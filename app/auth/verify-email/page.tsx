@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../../lib/api';
 import { CheckCircle2, XCircle, Loader2, ArrowRight, ShieldCheck } from 'lucide-react';
 
-export default function VerifyEmailPage() {
+// 1. Separamos la lógica en un componente interno
+function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -102,5 +103,18 @@ export default function VerifyEmailPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+// 2. Exportamos la página envuelta en la "Burbuja" de Suspense
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <Loader2 className="w-20 h-20 text-purple-500 animate-spin" />
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
