@@ -1,0 +1,750 @@
+"use client";
+
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { chatService } from '../../../lib/chatService';
+import { paymentService } from '../../../lib/paymentService'; 
+import PaymentModal from '../../../components/PaymentModal'; 
+import ReportModal from '../../../components/ReportModal'; 
+
+// 🔥 IMPORTAMOS ICONOS PREMIUM DE LUCIDE
+import { 
+  MessageCircle, 
+  Megaphone, 
+  Search, 
+  Flag, 
+  Ban, 
+  Unlock, 
+  Lock, 
+  Trash2, 
+  Image as ImageIcon, 
+  Paperclip, 
+  Mic, 
+  Square, 
+  X, 
+  CircleDollarSign, 
+  ArrowLeft, 
+  Send 
+} from 'lucide-react';
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
+
+export default function MessagesDashboard() {
+  const router = useRouter();
+  
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+
+  const [activeChat, setActiveChat] = useState<any>(null);
+  const [conversations, setConversations] = useState<any[]>([]); 
+  const [messages, setMessages] = useState<any[]>([]); 
+  
+  const [newMessage, setNewMessage] = useState('');
+  const [isPPVMode, setIsPPVMode] = useState(false);
+  const [ppvPrice, setPpvPrice] = useState('');
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isBlockedByMe, setIsBlockedByMe] = useState(false);
+
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [clientSecret, setClientSecret] = useState('');
+  const [selectedMessageToUnlock, setSelectedMessageToUnlock] = useState<any>(null);
+
+  const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
+  const [broadcastContent, setBroadcastContent] = useState('');
+  const [broadcastPrice, setBroadcastPrice] = useState('');
+  const [broadcastFile, setBroadcastFile] = useState<File | null>(null);
+  const [isSendingBroadcast, setIsSendingBroadcast] = useState(false);
+  const broadcastFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [isFlashing, setIsFlashing] = useState(false);
+
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportingMessageId, setReportingMessageId] = useState<string | null>(null);
+
+  // 📸 ESTADO PARA EL VISOR DE IMÁGENES (LIGHTBOX)
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user && user !== "undefined") {
+      setCurrentUser(JSON.parse(user));
+    } else {
+      router.push('/auth');
+    }
+    fetchConversations(true); 
+  }, []);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (activeChat) {
+      interval = setInterval(async () => {
+        try {
+          const data = await chatService.getMessages(activeChat.id);
+          const incomingMessages = data.messages || [];
+          
+          setMessages(prev => {
+            if (incomingMessages.length === prev.length) return prev;
+            
+            if (incomingMessages.length > prev.length) {
+              const lastMsg = incomingMessages[incomingMessages.length - 1];
+              if (lastMsg.senderId !== 'me' && prev.length > 0) {
+                triggerNewMessageAlert();
+              }
+            }
+            return incomingMessages;
+          });
+        } catch (error) {}
+      }, 3000); 
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [activeChat]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length]); 
+
+  const triggerNewMessageAlert = () => {
+    try {
+      const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-30.mp3');
+      audio.volume = 0.5;
+      audio.play();
+    } catch(e) {} 
+    setIsFlashing(true);
+    setTimeout(() => setIsFlashing(false), 1000);
+  };
+
+  const fetchConversations = async (isInitialLoad = false) => {
+    try {
+      const data = await chatService.getConversations();
+      const chats = data.conversations || [];
+      setConversations(chats);
+
+      if (isInitialLoad) {
+        const lastChatId = localStorage.getItem('lastOpenedChat');
+        if (lastChatId) {
+          const chatToRestore = chats.find((c: any) => c.id === lastChatId);
+          if (chatToRestore) {
+            handleSelectChat(chatToRestore); 
+          }
+        }
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSelectChat = async (chat: any) => {
+    if (!chat || !chat.id || chat.id === '') return;
+    setActiveChat(chat); 
+    localStorage.setItem('lastOpenedChat', chat.id); 
+    setIsBlockedByMe(false); 
+    
+    try {
+      const data = await chatService.getMessages(chat.id);
+      setMessages(data.messages || []);
+      
+      const blockData = await chatService.checkBlockStatus(chat.user.id);
+      setIsBlockedByMe(blockData.isBlocked);
+      
+      fetchConversations(); 
+    } catch (error) {}
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) setSelectedImage(e.target.files[0]);
+  };
+
+  const handleBroadcastFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) setBroadcastFile(e.target.files[0]);
+  };
+
+  const startRecording = async () => { /* Lógica de grabación */ };
+  const stopRecording = () => { /* Lógica de grabación */ };
+  const cancelRecording = () => { /* Lógica de grabación */ };
+  const formatTime = (seconds: number) => { return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`; };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() && !selectedImage && !audioBlob) return;
+    if (!activeChat || !activeChat.id) return;
+    setIsSending(true);
+
+    try {
+      let fileToSend: any = selectedImage;
+      if (audioBlob) fileToSend = new File([audioBlob], `audio_${Date.now()}.webm`, { type: 'audio/webm' });
+
+      const data = await chatService.sendMessage(activeChat.id, activeChat.user.id, newMessage, ppvPrice, fileToSend);
+
+      if (data && data.messageData) {
+         const newMsgRight = { ...data.messageData, senderId: 'me' };
+         setMessages(prev => [...prev, newMsgRight]); 
+      }
+      
+      setNewMessage(''); setIsPPVMode(false); setPpvPrice(''); setSelectedImage(null); setAudioBlob(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      
+      fetchConversations();
+    } catch (error) {
+      alert("Hubo un error al enviar el mensaje.");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleSendBroadcast = async () => {
+    if (!broadcastContent.trim() && !broadcastFile) return alert("Debes escribir un mensaje o adjuntar un archivo.");
+    if (!broadcastPrice || parseFloat(broadcastPrice) <= 0) {
+      if (!confirm("No has puesto precio. ¿Deseas enviar este mensaje GRATIS a todos tus fans?")) return;
+    }
+    setIsSendingBroadcast(true);
+    try {
+      const res = await chatService.sendBroadcast(broadcastContent, broadcastPrice, broadcastFile);
+      alert(`✅ ¡Éxito! ${res.message}`);
+      setIsBroadcastModalOpen(false); setBroadcastContent(''); setBroadcastPrice(''); setBroadcastFile(null);
+      fetchConversations(); 
+    } catch (error: any) {
+      alert(error.response?.data?.error || "Error de conexión con el servidor.");
+    } finally {
+      setIsSendingBroadcast(false);
+    }
+  };
+
+  const handleDeleteMessage = async (msgId: string) => {
+    if (!confirm("¿Estás seguro de que quieres borrar este mensaje para todos?")) return;
+    try {
+      await chatService.deleteMessage(msgId);
+      setMessages(prev => prev.filter(m => m.id !== msgId));
+    } catch (error) {
+      alert("Error al intentar borrar el mensaje.");
+    }
+  };
+
+  const handleUnlockClick = async (message: any) => {
+    let isAdmin = false;
+    if (typeof window !== 'undefined') {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+        isAdmin = storedUser?.role === 'ADMIN';
+      } catch (e) {
+        console.error("Error leyendo usuario local");
+      }
+    }
+
+    if (isAdmin) {
+      alert("👑 MODO DIOS ACTIVO: Como Admin, no necesitas pagar. (Nota: Ajustaremos el backend luego para que no te salga este botón).");
+      return;
+    }
+
+    try {
+      const data = await paymentService.createPaymentIntent({
+        amount: message.price,
+        type: 'MESSAGE', 
+        creatorId: message.senderId || message.userId, 
+        description: 'Desbloqueo de Mensaje Privado'
+      });
+      
+      setClientSecret(data.clientSecret);
+      setSelectedMessageToUnlock(message);
+      setIsPaymentModalOpen(true);
+    } catch (error) { 
+      alert('Error al conectar con la pasarela de pagos.'); 
+    }
+  };
+
+  const handleToggleBlock = async () => {
+    if (!activeChat) return;
+    
+    try {
+      if (isBlockedByMe) {
+        await chatService.unblockUser(activeChat.user.id);
+        setIsBlockedByMe(false);
+        alert(`✅ Usuario @${activeChat.user?.username} desbloqueado.`);
+      } else {
+        const confirmBlock = confirm(`🚨 ¿Estás seguro de que quieres bloquear a @${activeChat.user?.username}?`);
+        if (!confirmBlock) return;
+        
+        try {
+          await chatService.blockUser(activeChat.user.id);
+        } catch (err: any) {
+          if (err.response?.data?.error !== 'El usuario ya estaba bloqueado.') throw err;
+        }
+        
+        setIsBlockedByMe(true);
+        alert(`🚫 Usuario @${activeChat.user?.username} ha sido bloqueado.`);
+      }
+    } catch (error: any) {
+      alert(error.response?.data?.error || "Error al actualizar bloqueo.");
+    }
+  };
+
+  if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-10 h-10 border-4 border-teal-500 rounded-full border-t-transparent animate-spin"></div></div>;
+
+  const filteredConversations = conversations.filter(chat => 
+    chat.user?.username?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="h-screen flex flex-col bg-nm-base overflow-hidden relative">
+      <div className="absolute top-[-20%] left-1/2 w-[800px] h-[500px] bg-teal-900/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
+
+      {/* ================= NAVBAR SUPERIOR NEUMÓRFICA ================= */}
+      <nav className="bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center z-10 shrink-0 backdrop-blur-xl shadow-md">
+        <h1 className="text-xl font-black text-white flex items-center gap-2">
+          <MessageCircle className="w-5 h-5 text-teal-500" strokeWidth={2.5}/> Mensajes VIP
+        </h1>
+        <div className="flex gap-3">
+          {currentUser?.role === 'CREATOR' && (
+            <button 
+              onClick={() => setIsBroadcastModalOpen(true)}
+              className="text-sm nm-btn-primary border-teal-500/30 text-teal-400 hover:text-white hover:bg-teal-600 px-4 py-2 rounded-full font-bold flex items-center gap-2"
+            >
+              <Megaphone className="w-4 h-4" /> <span className="hidden md:inline">Broadcast PPV</span>
+            </button>
+          )}
+          <button 
+            onClick={() => router.push('/dashboard')} 
+            className="text-sm nm-btn text-gray-300 px-4 py-2 rounded-full hover:text-white transition-colors flex items-center gap-2 font-bold"
+          >
+            <ArrowLeft className="w-4 h-4" /> <span className="hidden md:inline">Volver</span>
+          </button>
+        </div>
+      </nav>
+
+      <div className={`flex flex-1 overflow-hidden max-w-7xl mx-auto w-full z-10 ${isFlashing ? 'shadow-[inset_0_0_50px_rgba(20,184,166,0.2)] border border-teal-500/30 rounded-xl' : ''}`}>
+        
+        {/* ================= BARRA LATERAL (LISTA DE CHATS) ================= */}
+        <div className={`w-full sm:w-80 border-r border-white/5 flex flex-col bg-nm-base relative z-20 ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
+          <div className="p-4 border-b border-white/5">
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                <Search className="w-4 h-4" />
+              </span>
+              <input 
+                type="text" 
+                placeholder="Buscar fan..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full nm-inset rounded-xl pl-10 pr-4 py-2.5 text-white outline-none focus:border focus:border-teal-500/50 transition-colors shadow-inner text-sm" 
+              />
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto custom-scrollbar px-2 py-2">
+            {filteredConversations.length === 0 ? (
+              <p className="text-gray-500 text-sm text-center mt-10 px-4 font-medium">
+                {searchTerm ? 'No se encontraron resultados.' : 'No tienes conversaciones activas.'}
+              </p>
+            ) : (
+              filteredConversations.map(chat => (
+                <div 
+                  key={chat.id} 
+                  onClick={() => handleSelectChat(chat)} 
+                  className={`flex items-center gap-3 p-3 mb-1 rounded-xl cursor-pointer transition-all ${
+                    activeChat?.id === chat.id 
+                      ? 'nm-inset border border-teal-500/20' 
+                      : 'nm-btn border border-transparent hover:border-white/5'
+                  }`}
+                >
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center text-white font-bold shrink-0 shadow-lg relative border-2 border-[#0e0e0e]">
+                    {chat.user?.username ? chat.user.username[0].toUpperCase() : 'U'}
+                    {chat.unread && (
+                      <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-black rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]"></span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-center mb-0.5">
+                      <h4 className={`truncate text-sm ${chat.unread ? 'text-white font-black' : 'text-gray-300 font-bold'}`}>
+                        @{chat.user?.username || 'Usuario'}
+                      </h4>
+                      <span className={`text-[10px] ${chat.unread ? 'text-teal-400 font-bold' : 'text-gray-500'}`}>{chat.time}</span>
+                    </div>
+                    <p className={`text-xs truncate ${chat.unread ? 'text-teal-300 font-bold' : 'text-gray-500 font-medium'}`}>{chat.lastMsg}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* ================= ÁREA DE CHAT (DERECHA) ================= */}
+        {activeChat ? (
+          <div className="flex flex-col flex-1 bg-[#0a0a0a] relative z-10 isolate">
+            
+            {/* Cabecera del Chat Activo */}
+            <div className="p-4 border-b border-white/5 flex justify-between items-center bg-nm-base relative z-20 shadow-md">
+              <div className="flex items-center gap-3">
+                <button onClick={() => { setActiveChat(null); localStorage.removeItem('lastOpenedChat'); }} className="sm:hidden nm-btn p-2 rounded-full text-gray-400 hover:text-white transition-colors">
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center text-white font-bold shadow-md border-2 border-[#0a0a0a]">
+                   {activeChat.user?.username ? activeChat.user.username[0].toUpperCase() : 'U'}
+                </div>
+                <div>
+                  <h3 className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
+                    @{activeChat.user?.username || 'Usuario'}
+                    <span className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_5px_rgba(34,197,94,0.8)]"></span>
+                  </h3>
+                  <p className="text-[10px] text-gray-400 font-medium">En línea</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => { setReportingMessageId(null); setIsReportModalOpen(true); }}
+                  className="text-xs font-bold p-2 rounded-full transition-all flex items-center text-gray-400 nm-btn hover:text-red-400"
+                  title="Reportar Usuario"
+                >
+                  <Flag className="w-4 h-4" />
+                </button>
+
+                <button 
+                  onClick={handleToggleBlock}
+                  className={`text-xs font-bold px-4 py-2 rounded-full transition-all flex items-center gap-2 ${
+                    isBlockedByMe 
+                      ? 'text-green-400 nm-inset border border-green-500/30' 
+                      : 'text-red-400 nm-btn hover:text-red-300'
+                  }`}
+                >
+                  {isBlockedByMe ? <Unlock className="w-4 h-4"/> : <Ban className="w-4 h-4"/>} 
+                  <span className="hidden sm:inline">{isBlockedByMe ? 'Desbloquear' : 'Bloquear'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Contenedor de Mensajes */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar relative">
+              {messages.length === 0 && <p className="text-center text-gray-500 mt-10 font-medium">No hay mensajes. ¡Inicia la conversación!</p>}
+              
+              {messages.map((msg) => {
+                const isAudio = msg.mediaUrl && (msg.mediaUrl.endsWith('.mp3') || msg.mediaUrl.endsWith('.wav') || msg.mediaUrl.endsWith('.ogg') || msg.mediaUrl.includes('audio_'));
+                const isVideo = msg.mediaUrl && (msg.mediaUrl.endsWith('.mp4') || msg.mediaUrl.endsWith('.mov') || (msg.mediaUrl.endsWith('.webm') && !msg.mediaUrl.includes('audio_')));
+
+                return (
+                  <div key={msg.id} className={`flex ${msg.senderId === 'me' ? 'justify-end' : 'justify-start'} animate-fade-in group`}>
+                    
+                    {/* Botones Flotantes del mensaje */}
+                    {msg.senderId === 'me' ? (
+                      <button 
+                        onClick={() => handleDeleteMessage(msg.id)} 
+                        className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 mr-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full"
+                        title="Borrar mensaje"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => { setReportingMessageId(msg.id); setIsReportModalOpen(true); }} 
+                        className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-500 ml-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full order-last"
+                        title="Reportar este mensaje"
+                      >
+                        <Flag className="w-4 h-4" />
+                      </button>
+                    )}
+
+                    <div className={`max-w-[85%] sm:max-w-[70%] rounded-2xl p-1 relative ${
+                      msg.senderId === 'me' 
+                        ? 'bg-gradient-to-bl from-teal-700 to-blue-700 rounded-tr-none text-white shadow-lg' 
+                        : 'nm-inset rounded-tl-none text-gray-200 border border-white/5'
+                    }`}>
+                      
+                      {msg.content && (
+                         <div className={`px-4 py-2.5 text-sm md:text-base whitespace-pre-wrap ${msg.isPPV && !msg.isUnlocked ? 'text-teal-200 italic border-l-2 border-teal-500 ml-2 pl-2 mb-2 bg-black/40 rounded-r-lg' : ''}`}>
+                            {msg.content}
+                         </div>
+                      )}
+
+                      {msg.isPPV && (
+                        <div className="bg-[#050505] p-4 rounded-xl flex flex-col items-center justify-center min-h-[140px] border border-white/5 m-1 relative overflow-hidden mb-2 shadow-inner">
+                          {!msg.isUnlocked ? (
+                            <>
+                              <div className="absolute inset-0 bg-gradient-to-t from-teal-900/40 to-transparent"></div>
+                              <Lock className="w-10 h-10 text-teal-500 relative z-10 drop-shadow-[0_0_10px_rgba(20,184,166,0.5)] mb-2" />
+                              <p className="font-bold relative z-10 text-sm text-white">Contenido Privado</p>
+                              {msg.senderId !== 'me' ? (
+                                <button onClick={() => handleUnlockClick(msg)} className="mt-3 bg-teal-500 hover:bg-teal-400 text-black text-xs font-bold py-2 px-6 rounded-full relative z-10 transition-transform hover:scale-105 shadow-[0_0_10px_rgba(20,184,166,0.3)] flex items-center gap-1">
+                                  <Unlock className="w-3 h-3" /> Desbloquear ${msg.price?.toFixed(2)}
+                                </button>
+                              ) : (
+                                 <span className="nm-inset border border-teal-500/50 text-teal-400 font-bold px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest mt-2 relative z-10">Tú cobraste: ${msg.price?.toFixed(2)}</span>
+                              )}
+                            </>
+                          ) : (
+                            <div className="text-center relative z-10 py-2 flex flex-col items-center">
+                               <Unlock className="w-8 h-8 text-teal-400 mb-2 drop-shadow-md" />
+                               <span className="text-[10px] text-teal-300 font-bold nm-inset px-3 py-1 rounded-full border border-teal-500/30 uppercase tracking-widest">¡Desbloqueado por ${msg.price?.toFixed(2)}!</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      {msg.mediaUrl && (!msg.isPPV || msg.isUnlocked) && (
+                        <div className="relative z-10">
+                          {isAudio ? (
+                             <div className="px-3 pb-2 pt-1">
+                               <audio controls src={`${BACKEND_URL}${msg.mediaUrl}`} className="max-w-[200px] sm:max-w-[250px] h-10 outline-none" />
+                             </div>
+                          ) : isVideo ? (
+                             <div className="px-2 pb-2 mt-1 relative group">
+                               <video 
+                                 controls 
+                                 controlsList="nodownload noplaybackrate" 
+                                 disablePictureInPicture
+                                 src={`${BACKEND_URL}${msg.mediaUrl}`} 
+                                 className="rounded-xl max-h-64 w-full object-cover shadow-md select-none" 
+                                 onContextMenu={(e) => e.preventDefault()} 
+                               />
+                             </div>
+                          ) : (
+                             // 📸 MINIATURA BLINDADA
+                             <div className="px-2 pb-2 mt-1 relative">
+                               <img 
+                                 src={`${BACKEND_URL}${msg.mediaUrl}`} 
+                                 alt="Contenido Protegido" 
+                                 className="rounded-xl max-h-48 object-cover shadow-md cursor-pointer hover:opacity-80 transition-opacity border border-white/5 select-none" 
+                                 onClick={() => setExpandedImage(`${BACKEND_URL}${msg.mediaUrl}`)}
+                                 onContextMenu={(e) => e.preventDefault()} 
+                                 draggable="false"
+                               />
+                             </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* CONTROLES DE ESCRITURA (Hundidos) */}
+            <div className="p-4 border-t border-white/5 bg-nm-base relative z-20 min-h-[95px] flex flex-col justify-center shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
+              {isBlockedByMe ? (
+                <div className="w-full text-center py-3 text-red-400 text-sm font-bold nm-inset border border-red-500/30 rounded-full shadow-inner flex items-center justify-center gap-2">
+                  <Ban className="w-4 h-4" /> Tienes bloqueado a este usuario.
+                </div>
+              ) : (
+                <>
+                  <div className="flex flex-wrap gap-3 mb-3">
+                    {selectedImage && (
+                      <div className="flex items-center gap-2 nm-inset px-3 py-1.5 rounded-lg border border-white/5 animate-fade-in">
+                        <ImageIcon className="w-4 h-4 text-teal-400" />
+                        <span className="text-xs text-gray-300 truncate max-w-[150px]">{selectedImage.name}</span>
+                        <button onClick={() => setSelectedImage(null)} className="text-gray-500 hover:text-red-400 transition-colors"><X className="w-4 h-4"/></button>
+                      </div>
+                    )}
+                    {isPPVMode && currentUser?.role === 'CREATOR' && (
+                      <div className="flex items-center gap-2 nm-inset border border-teal-500/50 w-max px-3 py-1.5 rounded-xl animate-fade-in">
+                        <span className="text-teal-400 font-bold text-xs uppercase tracking-widest">Cobrar: $</span>
+                        <input type="number" min="1" step="0.01" placeholder="0.00" value={ppvPrice} onChange={(e) => setPpvPrice(e.target.value)} className="bg-transparent border-b border-teal-500/30 text-white outline-none w-16 px-1 py-0.5 text-sm font-bold focus:border-teal-400" />
+                        <button onClick={() => { setIsPPVMode(false); setPpvPrice(''); }} className="text-gray-400 hover:text-red-400 ml-1 transition-colors"><X className="w-4 h-4"/></button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-end gap-2 nm-inset rounded-[2rem] p-1.5 focus-within:border-teal-500/50 transition-colors border border-transparent">
+                    {!isRecording && !audioBlob && (
+                      <>
+                        <input type="file" accept="image/*,video/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
+                        <button onClick={() => fileInputRef.current?.click()} className="nm-btn w-11 h-11 rounded-full text-gray-400 hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
+                          <Paperclip className="w-5 h-5" />
+                        </button>
+                      </>
+                    )}
+
+                    {currentUser?.role === 'CREATOR' && (
+                      <button onClick={() => setIsPPVMode(!isPPVMode)} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all shrink-0 ${isPPVMode ? 'nm-inset text-teal-400 border border-teal-500/30' : 'nm-btn text-gray-400 hover:text-teal-400'}`}>
+                        <CircleDollarSign className="w-5 h-5" />
+                      </button>
+                    )}
+                    
+                    {isRecording ? (
+                      <div className="flex-1 flex items-center justify-between nm-inset border border-red-500/30 rounded-full px-4 py-2 self-center">
+                        <span className="text-red-400 font-bold flex items-center gap-2 text-sm tracking-wide">
+                          <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span> Grabando {formatTime(recordingTime)}
+                        </span>
+                        <div className="flex items-center gap-3">
+                          <button onClick={cancelRecording} className="text-gray-400 hover:text-white transition-colors text-sm font-bold">Cancelar</button>
+                          <button onClick={stopRecording} className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold hover:bg-red-600 transition-colors">
+                            <Square className="w-3 h-3 fill-current" />
+                          </button>
+                        </div>
+                      </div>
+                    ) : audioBlob ? (
+                      <div className="flex-1 flex items-center justify-between nm-inset border border-teal-500/30 rounded-full px-4 py-1.5 self-center">
+                        <audio controls src={URL.createObjectURL(audioBlob)} className="h-8 w-full max-w-[200px]" />
+                        <button onClick={cancelRecording} className="text-gray-400 hover:text-red-400 transition-colors ml-2 flex items-center gap-1 font-bold text-xs">
+                          <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Borrar</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Escribe un mensaje privado..." className="flex-1 bg-transparent text-white outline-none px-4 py-3 max-h-32 resize-none custom-scrollbar self-center text-sm md:text-base placeholder:text-gray-600" rows={1} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }} />
+                    )}
+
+                    {!newMessage.trim() && !selectedImage && !audioBlob && !isRecording ? (
+                      <button onClick={startRecording} className="nm-btn w-11 h-11 rounded-full text-gray-400 hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
+                        <Mic className="w-5 h-5" />
+                      </button>
+                    ) : (
+                      <button onClick={handleSendMessage} disabled={isSending || (isPPVMode && !ppvPrice) || isRecording} className="nm-btn-primary h-11 w-11 sm:w-auto sm:px-6 rounded-full transition-all disabled:opacity-50 shrink-0 flex items-center justify-center gap-2">
+                        {isSending ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : <><Send className="w-5 h-5" /> <span className="hidden sm:inline">Enviar</span></>}
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="hidden sm:flex flex-1 flex-col items-center justify-center bg-[#0a0a0a] border-l border-white/5 text-center p-8 relative z-10 shadow-inner">
+            <div className="w-24 h-24 rounded-3xl nm-inset flex items-center justify-center mb-6 text-teal-500">
+              <MessageCircle className="w-12 h-12 drop-shadow-[0_0_15px_rgba(20,184,166,0.4)]" />
+            </div>
+            <h2 className="text-2xl font-black text-white mb-2 tracking-tighter">Bóveda de Mensajes</h2>
+            <p className="text-gray-500 max-w-sm font-medium">Selecciona un fan de la lista izquierda para enviar contenido exclusivo o conversar.</p>
+          </div>
+        )}
+      </div>
+
+      {/* MODAL DE BROADCAST (Neumórfico) */}
+      {isBroadcastModalOpen && currentUser?.role === 'CREATOR' && (
+        <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+           <div className="nm-inset border border-teal-500/30 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(20,184,166,0.1)]">
+            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#0e0e0e]">
+              <h3 className="text-white font-black flex items-center gap-2">
+                <Megaphone className="w-5 h-5 text-teal-400" /> Difusión Masiva
+              </h3>
+              <button onClick={() => setIsBroadcastModalOpen(false)} className="nm-btn p-2 rounded-full text-gray-400 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-6 space-y-5 bg-[#0a0a0a]">
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Mensaje (Opcional)</label>
+                <textarea value={broadcastContent} onChange={(e) => setBroadcastContent(e.target.value)} className="w-full nm-inset border border-white/5 rounded-xl p-4 text-white outline-none focus:border-teal-500/50 resize-none text-sm placeholder:text-gray-600" rows={3} placeholder="Escribe un mensaje para todos tus fans..."/>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Archivo (Opcional)</label>
+                <input type="file" accept="image/*,video/*" className="hidden" ref={broadcastFileInputRef} onChange={handleBroadcastFileChange} />
+                <div className="flex gap-2 items-center">
+                  <button onClick={() => broadcastFileInputRef.current?.click()} className="nm-btn text-gray-300 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
+                    <Paperclip className="w-4 h-4" /> Elegir
+                  </button>
+                  {broadcastFile && <span className="flex-1 nm-inset text-teal-400 text-xs px-4 py-2.5 rounded-xl flex justify-between items-center border border-teal-500/20">
+                    <span className="truncate pr-2">{broadcastFile.name}</span> 
+                    <button onClick={() => setBroadcastFile(null)} className="hover:text-red-400"><X className="w-4 h-4"/></button>
+                  </span>}
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Precio PPV ($)</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
+                  <input type="number" min="0" step="0.01" value={broadcastPrice} onChange={(e) => setBroadcastPrice(e.target.value)} className="w-full nm-inset border border-white/5 rounded-xl pl-8 pr-4 py-3 text-white font-bold outline-none focus:border-teal-500/50"/>
+                </div>
+              </div>
+            </div>
+            <div className="p-5 border-t border-white/5 bg-[#0e0e0e] flex justify-end gap-3">
+              <button onClick={() => setIsBroadcastModalOpen(false)} className="nm-btn px-6 py-2.5 text-sm text-gray-400 font-bold rounded-xl">Cancelar</button>
+              <button onClick={handleSendBroadcast} disabled={isSendingBroadcast || (!broadcastContent.trim() && !broadcastFile)} className="nm-btn-primary px-6 py-2.5 rounded-xl disabled:opacity-50 flex items-center gap-2 text-sm">
+                {isSendingBroadcast ? 'Enviando...' : <><Send className="w-4 h-4" /> Enviar a Todos</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🚀 MODAL DE PAGO */}
+      {isPaymentModalOpen && clientSecret && selectedMessageToUnlock && (
+        <PaymentModal 
+          clientSecret={clientSecret} 
+          price={selectedMessageToUnlock.price} 
+          creatorId={activeChat?.user?.id} 
+          onClose={() => setIsPaymentModalOpen(false)} 
+          onSuccess={async () => { 
+            setIsPaymentModalOpen(false); 
+            try { 
+              await paymentService.confirmPurchase(selectedMessageToUnlock.id); 
+              alert("✨ ¡Contenido desbloqueado con éxito!"); 
+              if (activeChat) { 
+                const data = await chatService.getMessages(activeChat.id); 
+                setMessages(data.messages || []); 
+              } 
+            } catch (error) {} 
+          }} 
+        />
+      )}
+
+      {/* MODAL INTELIGENTE DE REPORTES */}
+      {isReportModalOpen && activeChat && (
+        <ReportModal 
+          type={reportingMessageId ? 'MESSAGE' : 'USER'} 
+          targetId={reportingMessageId || activeChat.user.id} 
+          reportedUsername={activeChat.user.username} 
+          onClose={() => { setIsReportModalOpen(false); setReportingMessageId(null); }} 
+        />
+      )}
+
+      {/* 📸 MODAL DE VISOR DE IMÁGENES (CON MARCA DE AGUA Y ESCUDO INVISIBLE) */}
+      {expandedImage && (
+        <div 
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none"
+          onClick={() => setExpandedImage(null)}
+          onContextMenu={(e) => e.preventDefault()} 
+        >
+          <button 
+            onClick={() => setExpandedImage(null)}
+            className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all z-50 border border-white/10"
+            title="Cerrar"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          
+          <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
+            
+            {/* Imagen con "pointer-events-none" para que sea intocable */}
+            <img 
+              src={expandedImage} 
+              alt="Contenido Exclusivo" 
+              className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none"
+              draggable="false"
+            />
+            
+            {/* 💧 MARCA DE AGUA DINÁMICA */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none overflow-hidden opacity-30 mix-blend-overlay">
+               <div className="transform -rotate-45 flex flex-col items-center">
+                 <span className="text-white text-5xl md:text-8xl font-black uppercase tracking-widest drop-shadow-[0_5px_5px_rgba(0,0,0,1)]">
+                   FANSMIOS
+                 </span>
+                 <span className="text-white text-xl md:text-3xl font-bold drop-shadow-[0_5px_5px_rgba(0,0,0,1)] mt-2">
+                   @{activeChat?.user?.username || 'EXCLUSIVO'}
+                 </span>
+               </div>
+            </div>
+
+            {/* 🛡️ CAPA ESCUDO INVISIBLE (Trampa para clics) */}
+            <div 
+              className="absolute inset-0 z-10 w-full h-full cursor-default" 
+              onContextMenu={(e) => e.preventDefault()}
+            ></div>
+
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}

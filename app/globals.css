@@ -1,0 +1,95 @@
+/* frontend/app/globals.css */
+@import "tailwindcss";
+
+:root {
+  /* Colores base del Club VIP (Ajustado ligeramente a #0e0e0e para que el Neumorfismo funcione) */
+  --background: #0e0e0e;
+  --foreground: #ffffff;
+  
+  /* Variables para el Cristal Esmerilado (Glassmorphism) */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  /* Luces de neón de fondo (Mantenemos tu diseño original) */
+  background-image:
+    radial-gradient(circle at 15% 50%, rgba(107, 33, 168, 0.15), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(29, 78, 216, 0.15), transparent 25%);
+  background-attachment: fixed;
+}
+
+/* ==========================================
+   💎 1. LA CLASE MÁGICA DE CRISTAL (Glassmorphism)
+   ========================================== */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================
+   🎛️ 2. CLASES DE NEUMORFISMO (Soft UI Táctil)
+   ========================================== */
+@layer components {
+  
+  /* Color de fondo base forzado (si lo necesitas en algún contenedor) */
+  .bg-nm-base {
+    background-color: var(--background);
+  }
+
+  /* --- BOTÓN EXTRUIDO (Relieve hacia afuera) --- */
+  .nm-btn {
+    @apply rounded-xl transition-all duration-300 ease-in-out border border-transparent;
+    background-color: var(--background);
+    /* Sombra oscura abajo-derecha, Sombra clara arriba-izquierda */
+    box-shadow: 6px 6px 12px #050505, -3px -3px 8px rgba(255, 255, 255, 0.03);
+  }
+
+  /* Estado Hover: Se eleva y brilla */
+  .nm-btn:hover {
+    @apply scale-[1.01];
+    box-shadow: 8px 8px 16px #050505, -4px -4px 10px rgba(255, 255, 255, 0.04);
+  }
+
+  /* Estado Active (Clic): Se hunde como un botón real */
+  .nm-btn:active, .nm-btn-active {
+    @apply scale-[0.99];
+    box-shadow: inset 4px 4px 8px #050505, inset -2px -2px 5px rgba(255, 255, 255, 0.02);
+  }
+
+  /* --- BOTÓN PRIMARIO (Rojo FansMios Neumórfico) --- */
+  .nm-btn-primary {
+    @apply rounded-xl transition-all duration-300 ease-in-out text-red-500 font-bold border border-red-950/30;
+    background-color: var(--background);
+    box-shadow: 6px 6px 12px #050505, -3px -3px 8px rgba(255, 255, 255, 0.03);
+  }
+
+  .nm-btn-primary:hover {
+    @apply text-white bg-red-600 border-red-500 scale-[1.01];
+    /* Cambia a un brillo neón rojo al pasar el mouse */
+    box-shadow: 0 0 15px rgba(220, 38, 38, 0.3); 
+  }
+
+  .nm-btn-primary:active {
+    @apply bg-red-700 text-gray-200 scale-[0.99];
+    box-shadow: inset 4px 4px 8px #7f1d1d, inset -2px -2px 5px rgba(255, 255, 255, 0.1);
+  }
+
+  /* --- ELEMENTO HUNDIDO (Para Inputs o fondos de tarjetas) --- */
+  .nm-inset {
+    @apply rounded-xl transition-all duration-300 border border-transparent;
+    background-color: #0a0a0a; /* Ligeramente más oscuro que el fondo para crear el "hueco" */
+    box-shadow: inset 5px 5px 10px #030303, inset -2px -2px 6px rgba(255, 255, 255, 0.01);
+  }
+
+  /* Cuando el usuario hace clic en el input para escribir */
+  .nm-inset:focus-within {
+    @apply border-red-500/30;
+    box-shadow: inset 2px 2px 4px #030303, inset -1px -1px 3px rgba(255, 255, 255, 0.01), 0 0 10px rgba(220, 38, 38, 0.1);
+  }
+}
