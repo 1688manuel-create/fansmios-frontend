@@ -15,21 +15,29 @@ import AppLayout from '../../components/AppLayout';
 import React from 'react';
 import BoostModal from '../../components/BoostModal';
 
-// 🔥 IMPORTAMOS LOS ICONOS PREMIUM
+// 🔥 IMPORTAMOS LOS ICONOS
 import { 
   Image as ImageIcon, Lock, Radio, Bell, MessageCircle, Settings, LogOut, 
   Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, Eye, Ghost, X, User,
-  TrendingUp, Zap, Star, ChevronRight, Send, Package
+  TrendingUp, Zap, Star, ChevronRight, Send, Package, Heart
 } from 'lucide-react';
 
 import { requestPushPermission } from '../../lib/firebase';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-// 🛠️ EL REPARADOR DE ENLACES: Evita que las fotos se rompan por falta de '/'
-const getImageUrl = (path: string | null) => {
+// 🛠️ EL REPARADOR DE ENLACES CON MARCA DE AGUA AUTOMÁTICA EN LA NUBE
+const getImageUrl = (path: string | null, usernameForWatermark: string | null = null) => {
   if (!path) return '';
-  if (path.startsWith('http')) return path; 
+  
+  if (path.startsWith('http')) {
+    if (usernameForWatermark && path.includes('cloudinary.com')) {
+      const cleanUsername = usernameForWatermark.replace('@', '');
+      const watermarkTransform = `upload/l_text:Arial_80_bold:fansmios%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_center/`;
+      return path.replace('upload/', watermarkTransform);
+    }
+    return path; 
+  }
   
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
@@ -58,11 +66,11 @@ export default function Feed() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // 💬 VARIABLES DE COMENTARIOS
   const [commentingPostId, setCommentingPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null); 
-  const [activeReactionMenu, setActiveReactionMenu] = useState<string | null>(null);
 
   const [stories, setStories] = useState<any[]>([]);
   const [activeStory, setActiveStory] = useState<any>(null);
@@ -130,7 +138,30 @@ export default function Feed() {
     finally { setIsLoading(false); }
   };
 
-  // 🏦 LÓGICA PAYRAM INSTANTÁNEA PARA PAQUETES
+  const handleToggleLike = async (postId: string) => {
+    if (!user) return;
+    try {
+      await api.post(`/posts/${postId}/like`);
+      fetchData(); 
+    } catch (error) { console.error("Error al dar like:", error); }
+  };
+
+  const submitComment = async (postId: string) => {
+    if (!commentText.trim()) return;
+    setIsSubmittingComment(true);
+    try {
+      await postService.addComment(postId, commentText, replyingToCommentId);
+      setCommentText('');
+      setCommentingPostId(null);
+      setReplyingToCommentId(null);
+      fetchData(); 
+    } catch (error) {
+      alert("Error al enviar comentario");
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  };
+
   const handleUnlockBundle = async (bundle: any) => {
     try {
       const payload: any = {
@@ -156,7 +187,6 @@ export default function Feed() {
     }
   };
 
-  // 🏦 LÓGICA PAYRAM INSTANTÁNEA PARA POSTS PPV
   const handleUnlockClick = async (post: any) => {
     try {
       const data = await paymentService.createPaymentIntent({
@@ -232,16 +262,26 @@ export default function Feed() {
     try { await storyService.viewStory(story.id); fetchData(); } catch (error) {}
   };
 
-  // 🔥 NUEVA FUNCIÓN: Eliminar Historia
   const handleDeleteStory = async (storyId: string) => {
     if (!window.confirm("🚨 ¿Estás seguro de que deseas eliminar esta historia?")) return;
     try {
       await api.delete(`/stories/${storyId}`);
       alert("✅ Historia eliminada.");
-      setActiveStory(null); // Cerramos el visor
-      fetchData(); // Recargamos el muro
+      setActiveStory(null); 
+      fetchData(); 
     } catch (error) {
       alert("Error al intentar eliminar la historia.");
+    }
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    if (!window.confirm("🚨 ¿Estás seguro de que deseas eliminar esta publicación para siempre?")) return;
+    try {
+      await api.delete(`/posts/${postId}`);
+      alert("✅ Publicación eliminada.");
+      fetchData();
+    } catch (error) {
+      alert("Error al intentar eliminar la publicación.");
     }
   };
 
@@ -409,55 +449,153 @@ export default function Feed() {
 
             {/* FEED POSTS */}
             <div className="space-y-6">
-              {posts.length === 0 ? <div className="text-center text-gray-500 py-10 nm-inset border border-white/5 rounded-3xl">Sin publicaciones aún.</div> : (
-                posts.map((post, index) => (
-                  <React.Fragment key={`${post.id}-${index}`}>
-                    {post.isPromoted && (
-                      <div className="flex items-center gap-2 text-yellow-500 mb-[-12px] ml-4 relative z-10 animate-fade-in">
-                        <Star className="w-4 h-4 fill-yellow-500" />
-                        <span className="text-xs font-black uppercase tracking-widest">Recomendado para ti</span>
-                      </div>
-                    )}
+              {posts.length === 0 ? (
+                <div className="text-center text-gray-500 py-10 nm-inset border border-white/5 rounded-3xl">Sin publicaciones aún.</div>
+              ) : (
+                posts.map((post, index) => {
+                  const isOwner = user && post.user && user.id === post.user.id;
 
-                    <div className={`p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
-                      <div className="flex justify-between items-center relative z-10">
-                        <div className="flex items-center gap-3">
-                          <div onClick={() => router.push(`/${post.user.username}`)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shadow-lg overflow-hidden cursor-pointer border ${post.isPromoted ? 'border-yellow-500' : 'border-white/10'}`}>
-                            {post.user?.creatorProfile?.profileImage ? <img src={getImageUrl(post.user.creatorProfile.profileImage)} className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center ${post.isPromoted ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}>{(post.user?.username || 'U')[0].toUpperCase()}</div>}
-                          </div>
-                          <div onClick={() => router.push(`/${post.user.username}`)} className="cursor-pointer group">
-                            <h3 className={`font-bold text-lg ${post.isPromoted ? 'text-yellow-500' : 'text-white'}`}>@{post.user?.username || 'usuario'}</h3>
-                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{!post.hasAccess ? 'Exclusivo' : 'Público'}</p>
-                          </div>
+                  return (
+                    <React.Fragment key={`${post.id}-${index}`}>
+                      {post.isPromoted && (
+                        <div className="flex items-center gap-2 text-yellow-500 mb-[-12px] ml-4 relative z-10 animate-fade-in">
+                          <Star className="w-4 h-4 fill-yellow-500" />
+                          <span className="text-xs font-black uppercase tracking-widest">Recomendado para ti</span>
                         </div>
-                        {post.isPromoted && <button onClick={() => router.push(`/${post.user.username}`)} className="nm-btn border-yellow-500/30 text-yellow-500 px-4 py-2 rounded-full text-xs font-bold">Ver Perfil</button>}
-                      </div>
-                      
-                      {post.content && <p className="text-gray-200 text-base leading-relaxed">{post.content}</p>}
-
-                      {!post.hasAccess ? (
-                        <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 overflow-hidden group nm-inset">
-                          <div className="relative z-10 flex flex-col items-center bg-black/60 p-8 rounded-3xl border border-white/10 backdrop-blur-md">
-                            <Lock className={`w-16 h-16 mb-4 ${post.isPromoted ? 'text-yellow-500' : 'text-red-500'}`} />
-                            <button onClick={() => handleUnlockClick(post)} className={`py-3 px-8 text-sm flex items-center gap-2 font-bold ${post.isPromoted ? 'bg-yellow-500 text-black rounded-full' : 'nm-btn-primary'}`}>
-                              <Unlock className="w-4 h-4"/> Desbloquear ${post.price}
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        post.mediaUrl && (
-                          <div className="mt-4 rounded-2xl overflow-hidden nm-inset border border-white/5 relative bg-black/50 flex justify-center">
-                            {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                              <video controls controlsList="nodownload" src={getImageUrl(post.mediaUrl)} className="w-full max-h-[600px] object-cover" />
-                            ) : (
-                              <img src={getImageUrl(post.mediaUrl)} className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl), username: post.user?.username })} />
-                            )}
-                          </div>
-                        )
                       )}
-                    </div>
-                  </React.Fragment>
-                ))
+
+                      <div className={`p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
+                        
+                        {/* 🗑️ BOTÓN ELIMINAR POST (SOLO PARA EL DUEÑO) */}
+                        {isOwner && (
+                          <button 
+                            onClick={() => handleDeletePost(post.id)}
+                            className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
+                            title="Eliminar publicación"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        )}
+
+                        <div className="flex justify-between items-center relative z-10">
+                          <div className="flex items-center gap-3">
+                            <div onClick={() => router.push(`/${post.user.username}`)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shadow-lg overflow-hidden cursor-pointer border ${post.isPromoted ? 'border-yellow-500' : 'border-white/10'}`}>
+                              {post.user?.creatorProfile?.profileImage ? <img src={getImageUrl(post.user.creatorProfile.profileImage)} className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center ${post.isPromoted ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}>{(post.user?.username || 'U')[0].toUpperCase()}</div>}
+                            </div>
+                            <div onClick={() => router.push(`/${post.user.username}`)} className="cursor-pointer group">
+                              <h3 className={`font-bold text-lg ${post.isPromoted ? 'text-yellow-500' : 'text-white'}`}>@{post.user?.username || 'usuario'}</h3>
+                              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{!post.hasAccess ? 'Exclusivo' : 'Público'}</p>
+                            </div>
+                          </div>
+                          {post.isPromoted && !isOwner && <button onClick={() => router.push(`/${post.user.username}`)} className="nm-btn border-yellow-500/30 text-yellow-500 px-4 py-2 rounded-full text-xs font-bold">Ver Perfil</button>}
+                        </div>
+                        
+                        {post.content && <p className="text-gray-200 text-base leading-relaxed">{post.content}</p>}
+
+                        {!post.hasAccess ? (
+                          <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 overflow-hidden group nm-inset">
+                            <div className="relative z-10 flex flex-col items-center bg-black/60 p-8 rounded-3xl border border-white/10 backdrop-blur-md">
+                              <Lock className={`w-16 h-16 mb-4 ${post.isPromoted ? 'text-yellow-500' : 'text-red-500'}`} />
+                              <button onClick={() => handleUnlockClick(post)} className={`py-3 px-8 text-sm flex items-center gap-2 font-bold ${post.isPromoted ? 'bg-yellow-500 text-black rounded-full' : 'nm-btn-primary'}`}>
+                                <Unlock className="w-4 h-4"/> Desbloquear ${post.price}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            {post.mediaUrl && (
+                              <div className="mt-4 rounded-2xl overflow-hidden nm-inset border border-white/5 relative bg-black/50 flex justify-center">
+                                {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                                  <video controls controlsList="nodownload" src={getImageUrl(post.mediaUrl)} className="w-full max-h-[600px] object-cover" />
+                                ) : (
+                                  <img src={getImageUrl(post.mediaUrl, post.user?.username)} className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
+                                )}
+                              </div>
+                            )}
+
+                            {/* 🔥 BOTONERÍA DE INTERACCIÓN */}
+                            <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-white/5">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-6">
+                                  <button onClick={() => handleToggleLike(post.id)} className={`flex items-center gap-2 font-bold transition-all ${post.myReaction ? 'text-red-500' : 'text-gray-400 hover:text-red-400'}`}>
+                                    <Heart className={`w-5 h-5 ${post.myReaction ? 'fill-red-500' : ''}`} />
+                                    <span>{post._count?.likes || 0}</span>
+                                  </button>
+                                  
+                                  <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-2 font-bold transition-all ${commentingPostId === post.id ? 'text-blue-500' : 'text-gray-400 hover:text-blue-400'}`}>
+                                    <MessageCircle className="w-5 h-5" />
+                                    <span>{post._count?.comments || 0}</span>
+                                  </button>
+                                </div>
+                                
+                                {/* Botón de propina (Oculto si es tu propio post) */}
+                                {!isOwner && (
+                                  <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
+                                    <Coins className="w-5 h-5" />
+                                    <span className="text-sm">Propina</span>
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* 💬 CAJA DE COMENTARIOS */}
+                              {commentingPostId === post.id && (
+                                <div className="flex flex-col gap-2 animate-fade-in mt-2">
+                                  {/* INDICADOR DE RESPUESTA */}
+                                  {replyingToCommentId && (
+                                    <div className="flex justify-between items-center bg-blue-900/20 px-3 py-1 text-xs text-blue-400 rounded-lg">
+                                      <span>Respondiendo al comentario...</span>
+                                      <button onClick={() => setReplyingToCommentId(null)}><X className="w-3 h-3"/></button>
+                                    </div>
+                                  )}
+                                  <div className="flex gap-2">
+                                    <input 
+                                      type="text" 
+                                      value={commentText} 
+                                      onChange={(e) => setCommentText(e.target.value)} 
+                                      placeholder="Escribe un comentario..." 
+                                      className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-blue-500/50" 
+                                      onKeyDown={(e) => e.key === 'Enter' && submitComment(post.id)}
+                                    />
+                                    <button 
+                                      onClick={() => submitComment(post.id)} 
+                                      disabled={isSubmittingComment || !commentText.trim()} 
+                                      className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white hover:bg-blue-500 transition-colors shrink-0 disabled:opacity-50"
+                                    >
+                                      <Send className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* LISTA DE COMENTARIOS */}
+                              {post.comments && post.comments.length > 0 && (
+                                 <div className="space-y-3 mt-2">
+                                   {post.comments.map((comment: any) => (
+                                      <div key={comment.id} className="text-sm bg-white/5 p-3 rounded-xl border border-white/5">
+                                        <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
+                                        <span className="text-gray-400">{comment.content}</span>
+                                        
+                                        {/* BOTÓN RESPONDER */}
+                                        <button 
+                                          onClick={() => {
+                                            setCommentingPostId(post.id);
+                                            setReplyingToCommentId(comment.id);
+                                          }} 
+                                          className="block text-xs text-blue-400 mt-1 hover:underline font-bold"
+                                        >
+                                          Responder
+                                        </button>
+                                      </div>
+                                   ))}
+                                 </div>
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </React.Fragment>
+                  );
+                })
               )}
             </div>
           </main>
@@ -546,7 +684,6 @@ export default function Feed() {
         {/* ================= MODALES ================= */}
         {activeStory && (
           <div className="fixed inset-0 z-[200] bg-black/95 flex flex-col animate-fade-in select-none">
-            {/* CABECERA DEL VISOR DE HISTORIA */}
             <div className="flex justify-between items-center p-4 absolute top-0 w-full z-10 bg-gradient-to-b from-black/80 to-transparent">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/20 shadow-lg">
@@ -555,9 +692,7 @@ export default function Feed() {
                 <span className="text-white font-bold drop-shadow-md">@{activeStory.creator?.username}</span>
               </div>
               
-              {/* BOTONES DE ACCIÓN */}
               <div className="flex items-center gap-3">
-                {/* 🗑️ BOTÓN DE BORRAR (SOLO PARA EL DUEÑO) */}
                 {user?.id === activeStory.creator?.id && (
                   <button 
                     onClick={() => handleDeleteStory(activeStory.id)} 
@@ -568,25 +703,22 @@ export default function Feed() {
                   </button>
                 )}
                 
-                {/* BOTÓN CERRAR */}
                 <button onClick={() => setActiveStory(null)} className="w-10 h-10 bg-black/50 hover:bg-white/20 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg">
                   <X className="w-6 h-6"/>
                 </button>
               </div>
             </div>
 
-            {/* CONTENIDO DE LA HISTORIA */}
             <div className="flex-1 flex justify-center items-center p-4 pt-20">
               {activeStory.mediaUrl?.match(/\.(mp4|mov|webm)$/i) ? (
                 <video src={getImageUrl(activeStory.mediaUrl)} autoPlay controls className="max-w-full max-h-full rounded-2xl shadow-2xl" />
               ) : (
-                <img src={getImageUrl(activeStory.mediaUrl)} className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain pointer-events-none" />
+                <img src={getImageUrl(activeStory.mediaUrl, activeStory.creator?.username)} className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain pointer-events-none" />
               )}
             </div>
           </div>
         )}
 
-        {/* 🏦 LÓGICA PAYRAM INSTANTÁNEA PARA PROPINAS */}
         {isTipModalOpen && tipRecipient && (
           <TipModal 
             creatorName={tipRecipient.username} 
@@ -606,7 +738,6 @@ export default function Feed() {
           />
         )}
 
-        {/* MODAL DE RESPALDO (En caso de que se necesite tarjeta externa en el futuro) */}
         {isPaymentModalOpen && clientSecret && selectedPost && (
           <PaymentModal 
             clientSecret={clientSecret} 
@@ -635,18 +766,11 @@ export default function Feed() {
           />
         )}
 
-        {/* 📸 MODAL VISOR DE IMÁGENES */}
         {expandedImage && (
           <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" onClick={() => setExpandedImage(null)} onContextMenu={(e) => e.preventDefault()}>
             <button onClick={() => setExpandedImage(null)} className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all z-50 border border-white/10" title="Cerrar"><X className="w-6 h-6" /></button>
             <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
               <img src={expandedImage.url} alt="Exclusivo" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none overflow-hidden opacity-30 mix-blend-overlay">
-                 <div className="transform -rotate-45 flex flex-col items-center">
-                   <span className="text-white text-5xl md:text-8xl font-black uppercase tracking-widest drop-shadow-[0_5px_5px_rgba(0,0,0,1)]">FANSMIOS</span>
-                   <span className="text-white text-xl md:text-3xl font-bold drop-shadow-[0_5px_5px_rgba(0,0,0,1)] mt-2">@{expandedImage.username || 'Usuario'}</span>
-                 </div>
-              </div>
               <div className="absolute inset-0 z-10 w-full h-full cursor-default"></div>
             </div>
           </div>
