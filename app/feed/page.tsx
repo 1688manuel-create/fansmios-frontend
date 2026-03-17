@@ -40,6 +40,33 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
+// 🌳 COMPONENTE RECURSIVO PARA COMENTARIOS ESCALONADOS (Papá -> Hijo -> Nieto)
+const CommentNode = ({ comment, postId, onReply }: { comment: any, postId: string, onReply: (postId: string, commentId: string) => void }) => {
+  return (
+    <div className="flex flex-col mt-2">
+      <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm">
+        <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
+        <span className="text-gray-400">{comment.content}</span>
+        <button 
+          onClick={() => onReply(postId, comment.id)} 
+          className="block text-[11px] text-blue-400 mt-1.5 hover:underline font-bold"
+        >
+          Responder
+        </button>
+      </div>
+      
+      {/* Si este comentario tiene hijos, nos llamamos a nosotros mismos pero con margen a la izquierda */}
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1">
+          {comment.replies.map((reply: any) => (
+            <CommentNode key={reply.id} comment={reply} postId={postId} onReply={onReply} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function Feed() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
@@ -61,10 +88,14 @@ export default function Feed() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // 💬 VARIABLES DE COMENTARIOS
   const [commentingPostId, setCommentingPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null); 
+  
+  // 🔥 NUEVA VARIABLE: Para saber qué posts tienen los comentarios expandidos (Más de 3)
+  const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
 
   const [stories, setStories] = useState<any[]>([]);
   const [activeStory, setActiveStory] = useState<any>(null);
@@ -152,7 +183,10 @@ export default function Feed() {
         }
       }
 
-      await postService.addComment(postId, finalContent, replyingToCommentId);
+      // 🔥 FIX: Llamamos directo a la API para asegurar que se envíe el parentId (el padre)
+      // Ajusta 'comment' o 'comments' según tu ruta en backend (normalmente es /comment)
+      await api.post(`/posts/${postId}/comment`, { content: finalContent, parentId: replyingToCommentId });
+      
       setCommentText('');
       setCommentingPostId(null);
       setReplyingToCommentId(null);
@@ -162,6 +196,11 @@ export default function Feed() {
     } finally {
       setIsSubmittingComment(false);
     }
+  };
+
+  const handleReplyClick = (postId: string, commentId: string) => {
+    setCommentingPostId(postId);
+    setReplyingToCommentId(commentId);
   };
 
   const handleUnlockBundle = async (bundle: any) => {
@@ -280,6 +319,7 @@ export default function Feed() {
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
 
+  // 🌳 LA FÁBRICA DE ÁRBOLES
   const buildCommentTree = (comments: any[]) => {
     if (!comments) return [];
     const commentMap = new Map();
@@ -467,7 +507,13 @@ export default function Feed() {
               ) : (
                 posts.map((post, index) => {
                   const isOwner = user && post.user && user.id === post.user.id;
+                  
+                  // 🔥 ORDENAMOS LOS COMENTARIOS EN ESCALERA
                   const rootComments = buildCommentTree(post.comments || []);
+                  
+                  // 🔥 LÍMITE DE 3 COMENTARIOS INICIALES
+                  const isExpanded = expandedComments[post.id];
+                  const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
 
                   return (
                     <React.Fragment key={`${post.id}-${index}`}>
@@ -480,7 +526,6 @@ export default function Feed() {
 
                       <div className={`p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
                         
-                        {/* 🗑️ BOTÓN ELIMINAR POST */}
                         {isOwner && (
                           <button 
                             onClick={() => handleDeletePost(post.id)}
@@ -527,12 +572,13 @@ export default function Feed() {
                               </div>
                             )}
 
-                            {/* 🔥 NUEVA BOTONERÍA (4 EMOJIS EN LÍNEA CON CONTEO) */}
+                            {/* 🔥 BOTONERÍA DE INTERACCIÓN */}
                             <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-white/5">
                               <div className="flex items-center justify-between relative">
                                 <div className="flex items-center gap-3">
                                   
-                                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
+                                  {/* 💖 SISTEMA DE LIKES EN LÍNEA */}
+                                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5 overflow-hidden">
                                     {['❤️', '❤️‍🔥', '🤤', '🫦'].map((emoji) => {
                                       const isSelected = post.myReaction === emoji;
                                       const count = post.reactionCounts ? (post.reactionCounts[emoji] || 0) : 0;
@@ -541,7 +587,7 @@ export default function Feed() {
                                         <button 
                                           key={emoji}
                                           onClick={() => handleReact(post.id, emoji)}
-                                          className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}
+                                          className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 hover:grayscale-0 hover:opacity-100 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale'}`}
                                           title="Reaccionar"
                                         >
                                           <span className="text-xl">{emoji}</span>
@@ -574,7 +620,7 @@ export default function Feed() {
                                 <div className="flex flex-col gap-2 animate-fade-in mt-2">
                                   {replyingToCommentId && (
                                     <div className="flex justify-between items-center bg-blue-900/20 px-3 py-1 text-xs text-blue-400 rounded-lg">
-                                      <span>Respondiendo...</span>
+                                      <span>Respondiendo al comentario...</span>
                                       <button onClick={() => setReplyingToCommentId(null)}><X className="w-3 h-3"/></button>
                                     </div>
                                   )}
@@ -598,39 +644,27 @@ export default function Feed() {
                                 </div>
                               )}
 
-                              {/* 🌳 LISTA DE COMENTARIOS ESCALONADOS */}
+                              {/* 🌳 LISTA DE COMENTARIOS ESCALONADOS (Máx 3 iniciales) */}
                               {rootComments.length > 0 && (
-                                 <div className="space-y-4 mt-4">
-                                   {rootComments.map((comment: any) => (
-                                      <div key={comment.id} className="flex flex-col">
-                                        
-                                        <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5">
-                                          <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
-                                          <span className="text-gray-400">{comment.content}</span>
-                                          <button 
-                                            onClick={() => {
-                                              setCommentingPostId(post.id);
-                                              setReplyingToCommentId(comment.id);
-                                            }} 
-                                            className="block text-xs text-blue-400 mt-1.5 hover:underline font-bold"
-                                          >
-                                            Responder
-                                          </button>
-                                        </div>
-
-                                        {comment.replies && comment.replies.length > 0 && (
-                                          <div className="pl-6 mt-2 border-l-2 border-white/10 space-y-2">
-                                            {comment.replies.map((reply: any) => (
-                                              <div key={reply.id} className="text-sm bg-black/30 p-3 rounded-xl border border-white/5">
-                                                <span className="font-bold text-gray-400 mr-2">@{reply.user?.username || 'Usuario'}:</span>
-                                                <span className="text-gray-500">{reply.content}</span>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        )}
-
-                                      </div>
+                                 <div className="space-y-1 mt-4">
+                                   {visibleComments.map((comment: any) => (
+                                      <CommentNode 
+                                        key={comment.id} 
+                                        comment={comment} 
+                                        postId={post.id} 
+                                        onReply={handleReplyClick} 
+                                      />
                                    ))}
+
+                                   {/* 🔥 BOTÓN PARA VER MÁS COMENTARIOS */}
+                                   {rootComments.length > 3 && (
+                                     <button 
+                                       onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
+                                       className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left"
+                                     >
+                                       {isExpanded ? 'Ocultar comentarios' : `Ver los ${rootComments.length} comentarios`}
+                                     </button>
+                                   )}
                                  </div>
                               )}
                             </div>
