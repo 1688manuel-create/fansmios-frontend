@@ -108,22 +108,23 @@ export default function CreatorProfile() {
     }
   };
 
-  // 🏦 LÓGICA ACTUALIZADA DE PAYRAM (Procesamiento Instantáneo)
   const handleSubscribe = async () => {
     if (!currentUser) { alert("Debes iniciar sesión para suscribirte."); router.push('/auth'); return; }
     try {
       const res = await api.post('/payments/create-intent', {
-        amount: creator.creatorProfile.monthlyPrice,
+        amount: creator?.creatorProfile?.monthlyPrice || 0, // 🛡️ BLINDAJE AQUÍ
         type: 'SUBSCRIPTION',
         creatorId: creator.id,
         description: `Suscripción VIP - @${creator.username}`
       });
-      // 🚀 PayRam procesa el pago de inmediato. Ya no hay modal.
+      
       if (res.data.success) {
         alert('✅ ¡Suscripción VIP activada por PayRam!');
         fetchProfileAndPosts(true);
       }
-    } catch (error: any) { alert(error.response?.data?.error || 'Error al iniciar suscripción'); }
+    } catch (error: any) { 
+      alert(error.response?.data?.error || 'Error al iniciar suscripción'); 
+    }
   };
 
   const handleUnlockPPV = async (post: any) => {
