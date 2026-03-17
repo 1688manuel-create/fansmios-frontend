@@ -26,10 +26,15 @@ import { requestPushPermission } from '../../lib/firebase';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
+// 🛠️ EL REPARADOR DE ENLACES: Evita que las fotos se rompan por falta de '/'
 const getImageUrl = (path: string | null) => {
   if (!path) return '';
   if (path.startsWith('http')) return path; 
-  return `${BACKEND_URL}${path}`; 
+  
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
+  
+  return `${cleanBase}/${cleanPath}`; 
 };
 
 export default function Feed() {
@@ -68,16 +73,11 @@ export default function Feed() {
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0); 
   
-  // 📸 VISOR DE IMÁGENES RECUPERADO
   const [expandedImage, setExpandedImage] = useState<{url: string, username: string} | null>(null);
-  
   const [isBoostModalOpen, setIsBoostModalOpen] = useState(false);
-  
   const [trendingCreators, setTrendingCreators] = useState<any[]>([]);
   const [featuredBundle, setFeaturedBundle] = useState<any>(null);
   const [vipCreator, setVipCreator] = useState<any>(null);
-
-  // 💰 ESTADO PARA EL SALDO REAL DE LA BILLETERA
   const [walletBalance, setWalletBalance] = useState(0);
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function Feed() {
         api.get('/users/trending').catch(() => ({ data: { trending: [] } })),
         api.get('/bundles/featured').catch(() => ({ data: { bundle: null } })),
         api.get('/users/vip-story').catch(() => ({ data: { vip: null } })),
-        api.get('/wallet').catch(() => ({ data: { wallet: { balance: 0 } } })) // 🔥 Billetera Real
+        api.get('/wallet').catch(() => ({ data: { wallet: { balance: 0 } } }))
       ]);
       
       let feedPosts = postData.posts || [];
@@ -124,34 +124,58 @@ export default function Feed() {
       setTrendingCreators(trendingData.data.trending || []);
       setFeaturedBundle(featuredBundleData.data?.bundle || null);
       setVipCreator(vipCreatorData.data?.vip || null);
-      
       setWalletBalance(walletData.data?.wallet?.balance || 0);
 
     } catch (error) { console.error('Error cargando datos:', error); }
     finally { setIsLoading(false); }
   };
 
-  // 🔥 NUEVA FUNCIÓN PARA COBRAR EL PAQUETE AZUL (CORREGIDA)
+  // 🏦 LÓGICA PAYRAM INSTANTÁNEA PARA PAQUETES
   const handleUnlockBundle = async (bundle: any) => {
     try {
-      // 🛡️ TRUCO: Usamos 'any' para que TypeScript no bloquee la palabra 'bundleId'
       const payload: any = {
-        amount: bundle.price,
+        amount: bundle.price || 0,
         type: 'BUNDLE',
-        creatorId: bundle.creatorId,
+        creatorId: bundle.creatorId || bundle.creator?.id,
         bundleId: bundle.id,
         description: `Compra de Paquete VIP: ${bundle.title}`
       };
 
       const data = await paymentService.createPaymentIntent(payload);
       
-      setClientSecret(data.clientSecret);
-      // Le agregamos la bandera isBundle para que el modal sepa qué hacer al terminar
-      setSelectedPost({ id: bundle.id, price: bundle.price, user: bundle.creator, isBundle: true });
-      setIsPaymentModalOpen(true);
+      if (data.success || data.receipt) {
+        alert('✅ ¡Paquete comprado con éxito por PayRam!');
+        fetchData();
+      } else {
+        setClientSecret(data.clientSecret);
+        setSelectedPost({ id: bundle.id, price: bundle.price, user: bundle.creator, isBundle: true });
+        setIsPaymentModalOpen(true);
+      }
     } catch (error) {
       alert('Error al procesar el pago del paquete. Verifica tu conexión.');
     }
+  };
+
+  // 🏦 LÓGICA PAYRAM INSTANTÁNEA PARA POSTS PPV
+  const handleUnlockClick = async (post: any) => {
+    try {
+      const data = await paymentService.createPaymentIntent({
+        amount: post.price || 0,
+        type: 'PPV_POST', // 🔥 CORREGIDO para que backend lo acepte
+        creatorId: post.user?.id || 'mock',
+        postId: post.id,
+        description: 'Desbloqueo de Post'
+      });
+      
+      if (data.success || data.receipt) {
+        alert('✅ ¡Contenido desbloqueado con PayRam!');
+        fetchData();
+      } else {
+        setClientSecret(data.clientSecret);
+        setSelectedPost(post);
+        setIsPaymentModalOpen(true);
+      }
+    } catch (error) { alert('Error con la pasarela.'); }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -206,21 +230,6 @@ export default function Feed() {
   const openStory = async (story: any) => {
     setActiveStory(story);
     try { await storyService.viewStory(story.id); fetchData(); } catch (error) {}
-  };
-
-  const handleUnlockClick = async (post: any) => {
-    try {
-      const data = await paymentService.createPaymentIntent({
-        amount: post.price,
-        type: 'POST',
-        creatorId: post.user?.id || 'mock',
-        postId: post.id,
-        description: 'Desbloqueo de Post'
-      });
-      setClientSecret(data.clientSecret);
-      setSelectedPost(post);
-      setIsPaymentModalOpen(true);
-    } catch (error) { alert('Error con la pasarela.'); }
   };
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
@@ -285,23 +294,19 @@ export default function Feed() {
                 </div>
               )}
 
-             {/* 🟡 1. HISTORIA DORADA VIP (NUEVO DISEÑO "CORONA" - BLINDADO) */}
+              {/* 🟡 1. HISTORIA DORADA VIP */}
               {vipCreator && (
                 <div onClick={() => router.push(`/${vipCreator.username}`)} className="flex flex-col items-center gap-1 cursor-pointer group shrink-0 relative mt-1.5">
-                    
-                    {/* 👑 LA NUEVA CORONA VIP: Posicionada arriba para no tapar nada */}
                     <div className="absolute -top-3 z-10 bg-[#0e0e0e] border border-yellow-500 rounded-full px-2.5 py-0.5 flex items-center gap-1 shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-pulse">
                       <Crown className="w-3.5 h-3.5 text-yellow-400 fill-yellow-500" />
                       <span className="text-yellow-400 text-[9px] font-black uppercase tracking-widest">VIP</span>
                     </div>
 
-                    {/* El Anillo Dorado Premium (bajado ligeramente para dar espacio a la corona) */}
                     <div className="w-16 h-16 rounded-full p-1 transition-transform group-hover:scale-105 bg-gradient-to-tr from-yellow-400 to-yellow-600 shadow-[0_0_15px_rgba(234,179,8,0.3)] mt-1">
                       <div className="w-full h-full rounded-full bg-black border-2 border-black flex items-center justify-center overflow-hidden">
                         {vipCreator.creatorProfile?.profileImage ? (
                           <img src={getImageUrl(vipCreator.creatorProfile.profileImage)} className="w-full h-full object-cover" alt="Avatar VIP" />
                         ) : (
-                          // Escudo blindado si no hay foto: Usa la inicial de username, o 'V' si username es null
                           <span className="text-2xl text-yellow-400 font-bold bg-[#111]">
                             {(vipCreator.username || 'V')[0].toUpperCase()}
                           </span>
@@ -309,7 +314,6 @@ export default function Feed() {
                       </div>
                     </div>
 
-                    {/* 🔥 Nombre Despejado y Blindado: No se tapa porque el badge se movió arriba */}
                     <span className="text-xs text-yellow-500 max-w-[64px] truncate font-bold mt-1 text-center">
                       @{vipCreator.username || 'VIP Creador'}
                     </span>
@@ -433,7 +437,6 @@ export default function Feed() {
                             {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
                               <video controls controlsList="nodownload" src={getImageUrl(post.mediaUrl)} className="w-full max-h-[600px] object-cover" />
                             ) : (
-                              // 📸 AQUÍ SE LLAMA AL VISOR EXPANDIDO
                               <img src={getImageUrl(post.mediaUrl)} className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl), username: post.user?.username })} />
                             )}
                           </div>
@@ -481,12 +484,10 @@ export default function Feed() {
               {/* 🔵 2. BANNER AZUL ULTRA-PREMIUM */}
               {featuredBundle && (
                 <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/20 rounded-[2rem] border border-blue-500/30 shadow-2xl p-6 relative overflow-hidden group">
-                  {/* Etiqueta Superior */}
                   <div className="absolute top-0 right-0 bg-blue-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl z-10 flex items-center gap-1 shadow-lg">
                     <Zap className="w-3 h-3 fill-white"/> RECOMENDADO
                   </div>
                   
-                  {/* Foto de Perfil y Nombre */}
                   <div onClick={() => router.push(`/${featuredBundle.creator?.username}`)} className="cursor-pointer flex flex-col items-center text-center">
                     <div className="w-16 h-16 rounded-full border-2 border-blue-500 p-1 mb-3 relative group-hover:scale-105 transition-transform shadow-[0_0_15px_rgba(59,130,246,0.4)]">
                        <div className="w-full h-full rounded-full overflow-hidden bg-black">
@@ -506,7 +507,6 @@ export default function Feed() {
                     </p>
                   </div>
 
-                  {/* Botonera Doble (Impulso + Suscripción) */}
                   <div className="flex flex-col gap-2 relative z-10">
                     <button 
                       onClick={(e) => { e.stopPropagation(); handleUnlockBundle(featuredBundle); }}
@@ -552,6 +552,7 @@ export default function Feed() {
           </div>
         )}
 
+        {/* 🏦 LÓGICA PAYRAM INSTANTÁNEA PARA PROPINAS */}
         {isTipModalOpen && tipRecipient && (
           <TipModal 
             creatorName={tipRecipient.username} 
@@ -559,23 +560,27 @@ export default function Feed() {
             onContinue={async (amount, message) => { 
               setIsTipModalOpen(false); 
               try { 
-                const data = await paymentService.createPaymentIntent({ amount: amount, type: 'TIP', creatorId: tipRecipient.id, description: `Tip: ${message}` }); 
-                setClientSecret(data.clientSecret); setSelectedPost({ id: 'tip', price: amount }); setIsPaymentModalOpen(true); 
+                const data = await paymentService.createPaymentIntent({ amount: amount || 0, type: 'TIP', creatorId: tipRecipient.id, description: `Propina: ${message}` }); 
+                if (data.success || data.receipt) {
+                  alert('✅ ¡Propina enviada con PayRam!');
+                  fetchData();
+                } else {
+                  setClientSecret(data.clientSecret); setSelectedPost({ id: 'tip', price: amount }); setIsPaymentModalOpen(true); 
+                }
               } catch (error) { alert('Error al procesar propina.'); } 
             }} 
           />
         )}
 
+        {/* MODAL DE RESPALDO (En caso de que se necesite tarjeta externa en el futuro) */}
         {isPaymentModalOpen && clientSecret && selectedPost && (
           <PaymentModal 
             clientSecret={clientSecret} 
-            price={selectedPost.price} 
+            price={selectedPost.price || 0} 
             creatorId={selectedPost.user?.id || tipRecipient?.id || featuredBundle?.creatorId}
             onClose={() => setIsPaymentModalOpen(false)} 
             onSuccess={async () => { 
               setIsPaymentModalOpen(false); 
-              
-              // 🪄 MAGIA DE ENTREGA: Si lo que compró fue un Paquete, lo desbloqueamos en la Base de Datos
               if (selectedPost.isBundle) {
                 try {
                   await api.post('/bundles/purchase', { bundleId: selectedPost.id });
@@ -583,9 +588,8 @@ export default function Feed() {
                   console.error('Error interno al liberar el paquete:', e);
                 }
               }
-
               alert("¡Pago exitoso! El contenido ya es tuyo 🔓"); 
-              fetchData(); // Recargamos el muro para que desaparezcan los candados
+              fetchData(); 
             }} 
           />
         )}
@@ -597,7 +601,7 @@ export default function Feed() {
           />
         )}
 
-        {/* 📸 MODAL VISOR DE IMÁGENES (RESTAUARDO) */}
+        {/* 📸 MODAL VISOR DE IMÁGENES */}
         {expandedImage && (
           <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" onClick={() => setExpandedImage(null)} onContextMenu={(e) => e.preventDefault()}>
             <button onClick={() => setExpandedImage(null)} className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all z-50 border border-white/10" title="Cerrar"><X className="w-6 h-6" /></button>
