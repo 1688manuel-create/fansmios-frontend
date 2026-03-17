@@ -194,7 +194,7 @@ export default function Feed() {
       formData.append('content', newPostContent);
       formData.append('isPPV', String(isPPV));
       formData.append('price', String(isPPV ? Number(price) : 0));
-      if (selectedImage) formData.append('image', selectedImage);
+      if (selectedImage) formData.append('media', selectedImage);
       await postService.createPost(formData);
       setNewPostContent(''); setIsPPV(false); setPrice(''); setSelectedImage(null); setImagePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = ''; 
