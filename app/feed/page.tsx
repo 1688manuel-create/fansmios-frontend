@@ -15,11 +15,10 @@ import AppLayout from '../../components/AppLayout';
 import React from 'react';
 import BoostModal from '../../components/BoostModal';
 
-// 🔥 IMPORTAMOS LOS ICONOS (Quitamos 'Heart' porque ahora usamos emojis reales)
 import { 
-  Image as ImageIcon, Lock, Radio, Bell, MessageCircle, Settings, LogOut, 
-  Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, Eye, Ghost, X, User,
-  TrendingUp, Zap, Star, ChevronRight, Send, Package
+  Image as ImageIcon, Lock, Radio, Bell, MessageCircle, LogOut, 
+  Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, X, User,
+  TrendingUp, Zap, Star, ChevronRight, Send
 } from 'lucide-react';
 
 import { requestPushPermission } from '../../lib/firebase';
@@ -28,7 +27,6 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'htt
 
 const getImageUrl = (path: string | null, usernameForWatermark: string | null = null) => {
   if (!path) return '';
-  
   if (path.startsWith('http')) {
     if (usernameForWatermark && path.includes('cloudinary.com')) {
       const cleanUsername = usernameForWatermark.replace('@', '');
@@ -37,10 +35,8 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
     }
     return path; 
   }
-  
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
-  
   return `${cleanBase}/${cleanPath}`; 
 };
 
@@ -65,7 +61,6 @@ export default function Feed() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 💬 VARIABLES DE COMENTARIOS (Limpias, funcionales y en uso)
   const [commentingPostId, setCommentingPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
@@ -132,7 +127,6 @@ export default function Feed() {
       setFeaturedBundle(featuredBundleData.data?.bundle || null);
       setVipCreator(vipCreatorData.data?.vip || null);
       setWalletBalance(walletData.data?.wallet?.balance || 0);
-
     } catch (error) { console.error('Error cargando datos:', error); }
     finally { setIsLoading(false); }
   };
@@ -142,7 +136,7 @@ export default function Feed() {
     try {
       await api.post(`/posts/${postId}/like`, { emoji });
       fetchData(); 
-    } catch (error) { console.error("Error al dar like:", error); }
+    } catch (error) { console.error("Error al reaccionar:", error); }
   };
 
   const submitComment = async (postId: string) => {
@@ -179,9 +173,7 @@ export default function Feed() {
         bundleId: bundle.id,
         description: `Compra de Paquete VIP: ${bundle.title}`
       };
-
       const data = await paymentService.createPaymentIntent(payload);
-      
       if (data.success || data.receipt) {
         alert('✅ ¡Paquete comprado con éxito por PayRam!');
         fetchData();
@@ -190,9 +182,7 @@ export default function Feed() {
         setSelectedPost({ id: bundle.id, price: bundle.price, user: bundle.creator, isBundle: true });
         setIsPaymentModalOpen(true);
       }
-    } catch (error) {
-      alert('Error al procesar el pago del paquete. Verifica tu conexión.');
-    }
+    } catch (error) { alert('Error al procesar el pago del paquete.'); }
   };
 
   const handleUnlockClick = async (post: any) => {
@@ -204,7 +194,6 @@ export default function Feed() {
         postId: post.id,
         description: 'Desbloqueo de Post'
       });
-      
       if (data.success || data.receipt) {
         alert('✅ ¡Contenido desbloqueado con PayRam!');
         fetchData();
@@ -277,9 +266,7 @@ export default function Feed() {
       alert("✅ Historia eliminada.");
       setActiveStory(null); 
       fetchData(); 
-    } catch (error) {
-      alert("Error al intentar eliminar la historia.");
-    }
+    } catch (error) { alert("Error al intentar eliminar la historia."); }
   };
 
   const handleDeletePost = async (postId: string) => {
@@ -288,9 +275,7 @@ export default function Feed() {
       await api.delete(`/posts/${postId}`);
       alert("✅ Publicación eliminada.");
       fetchData();
-    } catch (error) {
-      alert("Error al intentar eliminar la publicación.");
-    }
+    } catch (error) { alert("Error al intentar eliminar la publicación."); }
   };
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
@@ -542,37 +527,40 @@ export default function Feed() {
                               </div>
                             )}
 
-                            {/* 🔥 BOTONERÍA DE INTERACCIÓN (NUEVOS EMOJIS INLINE) */}
+                            {/* 🔥 NUEVA BOTONERÍA (4 EMOJIS EN LÍNEA CON CONTEO) */}
                             <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-white/5">
                               <div className="flex items-center justify-between relative">
                                 <div className="flex items-center gap-3">
                                   
-                                  {/* 💖 SISTEMA DE LIKES (4 EMOJIS EN LÍNEA SIEMPRE VISIBLES) */}
-                                  <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
+                                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
                                     {['❤️', '❤️‍🔥', '🤤', '🫦'].map((emoji) => {
                                       const isSelected = post.myReaction === emoji;
+                                      const count = post.reactionCounts ? (post.reactionCounts[emoji] || 0) : 0;
+                                      
                                       return (
                                         <button 
                                           key={emoji}
                                           onClick={() => handleReact(post.id, emoji)}
-                                          className={`text-lg transition-all duration-300 hover:scale-125 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}
+                                          className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}
                                           title="Reaccionar"
                                         >
-                                          {emoji}
+                                          <span className="text-xl">{emoji}</span>
+                                          {count > 0 && (
+                                            <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-400'}`}>
+                                              {count}
+                                            </span>
+                                          )}
                                         </button>
                                       );
                                     })}
-                                    <div className="w-px h-4 bg-white/20 mx-1"></div>
-                                    <span className="font-bold text-sm text-gray-300">{post._count?.likes || 0}</span>
                                   </div>
                                   
-                                  <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-3 py-1.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-blue-500 border-blue-500/30' : 'text-gray-400 hover:text-blue-400 hover:border-white/20'}`}>
+                                  <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-4 py-2.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-blue-500 border-blue-500/30' : 'text-gray-400 hover:text-blue-400 hover:border-white/20'}`}>
                                     <MessageCircle className="w-4 h-4" />
                                     <span className="text-sm">{post._count?.comments || 0}</span>
                                   </button>
                                 </div>
                                 
-                                {/* Botón de propina */}
                                 {!isOwner && (
                                   <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
                                     <Coins className="w-5 h-5" />
@@ -610,7 +598,7 @@ export default function Feed() {
                                 </div>
                               )}
 
-                              {/* 🌳 ÁRBOL DE COMENTARIOS */}
+                              {/* 🌳 LISTA DE COMENTARIOS ESCALONADOS */}
                               {rootComments.length > 0 && (
                                  <div className="space-y-4 mt-4">
                                    {rootComments.map((comment: any) => (
