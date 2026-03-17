@@ -1,9 +1,17 @@
-// frontend/app/dashboard/live/page.tsx
 "use client";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { liveService } from '../../../lib/liveService'; // 🔥 Usamos el servicio centralizado
+import { liveService } from '../../../lib/liveService';
+import { 
+  Tv, 
+  ArrowLeft, 
+  Zap, 
+  DollarSign, 
+  ShieldCheck, 
+  Sparkles, 
+  Lock 
+} from 'lucide-react';
 
 export default function LiveSetupLobby() {
   const router = useRouter();
@@ -14,90 +22,150 @@ export default function LiveSetupLobby() {
 
   const handleStartLive = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title) return alert("Ponle un título atractivo a tu Live.");
-    if (isPPV && (!price || price < 1)) return alert("El precio mínimo de entrada es $1.00");
+    
+    // 🛡️ VALIDACIONES DE SEGURIDAD PAYRAM
+    if (!title.trim()) return alert("⚠️ Ponle un título atractivo a tu transmisión.");
+    
+    const finalPrice = isPPV ? Number(price) : 0;
+    
+    if (isPPV && (isNaN(finalPrice) || finalPrice < 1)) {
+      return alert("⚠️ El precio mínimo para un evento PPV es de $1.00 USD.");
+    }
 
     setIsStarting(true);
     try {
-      // 🔥 Llamamos al servicio que ya tiene la ruta '/create' correcta
-      const res = await liveService.createStream(title, isPPV, isPPV ? Number(price) : 0);
+      // 🚀 CREACIÓN DEL EVENTO EN EL MOTOR CENTRAL
+      const res = await liveService.createStream(title, isPPV, finalPrice);
 
-      // 🔥 El backend nos devuelve el ID de la sala. Teletransportamos al creador a su CABINA.
-      router.push(`/live/${res.streamId || res.liveStream?.id}`);
+      const streamId = res.streamId || res.liveStream?.id;
+
+      if (!streamId) throw new Error("No se pudo obtener el ID de la sala.");
+
+      // ⚡ TELETRANSPORTACIÓN A LA CABINA DE TRANSMISIÓN
+      router.push(`/live/${streamId}`);
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al iniciar la sala de transmisión.");
+      console.error("Error al iniciar Live:", error);
+      alert(error.response?.data?.error || "Error al conectar con el servidor de streaming.");
       setIsStarting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] p-6 sm:p-10 flex flex-col items-center justify-center relative">
-      <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-red-900/20 rounded-full blur-[120px] pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
+    <div className="min-h-screen bg-nm-base flex items-center justify-center p-4 relative overflow-hidden">
       
-      <button onClick={() => router.push('/dashboard')} className="absolute top-6 left-6 text-gray-400 hover:text-white transition-colors">
-        ← Volver al Dashboard
+      {/* Luces de ambiente sutiles (PayRam Rojo/Púrpura) */}
+      <div className="absolute top-0 left-1/2 w-[600px] h-[300px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
+      
+      {/* BOTÓN VOLVER */}
+      <button 
+        onClick={() => router.push('/dashboard')} 
+        className="absolute top-8 left-8 nm-btn p-3 rounded-full text-gray-400 hover:text-white transition-all flex items-center gap-2 font-bold text-xs uppercase tracking-widest"
+      >
+        <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Panel de Control</span>
       </button>
 
-      <div className="glass-panel p-8 sm:p-10 rounded-3xl max-w-lg w-full border border-red-500/30 shadow-[0_0_50px_rgba(239,68,68,0.15)] relative z-10 bg-black/40 backdrop-blur-xl">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]">
-            🎙️
-          </div>
-          <h1 className="text-3xl font-extrabold text-white">Configurar Live</h1>
-          <p className="text-gray-400 text-sm mt-2">Prepara tu sala de transmisión antes de salir al aire.</p>
-        </div>
-
-        <form onSubmit={handleStartLive} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Título del Live</label>
-            <input 
-              type="text" 
-              value={title} 
-              onChange={(e) => setTitle(e.target.value)} 
-              placeholder="Ej: Charla privada + Sorteo 🎉" 
-              className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-red-500 transition-colors"
-              maxLength={60}
-            />
+      <div className="max-w-lg w-full animate-fade-in">
+        <div className="nm-btn border border-white/5 p-8 sm:p-12 rounded-[2.5rem] relative z-10">
+          
+          {/* HEADER DEL LOBBY */}
+          <div className="text-center mb-10">
+            <div className="w-20 h-20 bg-black nm-inset rounded-3xl flex items-center justify-center mx-auto mb-6 border border-white/5 shadow-inner">
+              <Tv className="w-10 h-10 text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+            </div>
+            <h1 className="text-3xl font-black text-white tracking-tight">Iniciar Transmisión</h1>
+            <p className="text-gray-500 text-sm mt-3 font-medium leading-relaxed">
+              Configura los parámetros de acceso para tus fans antes de salir al aire.
+            </p>
           </div>
 
-          <div className="bg-black/40 border border-white/5 rounded-2xl p-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white font-bold">Cobrar Entrada (Ticket PPV)</p>
-                <p className="text-[10px] text-gray-500 mt-1">Los VIPs y visitantes deberán pagar para entrar.</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" checked={isPPV} onChange={() => setIsPPV(!isPPV)} />
-                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+          <form onSubmit={handleStartLive} className="space-y-8">
+            
+            {/* TÍTULO DEL LIVE */}
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
+                <Sparkles className="w-3 h-3 text-red-500" /> Título de la Sala
               </label>
+              <input 
+                type="text" 
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)} 
+                placeholder="Ej: Charla VIP + Sorteo 🔥" 
+                className="w-full nm-inset bg-black border border-white/5 rounded-2xl px-6 py-4 text-white outline-none focus:border-red-500/50 transition-all font-bold placeholder:text-gray-700"
+                maxLength={60}
+                required
+              />
             </div>
 
-            {isPPV && (
-              <div className="pt-4 border-t border-white/5 animate-fade-in">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Precio del Ticket ($ USD)</label>
-                <div className="relative mt-2">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-red-500 font-bold">$</span>
-                  <input 
-                    type="number" 
-                    min="1" step="0.01" 
-                    value={price} 
-                    onChange={(e) => setPrice(Number(e.target.value))} 
-                    placeholder="5.00" 
-                    className="w-full bg-black/50 border border-white/10 rounded-xl py-3 pl-9 pr-4 text-white font-bold outline-none focus:border-red-500 transition-colors"
-                  />
+            {/* CONFIGURACIÓN DE PAGO (PAYWALL) */}
+            <div className="nm-inset bg-black/40 border border-white/5 rounded-[2rem] p-6 space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#0a0a0a] nm-btn rounded-xl flex items-center justify-center border border-white/5">
+                    <Lock className={`w-5 h-5 ${isPPV ? 'text-red-500' : 'text-gray-600'}`} />
+                  </div>
+                  <div>
+                    <p className="text-white font-black text-sm uppercase tracking-wide">Acceso Privado (PPV)</p>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Cobrar entrada con PayRam</p>
+                  </div>
                 </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    className="sr-only peer" 
+                    checked={isPPV} 
+                    onChange={() => setIsPPV(!isPPV)} 
+                  />
+                  <div className="w-12 h-6 bg-gray-800 rounded-full peer peer-checked:bg-red-600 transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-6"></div>
+                </label>
               </div>
-            )}
-          </div>
 
-          <button 
-            type="submit" 
-            disabled={isStarting || !title}
-            className="w-full bg-red-600 hover:bg-red-500 text-white font-extrabold py-4 rounded-xl shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
-          >
-            {isStarting ? <div className="w-5 h-5 border-2 border-white rounded-full border-t-transparent animate-spin"></div> : 'Crear Sala y Obtener Clave 🚀'}
-          </button>
-        </form>
+              {isPPV && (
+                <div className="pt-6 border-t border-white/5 animate-slide-up">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2 block mb-3">
+                    Precio del Ticket (USD)
+                  </label>
+                  <div className="relative">
+                    <div className="absolute left-6 top-1/2 -translate-y-1/2 w-8 h-8 bg-black nm-inset rounded-lg flex items-center justify-center border border-white/5">
+                      <DollarSign className="w-4 h-4 text-green-500" />
+                    </div>
+                    <input 
+                      type="number" 
+                      min="1" 
+                      step="0.50" 
+                      value={price} 
+                      onChange={(e) => setPrice(e.target.value === '' ? '' : Number(e.target.value))} 
+                      placeholder="5.00" 
+                      className="w-full nm-inset bg-black border border-white/5 rounded-2xl py-4 pl-16 pr-6 text-white font-black text-xl outline-none focus:border-green-500/50 transition-all"
+                    />
+                  </div>
+                  <p className="text-[9px] text-gray-600 font-bold uppercase tracking-[0.15em] mt-3 text-center">
+                    Tú recibes el 70% de cada ticket vendido
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* BOTÓN DE ACCIÓN */}
+            <button 
+              type="submit" 
+              disabled={isStarting || !title.trim()}
+              className="w-full nm-btn-primary py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
+            >
+              {isStarting ? (
+                <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <Zap className="w-5 h-5 fill-white" />
+                  CREAR SALA Y SALIR AL AIRE
+                </>
+              )}
+            </button>
+            
+            <p className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em] text-center flex items-center justify-center gap-2">
+              <ShieldCheck className="w-3 h-3" /> Transmisión Protegida por PayRam
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   );
