@@ -48,7 +48,7 @@ export default function DashboardIndex() {
   const creatorTools = [
     { title: 'Mi Perfil Público', icon: UserCircle, path: user?.username ? `/${user.username}` : 'CONFIG_FIRST', color: 'text-orange-500' },
     { title: 'Configurar Perfil', icon: Settings, path: '/dashboard/profile', color: 'text-gray-400' },
-    { title: 'Mi Billetera PayRam', icon: Wallet, path: '/dashboard/wallet', color: 'text-green-500' },
+    { title: 'Mi Billetera Covra Pay', icon: Wallet, path: '/dashboard/wallet', color: 'text-green-500' },
     { title: 'Paquetes (Bundles)', icon: PackageSearch, path: '/dashboard/bundles', color: 'text-purple-500' },
     { title: 'Cupones de Descuento', icon: TicketPercent, path: '/dashboard/coupons', color: 'text-red-500' }, 
     { title: 'Estadísticas de Venta', icon: TrendingUp, path: '/dashboard/stats', color: 'text-blue-400' },

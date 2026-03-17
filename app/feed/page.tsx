@@ -161,7 +161,7 @@ export default function Feed() {
     try {
       const data = await paymentService.createPaymentIntent({
         amount: post.price || 0,
-        type: 'PPV_POST', // 🔥 CORREGIDO para que backend lo acepte
+        type: 'PPV_POST', 
         creatorId: post.user?.id || 'mock',
         postId: post.id,
         description: 'Desbloqueo de Post'
@@ -230,6 +230,19 @@ export default function Feed() {
   const openStory = async (story: any) => {
     setActiveStory(story);
     try { await storyService.viewStory(story.id); fetchData(); } catch (error) {}
+  };
+
+  // 🔥 NUEVA FUNCIÓN: Eliminar Historia
+  const handleDeleteStory = async (storyId: string) => {
+    if (!window.confirm("🚨 ¿Estás seguro de que deseas eliminar esta historia?")) return;
+    try {
+      await api.delete(`/stories/${storyId}`);
+      alert("✅ Historia eliminada.");
+      setActiveStory(null); // Cerramos el visor
+      fetchData(); // Recargamos el muro
+    } catch (error) {
+      alert("Error al intentar eliminar la historia.");
+    }
   };
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
@@ -424,7 +437,7 @@ export default function Feed() {
 
                       {!post.hasAccess ? (
                         <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 overflow-hidden group nm-inset">
-                          <div className="relative z-10 flex flex-col items-center bg-black/60 p-8 rounded-3xl border border-white/10 backdrop-blur-xl">
+                          <div className="relative z-10 flex flex-col items-center bg-black/60 p-8 rounded-3xl border border-white/10 backdrop-blur-md">
                             <Lock className={`w-16 h-16 mb-4 ${post.isPromoted ? 'text-yellow-500' : 'text-red-500'}`} />
                             <button onClick={() => handleUnlockClick(post)} className={`py-3 px-8 text-sm flex items-center gap-2 font-bold ${post.isPromoted ? 'bg-yellow-500 text-black rounded-full' : 'nm-btn-primary'}`}>
                               <Unlock className="w-4 h-4"/> Desbloquear ${post.price}
@@ -533,16 +546,37 @@ export default function Feed() {
         {/* ================= MODALES ================= */}
         {activeStory && (
           <div className="fixed inset-0 z-[200] bg-black/95 flex flex-col animate-fade-in select-none">
-            <div className="flex justify-between items-center p-4 absolute top-0 w-full z-10">
+            {/* CABECERA DEL VISOR DE HISTORIA */}
+            <div className="flex justify-between items-center p-4 absolute top-0 w-full z-10 bg-gradient-to-b from-black/80 to-transparent">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/20">
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/20 shadow-lg">
                   {activeStory.creator?.creatorProfile?.profileImage ? <img src={getImageUrl(activeStory.creator.creatorProfile.profileImage)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white font-bold">{(activeStory.creator?.username || 'U')[0].toUpperCase()}</div>}
                 </div>
-                <span className="text-white font-bold">@{activeStory.creator?.username}</span>
+                <span className="text-white font-bold drop-shadow-md">@{activeStory.creator?.username}</span>
               </div>
-              <button onClick={() => setActiveStory(null)} className="w-10 h-10 nm-btn hover:bg-red-500 text-gray-400 rounded-full flex items-center justify-center"><X className="w-6 h-6"/></button>
+              
+              {/* BOTONES DE ACCIÓN */}
+              <div className="flex items-center gap-3">
+                {/* 🗑️ BOTÓN DE BORRAR (SOLO PARA EL DUEÑO) */}
+                {user?.id === activeStory.creator?.id && (
+                  <button 
+                    onClick={() => handleDeleteStory(activeStory.id)} 
+                    className="w-10 h-10 bg-black/50 hover:bg-red-600 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg"
+                    title="Eliminar historia"
+                  >
+                    <Trash2 className="w-5 h-5"/>
+                  </button>
+                )}
+                
+                {/* BOTÓN CERRAR */}
+                <button onClick={() => setActiveStory(null)} className="w-10 h-10 bg-black/50 hover:bg-white/20 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg">
+                  <X className="w-6 h-6"/>
+                </button>
+              </div>
             </div>
-            <div className="flex-1 flex justify-center items-center p-4">
+
+            {/* CONTENIDO DE LA HISTORIA */}
+            <div className="flex-1 flex justify-center items-center p-4 pt-20">
               {activeStory.mediaUrl?.match(/\.(mp4|mov|webm)$/i) ? (
                 <video src={getImageUrl(activeStory.mediaUrl)} autoPlay controls className="max-w-full max-h-full rounded-2xl shadow-2xl" />
               ) : (
