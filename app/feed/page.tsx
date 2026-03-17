@@ -26,10 +26,8 @@ import { requestPushPermission } from '../../lib/firebase';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-// 🛠️ EL REPARADOR DE ENLACES CON MARCA DE AGUA AUTOMÁTICA EN LA NUBE
 const getImageUrl = (path: string | null, usernameForWatermark: string | null = null) => {
   if (!path) return '';
-  
   if (path.startsWith('http')) {
     if (usernameForWatermark && path.includes('cloudinary.com')) {
       const cleanUsername = usernameForWatermark.replace('@', '');
@@ -38,10 +36,8 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
     }
     return path; 
   }
-  
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
-  
   return `${cleanBase}/${cleanPath}`; 
 };
 
@@ -66,12 +62,11 @@ export default function Feed() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 💬 VARIABLES DE COMENTARIOS Y REACCIONES
+  // 💬 VARIABLES DE COMENTARIOS
   const [commentingPostId, setCommentingPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null); 
-  const [activeReactionMenu, setActiveReactionMenu] = useState<string | null>(null); // Revivida para el menú de emojis
 
   const [stories, setStories] = useState<any[]>([]);
   const [activeStory, setActiveStory] = useState<any>(null);
@@ -134,29 +129,33 @@ export default function Feed() {
       setFeaturedBundle(featuredBundleData.data?.bundle || null);
       setVipCreator(vipCreatorData.data?.vip || null);
       setWalletBalance(walletData.data?.wallet?.balance || 0);
-
     } catch (error) { console.error('Error cargando datos:', error); }
     finally { setIsLoading(false); }
   };
 
-  // 🔥 INTERACCIONES MEJORADAS (Reacciones múltiples)
   const handleReact = async (postId: string, emoji: string) => {
     if (!user) return;
     try {
-      // El backend debe estar preparado para recibir el emoji (Ej: body: { emoji })
-      // Si tu backend actual solo recibe POST /like, modificaremos el postService luego, 
-      // por ahora enviamos la petición base.
-      await api.post(`/posts/${postId}/like`, { emoji }); 
-      setActiveReactionMenu(null);
+      await api.post(`/posts/${postId}/like`, { emoji });
       fetchData(); 
-    } catch (error) { console.error("Error al reaccionar:", error); }
+    } catch (error) { console.error("Error al dar like:", error); }
   };
 
   const submitComment = async (postId: string) => {
     if (!commentText.trim()) return;
     setIsSubmittingComment(true);
     try {
-      await postService.addComment(postId, commentText, replyingToCommentId);
+      // Truco para identificar visualmente a quién le respondemos
+      let finalContent = commentText;
+      if (replyingToCommentId) {
+        const post = posts.find(p => p.id === postId);
+        const parentComment = post?.comments?.find((c: any) => c.id === replyingToCommentId);
+        if (parentComment && parentComment.user?.username) {
+          finalContent = `@${parentComment.user.username} ${commentText}`;
+        }
+      }
+
+      await postService.addComment(postId, finalContent, replyingToCommentId);
       setCommentText('');
       setCommentingPostId(null);
       setReplyingToCommentId(null);
@@ -177,9 +176,7 @@ export default function Feed() {
         bundleId: bundle.id,
         description: `Compra de Paquete VIP: ${bundle.title}`
       };
-
       const data = await paymentService.createPaymentIntent(payload);
-      
       if (data.success || data.receipt) {
         alert('✅ ¡Paquete comprado con éxito por PayRam!');
         fetchData();
@@ -188,9 +185,7 @@ export default function Feed() {
         setSelectedPost({ id: bundle.id, price: bundle.price, user: bundle.creator, isBundle: true });
         setIsPaymentModalOpen(true);
       }
-    } catch (error) {
-      alert('Error al procesar el pago del paquete. Verifica tu conexión.');
-    }
+    } catch (error) { alert('Error al procesar el pago.'); }
   };
 
   const handleUnlockClick = async (post: any) => {
@@ -202,7 +197,6 @@ export default function Feed() {
         postId: post.id,
         description: 'Desbloqueo de Post'
       });
-      
       if (data.success || data.receipt) {
         alert('✅ ¡Contenido desbloqueado con PayRam!');
         fetchData();
@@ -275,9 +269,7 @@ export default function Feed() {
       alert("✅ Historia eliminada.");
       setActiveStory(null); 
       fetchData(); 
-    } catch (error) {
-      alert("Error al intentar eliminar la historia.");
-    }
+    } catch (error) { alert("Error al intentar eliminar la historia."); }
   };
 
   const handleDeletePost = async (postId: string) => {
@@ -286,36 +278,10 @@ export default function Feed() {
       await api.delete(`/posts/${postId}`);
       alert("✅ Publicación eliminada.");
       fetchData();
-    } catch (error) {
-      alert("Error al intentar eliminar la publicación.");
-    }
+    } catch (error) { alert("Error al intentar eliminar la publicación."); }
   };
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
-
-  // 🌳 FUNCIÓN PARA ORDENAR COMENTARIOS EN ÁRBOL
-  const buildCommentTree = (comments: any[]) => {
-    if (!comments) return [];
-    const commentMap = new Map();
-    const roots: any[] = [];
-    
-    // Primero, preparamos el mapa
-    comments.forEach(comment => {
-      commentMap.set(comment.id, { ...comment, replies: [] });
-    });
-    
-    // Luego, organizamos por jerarquía
-    comments.forEach(comment => {
-      if (comment.parentId) {
-        const parent = commentMap.get(comment.parentId);
-        if (parent) parent.replies.push(commentMap.get(comment.id));
-      } else {
-        roots.push(commentMap.get(comment.id));
-      }
-    });
-    
-    return roots;
-  };
 
   if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-16 h-16 border-4 border-red-500/30 border-t-red-500 rounded-full animate-spin"></div></div>;
 
@@ -377,7 +343,6 @@ export default function Feed() {
                 </div>
               )}
 
-              {/* 🟡 1. HISTORIA DORADA VIP */}
               {vipCreator && (
                 <div onClick={() => router.push(`/${vipCreator.username}`)} className="flex flex-col items-center gap-1 cursor-pointer group shrink-0 relative mt-1.5">
                     <div className="absolute -top-3 z-10 bg-[#0e0e0e] border border-yellow-500 rounded-full px-2.5 py-0.5 flex items-center gap-1 shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-pulse">
@@ -484,8 +449,6 @@ export default function Feed() {
               ) : (
                 posts.map((post, index) => {
                   const isOwner = user && post.user && user.id === post.user.id;
-                  // Usamos nuestra función para ordenar los comentarios en cascada
-                  const rootComments = buildCommentTree(post.comments || []);
 
                   return (
                     <React.Fragment key={`${post.id}-${index}`}>
@@ -547,15 +510,14 @@ export default function Feed() {
 
                             {/* 🔥 BOTONERÍA DE INTERACCIÓN */}
                             <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-white/5">
-                              <div className="flex items-center justify-between">
+                              <div className="flex items-center justify-between relative">
                                 <div className="flex items-center gap-6">
                                   
-                                  {/* 💖 SISTEMA DE LIKES MÚLTIPLES (HOVER) */}
-                                  <div 
-                                    className="relative flex items-center gap-2"
-                                    onMouseEnter={() => setActiveReactionMenu(post.id)}
-                                    onMouseLeave={() => setActiveReactionMenu(null)}
-                                  >
+                                  {/* 💖 SISTEMA DE LIKES MÚLTIPLES (CSS HOVER BLINDADO) */}
+                                  <div className="relative flex items-center gap-2 group">
+                                    {/* Puente invisible para que el hover no se corte */}
+                                    <div className="absolute bottom-full left-0 w-full h-4 z-40"></div>
+                                    
                                     <button onClick={() => handleReact(post.id, '❤️')} className={`font-bold transition-all flex items-center gap-1 ${post.myReaction ? 'text-red-500' : 'text-gray-400 hover:text-red-400'}`}>
                                       {post.myReaction ? (
                                         <span className="text-xl drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">{post.myReaction}</span>
@@ -565,20 +527,18 @@ export default function Feed() {
                                       <span>{post._count?.likes || 0}</span>
                                     </button>
 
-                                    {/* Menú de Reacciones Flotante */}
-                                    {activeReactionMenu === post.id && (
-                                      <div className="absolute bottom-full left-0 mb-2 flex bg-[#111] border border-white/10 rounded-full px-3 py-2 shadow-2xl animate-fade-in z-50">
-                                        {['❤️', '❤️‍🔥', '🤤', '🫦'].map(emoji => (
-                                          <button 
-                                            key={emoji} 
-                                            onClick={() => handleReact(post.id, emoji)}
-                                            className="text-2xl mx-1 hover:scale-125 transition-transform origin-bottom"
-                                          >
-                                            {emoji}
-                                          </button>
-                                        ))}
-                                      </div>
-                                    )}
+                                    {/* Menú de Reacciones Flotante (Solo aparece en Hover) */}
+                                    <div className="absolute bottom-full left-[-10px] mb-2 hidden group-hover:flex bg-[#1a1a1a] border border-white/10 rounded-full px-3 py-2 shadow-[0_10px_25px_rgba(0,0,0,0.8)] animate-fade-in z-50">
+                                      {['❤️', '❤️‍🔥', '🤤', '🫦'].map(emoji => (
+                                        <button 
+                                          key={emoji} 
+                                          onClick={(e) => { e.stopPropagation(); handleReact(post.id, emoji); }}
+                                          className="text-2xl mx-1 hover:scale-125 transition-transform origin-bottom"
+                                        >
+                                          {emoji}
+                                        </button>
+                                      ))}
+                                    </div>
                                   </div>
                                   
                                   <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-2 font-bold transition-all ${commentingPostId === post.id ? 'text-blue-500' : 'text-gray-400 hover:text-blue-400'}`}>
@@ -599,9 +559,10 @@ export default function Feed() {
                               {/* 💬 CAJA DE COMENTARIOS */}
                               {commentingPostId === post.id && (
                                 <div className="flex flex-col gap-2 animate-fade-in mt-2">
+                                  {/* INDICADOR DE RESPUESTA */}
                                   {replyingToCommentId && (
                                     <div className="flex justify-between items-center bg-blue-900/20 px-3 py-1 text-xs text-blue-400 rounded-lg">
-                                      <span>Respondiendo al comentario...</span>
+                                      <span>Respondiendo...</span>
                                       <button onClick={() => setReplyingToCommentId(null)}><X className="w-3 h-3"/></button>
                                     </div>
                                   )}
@@ -625,41 +586,31 @@ export default function Feed() {
                                 </div>
                               )}
 
-                              {/* 🌳 ÁRBOL DE COMENTARIOS (Escalonados) */}
-                              {rootComments.length > 0 && (
-                                 <div className="space-y-4 mt-4">
-                                   {rootComments.map((comment: any) => (
-                                      <div key={comment.id} className="flex flex-col">
+                              {/* LISTA DE COMENTARIOS (Con nombres reales e indentación visual simulada) */}
+                              {post.comments && post.comments.length > 0 && (
+                                 <div className="space-y-3 mt-2">
+                                   {post.comments.map((comment: any) => {
+                                     // Revisamos si el comentario es una respuesta a alguien (si empieza con @)
+                                     const isReply = comment.content.startsWith('@');
+                                     
+                                     return (
+                                      <div key={comment.id} className={`text-sm bg-white/5 p-3 rounded-xl border border-white/5 ${isReply ? 'ml-6 border-l-2 border-l-blue-500/50 bg-black/30' : ''}`}>
+                                        <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
+                                        <span className="text-gray-400">{comment.content}</span>
                                         
-                                        {/* Comentario Raíz */}
-                                        <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5">
-                                          <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
-                                          <span className="text-gray-400">{comment.content}</span>
-                                          <button 
-                                            onClick={() => {
-                                              setCommentingPostId(post.id);
-                                              setReplyingToCommentId(comment.id);
-                                            }} 
-                                            className="block text-xs text-blue-400 mt-1.5 hover:underline font-bold"
-                                          >
-                                            Responder
-                                          </button>
-                                        </div>
-
-                                        {/* Respuestas (Indentadas) */}
-                                        {comment.replies && comment.replies.length > 0 && (
-                                          <div className="pl-6 mt-2 border-l border-white/10 space-y-2">
-                                            {comment.replies.map((reply: any) => (
-                                              <div key={reply.id} className="text-sm bg-black/30 p-3 rounded-xl border border-white/5">
-                                                <span className="font-bold text-gray-400 mr-2">@{reply.user?.username || 'Usuario'}:</span>
-                                                <span className="text-gray-500">{reply.content}</span>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        )}
-
+                                        {/* BOTÓN RESPONDER */}
+                                        <button 
+                                          onClick={() => {
+                                            setCommentingPostId(post.id);
+                                            setReplyingToCommentId(comment.id);
+                                          }} 
+                                          className="block text-xs text-blue-400 mt-1.5 hover:underline font-bold"
+                                        >
+                                          Responder
+                                        </button>
                                       </div>
-                                   ))}
+                                     );
+                                   })}
                                  </div>
                               )}
                             </div>
