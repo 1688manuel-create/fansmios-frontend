@@ -15,11 +15,11 @@ import AppLayout from '../../components/AppLayout';
 import React from 'react';
 import BoostModal from '../../components/BoostModal';
 
-// 🔥 IMPORTAMOS LOS ICONOS
+// 🔥 IMPORTAMOS LOS ICONOS (Quitamos 'Heart' porque ahora usamos emojis reales)
 import { 
   Image as ImageIcon, Lock, Radio, Bell, MessageCircle, Settings, LogOut, 
   Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, Eye, Ghost, X, User,
-  TrendingUp, Zap, Star, ChevronRight, Send, Package, Heart
+  TrendingUp, Zap, Star, ChevronRight, Send, Package
 } from 'lucide-react';
 
 import { requestPushPermission } from '../../lib/firebase';
@@ -28,6 +28,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'htt
 
 const getImageUrl = (path: string | null, usernameForWatermark: string | null = null) => {
   if (!path) return '';
+  
   if (path.startsWith('http')) {
     if (usernameForWatermark && path.includes('cloudinary.com')) {
       const cleanUsername = usernameForWatermark.replace('@', '');
@@ -36,8 +37,10 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
     }
     return path; 
   }
+  
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
+  
   return `${cleanBase}/${cleanPath}`; 
 };
 
@@ -62,7 +65,7 @@ export default function Feed() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 💬 VARIABLES DE COMENTARIOS
+  // 💬 VARIABLES DE COMENTARIOS (Limpias, funcionales y en uso)
   const [commentingPostId, setCommentingPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
@@ -129,6 +132,7 @@ export default function Feed() {
       setFeaturedBundle(featuredBundleData.data?.bundle || null);
       setVipCreator(vipCreatorData.data?.vip || null);
       setWalletBalance(walletData.data?.wallet?.balance || 0);
+
     } catch (error) { console.error('Error cargando datos:', error); }
     finally { setIsLoading(false); }
   };
@@ -145,7 +149,6 @@ export default function Feed() {
     if (!commentText.trim()) return;
     setIsSubmittingComment(true);
     try {
-      // Truco para identificar visualmente a quién le respondemos
       let finalContent = commentText;
       if (replyingToCommentId) {
         const post = posts.find(p => p.id === postId);
@@ -176,7 +179,9 @@ export default function Feed() {
         bundleId: bundle.id,
         description: `Compra de Paquete VIP: ${bundle.title}`
       };
+
       const data = await paymentService.createPaymentIntent(payload);
+      
       if (data.success || data.receipt) {
         alert('✅ ¡Paquete comprado con éxito por PayRam!');
         fetchData();
@@ -185,7 +190,9 @@ export default function Feed() {
         setSelectedPost({ id: bundle.id, price: bundle.price, user: bundle.creator, isBundle: true });
         setIsPaymentModalOpen(true);
       }
-    } catch (error) { alert('Error al procesar el pago.'); }
+    } catch (error) {
+      alert('Error al procesar el pago del paquete. Verifica tu conexión.');
+    }
   };
 
   const handleUnlockClick = async (post: any) => {
@@ -197,6 +204,7 @@ export default function Feed() {
         postId: post.id,
         description: 'Desbloqueo de Post'
       });
+      
       if (data.success || data.receipt) {
         alert('✅ ¡Contenido desbloqueado con PayRam!');
         fetchData();
@@ -269,7 +277,9 @@ export default function Feed() {
       alert("✅ Historia eliminada.");
       setActiveStory(null); 
       fetchData(); 
-    } catch (error) { alert("Error al intentar eliminar la historia."); }
+    } catch (error) {
+      alert("Error al intentar eliminar la historia.");
+    }
   };
 
   const handleDeletePost = async (postId: string) => {
@@ -278,10 +288,33 @@ export default function Feed() {
       await api.delete(`/posts/${postId}`);
       alert("✅ Publicación eliminada.");
       fetchData();
-    } catch (error) { alert("Error al intentar eliminar la publicación."); }
+    } catch (error) {
+      alert("Error al intentar eliminar la publicación.");
+    }
   };
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
+
+  const buildCommentTree = (comments: any[]) => {
+    if (!comments) return [];
+    const commentMap = new Map();
+    const roots: any[] = [];
+    
+    comments.forEach(comment => {
+      commentMap.set(comment.id, { ...comment, replies: [] });
+    });
+    
+    comments.forEach(comment => {
+      if (comment.parentId) {
+        const parent = commentMap.get(comment.parentId);
+        if (parent) parent.replies.push(commentMap.get(comment.id));
+      } else {
+        roots.push(commentMap.get(comment.id));
+      }
+    });
+    
+    return roots;
+  };
 
   if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-16 h-16 border-4 border-red-500/30 border-t-red-500 rounded-full animate-spin"></div></div>;
 
@@ -449,6 +482,7 @@ export default function Feed() {
               ) : (
                 posts.map((post, index) => {
                   const isOwner = user && post.user && user.id === post.user.id;
+                  const rootComments = buildCommentTree(post.comments || []);
 
                   return (
                     <React.Fragment key={`${post.id}-${index}`}>
@@ -461,7 +495,7 @@ export default function Feed() {
 
                       <div className={`p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
                         
-                        {/* 🗑️ BOTÓN ELIMINAR POST (SOLO PARA EL DUEÑO) */}
+                        {/* 🗑️ BOTÓN ELIMINAR POST */}
                         {isOwner && (
                           <button 
                             onClick={() => handleDeletePost(post.id)}
@@ -508,50 +542,41 @@ export default function Feed() {
                               </div>
                             )}
 
-                            {/* 🔥 BOTONERÍA DE INTERACCIÓN */}
+                            {/* 🔥 BOTONERÍA DE INTERACCIÓN (NUEVOS EMOJIS INLINE) */}
                             <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-white/5">
                               <div className="flex items-center justify-between relative">
-                                <div className="flex items-center gap-6">
+                                <div className="flex items-center gap-3">
                                   
-                                  {/* 💖 SISTEMA DE LIKES MÚLTIPLES (CSS HOVER BLINDADO) */}
-                                  <div className="relative flex items-center gap-2 group">
-                                    {/* Puente invisible para que el hover no se corte */}
-                                    <div className="absolute bottom-full left-0 w-full h-4 z-40"></div>
-                                    
-                                    <button onClick={() => handleReact(post.id, '❤️')} className={`font-bold transition-all flex items-center gap-1 ${post.myReaction ? 'text-red-500' : 'text-gray-400 hover:text-red-400'}`}>
-                                      {post.myReaction ? (
-                                        <span className="text-xl drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">{post.myReaction}</span>
-                                      ) : (
-                                        <Heart className="w-5 h-5" />
-                                      )}
-                                      <span>{post._count?.likes || 0}</span>
-                                    </button>
-
-                                    {/* Menú de Reacciones Flotante (Solo aparece en Hover) */}
-                                    <div className="absolute bottom-full left-[-10px] mb-2 hidden group-hover:flex bg-[#1a1a1a] border border-white/10 rounded-full px-3 py-2 shadow-[0_10px_25px_rgba(0,0,0,0.8)] animate-fade-in z-50">
-                                      {['❤️', '❤️‍🔥', '🤤', '🫦'].map(emoji => (
+                                  {/* 💖 SISTEMA DE LIKES (4 EMOJIS EN LÍNEA SIEMPRE VISIBLES) */}
+                                  <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
+                                    {['❤️', '❤️‍🔥', '🤤', '🫦'].map((emoji) => {
+                                      const isSelected = post.myReaction === emoji;
+                                      return (
                                         <button 
-                                          key={emoji} 
-                                          onClick={(e) => { e.stopPropagation(); handleReact(post.id, emoji); }}
-                                          className="text-2xl mx-1 hover:scale-125 transition-transform origin-bottom"
+                                          key={emoji}
+                                          onClick={() => handleReact(post.id, emoji)}
+                                          className={`text-lg transition-all duration-300 hover:scale-125 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}
+                                          title="Reaccionar"
                                         >
                                           {emoji}
                                         </button>
-                                      ))}
-                                    </div>
+                                      );
+                                    })}
+                                    <div className="w-px h-4 bg-white/20 mx-1"></div>
+                                    <span className="font-bold text-sm text-gray-300">{post._count?.likes || 0}</span>
                                   </div>
                                   
-                                  <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-2 font-bold transition-all ${commentingPostId === post.id ? 'text-blue-500' : 'text-gray-400 hover:text-blue-400'}`}>
-                                    <MessageCircle className="w-5 h-5" />
-                                    <span>{post._count?.comments || 0}</span>
+                                  <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-3 py-1.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-blue-500 border-blue-500/30' : 'text-gray-400 hover:text-blue-400 hover:border-white/20'}`}>
+                                    <MessageCircle className="w-4 h-4" />
+                                    <span className="text-sm">{post._count?.comments || 0}</span>
                                   </button>
                                 </div>
                                 
-                                {/* Botón de propina (Oculto si es tu propio post) */}
+                                {/* Botón de propina */}
                                 {!isOwner && (
                                   <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
                                     <Coins className="w-5 h-5" />
-                                    <span className="text-sm">Propina</span>
+                                    <span className="text-sm hidden sm:inline">Propina</span>
                                   </button>
                                 )}
                               </div>
@@ -559,7 +584,6 @@ export default function Feed() {
                               {/* 💬 CAJA DE COMENTARIOS */}
                               {commentingPostId === post.id && (
                                 <div className="flex flex-col gap-2 animate-fade-in mt-2">
-                                  {/* INDICADOR DE RESPUESTA */}
                                   {replyingToCommentId && (
                                     <div className="flex justify-between items-center bg-blue-900/20 px-3 py-1 text-xs text-blue-400 rounded-lg">
                                       <span>Respondiendo...</span>
@@ -586,31 +610,39 @@ export default function Feed() {
                                 </div>
                               )}
 
-                              {/* LISTA DE COMENTARIOS (Con nombres reales e indentación visual simulada) */}
-                              {post.comments && post.comments.length > 0 && (
-                                 <div className="space-y-3 mt-2">
-                                   {post.comments.map((comment: any) => {
-                                     // Revisamos si el comentario es una respuesta a alguien (si empieza con @)
-                                     const isReply = comment.content.startsWith('@');
-                                     
-                                     return (
-                                      <div key={comment.id} className={`text-sm bg-white/5 p-3 rounded-xl border border-white/5 ${isReply ? 'ml-6 border-l-2 border-l-blue-500/50 bg-black/30' : ''}`}>
-                                        <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
-                                        <span className="text-gray-400">{comment.content}</span>
+                              {/* 🌳 ÁRBOL DE COMENTARIOS */}
+                              {rootComments.length > 0 && (
+                                 <div className="space-y-4 mt-4">
+                                   {rootComments.map((comment: any) => (
+                                      <div key={comment.id} className="flex flex-col">
                                         
-                                        {/* BOTÓN RESPONDER */}
-                                        <button 
-                                          onClick={() => {
-                                            setCommentingPostId(post.id);
-                                            setReplyingToCommentId(comment.id);
-                                          }} 
-                                          className="block text-xs text-blue-400 mt-1.5 hover:underline font-bold"
-                                        >
-                                          Responder
-                                        </button>
+                                        <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5">
+                                          <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
+                                          <span className="text-gray-400">{comment.content}</span>
+                                          <button 
+                                            onClick={() => {
+                                              setCommentingPostId(post.id);
+                                              setReplyingToCommentId(comment.id);
+                                            }} 
+                                            className="block text-xs text-blue-400 mt-1.5 hover:underline font-bold"
+                                          >
+                                            Responder
+                                          </button>
+                                        </div>
+
+                                        {comment.replies && comment.replies.length > 0 && (
+                                          <div className="pl-6 mt-2 border-l-2 border-white/10 space-y-2">
+                                            {comment.replies.map((reply: any) => (
+                                              <div key={reply.id} className="text-sm bg-black/30 p-3 rounded-xl border border-white/5">
+                                                <span className="font-bold text-gray-400 mr-2">@{reply.user?.username || 'Usuario'}:</span>
+                                                <span className="text-gray-500">{reply.content}</span>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        )}
+
                                       </div>
-                                     );
-                                   })}
+                                   ))}
                                  </div>
                               )}
                             </div>
