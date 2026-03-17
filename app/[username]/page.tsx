@@ -18,8 +18,14 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'htt
 
 const getImageUrl = (path: string | null) => {
   if (!path) return '';
+  // Si la ruta ya viene de Cloudinary (http...), la pasamos directo
   if (path.startsWith('http')) return path; 
-  return `${BACKEND_URL}${path}`; 
+  
+  // Reparador de barras (Evita el error .sslip.iouploads)
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
+  
+  return `${cleanBase}/${cleanPath}`; 
 };
 
 export default function CreatorProfile() {
