@@ -1,4 +1,3 @@
-// frontend/app/dashboard/wallet/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -7,7 +6,7 @@ import { walletService } from '../../../lib/walletService';
 import api from '../../../lib/api';
 import AppLayout from '../../../components/AppLayout';
 
-// 🔥 IMPORTAMOS ICONOS DE ALTA GAMA DE LUCIDE REACT
+// 🔥 IMPORTAMOS ICONOS DE ALTA GAMA
 import { 
   Wallet, 
   ArrowLeft, 
@@ -56,7 +55,7 @@ export default function WalletDashboard() {
     try {
       const data = await walletService.getDashboard();
       setFinanceData(data);
-      if (data.wallet?.cryptoAddress) {
+      if (data?.wallet?.cryptoAddress) {
         setCryptoAddress(data.wallet.cryptoAddress);
       }
     } catch (error) {
@@ -88,12 +87,13 @@ export default function WalletDashboard() {
 
   const handleWithdraw = async () => {
     const amount = parseFloat(withdrawAmount);
+    const availableBalance = financeData?.wallet?.balance || 0;
     
     if (!amount || amount < 50) {
       alert("El retiro mínimo es de $50 USD.");
       return;
     }
-    if (amount > financeData?.wallet?.balance) {
+    if (amount > availableBalance) {
       alert("No puedes retirar más de tu Balance Disponible.");
       return;
     }
@@ -126,6 +126,11 @@ export default function WalletDashboard() {
 
   if (isLoading) return <AppLayout><div className="min-h-screen bg-nm-base flex items-center justify-center"><Loader2 className="w-12 h-12 text-green-500 animate-spin drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]"/></div></AppLayout>;
 
+  // 🛡️ VARIABLES SEGURAS (El Escudo PayRam contra Nulos)
+  const availableBalance = financeData?.wallet?.balance || 0;
+  const pendingBalance = financeData?.wallet?.pendingBalance || 0;
+  const totalEarned = financeData?.totalEarnedHistorial || 0;
+
   return (
     <AppLayout>
       <div className="min-h-screen pb-24 bg-nm-base relative">
@@ -148,7 +153,7 @@ export default function WalletDashboard() {
         <main className="max-w-6xl mx-auto mt-8 px-4 space-y-8 relative z-10">
           
           {/* =========================================
-              📊 FILA 1: TARJETAS DE MÉTRICAS (Neumórficas)
+              📊 FILA 1: TARJETAS DE MÉTRICAS (Blindadas)
           ========================================= */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
@@ -161,7 +166,7 @@ export default function WalletDashboard() {
                 <CheckCircle2 className="w-4 h-4 text-green-400" /> Balance Disponible
               </h3>
               <p className="text-5xl font-black text-white z-10 drop-shadow-[0_0_10px_rgba(34,197,94,0.2)]">
-                ${financeData?.wallet?.balance?.toFixed(2) || '0.00'}
+                ${availableBalance.toFixed(2)}
               </p>
               <p className="text-[10px] text-green-400 mt-4 font-bold uppercase tracking-widest nm-inset bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-md inline-flex w-fit z-10">
                 Fondos listos para retirar
@@ -177,10 +182,10 @@ export default function WalletDashboard() {
                 <ShieldCheck className="w-4 h-4 text-yellow-500" /> En Cuarentena (Pending)
               </h3>
               <p className="text-5xl font-black text-white z-10">
-                ${financeData?.wallet?.pendingBalance?.toFixed(2) || '0.00'}
+                ${pendingBalance.toFixed(2)}
               </p>
               <p className="text-[10px] text-yellow-500 mt-4 font-bold uppercase tracking-widest z-10">
-                Liberación automática Anti-Fraude (48h)
+                Liberación automática Anti-Fraude
               </p>
             </div>
 
@@ -193,7 +198,7 @@ export default function WalletDashboard() {
                 <TrendingUp className="w-4 h-4 text-purple-400" /> Histórico Facturado
               </h3>
               <p className="text-5xl font-black text-purple-400 z-10">
-                ${financeData?.totalEarnedHistorial?.toFixed(2) || '0.00'}
+                ${totalEarned.toFixed(2)}
               </p>
               <p className="text-[10px] text-gray-500 mt-4 font-bold uppercase tracking-widest z-10">
                 Total generado en la plataforma
@@ -233,7 +238,7 @@ export default function WalletDashboard() {
                   </div>
                 </div>
 
-                {/* Tipo de Retiro (Toggles Neumórficos) */}
+                {/* Tipo de Retiro */}
                 <div className="grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => setIsExpress(false)}
@@ -347,7 +352,7 @@ export default function WalletDashboard() {
           </div>
 
           {/* =========================================
-              📜 FILA 3: TABLAS HISTÓRICAS
+              📜 FILA 3: TABLAS HISTÓRICAS (Blindadas)
           ========================================= */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
             
@@ -372,7 +377,7 @@ export default function WalletDashboard() {
                         </div>
                       </div>
                       <p className="text-green-400 font-black text-base drop-shadow-[0_0_5px_rgba(34,197,94,0.3)]">
-                        +${tx.netAmount?.toFixed(2)}
+                        +${(tx.netAmount || 0).toFixed(2)}
                       </p>
                     </div>
                   ))}
@@ -413,7 +418,7 @@ export default function WalletDashboard() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-white font-black text-base">-${w.amount?.toFixed(2)}</p>
+                        <p className="text-white font-black text-base">-${(w.amount || 0).toFixed(2)}</p>
                         {w.adminNotes && <p className="text-[9px] text-gray-500 font-medium max-w-[120px] truncate mt-1" title={w.adminNotes}>{w.adminNotes}</p>}
                       </div>
                     </div>
