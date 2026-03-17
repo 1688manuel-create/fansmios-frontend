@@ -38,25 +38,17 @@ export default function CreatorProfile() {
   const [followersCount, setFollowersCount] = useState(0);
 
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null); 
   const [posts, setPosts] = useState<any[]>([]);
   
   const [bundles, setBundles] = useState<any[]>([]);
-  const [purchasedBundles, setPurchasedBundles] = useState<any[]>([]);
   
   const [paymentData, setPaymentData] = useState<{ payAddress: string, amountUsd: number, transactionId: string, clientSecret?: string } | null>(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   
-  const [activeReactionMenu, setActiveReactionMenu] = useState<string | null>(null);
-  const [commentingPostId, setCommentingPostId] = useState<string | null>(null);
-  const [commentText, setCommentText] = useState('');
   const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null);
   
   const [isTipModalOpen, setIsTipModalOpen] = useState(false);
   const [tipRecipient, setTipRecipient] = useState<any>(null);
-
-  const [expandedImage, setExpandedImage] = useState<{url: string, username: string} | null>(null);
-  const [activeTab, setActiveTab] = useState<'ALL' | 'PHOTOS' | 'VIDEOS'>('ALL');
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -86,7 +78,6 @@ export default function CreatorProfile() {
       try {
         const bundlesRes = await api.get(`/bundles/creator/${username}`);
         setBundles(bundlesRes.data.availableBundles || []);
-        setPurchasedBundles(bundlesRes.data.purchasedBundles || []);
       } catch (e) {}
 
     } catch (error: any) {
@@ -112,7 +103,7 @@ export default function CreatorProfile() {
     if (!currentUser) { alert("Debes iniciar sesión para suscribirte."); router.push('/auth'); return; }
     try {
       const res = await api.post('/payments/create-intent', {
-        amount: creator?.creatorProfile?.monthlyPrice || 0, // 🛡️ BLINDAJE AQUÍ
+        amount: creator?.creatorProfile?.monthlyPrice || 0,
         type: 'SUBSCRIPTION',
         creatorId: creator.id,
         description: `Suscripción VIP - @${creator.username}`
@@ -161,11 +152,16 @@ export default function CreatorProfile() {
     } catch (error) { alert('Error al procesar el pago.'); }
   };
 
-  // ... (Las demás funciones se mantienen intactas para no alargar)
-  const submitComment = async (postId: string) => {
-    if (!currentUser) return router.push('/auth');
-    if (!commentText.trim()) return;
-    try { await postService.addComment(postId, commentText, replyingToCommentId); setCommentText(''); fetchProfileAndPosts(true); } catch (error) {}
+  // 🔥 NUEVA FUNCIÓN: Eliminar publicación
+  const handleDeletePost = async (postId: string) => {
+    if (!window.confirm("🚨 ¿Estás seguro de que deseas eliminar esta publicación para siempre?")) return;
+    try {
+      await api.delete(`/posts/${postId}`);
+      alert("✅ Publicación eliminada.");
+      fetchProfileAndPosts(true);
+    } catch (error) {
+      alert("Error al intentar eliminar la publicación.");
+    }
   };
 
   const handleMessageClick = async () => {
@@ -177,12 +173,14 @@ export default function CreatorProfile() {
   if (hasError || !creator) return <div className="min-h-screen bg-nm-base text-white flex flex-col items-center justify-center"><Ghost className="w-20 h-20 text-gray-600"/><h2 className="text-3xl font-black">Página no encontrada</h2></div>;
 
   const profile = creator.creatorProfile || {};
+  
+  // 🛡️ LA LLAVE MAESTRA: Verifica si el que mira es el dueño del perfil
+  const isOwner = currentUser && creator && currentUser.id === creator.id;
 
   return (
     <AppLayout>
       <div className="min-h-screen pb-20 bg-nm-base relative">
         
-        {/* PORTADA NEUMÓRFICA */}
         <div 
           className="h-48 sm:h-72 w-full relative bg-[#0a0a0a] select-none" 
           style={profile.coverImage ? { backgroundImage: `url(${getImageUrl(profile.coverImage)})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
@@ -197,7 +195,6 @@ export default function CreatorProfile() {
 
         <main className="max-w-4xl mx-auto px-4 sm:px-6 relative -mt-20 z-10">
           
-          {/* CABECERA Y AVATAR */}
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-4">
             <div className="flex flex-col items-start">
               <div 
@@ -217,9 +214,8 @@ export default function CreatorProfile() {
               </div>
             </div>
             
-            {/* BOTONERA ACCIÓN */}
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-              {(!currentUser || currentUser.id !== creator.id) && (
+              {(!isOwner) && (
                 <>
                   <button 
                     onClick={handleFollowToggle}
@@ -238,7 +234,7 @@ export default function CreatorProfile() {
                 </>
               )}
 
-              {(!currentUser || currentUser.id !== creator.id) && (
+              {(!isOwner) && (
                 isSubscribed ? (
                   <button disabled className="nm-inset text-yellow-500 border border-yellow-500/30 font-bold py-3 px-8 rounded-xl cursor-default w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
                     <Star className="w-4 h-4 fill-yellow-500/20"/> Eres VIP
@@ -252,7 +248,6 @@ export default function CreatorProfile() {
             </div>
           </div>
 
-          {/* INFO SOCIAL Y BIOGRAFÍA */}
           <div className="mb-10 nm-inset p-6 md:p-8 rounded-[2rem] border border-white/5 relative overflow-hidden">
             <div className="flex gap-8 text-sm font-bold text-gray-300 border-b border-white/5 pb-6">
               <div className="flex flex-col">
@@ -270,7 +265,6 @@ export default function CreatorProfile() {
             </p>
           </div>
 
-          {/* PAQUETES (BUNDLES) */}
           {bundles.length > 0 && (
             <div className="mb-12 space-y-6 animate-fade-in">
               <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2">
@@ -283,7 +277,6 @@ export default function CreatorProfile() {
                     <p className="text-sm text-gray-500 mt-2 mb-6 line-clamp-2">{bundle.description}</p>
                     <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
                       <span className="text-xs font-bold text-blue-400 nm-inset px-3 py-1.5 rounded-md border border-blue-500/20">{bundle.posts?.length} Archivos</span>
-                      {/* 🛡️ ESCUDO TOFIXED EN PAQUETES */}
                       <button className="nm-btn-primary py-2.5 px-6 text-sm">Comprar ${(bundle.price || 0).toFixed(2)}</button>
                     </div>
                   </div>
@@ -292,12 +285,16 @@ export default function CreatorProfile() {
             </div>
           )}
 
-          {/* SECCIÓN DEL MURO */}
           <div className="space-y-6">
             {posts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5">Aún no hay publicaciones.</div> : (
-              posts.map((post) => (
-                !post.hasAccess ? (
-                  /* POST BLOQUEADO */
+              posts.map((post) => {
+                // 🛡️ EL MAGO EN ACCIÓN: Si eres el dueño, tienes acceso completo a todo.
+                const isPostUnlocked = isOwner || post.hasAccess;
+
+                return !isPostUnlocked ? (
+                  /* ========================================================
+                     POST BLOQUEADO (Solo lo ven los fans sin pagar)
+                  ======================================================== */
                   <div key={post.id} className="bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
                     <div className="flex justify-between items-center relative z-10">
                       <div className="flex items-center gap-3">
@@ -323,7 +320,6 @@ export default function CreatorProfile() {
                           </button>
                         ) : (
                           <button onClick={(e) => { e.stopPropagation(); handleUnlockPPV(post); }} className="mt-2 nm-btn-primary py-3 px-8 text-sm flex items-center gap-2">
-                            {/* 🛡️ ESCUDO TOFIXED EN POSTS */}
                             <Unlock className="w-4 h-4"/> Desbloquear por ${(post.price || 0).toFixed(2)}
                           </button>
                         )}
@@ -331,9 +327,23 @@ export default function CreatorProfile() {
                     </div>
                   </div>
                 ) : (
-                  /* POST DESBLOQUEADO */
-                  <div key={post.id} className="bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl">
-                    <div className="flex justify-between items-center">
+                  /* ========================================================
+                     POST DESBLOQUEADO (Lo ves tú, y los fans que ya pagaron)
+                  ======================================================== */
+                  <div key={post.id} className="bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
+                    
+                    {/* 🗑️ BOTÓN ELIMINAR (SOLO PARA TI) */}
+                    {isOwner && (
+                      <button 
+                        onClick={() => handleDeletePost(post.id)}
+                        className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
+                        title="Eliminar publicación"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    )}
+
+                    <div className="flex justify-between items-center pr-12">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full nm-inset flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border border-white/5">
                           {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-teal-400 flex items-center justify-center">{creator.username[0].toUpperCase()}</div>}
@@ -341,7 +351,11 @@ export default function CreatorProfile() {
                         <div>
                           <h3 className="text-white font-bold text-base">{creator.username}</h3>
                           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
-                            {post.isPPV ? <><Unlock className="w-3 h-3 text-green-400"/> Comprado</> : <><Star className="w-3 h-3 text-yellow-500"/> VIP</>}
+                            {post.isPPV ? (
+                              <><Unlock className="w-3 h-3 text-green-400"/> {isOwner ? `PPV: $${(post.price || 0).toFixed(2)}` : 'Comprado'}</>
+                            ) : (
+                              <><Star className="w-3 h-3 text-yellow-500"/> VIP</>
+                            )}
                           </p>
                         </div>
                       </div>
@@ -353,8 +367,8 @@ export default function CreatorProfile() {
                       </div>
                     )}
                   </div>
-                )
-              ))
+                );
+              })
             )}
           </div>
         </main>
@@ -369,7 +383,6 @@ export default function CreatorProfile() {
           }} />
         )}
         
-        {/* MODAL DE PAGOS (Se mantiene por si se necesita para algo, pero ahora está blindado) */}
         {isPaymentModalOpen && paymentData && (
           <PaymentModal price={paymentData.amountUsd} onClose={() => setIsPaymentModalOpen(false)} onSuccess={() => { setIsPaymentModalOpen(false); fetchProfileAndPosts(true); }} creatorId={creator.id} />
         )}
