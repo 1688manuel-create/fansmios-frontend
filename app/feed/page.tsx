@@ -25,12 +25,14 @@ import { requestPushPermission } from '../../lib/firebase';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
+// 🛠️ MARCA DE AGUA AJUSTADA: Más pequeña y abajo
 const getImageUrl = (path: string | null, usernameForWatermark: string | null = null) => {
   if (!path) return '';
   if (path.startsWith('http')) {
     if (usernameForWatermark && path.includes('cloudinary.com')) {
       const cleanUsername = usernameForWatermark.replace('@', '');
-      const watermarkTransform = `upload/l_text:Arial_80_bold:fansmios%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_center/`;
+      // Arial_40_bold (más chico), g_south (abajo), y_40 (margen desde abajo)
+      const watermarkTransform = `upload/l_text:Arial_40_bold:fansmios%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
       return path.replace('upload/', watermarkTransform);
     }
     return path; 
@@ -40,26 +42,41 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 COMPONENTE RECURSIVO PARA COMENTARIOS ESCALONADOS (Papá -> Hijo -> Nieto)
-const CommentNode = ({ comment, postId, onReply }: { comment: any, postId: string, onReply: (postId: string, commentId: string) => void }) => {
+// 🌳 NODO DE COMENTARIOS (AHORA CON BOTÓN ELIMINAR)
+const CommentNode = ({ comment, postId, currentUser, onReply, onDelete }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void }) => {
+  // Verificamos si el usuario actual es el dueño del comentario
+  const isOwner = currentUser?.id === comment.userId;
+
   return (
-    <div className="flex flex-col mt-2">
-      <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm">
+    <div className="flex flex-col mt-2 group/comment">
+      <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative">
         <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
         <span className="text-gray-400">{comment.content}</span>
-        <button 
-          onClick={() => onReply(postId, comment.id)} 
-          className="block text-[11px] text-blue-400 mt-1.5 hover:underline font-bold"
-        >
-          Responder
-        </button>
+        
+        <div className="flex items-center gap-4 mt-1.5">
+          <button 
+            onClick={() => onReply(postId, comment.id)} 
+            className="text-[11px] text-blue-400 hover:underline font-bold"
+          >
+            Responder
+          </button>
+          
+          {/* 🔥 BOTÓN ELIMINAR (Solo aparece al pasar el ratón si eres el dueño) */}
+          {isOwner && (
+            <button 
+              onClick={() => onDelete(comment.id)} 
+              className="text-[11px] text-red-500 hover:underline font-bold hidden group-hover/comment:block"
+            >
+              Eliminar
+            </button>
+          )}
+        </div>
       </div>
       
-      {/* Si este comentario tiene hijos, nos llamamos a nosotros mismos pero con margen a la izquierda */}
       {comment.replies && comment.replies.length > 0 && (
         <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1">
           {comment.replies.map((reply: any) => (
-            <CommentNode key={reply.id} comment={reply} postId={postId} onReply={onReply} />
+            <CommentNode key={reply.id} comment={reply} postId={postId} currentUser={currentUser} onReply={onReply} onDelete={onDelete} />
           ))}
         </div>
       )}
@@ -88,13 +105,10 @@ export default function Feed() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 💬 VARIABLES DE COMENTARIOS
   const [commentingPostId, setCommentingPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null); 
-  
-  // 🔥 NUEVA VARIABLE: Para saber qué posts tienen los comentarios expandidos (Más de 3)
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
 
   const [stories, setStories] = useState<any[]>([]);
@@ -183,8 +197,6 @@ export default function Feed() {
         }
       }
 
-      // 🔥 FIX: Llamamos directo a la API para asegurar que se envíe el parentId (el padre)
-      // Ajusta 'comment' o 'comments' según tu ruta en backend (normalmente es /comment)
       await api.post(`/posts/${postId}/comment`, { content: finalContent, parentId: replyingToCommentId });
       
       setCommentText('');
@@ -201,6 +213,17 @@ export default function Feed() {
   const handleReplyClick = (postId: string, commentId: string) => {
     setCommentingPostId(postId);
     setReplyingToCommentId(commentId);
+  };
+
+  // 🔥 NUEVA FUNCIÓN: ELIMINAR COMENTARIO
+  const handleDeleteComment = async (commentId: string) => {
+    if (!window.confirm("🚨 ¿Seguro que deseas eliminar este comentario?")) return;
+    try {
+      await api.delete(`/posts/comments/${commentId}`); 
+      fetchData(); 
+    } catch (error) {
+      alert("Error al eliminar comentario.");
+    }
   };
 
   const handleUnlockBundle = async (bundle: any) => {
@@ -319,7 +342,6 @@ export default function Feed() {
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
 
-  // 🌳 LA FÁBRICA DE ÁRBOLES
   const buildCommentTree = (comments: any[]) => {
     if (!comments) return [];
     const commentMap = new Map();
@@ -507,11 +529,8 @@ export default function Feed() {
               ) : (
                 posts.map((post, index) => {
                   const isOwner = user && post.user && user.id === post.user.id;
-                  
-                  // 🔥 ORDENAMOS LOS COMENTARIOS EN ESCALERA
                   const rootComments = buildCommentTree(post.comments || []);
                   
-                  // 🔥 LÍMITE DE 3 COMENTARIOS INICIALES
                   const isExpanded = expandedComments[post.id];
                   const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
 
@@ -526,6 +545,7 @@ export default function Feed() {
 
                       <div className={`p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
                         
+                        {/* 🗑️ BOTÓN ELIMINAR POST */}
                         {isOwner && (
                           <button 
                             onClick={() => handleDeletePost(post.id)}
@@ -577,8 +597,7 @@ export default function Feed() {
                               <div className="flex items-center justify-between relative">
                                 <div className="flex items-center gap-3">
                                   
-                                  {/* 💖 SISTEMA DE LIKES EN LÍNEA */}
-                                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5 overflow-hidden">
+                                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
                                     {['❤️', '❤️‍🔥', '🤤', '🫦'].map((emoji) => {
                                       const isSelected = post.myReaction === emoji;
                                       const count = post.reactionCounts ? (post.reactionCounts[emoji] || 0) : 0;
@@ -587,7 +606,7 @@ export default function Feed() {
                                         <button 
                                           key={emoji}
                                           onClick={() => handleReact(post.id, emoji)}
-                                          className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 hover:grayscale-0 hover:opacity-100 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale'}`}
+                                          className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}
                                           title="Reaccionar"
                                         >
                                           <span className="text-xl">{emoji}</span>
@@ -644,7 +663,7 @@ export default function Feed() {
                                 </div>
                               )}
 
-                              {/* 🌳 LISTA DE COMENTARIOS ESCALONADOS (Máx 3 iniciales) */}
+                              {/* 🌳 LISTA DE COMENTARIOS ESCALONADOS USANDO EL NODO RECURSIVO */}
                               {rootComments.length > 0 && (
                                  <div className="space-y-1 mt-4">
                                    {visibleComments.map((comment: any) => (
@@ -652,11 +671,12 @@ export default function Feed() {
                                         key={comment.id} 
                                         comment={comment} 
                                         postId={post.id} 
+                                        currentUser={user}
                                         onReply={handleReplyClick} 
+                                        onDelete={handleDeleteComment}
                                       />
                                    ))}
 
-                                   {/* 🔥 BOTÓN PARA VER MÁS COMENTARIOS */}
                                    {rootComments.length > 3 && (
                                      <button 
                                        onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
