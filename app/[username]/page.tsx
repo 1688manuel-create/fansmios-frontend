@@ -18,13 +18,9 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'htt
 
 const getImageUrl = (path: string | null) => {
   if (!path) return '';
-  // Si la ruta ya viene de Cloudinary (http...), la pasamos directo
   if (path.startsWith('http')) return path; 
-  
-  // Reparador de barras (Evita el error .sslip.iouploads)
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
-  
   return `${cleanBase}/${cleanPath}`; 
 };
 
@@ -65,6 +61,32 @@ export default function CreatorProfile() {
     
     fetchProfileAndPosts(false);
   }, [username]);
+
+  // 🔥 NUEVO: EFECTO FRANCOTIRADOR PARA EL SCROLL
+  useEffect(() => {
+    if (!isLoading && posts.length > 0) {
+      // Leemos si la URL tiene un #post-1234
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#post-')) {
+        // Le damos 300 milisegundos a React para que dibuje el HTML
+        setTimeout(() => {
+          const element = document.querySelector(hash);
+          if (element) {
+            // Hacemos scroll suave hasta el post
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Le ponemos un brillo rojo para que el usuario sepa cuál es
+            element.classList.add('ring-2', 'ring-red-500', 'shadow-[0_0_20px_rgba(239,68,68,0.5)]');
+            
+            // Se lo quitamos a los 3 segundos
+            setTimeout(() => {
+              element.classList.remove('ring-2', 'ring-red-500', 'shadow-[0_0_20px_rgba(239,68,68,0.5)]');
+            }, 3000);
+          }
+        }, 300);
+      }
+    }
+  }, [isLoading, posts]);
 
   const fetchProfileAndPosts = async (isSilent = false) => {
     try {
@@ -158,7 +180,6 @@ export default function CreatorProfile() {
     } catch (error) { alert('Error al procesar el pago.'); }
   };
 
-  // 🔥 NUEVA FUNCIÓN: Eliminar publicación
   const handleDeletePost = async (postId: string) => {
     if (!window.confirm("🚨 ¿Estás seguro de que deseas eliminar esta publicación para siempre?")) return;
     try {
@@ -179,8 +200,6 @@ export default function CreatorProfile() {
   if (hasError || !creator) return <div className="min-h-screen bg-nm-base text-white flex flex-col items-center justify-center"><Ghost className="w-20 h-20 text-gray-600"/><h2 className="text-3xl font-black">Página no encontrada</h2></div>;
 
   const profile = creator.creatorProfile || {};
-  
-  // 🛡️ LA LLAVE MAESTRA: Verifica si el que mira es el dueño del perfil
   const isOwner = currentUser && creator && currentUser.id === creator.id;
 
   return (
@@ -294,14 +313,10 @@ export default function CreatorProfile() {
           <div className="space-y-6">
             {posts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5">Aún no hay publicaciones.</div> : (
               posts.map((post) => {
-                // 🛡️ EL MAGO EN ACCIÓN: Si eres el dueño, tienes acceso completo a todo.
                 const isPostUnlocked = isOwner || post.hasAccess;
 
                 return !isPostUnlocked ? (
-                  /* ========================================================
-                     POST BLOQUEADO (Solo lo ven los fans sin pagar)
-                  ======================================================== */
-                  <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
+                  <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
                     <div className="flex justify-between items-center relative z-10">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full nm-inset flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border border-white/5">
@@ -333,12 +348,8 @@ export default function CreatorProfile() {
                     </div>
                   </div>
                 ) : (
-                  /* ========================================================
-                     POST DESBLOQUEADO (Lo ves tú, y los fans que ya pagaron)
-                  ======================================================== */
-                  <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
+                  <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
                     
-                    {/* 🗑️ BOTÓN ELIMINAR (SOLO PARA TI) */}
                     {isOwner && (
                       <button 
                         onClick={() => handleDeletePost(post.id)}
