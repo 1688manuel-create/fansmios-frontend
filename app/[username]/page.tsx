@@ -40,11 +40,13 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (BLINDADO: Los hijos NO se muestran si no está expandido)
+// 🌳 NODO DE COMENTARIOS (CANDADO ESTRICTO Y SOPORTE PARA SCROLL)
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
+  
   return (
-    <div className="flex flex-col mt-2 group/comment">
+    // 🔥 AQUÍ ESTÁ LA MAGIA: Le asignamos un ID exacto al comentario para poder saltar hacia él
+    <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
       <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative">
         <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
         <span className="text-gray-400">{comment.content}</span>
@@ -56,8 +58,8 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         </div>
       </div>
       
-      {/* 🔒 CANDADO ABSOLUTO: Solo mostramos sub-comentarios si isExpanded es TRUE */}
-      {isExpanded && comment.replies && comment.replies.length > 0 && (
+      {/* 🔒 CANDADO ABSOLUTO: Solo mostramos hijos si el post ESTÁ expandido */}
+      {(isExpanded === true) && comment.replies && comment.replies.length > 0 && (
         <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1">
           {comment.replies.map((reply: any) => (
             <CommentNode key={reply.id} comment={reply} postId={postId} currentUser={currentUser} onReply={onReply} onDelete={onDelete} isExpanded={isExpanded} />
@@ -131,34 +133,43 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🎯 FRANCOTIRADOR INTELIGENTE V3 (Perfectamente sincronizado)
+  // 🎯 FRANCOTIRADOR DEFINITIVO PARA COMENTARIOS EXACTOS
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
       const hash = window.location.hash;
       if (hash && hash.startsWith('#post-')) {
-        const postId = hash.replace('#post-', '');
         
-        // 1. Damos la orden de abrir los comentarios de ese post
-        setExpandedComments(prev => ({ ...prev, [postId]: true }));
+        // Destripamos el hash para saber si trae el ID del comentario (#post-XXX-comment-YYY)
+        const hashWithoutHash = hash.substring(1); // quitamos el #
+        const parts = hashWithoutHash.split('-comment-');
+        const postIdRaw = parts[0].replace('post-', '');
+        const commentIdRaw = parts[1]; // Puede ser undefined si fue solo un "Like" al post
+        
+        // 1. Damos la orden innegociable de abrir LOS COMENTARIOS de ese post para que el comentario exista en la pantalla
+        setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
 
-        // 2. Le damos tiempo a React de dibujar los comentarios antes de saltar
+        // 2. Esperamos a que React termine de "dibujar" los comentarios
         setTimeout(() => {
-          const element = document.getElementById(`post-${postId}`);
+          // Si trae commentId apuntamos al comentario, si no, al post (ej: un Like)
+          const targetId = commentIdRaw ? `comment-${commentIdRaw}` : `post-${postIdRaw}`;
+          const element = document.getElementById(targetId);
+          
           if (element) {
-            // Saltamos y lo dejamos en el medio
+            // Saltamos suavemente y lo centramos
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Brillo rojo intenso
-            element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'transition-all', 'duration-500');
+            // Le damos un resaltado brutal
+            element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
             
+            // Apagamos el resaltado después de 4 segundos
             setTimeout(() => {
-              element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]');
+              element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
             }, 4000);
           }
-        }, 500); // 500ms es el tiempo perfecto
+        }, 800); // 800ms es el tiempo ideal para el renderizado del árbol
       }
     }
-  }, [isLoading, posts]); // Se ejecuta cuando los posts terminan de cargar
+  }, [isLoading, posts]); 
 
   const fetchData = async () => {
     try {
@@ -212,6 +223,7 @@ export default function Feed() {
       }
       await api.post(`/posts/${postId}/comment`, { content: finalContent, parentId: replyingToCommentId });
       setCommentText(''); setCommentingPostId(null); setReplyingToCommentId(null);
+      // 🔥 Forzamos la apertura del post para ver lo que acabamos de comentar
       setExpandedComments(prev => ({...prev, [postId]: true}));
       fetchData(); 
     } catch (error) { alert("Error al enviar comentario"); } 
@@ -336,7 +348,6 @@ export default function Feed() {
     <AppLayout>
       <div className="min-h-screen bg-nm-base pb-24 sm:pb-10 relative">
         
-        {/* ================= TOP NAVBAR ================= */}
         <nav className="sticky top-0 z-50 bg-[#0e0e0e]/90 border-b border-white/5 px-4 sm:px-6 py-3 flex justify-between items-center backdrop-blur-xl shadow-md">
           <h1 onClick={() => router.push('/feed')} className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 tracking-tighter cursor-pointer flex items-center gap-1">
             <span className="text-2xl drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">⚡</span> FANSMIOS
@@ -371,12 +382,9 @@ export default function Feed() {
           </div>
         </nav>
 
-        {/* ================= CONTENEDOR PRINCIPAL ================= */}
         <div className="max-w-7xl mx-auto flex justify-center gap-8 mt-6 px-4">
-          
           <main className="w-full max-w-3xl shrink-0 space-y-8 pb-10">
             
-            {/* STORIES CAROUSEL */}
             <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
               {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
                 <div onClick={() => storyFileInputRef.current?.click()} className="flex flex-col items-center gap-1 cursor-pointer group shrink-0">
@@ -427,7 +435,6 @@ export default function Feed() {
               ))}
             </div>
 
-            {/* LIVE STREAMS */}
             {activeStreams.length > 0 && (
               <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
                 {activeStreams.map(stream => (
@@ -449,7 +456,6 @@ export default function Feed() {
               </div>
             )}
 
-            {/* PANEL CREADOR */}
             {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
               <div className="nm-inset p-6 rounded-[2rem] space-y-4 border border-white/5">
                 <div className="flex gap-4">
@@ -503,7 +509,7 @@ export default function Feed() {
                   const totalComments = post._count?.comments || 0;
                   const isExpanded = expandedComments[post.id] || false;
                   
-                  // 🔥 Si no está expandido, mostramos las 3 raíces. Los hijos están ocultos en el componente.
+                  // Mostramos las 3 raíces solo si no está expandido
                   const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
 
                   return (
@@ -595,7 +601,7 @@ export default function Feed() {
                                        currentUser={user} 
                                        onReply={handleReplyClick} 
                                        onDelete={handleDeleteComment} 
-                                       isExpanded={isExpanded} // El componente ahora obedece
+                                       isExpanded={isExpanded} // Pasamos la señal
                                      />
                                    ))}
                                    
