@@ -40,12 +40,11 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (AHORA SÍ CON EL CANDADO ISEXPANDED)
+// 🌳 NODO DE COMENTARIOS BLINDADO
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
 
   return (
-    // 🔥 ID dinámico para que el francotirador lo encuentre
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
       <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative">
         <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
@@ -84,7 +83,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
 
 export default function Feed() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(null); // LA VARIABLE CORRECTA ES 'user'
   const [isLoading, setIsLoading] = useState(true);
   
   const [selectedPost, setSelectedPost] = useState<any>(null); 
@@ -144,40 +143,32 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🎯 FRANCOTIRADOR DEFINITIVO PARA COMENTARIOS EXACTOS
+  // 🎯 FRANCOTIRADOR DEFINITIVO
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
       const hash = window.location.hash;
       if (hash && hash.startsWith('#post-')) {
         
-        // Destripamos el hash para saber si trae el ID del comentario (#post-XXX-comment-YYY)
         const hashWithoutHash = hash.substring(1); 
         const parts = hashWithoutHash.split('-comment-');
         const postIdRaw = parts[0].replace('post-', '');
         const commentIdRaw = parts[1]; 
         
-        // 1. Damos la orden innegociable de abrir LOS COMENTARIOS de ese post
         setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
 
-        // 2. Esperamos a que React termine de "dibujar" los comentarios
         setTimeout(() => {
           const targetId = commentIdRaw ? `comment-${commentIdRaw}` : `post-${postIdRaw}`;
           const element = document.getElementById(targetId);
           
           if (element) {
-            // Saltamos suavemente y lo centramos
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // Le damos un resaltado brutal
             element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
             
-            // Apagamos el resaltado después de 4 segundos
             setTimeout(() => {
               element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
             }, 4000);
 
-            // 🔥 LA CURA: Borramos las huellas de la URL sin recargar la página.
-            // Así, si haces un nuevo comentario, el sistema ya no volverá a saltar ni a brillar.
+            // 🔥 Borramos las huellas de la URL sin recargar
             window.history.replaceState(null, '', window.location.pathname);
           }
         }, 800); 
@@ -241,7 +232,6 @@ export default function Feed() {
       setCommentText('');
       setCommentingPostId(null);
       setReplyingToCommentId(null);
-      // 🔥 Forzamos la apertura del post para ver lo que acabamos de comentar
       setExpandedComments(prev => ({...prev, [postId]: true}));
       fetchData(); 
     } catch (error) {
@@ -522,7 +512,11 @@ export default function Feed() {
               <div className="nm-inset p-6 rounded-[2rem] space-y-4 border border-white/5">
                 <div className="flex gap-4">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-red-600 to-orange-600 flex items-center justify-center text-white font-bold text-xl overflow-hidden shadow-lg">
-                    {(user?.username || 'C')[0].toUpperCase()}
+                    {user?.creatorProfile?.profileImage ? (
+                      <img src={getImageUrl(user.creatorProfile.profileImage)} className="w-full h-full object-cover object-center" alt="Mi Avatar" />
+                    ) : (
+                      (user?.username || 'C')[0].toUpperCase()
+                    )}
                   </div>
                   <div className="w-full pt-2">
                     <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} className="w-full bg-transparent text-white placeholder-gray-500 outline-none resize-none" placeholder="¿Qué contenido exclusivo vas a subir hoy?" rows={2}></textarea>
@@ -698,7 +692,7 @@ export default function Feed() {
                                 </div>
                               )}
 
-                              {/* 🌳 LISTA DE COMENTARIOS (CANDADO Y LÍMITE) */}
+                              {/* 🌳 LISTA DE COMENTARIOS BLINDADA */}
                               {totalComments > 0 && (
                                  <div className="space-y-1 mt-4">
                                    {visibleComments.map((comment: any) => (
@@ -706,10 +700,10 @@ export default function Feed() {
                                         key={comment.id} 
                                         comment={comment} 
                                         postId={post.id} 
-                                        currentUser={user}
+                                        currentUser={user} // 🔥 CORRECCIÓN APLICADA AQUÍ
                                         onReply={handleReplyClick} 
                                         onDelete={handleDeleteComment}
-                                        isExpanded={isExpanded} // 🔥 Obligamos a que respete el candado
+                                        isExpanded={isExpanded}
                                       />
                                    ))}
 
