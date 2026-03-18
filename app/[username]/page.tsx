@@ -17,7 +17,6 @@ import {
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-// 🛠️ FUNCIÓN CORREGIDA: Ahora acepta 2 parámetros (path y usernameForWatermark)
 const getImageUrl = (path: string | null, usernameForWatermark: string | null = null) => {
   if (!path) return '';
   if (path.startsWith('http')) {

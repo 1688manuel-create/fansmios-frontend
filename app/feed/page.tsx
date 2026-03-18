@@ -600,7 +600,16 @@ export default function Feed() {
                             </div>
                             <div onClick={() => router.push(`/${post.user.username}`)} className="cursor-pointer group">
                               <h3 className={`font-bold text-lg ${post.isPromoted ? 'text-yellow-500' : 'text-white'}`}>@{post.user?.username || 'usuario'}</h3>
-                              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{!post.hasAccess ? 'Exclusivo' : 'Público'}</p>
+                              {/* 🔥 INDICADOR VIP / PPV ACTUALIZADO */}
+                              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
+                                {post.isPPV ? (
+                                  <><Unlock className="w-3 h-3 text-green-400"/> {isOwner ? `PPV: $${(post.price || 0).toFixed(2)}` : 'Comprado'}</>
+                                ) : !post.hasAccess ? (
+                                  <><Lock className="w-3 h-3 text-red-400"/> Exclusivo VIP</>
+                                ) : (
+                                  <><Star className="w-3 h-3 text-yellow-500"/> VIP</>
+                                )}
+                              </p>
                             </div>
                           </div>
                           {post.isPromoted && !isOwner && <button onClick={() => router.push(`/${post.user.username}`)} className="nm-btn border-yellow-500/30 text-yellow-500 px-4 py-2 rounded-full text-xs font-bold">Ver Perfil</button>}
