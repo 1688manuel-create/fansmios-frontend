@@ -7,6 +7,7 @@ import { postService } from '../../lib/postService';
 import PaymentModal from '../../components/PaymentModal';
 import TipModal from '../../components/TipModal';
 import AppLayout from '../../components/AppLayout';
+import { paymentService } from '../../lib/paymentService';
 
 // 🔥 Agregamos iconos de redes sociales
 import { 
@@ -80,6 +81,9 @@ export default function CreatorProfile() {
   const [posts, setPosts] = useState<any[]>([]);
   
   const [bundles, setBundles] = useState<any[]>([]);
+
+  const [clientSecret, setClientSecret] = useState('');
+  const [pendingPayment, setPendingPayment] = useState<any>(null);
   
   const [paymentData, setPaymentData] = useState<{ payAddress: string, amountUsd: number, transactionId: string, clientSecret?: string } | null>(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -175,35 +179,41 @@ export default function CreatorProfile() {
   const handleSubscribe = async () => {
     if (!currentUser) { alert("Debes iniciar sesión para suscribirte."); router.push('/auth'); return; }
     try {
-      const res = await api.post('/payments/create-intent', {
+      const data = await paymentService.createPaymentIntent({
         amount: creator?.creatorProfile?.monthlyPrice || 0,
         type: 'SUBSCRIPTION',
         creatorId: creator.id,
         description: `Suscripción VIP - @${creator.username}`
       });
       
-      if (res.data.success) {
-        alert('✅ ¡Suscripción VIP activada por PayRam!');
+      if (data.success || data.receipt) {
+        alert('✅ ¡Suscripción VIP activada!');
         fetchProfileAndPosts(true);
+      } else {
+        setClientSecret(data.clientSecret);
+        setPendingPayment({ price: creator?.creatorProfile?.monthlyPrice || 0 });
+        setIsPaymentModalOpen(true);
       }
-    } catch (error: any) { 
-      alert(error.response?.data?.error || 'Error al iniciar suscripción'); 
-    }
+    } catch (error: any) { alert('Error al iniciar suscripción'); }
   };
 
   const handleUnlockPPV = async (post: any) => {
     if (!currentUser) { alert("Debes iniciar sesión para desbloquear contenido."); router.push('/auth'); return; }
     try {
-      const res = await api.post('/payments/create-intent', {
+      const data = await paymentService.createPaymentIntent({
         amount: post.price,
         type: 'PPV_POST',
         creatorId: creator.id,
         postId: post.id,
         description: `Desbloqueo PPV - Post`
       });
-      if (res.data.success) {
-        alert('✅ ¡Contenido desbloqueado con PayRam!');
+      if (data.success || data.receipt) {
+        alert('✅ ¡Contenido desbloqueado!');
         fetchProfileAndPosts(true);
+      } else {
+        setClientSecret(data.clientSecret);
+        setPendingPayment({ price: post.price });
+        setIsPaymentModalOpen(true);
       }
     } catch (error) { alert('Error al procesar el pago.'); }
   };
@@ -211,16 +221,22 @@ export default function CreatorProfile() {
   const handleBuyBundle = async (bundle: any) => {
     if (!currentUser) { alert("Debes iniciar sesión para comprar paquetes."); router.push('/auth'); return; }
     try {
-      const res = await api.post('/payments/create-intent', {
+      const payload: any = {
         amount: bundle.price,
         type: 'BUNDLE',
         creatorId: creator.id,
         bundleId: bundle.id,
         description: `Paquete: ${bundle.title}`
-      });
-      if (res.data.success) {
+      };
+      const data = await paymentService.createPaymentIntent(payload);
+      
+      if (data.success || data.receipt) {
         alert('✅ ¡Paquete comprado con éxito!');
         fetchProfileAndPosts(true);
+      } else {
+        setClientSecret(data.clientSecret);
+        setPendingPayment({ price: bundle.price, id: bundle.id, isBundle: true });
+        setIsPaymentModalOpen(true);
       }
     } catch (error) { alert('Error al procesar el pago.'); }
   };
@@ -614,8 +630,21 @@ export default function CreatorProfile() {
           }} />
         )}
         
-        {isPaymentModalOpen && paymentData && (
-          <PaymentModal price={paymentData.amountUsd} onClose={() => setIsPaymentModalOpen(false)} onSuccess={() => { setIsPaymentModalOpen(false); fetchProfileAndPosts(true); }} creatorId={creator.id} />
+        {isPaymentModalOpen && clientSecret && (
+          <PaymentModal 
+            clientSecret={clientSecret} 
+            price={pendingPayment?.price || 0} 
+            creatorId={creator.id} 
+            onClose={() => setIsPaymentModalOpen(false)} 
+            onSuccess={async () => { 
+              setIsPaymentModalOpen(false); 
+              if (pendingPayment?.isBundle) {
+                try { await api.post('/bundles/purchase', { bundleId: pendingPayment.id }); } catch(e){}
+              }
+              alert("¡Pago exitoso! 🔓"); 
+              fetchProfileAndPosts(true); 
+            }} 
+          />
         )}
 
         {expandedImage && (
