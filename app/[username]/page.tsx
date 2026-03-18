@@ -62,28 +62,29 @@ export default function CreatorProfile() {
     fetchProfileAndPosts(false);
   }, [username]);
 
-  // 🔥 NUEVO: EFECTO FRANCOTIRADOR PARA EL SCROLL
+  // 🔥 NUEVO: EFECTO FRANCOTIRADOR PARA EL SCROLL (BLINDADO)
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
       // Leemos si la URL tiene un #post-1234
       const hash = window.location.hash;
       if (hash && hash.startsWith('#post-')) {
-        // Le damos 300 milisegundos a React para que dibuje el HTML
+        
+        // ⏱️ Aumentamos la espera a 800ms para que las imágenes terminen de cargar y empujar la página
         setTimeout(() => {
           const element = document.querySelector(hash);
           if (element) {
-            // Hacemos scroll suave hasta el post
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // 🎯 'center' pone el post justo en medio de tu pantalla, no arriba donde lo tapa el menú
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Le ponemos un brillo rojo para que el usuario sepa cuál es
-            element.classList.add('ring-2', 'ring-red-500', 'shadow-[0_0_20px_rgba(239,68,68,0.5)]');
+            // Le ponemos un brillo rojo MÁS FUERTE para que resalte
+            element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'transition-all', 'duration-500');
             
-            // Se lo quitamos a los 3 segundos
+            // Se lo quitamos a los 4 segundos suavemente
             setTimeout(() => {
-              element.classList.remove('ring-2', 'ring-red-500', 'shadow-[0_0_20px_rgba(239,68,68,0.5)]');
-            }, 3000);
+              element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]');
+            }, 4000);
           }
-        }, 300);
+        }, 800); // <-- La clave del éxito: esperar a que la interfaz se acomode
       }
     }
   }, [isLoading, posts]);
