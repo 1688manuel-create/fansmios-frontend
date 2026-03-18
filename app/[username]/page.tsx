@@ -301,7 +301,7 @@ export default function CreatorProfile() {
                   /* ========================================================
                      POST BLOQUEADO (Solo lo ven los fans sin pagar)
                   ======================================================== */
-                  <div key={post.id} className="bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
+                  <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
                     <div className="flex justify-between items-center relative z-10">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full nm-inset flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border border-white/5">
@@ -336,7 +336,7 @@ export default function CreatorProfile() {
                   /* ========================================================
                      POST DESBLOQUEADO (Lo ves tú, y los fans que ya pagaron)
                   ======================================================== */
-                  <div key={post.id} className="bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
+                  <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
                     
                     {/* 🗑️ BOTÓN ELIMINAR (SOLO PARA TI) */}
                     {isOwner && (
