@@ -508,24 +508,22 @@ export default function Feed() {
               </div>
             )}
 
+            {/* PANEL CREADOR */}
             {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
               <div className="nm-inset p-6 rounded-[2rem] space-y-4 border border-white/5">
                 <div className="flex gap-4">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-red-600 to-orange-600 flex items-center justify-center text-white font-bold text-xl overflow-hidden shadow-lg">
-                    {user?.creatorProfile?.profileImage ? (
-                      <img src={getImageUrl(user.creatorProfile.profileImage)} className="w-full h-full object-cover object-center" alt="Mi Avatar" />
-                    ) : (
-                      (user?.username || 'C')[0].toUpperCase()
-                    )}
-                  </div>
-                  <div className="w-full pt-2">
-                    <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} className="w-full bg-transparent text-white placeholder-gray-500 outline-none resize-none" placeholder="¿Qué contenido exclusivo vas a subir hoy?" rows={2}></textarea>
-                    {imagePreview && (
-                      <div className="relative mt-3 rounded-2xl overflow-hidden border border-white/10 inline-block shadow-lg">
-                        <img src={imagePreview} alt="Preview" className="max-h-64 object-cover" />
-                        <button onClick={() => { setImagePreview(null); setSelectedImage(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="absolute top-2 right-2 bg-black/80 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors"><X className="w-4 h-4" /></button>
-                      </div>
-                    )}
+                    {(() => {
+                      /* 🔥 TRUCO MAESTRO: Buscamos tu foto más reciente en los posts del muro */
+                      const myFreshData = posts.find(p => p.user?.id === user?.id)?.user;
+                      const avatarUrl = myFreshData?.creatorProfile?.profileImage || user?.creatorProfile?.profileImage;
+                      
+                      return avatarUrl ? (
+                        <img src={getImageUrl(avatarUrl)} className="w-full h-full object-cover object-center" alt="Avatar" />
+                      ) : (
+                        (user?.username || 'C')[0].toUpperCase()
+                      );
+                    })()}
                   </div>
                 </div>
 
