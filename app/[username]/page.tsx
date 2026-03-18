@@ -62,29 +62,27 @@ export default function CreatorProfile() {
     fetchProfileAndPosts(false);
   }, [username]);
 
-  // 🔥 NUEVO: EFECTO FRANCOTIRADOR PARA EL SCROLL (BLINDADO)
+  // 🔥 EFECTO FRANCOTIRADOR PARA EL SCROLL EN EL FEED
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
-      // Leemos si la URL tiene un #post-1234
       const hash = window.location.hash;
       if (hash && hash.startsWith('#post-')) {
-        
-        // ⏱️ Aumentamos la espera a 800ms para que las imágenes terminen de cargar y empujar la página
+        // Le damos 800ms a la pantalla para que dibuje todas las fotos y no se rompa el salto
         setTimeout(() => {
           const element = document.querySelector(hash);
           if (element) {
-            // 🎯 'center' pone el post justo en medio de tu pantalla, no arriba donde lo tapa el menú
+            // Saltamos dejando el post en el centro de la pantalla
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Le ponemos un brillo rojo MÁS FUERTE para que resalte
+            // Le ponemos el brillo rojo
             element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'transition-all', 'duration-500');
             
-            // Se lo quitamos a los 4 segundos suavemente
+            // Se lo quitamos a los 4 segundos
             setTimeout(() => {
               element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]');
             }, 4000);
           }
-        }, 800); // <-- La clave del éxito: esperar a que la interfaz se acomode
+        }, 800);
       }
     }
   }, [isLoading, posts]);
