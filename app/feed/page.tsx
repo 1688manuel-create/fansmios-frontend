@@ -25,13 +25,11 @@ import { requestPushPermission } from '../../lib/firebase';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-// 🛠️ MARCA DE AGUA AJUSTADA: Más pequeña y abajo
 const getImageUrl = (path: string | null, usernameForWatermark: string | null = null) => {
   if (!path) return '';
   if (path.startsWith('http')) {
     if (usernameForWatermark && path.includes('cloudinary.com')) {
       const cleanUsername = usernameForWatermark.replace('@', '');
-      // Arial_40_bold (más chico), g_south (abajo), y_40 (margen desde abajo)
       const watermarkTransform = `upload/l_text:Arial_40_bold:fansmios%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
       return path.replace('upload/', watermarkTransform);
     }
@@ -42,13 +40,13 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (AHORA CON BOTÓN ELIMINAR)
-const CommentNode = ({ comment, postId, currentUser, onReply, onDelete }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void }) => {
-  // Verificamos si el usuario actual es el dueño del comentario
+// 🌳 NODO DE COMENTARIOS (AHORA SÍ CON EL CANDADO ISEXPANDED)
+const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
 
   return (
-    <div className="flex flex-col mt-2 group/comment">
+    // 🔥 ID dinámico para que el francotirador lo encuentre
+    <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
       <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative">
         <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
         <span className="text-gray-400">{comment.content}</span>
@@ -61,7 +59,6 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete }: { comm
             Responder
           </button>
           
-          {/* 🔥 BOTÓN ELIMINAR (Solo aparece al pasar el ratón si eres el dueño) */}
           {isOwner && (
             <button 
               onClick={() => onDelete(comment.id)} 
@@ -73,10 +70,11 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete }: { comm
         </div>
       </div>
       
-      {comment.replies && comment.replies.length > 0 && (
+      {/* 🔒 CANDADO ABSOLUTO PARA LOS HIJOS */}
+      {(isExpanded === true) && comment.replies && comment.replies.length > 0 && (
         <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1">
           {comment.replies.map((reply: any) => (
-            <CommentNode key={reply.id} comment={reply} postId={postId} currentUser={currentUser} onReply={onReply} onDelete={onDelete} />
+            <CommentNode key={reply.id} comment={reply} postId={postId} currentUser={currentUser} onReply={onReply} onDelete={onDelete} isExpanded={isExpanded} />
           ))}
         </div>
       )}
@@ -146,6 +144,44 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
+  // 🎯 FRANCOTIRADOR DEFINITIVO PARA COMENTARIOS EXACTOS
+  useEffect(() => {
+    if (!isLoading && posts.length > 0) {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#post-')) {
+        
+        // Destripamos el hash para saber si trae el ID del comentario (#post-XXX-comment-YYY)
+        const hashWithoutHash = hash.substring(1); // quitamos el #
+        const parts = hashWithoutHash.split('-comment-');
+        const postIdRaw = parts[0].replace('post-', '');
+        const commentIdRaw = parts[1]; // Puede ser undefined si fue solo un "Like" al post
+        
+        // 1. Damos la orden innegociable de abrir LOS COMENTARIOS de ese post
+        setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
+
+        // 2. Esperamos a que React termine de "dibujar" los comentarios
+        setTimeout(() => {
+          // Si trae commentId apuntamos al comentario, si no, al post (ej: un Like)
+          const targetId = commentIdRaw ? `comment-${commentIdRaw}` : `post-${postIdRaw}`;
+          const element = document.getElementById(targetId);
+          
+          if (element) {
+            // Saltamos suavemente y lo centramos
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Le damos un resaltado brutal
+            element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
+            
+            // Apagamos el resaltado después de 4 segundos
+            setTimeout(() => {
+              element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
+            }, 4000);
+          }
+        }, 800); // 800ms es el tiempo ideal para el renderizado del árbol
+      }
+    }
+  }, [isLoading, posts]); 
+
   const fetchData = async () => {
     try {
       const [postData, storyData, notifData, liveData, chatData, trendingData, featuredBundleData, vipCreatorData, walletData] = await Promise.all([
@@ -202,6 +238,8 @@ export default function Feed() {
       setCommentText('');
       setCommentingPostId(null);
       setReplyingToCommentId(null);
+      // 🔥 Forzamos la apertura del post para ver lo que acabamos de comentar
+      setExpandedComments(prev => ({...prev, [postId]: true}));
       fetchData(); 
     } catch (error) {
       alert("Error al enviar comentario");
@@ -215,7 +253,6 @@ export default function Feed() {
     setReplyingToCommentId(commentId);
   };
 
-  // 🔥 NUEVA FUNCIÓN: ELIMINAR COMENTARIO
   const handleDeleteComment = async (commentId: string) => {
     if (!window.confirm("🚨 ¿Seguro que deseas eliminar este comentario?")) return;
     try {
@@ -369,7 +406,6 @@ export default function Feed() {
     <AppLayout>
       <div className="min-h-screen bg-nm-base pb-24 sm:pb-10 relative">
         
-        {/* ================= TOP NAVBAR ================= */}
         <nav className="sticky top-0 z-50 bg-[#0e0e0e]/90 border-b border-white/5 px-4 sm:px-6 py-3 flex justify-between items-center backdrop-blur-xl shadow-md">
           <h1 onClick={() => router.push('/feed')} className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 tracking-tighter cursor-pointer flex items-center gap-1">
             <span className="text-2xl drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">⚡</span> FANSMIOS
@@ -404,12 +440,10 @@ export default function Feed() {
           </div>
         </nav>
 
-        {/* ================= CONTENEDOR PRINCIPAL ================= */}
         <div className="max-w-7xl mx-auto flex justify-center gap-8 mt-6 px-4">
           
           <main className="w-full max-w-3xl shrink-0 space-y-8 pb-10">
             
-            {/* STORIES CAROUSEL */}
             <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
               {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
                 <div onClick={() => storyFileInputRef.current?.click()} className="flex flex-col items-center gap-1 cursor-pointer group shrink-0">
@@ -460,7 +494,6 @@ export default function Feed() {
               ))}
             </div>
 
-            {/* LIVE STREAMS */}
             {activeStreams.length > 0 && (
               <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
                 {activeStreams.map(stream => (
@@ -482,7 +515,6 @@ export default function Feed() {
               </div>
             )}
 
-            {/* PANEL CREADOR */}
             {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
               <div className="nm-inset p-6 rounded-[2rem] space-y-4 border border-white/5">
                 <div className="flex gap-4">
@@ -529,9 +561,12 @@ export default function Feed() {
               ) : (
                 posts.map((post, index) => {
                   const isOwner = user && post.user && user.id === post.user.id;
-                  const rootComments = buildCommentTree(post.comments || []);
                   
-                  const isExpanded = expandedComments[post.id];
+                  const rootComments = buildCommentTree(post.comments || []);
+                  const totalComments = post._count?.comments || 0; // Total real desde la BD
+                  const isExpanded = expandedComments[post.id] || false;
+                  
+                  // Si no está expandido, solo mostramos los 3 primeros padres
                   const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
 
                   return (
@@ -543,9 +578,8 @@ export default function Feed() {
                         </div>
                       )}
 
-                      <div className={`p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
+                      <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
                         
-                        {/* 🗑️ BOTÓN ELIMINAR POST */}
                         {isOwner && (
                           <button 
                             onClick={() => handleDeletePost(post.id)}
@@ -592,7 +626,6 @@ export default function Feed() {
                               </div>
                             )}
 
-                            {/* 🔥 BOTONERÍA DE INTERACCIÓN */}
                             <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-white/5">
                               <div className="flex items-center justify-between relative">
                                 <div className="flex items-center gap-3">
@@ -622,7 +655,7 @@ export default function Feed() {
                                   
                                   <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-4 py-2.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-blue-500 border-blue-500/30' : 'text-gray-400 hover:text-blue-400 hover:border-white/20'}`}>
                                     <MessageCircle className="w-4 h-4" />
-                                    <span className="text-sm">{post._count?.comments || 0}</span>
+                                    <span className="text-sm">{totalComments}</span>
                                   </button>
                                 </div>
                                 
@@ -634,7 +667,6 @@ export default function Feed() {
                                 )}
                               </div>
 
-                              {/* 💬 CAJA DE COMENTARIOS */}
                               {commentingPostId === post.id && (
                                 <div className="flex flex-col gap-2 animate-fade-in mt-2">
                                   {replyingToCommentId && (
@@ -663,8 +695,8 @@ export default function Feed() {
                                 </div>
                               )}
 
-                              {/* 🌳 LISTA DE COMENTARIOS ESCALONADOS USANDO EL NODO RECURSIVO */}
-                              {rootComments.length > 0 && (
+                              {/* 🌳 LISTA DE COMENTARIOS (CANDADO Y LÍMITE) */}
+                              {totalComments > 0 && (
                                  <div className="space-y-1 mt-4">
                                    {visibleComments.map((comment: any) => (
                                       <CommentNode 
@@ -674,15 +706,17 @@ export default function Feed() {
                                         currentUser={user}
                                         onReply={handleReplyClick} 
                                         onDelete={handleDeleteComment}
+                                        isExpanded={isExpanded} // 🔥 Obligamos a que respete el candado
                                       />
                                    ))}
 
-                                   {rootComments.length > 3 && (
+                                   {/* 🔥 BOTÓN "VER COMENTARIOS" */}
+                                   {totalComments > 3 && (
                                      <button 
                                        onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
-                                       className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left"
+                                       className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left transition-colors"
                                      >
-                                       {isExpanded ? 'Ocultar comentarios' : `Ver los ${rootComments.length} comentarios`}
+                                       {isExpanded ? 'Ocultar comentarios' : `Ver los ${totalComments} comentarios`}
                                      </button>
                                    )}
                                  </div>
@@ -702,7 +736,6 @@ export default function Feed() {
           <aside className="hidden lg:block w-80 shrink-0">
             <div className="sticky top-24 space-y-6">
               
-              {/* TRENDING VIP */}
               <div className="bg-[#0a0a0a] rounded-[2rem] border border-yellow-500/20 shadow-xl overflow-hidden">
                 <div className="bg-gradient-to-r from-yellow-900/30 to-black p-5 border-b border-yellow-500/20 flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-yellow-500" />
@@ -730,7 +763,6 @@ export default function Feed() {
                 )}
               </div>
 
-              {/* 🔵 2. BANNER AZUL ULTRA-PREMIUM */}
               {featuredBundle && (
                 <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/20 rounded-[2rem] border border-blue-500/30 shadow-2xl p-6 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 bg-blue-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl z-10 flex items-center gap-1 shadow-lg">

@@ -1,4 +1,3 @@
-// frontend/app/dashboard/notifications/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -54,9 +53,9 @@ export default function NotificationsDashboard() {
         await notificationService.markAsRead(id);
       }
       
-      // 2. 🚀 REDIRECCIÓN MÁGICA: Si trae un link, lo llevamos
+      // 2. 🚀 REDIRECCIÓN MÁGICA: Obligamos al navegador a recargar y ejecutar el salto
       if (link) {
-        router.push(link);
+        window.location.href = link; 
       }
     } catch (error) {
       console.error("Error al marcar como leída:", error);
