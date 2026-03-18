@@ -151,17 +151,16 @@ export default function Feed() {
       if (hash && hash.startsWith('#post-')) {
         
         // Destripamos el hash para saber si trae el ID del comentario (#post-XXX-comment-YYY)
-        const hashWithoutHash = hash.substring(1); // quitamos el #
+        const hashWithoutHash = hash.substring(1); 
         const parts = hashWithoutHash.split('-comment-');
         const postIdRaw = parts[0].replace('post-', '');
-        const commentIdRaw = parts[1]; // Puede ser undefined si fue solo un "Like" al post
+        const commentIdRaw = parts[1]; 
         
         // 1. Damos la orden innegociable de abrir LOS COMENTARIOS de ese post
         setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
 
         // 2. Esperamos a que React termine de "dibujar" los comentarios
         setTimeout(() => {
-          // Si trae commentId apuntamos al comentario, si no, al post (ej: un Like)
           const targetId = commentIdRaw ? `comment-${commentIdRaw}` : `post-${postIdRaw}`;
           const element = document.getElementById(targetId);
           
@@ -176,8 +175,12 @@ export default function Feed() {
             setTimeout(() => {
               element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
             }, 4000);
+
+            // 🔥 LA CURA: Borramos las huellas de la URL sin recargar la página.
+            // Así, si haces un nuevo comentario, el sistema ya no volverá a saltar ni a brillar.
+            window.history.replaceState(null, '', window.location.pathname);
           }
-        }, 800); // 800ms es el tiempo ideal para el renderizado del árbol
+        }, 800); 
       }
     }
   }, [isLoading, posts]); 
