@@ -40,7 +40,7 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (Ahora obedece si está expandido o no)
+// 🌳 NODO DE COMENTARIOS (BLINDADO: Los hijos NO se muestran si no está expandido)
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
   return (
@@ -56,7 +56,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         </div>
       </div>
       
-      {/* Solo mostramos las respuestas (escalera) si el usuario le dio clic en "Ver comentarios" */}
+      {/* 🔒 CANDADO ABSOLUTO: Solo mostramos sub-comentarios si isExpanded es TRUE */}
       {isExpanded && comment.replies && comment.replies.length > 0 && (
         <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1">
           {comment.replies.map((reply: any) => (
@@ -94,7 +94,6 @@ export default function Feed() {
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null); 
   
-  // Variable que controla qué posts están abiertos
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
 
   const [stories, setStories] = useState<any[]>([]);
@@ -132,30 +131,34 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🔥 FRANCOTIRADOR INTELIGENTE (Auto-Abre los Comentarios)
+  // 🎯 FRANCOTIRADOR INTELIGENTE V3 (Perfectamente sincronizado)
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
       const hash = window.location.hash;
       if (hash && hash.startsWith('#post-')) {
         const postId = hash.replace('#post-', '');
         
-        // 1. Damos la orden de "Abrir comentarios" automáticamente para ese post
+        // 1. Damos la orden de abrir los comentarios de ese post
         setExpandedComments(prev => ({ ...prev, [postId]: true }));
 
-        // 2. Esperamos un poco y saltamos a él
+        // 2. Le damos tiempo a React de dibujar los comentarios antes de saltar
         setTimeout(() => {
           const element = document.getElementById(`post-${postId}`);
           if (element) {
+            // Saltamos y lo dejamos en el medio
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Brillo rojo intenso
             element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'transition-all', 'duration-500');
+            
             setTimeout(() => {
               element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]');
             }, 4000);
           }
-        }, 800);
+        }, 500); // 500ms es el tiempo perfecto
       }
     }
-  }, [isLoading, posts]);
+  }, [isLoading, posts]); // Se ejecuta cuando los posts terminan de cargar
 
   const fetchData = async () => {
     try {
@@ -209,7 +212,6 @@ export default function Feed() {
       }
       await api.post(`/posts/${postId}/comment`, { content: finalContent, parentId: replyingToCommentId });
       setCommentText(''); setCommentingPostId(null); setReplyingToCommentId(null);
-      // Auto expandimos cuando comentamos para que lo veamos
       setExpandedComments(prev => ({...prev, [postId]: true}));
       fetchData(); 
     } catch (error) { alert("Error al enviar comentario"); } 
@@ -498,10 +500,10 @@ export default function Feed() {
                   const isOwner = user && post.user && user.id === post.user.id;
                   
                   const rootComments = buildCommentTree(post.comments || []);
-                  const totalComments = post._count?.comments || 0; // Total real de comentarios en DB
+                  const totalComments = post._count?.comments || 0;
                   const isExpanded = expandedComments[post.id] || false;
                   
-                  // 🔥 Si no está expandido, solo mostramos 3 (las ramas principales)
+                  // 🔥 Si no está expandido, mostramos las 3 raíces. Los hijos están ocultos en el componente.
                   const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
 
                   return (
@@ -582,7 +584,7 @@ export default function Feed() {
                                 </div>
                               )}
 
-                              {/* 🌳 LISTA DE COMENTARIOS (Ocultos por defecto) */}
+                              {/* 🌳 LISTA DE COMENTARIOS */}
                               {totalComments > 0 && (
                                  <div className="space-y-1 mt-4">
                                    {visibleComments.map((comment: any) => (
@@ -593,11 +595,11 @@ export default function Feed() {
                                        currentUser={user} 
                                        onReply={handleReplyClick} 
                                        onDelete={handleDeleteComment} 
-                                       isExpanded={isExpanded} // Pasamos la instrucción de si debe mostrar las respuestas o no
+                                       isExpanded={isExpanded} // El componente ahora obedece
                                      />
                                    ))}
                                    
-                                   {/* 🔥 BOTÓN "VER COMENTARIOS" (Solo sale si hay más de 3 en total en toda la rama) */}
+                                   {/* 🔥 BOTÓN "VER COMENTARIOS" */}
                                    {totalComments > 3 && (
                                      <button 
                                        onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))} 
