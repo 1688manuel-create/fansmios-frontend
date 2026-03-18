@@ -40,7 +40,7 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS BLINDADO
+// 🌳 NODO DE COMENTARIOS (CON CANDADO)
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
 
@@ -83,7 +83,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
 
 export default function Feed() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null); // LA VARIABLE CORRECTA ES 'user'
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   
   const [selectedPost, setSelectedPost] = useState<any>(null); 
@@ -168,7 +168,6 @@ export default function Feed() {
               element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
             }, 4000);
 
-            // 🔥 Borramos las huellas de la URL sin recargar
             window.history.replaceState(null, '', window.location.pathname);
           }
         }, 800); 
@@ -508,13 +507,12 @@ export default function Feed() {
               </div>
             )}
 
-            {/* PANEL CREADOR */}
+            {/* PANEL CREADOR COMPLETO RESTAURADO */}
             {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
               <div className="nm-inset p-6 rounded-[2rem] space-y-4 border border-white/5">
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-red-600 to-orange-600 flex items-center justify-center text-white font-bold text-xl overflow-hidden shadow-lg">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-red-600 to-orange-600 flex items-center justify-center text-white font-bold text-xl overflow-hidden shadow-lg shrink-0">
                     {(() => {
-                      /* 🔥 TRUCO MAESTRO: Buscamos tu foto más reciente en los posts del muro */
                       const myFreshData = posts.find(p => p.user?.id === user?.id)?.user;
                       const avatarUrl = myFreshData?.creatorProfile?.profileImage || user?.creatorProfile?.profileImage;
                       
@@ -524,6 +522,17 @@ export default function Feed() {
                         (user?.username || 'C')[0].toUpperCase()
                       );
                     })()}
+                  </div>
+                  
+                  {/* AQUÍ ESTÁ TU CUADRO DE TEXTO QUE HABÍA DESAPARECIDO */}
+                  <div className="w-full pt-2">
+                    <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} className="w-full bg-transparent text-white placeholder-gray-500 outline-none resize-none" placeholder="¿Qué contenido exclusivo vas a subir hoy?" rows={2}></textarea>
+                    {imagePreview && (
+                      <div className="relative mt-3 rounded-2xl overflow-hidden border border-white/10 inline-block shadow-lg">
+                        <img src={imagePreview} alt="Preview" className="max-h-64 object-cover" />
+                        <button onClick={() => { setImagePreview(null); setSelectedImage(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="absolute top-2 right-2 bg-black/80 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors"><X className="w-4 h-4" /></button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -558,10 +567,9 @@ export default function Feed() {
                   const isOwner = user && post.user && user.id === post.user.id;
                   
                   const rootComments = buildCommentTree(post.comments || []);
-                  const totalComments = post._count?.comments || 0; // Total real desde la BD
+                  const totalComments = post._count?.comments || 0; 
                   const isExpanded = expandedComments[post.id] || false;
                   
-                  // Si no está expandido, solo mostramos los 3 primeros padres
                   const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
 
                   return (
@@ -690,7 +698,6 @@ export default function Feed() {
                                 </div>
                               )}
 
-                              {/* 🌳 LISTA DE COMENTARIOS BLINDADA */}
                               {totalComments > 0 && (
                                  <div className="space-y-1 mt-4">
                                    {visibleComments.map((comment: any) => (
@@ -698,14 +705,13 @@ export default function Feed() {
                                         key={comment.id} 
                                         comment={comment} 
                                         postId={post.id} 
-                                        currentUser={user} // 🔥 CORRECCIÓN APLICADA AQUÍ
+                                        currentUser={user}
                                         onReply={handleReplyClick} 
                                         onDelete={handleDeleteComment}
                                         isExpanded={isExpanded}
                                       />
                                    ))}
 
-                                   {/* 🔥 BOTÓN "VER COMENTARIOS" */}
                                    {totalComments > 3 && (
                                      <button 
                                        onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
