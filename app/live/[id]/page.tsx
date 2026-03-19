@@ -340,6 +340,7 @@ export default function LiveRoom() {
               <MuxPlayer
                 streamType="live"
                 playbackId={streamData.playbackId}
+                tokens={streamData.playbackToken ? { playback: streamData.playbackToken } : undefined}
                 autoPlay
                 className="w-full h-full object-contain"
               />
