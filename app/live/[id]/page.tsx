@@ -8,7 +8,7 @@ import { paymentService } from '../../../lib/paymentService';
 import api from '../../../lib/api';
 import MuxPlayer from '@mux/mux-player-react'; 
 
-// 🔥 ICONOS PREMIUM (Solo los que realmente se usan)
+// 🔥 ICONOS PREMIUM
 import { 
   Eye, X, DollarSign, Diamond, Tv, Star, Award, Wifi, Lock, CreditCard
 } from 'lucide-react';
@@ -25,10 +25,6 @@ export default function LiveRoom() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [showTipMenu, setShowTipMenu] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
-  
-  // Referencias para la cámara WebRTC
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isLive, setIsLive] = useState(false);
   
   const [viewersCount, setViewersCount] = useState(0);
   
@@ -71,15 +67,11 @@ export default function LiveRoom() {
     }
   };
 
-  // ==========================================
-  // 🏦 COMPRA INSTANTÁNEA DE TICKET (PAYRAM)
-  // ==========================================
   const handleBuyTicket = async () => {
     if (isProcessing) return;
     setIsProcessing(true);
 
     try {
-      // Llamada al nuevo motor instantáneo de PayRam
       const res = await paymentService.createPaymentIntent({
         amount: streamData.price,
         type: 'LIVE_TICKET', 
@@ -91,7 +83,7 @@ export default function LiveRoom() {
       if (res.success) {
         setHasAccess(true);
         alert("✅ ¡Acceso concedido por PayRam! Disfruta el show.");
-        loadStreamData(); // Refrescamos para activar chat y video
+        loadStreamData(); 
       }
     } catch (error) {
       console.error("Error en cobro PayRam:", error);
@@ -101,9 +93,6 @@ export default function LiveRoom() {
     }
   };
 
-  // ==========================================
-  // 📡 ANTENA WEBSOCKET (CONEXIÓN SEGURA)
-  // ==========================================
   useEffect(() => {
     if (!user?.id || !id || !hasAccess) return;
     
@@ -142,7 +131,6 @@ export default function LiveRoom() {
     return () => { newSocket.disconnect(); };
   }, [user?.id, id, hasAccess]);
 
-  // Reloj de Transmisión
   useEffect(() => {
     const timer = setInterval(() => {
       if (!streamData?.createdAt) return;
@@ -175,7 +163,6 @@ export default function LiveRoom() {
   const sendFastTip = async (amount: number, IconComponent: any) => {
     setShowTipMenu(false);
     try {
-      // Los SuperChats ahora se descuentan directamente vía PayRam en el backend
       const res = await liveService.sendMessage(id as string, `¡SuperChat de $${amount}!`, true, amount);
       setMessages((prev) => [...prev, res.chatMessage]);
       chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -185,64 +172,6 @@ export default function LiveRoom() {
       setTimeout(() => setPinnedSuperChat(null), 8000);
     } catch (error: any) {
       alert("No tienes fondos suficientes en tu cuenta PayRam.");
-    }
-  };
-
-  // ==========================================
-  // 🚀 INICIAR CÁMARA NATIVA (WEBRTC WHIP MUX)
-  // ==========================================
-  const startWebRTCStream = async () => {
-    // 🛡️ REGLA DE SEGURIDAD: Los navegadores exigen HTTPS para encender la cámara
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      alert("🔒 ERROR: Tu navegador bloqueó la cámara porque la conexión no es segura. Asegúrate de entrar usando HTTPS:// en lugar de HTTP://");
-      return;
-    }
-
-    try {
-      setIsProcessing(true);
-      // 1. Pedimos permiso para usar la cámara y micrófono del celular
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { width: { ideal: 1280 }, height: { ideal: 720 } }, 
-        audio: true 
-      });
-      
-      // 2. Mostramos la cámara en silencio para que el creador se vea sin eco
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-
-      // 3. Empaquetamos el video
-      const pc = new RTCPeerConnection();
-      stream.getTracks().forEach(track => pc.addTrack(track, stream));
-
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
-
-      // 4. Disparamos el video a los servidores oficiales de Mux (WHIP)
-      const whipUrl = `https://global-live.mux.com/whip`;
-      const response = await fetch(whipUrl, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/sdp',
-          'Authorization': `Bearer ${streamData.streamKey}` // 🔑 La llave secreta que exige Mux
-        },
-        body: offer.sdp
-      });
-
-      if (!response.ok) throw new Error("Fallo en el servidor de video Mux");
-
-      const answerSdp = await response.text();
-      await pc.setRemoteDescription({ type: 'answer', sdp: answerSdp });
-
-      // 5. ¡Éxito! Avisamos al servidor que estamos En Vivo
-      setIsLive(true);
-      setIsProcessing(false);
-      liveService.updateStatus(id as string, 'LIVE').catch(()=>{});
-
-    } catch (error) {
-      console.error("Error WebRTC:", error);
-      alert("Permiso de cámara denegado o error de conexión con Mux.");
-      setIsProcessing(false);
     }
   };
 
@@ -312,35 +241,32 @@ export default function LiveRoom() {
             </div>
           ) : (
             String(user?.id) === String(streamData.creatorId) ? (
-              <div className="w-full h-full relative group bg-black flex flex-col items-center justify-center overflow-hidden">
+              <div className="z-20 p-8 nm-inset bg-[#0a0a0a] rounded-3xl border border-white/5 max-w-lg w-full text-left">
+                <h2 className="text-white font-black text-2xl mb-2 flex items-center gap-2"><Tv className="text-red-500"/> Panel de Transmisión VIP</h2>
+                <p className="text-gray-400 text-sm mb-6">Transmite en alta definición (1080p). Copia estas credenciales y pégalas en <b>Larix Broadcaster</b> (celular) u <b>OBS Studio</b> (PC).</p>
                 
-                {/* 📺 La pantalla donde el creador se ve a sí mismo */}
-                <video 
-                  ref={videoRef} 
-                  autoPlay 
-                  muted 
-                  playsInline 
-                  className="w-full h-full object-cover absolute inset-0 scale-x-[-1]"
-                />
-                
-                {/* 🔴 Indicador de estado */}
-                <div className="absolute top-6 left-6 z-30 bg-black/60 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-xs font-black flex items-center gap-2 shadow-lg border border-white/10">
-                  <div className={`w-2 h-2 rounded-full ${isLive ? 'bg-red-500 animate-pulse' : 'bg-gray-400'}`}></div> 
-                  {isLive ? 'EN VIVO (Tus fans te ven)' : 'VISTA PREVIA'}
-                </div>
-
-                {/* 🚀 Botón gigante para iniciar */}
-                {!isLive && (
-                  <div className="absolute bottom-10 z-30">
-                    <button 
-                      onClick={startWebRTCStream}
-                      disabled={isProcessing}
-                      className="nm-btn-primary px-8 py-4 rounded-full font-black flex items-center gap-2 text-lg shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-transform hover:scale-105"
-                    >
-                      {isProcessing ? 'Conectando...' : <><Tv className="w-6 h-6"/> INICIAR TRANSMISIÓN</>}
-                    </button>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1 block">Servidor (URL RTMP)</label>
+                    <div className="flex gap-2">
+                      <input type="text" readOnly value="rtmps://global-live.mux.com:443/app" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-sm text-white font-mono outline-none" />
+                    </div>
                   </div>
-                )}
+                  <div>
+                    <label className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1 block">Clave Secreta de Transmisión</label>
+                    <div className="flex gap-2">
+                      {/* 🔥 IMPORTANTE: Aquí generamos el texto exacto que Larix necesita copiarse */}
+                      <input type="text" readOnly value={`rtmps://global-live.mux.com:443/app/${streamData.streamKey || ''}`} className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-sm text-red-400 font-mono font-bold outline-none" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-8 p-4 bg-blue-900/20 border border-blue-500/20 rounded-xl text-blue-300 text-xs leading-relaxed">
+                  <span className="font-bold block mb-1">💡 Guía rápida para Larix (Celular):</span>
+                  1. Abre Larix Broadcaster y presiona el Engrane (Ajustes) &gt; Connections &gt; New Connection.<br/>
+                  2. En URL pega directamente el texto rojo de arriba (que ya trae tu clave pegada al final).<br/>
+                  3. Guarda, presiona el botón rojo de grabar, ¡y aparecerás en vivo!
+                </div>
               </div>
             ) : streamData.playbackId ? (
               <MuxPlayer
