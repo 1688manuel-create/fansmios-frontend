@@ -7,13 +7,10 @@ import { liveService } from '../../../lib/liveService';
 import { paymentService } from '../../../lib/paymentService'; 
 import api from '../../../lib/api';
 import MuxPlayer from '@mux/mux-player-react'; 
-import PaymentModal from '../../../components/PaymentModal'; 
 
-// 🔥 ICONOS PREMIUM
+// 🔥 ICONOS PREMIUM (Solo los que realmente se usan)
 import { 
-  Eye, X, Send, DollarSign, Crown, Target, Heart, 
-  Flame, Diamond, Key, Clock, Tv, MessageCircle, Star, 
-  Sparkles, ShieldAlert, Award, Zap, Wifi, Lock, CreditCard
+  Eye, X, DollarSign, Diamond, Tv, Star, Award, Wifi, Lock, CreditCard
 } from 'lucide-react';
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -29,18 +26,19 @@ export default function LiveRoom() {
   const [showTipMenu, setShowTipMenu] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   
+  // Referencias para la cámara WebRTC
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isLive, setIsLive] = useState(false);
+  
   const [viewersCount, setViewersCount] = useState(0);
   
   // Estados de Gamificación y UX
   const [uptime, setUptime] = useState('00:00:00');
   const [pinnedSuperChat, setPinnedSuperChat] = useState<any>(null);
-  const [connectionQuality, setConnectionQuality] = useState('Excelente');
   const DONATION_GOAL = 500; 
 
   // 🔥 ESTADOS DEL PAYWALL PAYRAM
   const [hasAccess, setHasAccess] = useState(true);
-  const [payramReceipt, setPayramReceipt] = useState('');
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -91,7 +89,6 @@ export default function LiveRoom() {
       });
 
       if (res.success) {
-        setPayramReceipt(res.receipt);
         setHasAccess(true);
         alert("✅ ¡Acceso concedido por PayRam! Disfruta el show.");
         loadStreamData(); // Refrescamos para activar chat y video
@@ -191,6 +188,58 @@ export default function LiveRoom() {
     }
   };
 
+  // ==========================================
+  // 🚀 INICIAR CÁMARA NATIVA (WEBRTC WHIP MUX)
+  // ==========================================
+  const startWebRTCStream = async () => {
+    try {
+      setIsProcessing(true);
+      // 1. Pedimos permiso para usar la cámara y micrófono del celular
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { width: { ideal: 1280 }, height: { ideal: 720 } }, 
+        audio: true 
+      });
+      
+      // 2. Mostramos la cámara en silencio para que el creador se vea sin eco
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+
+      // 3. Empaquetamos el video
+      const pc = new RTCPeerConnection();
+      stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+
+      // 4. Disparamos el video a los servidores oficiales de Mux (WHIP)
+      const whipUrl = `https://global-live.mux.com/whip`;
+      const response = await fetch(whipUrl, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/sdp',
+          'Authorization': `Bearer ${streamData.streamKey}` // 🔑 La llave secreta que exige Mux
+        },
+        body: offer.sdp
+      });
+
+      if (!response.ok) throw new Error("Fallo en el servidor de video Mux");
+
+      const answerSdp = await response.text();
+      await pc.setRemoteDescription({ type: 'answer', sdp: answerSdp });
+
+      // 5. ¡Éxito! Avisamos al servidor que estamos En Vivo
+      setIsLive(true);
+      setIsProcessing(false);
+      liveService.updateStatus(id as string, 'LIVE').catch(()=>{});
+
+    } catch (error) {
+      console.error("Error WebRTC:", error);
+      alert("Permiso de cámara denegado o error de conexión con Mux.");
+      setIsProcessing(false);
+    }
+  };
+
   const handleLeaveStream = () => {
     if (user?.id === streamData?.creatorId) {
       if (window.confirm("🚨 ¿TERMINAR transmisión definitivamente?")) {
@@ -256,7 +305,38 @@ export default function LiveRoom() {
               </button>
             </div>
           ) : (
-            streamData.playbackId ? (
+            user?.id === streamData.creatorId ? (
+              <div className="w-full h-full relative group bg-black flex flex-col items-center justify-center overflow-hidden">
+                
+                {/* 📺 La pantalla donde el creador se ve a sí mismo */}
+                <video 
+                  ref={videoRef} 
+                  autoPlay 
+                  muted 
+                  playsInline 
+                  className="w-full h-full object-cover absolute inset-0 scale-x-[-1]"
+                />
+                
+                {/* 🔴 Indicador de estado */}
+                <div className="absolute top-6 left-6 z-30 bg-black/60 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-xs font-black flex items-center gap-2 shadow-lg border border-white/10">
+                  <div className={`w-2 h-2 rounded-full ${isLive ? 'bg-red-500 animate-pulse' : 'bg-gray-400'}`}></div> 
+                  {isLive ? 'EN VIVO (Tus fans te ven)' : 'VISTA PREVIA'}
+                </div>
+
+                {/* 🚀 Botón gigante para iniciar */}
+                {!isLive && (
+                  <div className="absolute bottom-10 z-30">
+                    <button 
+                      onClick={startWebRTCStream}
+                      disabled={isProcessing}
+                      className="nm-btn-primary px-8 py-4 rounded-full font-black flex items-center gap-2 text-lg shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-transform hover:scale-105"
+                    >
+                      {isProcessing ? 'Conectando...' : <><Tv className="w-6 h-6"/> INICIAR TRANSMISIÓN</>}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : streamData.playbackId ? (
               <MuxPlayer
                 streamType="live"
                 playbackId={streamData.playbackId}
