@@ -133,7 +133,7 @@ export default function LiveRoom() {
     });
 
     newSocket.on('streamKilled', () => {
-      if (user.id !== streamData?.creatorId) {
+      if (String(user.id) !== String(streamData?.creatorId)) {
         alert("El creador ha finalizado la transmisión.");
         router.push('/explore');
       }
@@ -192,6 +192,12 @@ export default function LiveRoom() {
   // 🚀 INICIAR CÁMARA NATIVA (WEBRTC WHIP MUX)
   // ==========================================
   const startWebRTCStream = async () => {
+    // 🛡️ REGLA DE SEGURIDAD: Los navegadores exigen HTTPS para encender la cámara
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert("🔒 ERROR: Tu navegador bloqueó la cámara porque la conexión no es segura. Asegúrate de entrar usando HTTPS:// en lugar de HTTP://");
+      return;
+    }
+
     try {
       setIsProcessing(true);
       // 1. Pedimos permiso para usar la cámara y micrófono del celular
@@ -241,7 +247,7 @@ export default function LiveRoom() {
   };
 
   const handleLeaveStream = () => {
-    if (user?.id === streamData?.creatorId) {
+    if (String(user?.id) === String(streamData?.creatorId)) {
       if (window.confirm("🚨 ¿TERMINAR transmisión definitivamente?")) {
         liveService.updateStatus(id as string, 'ENDED').then(() => {
           socket?.emit('streamEnded', { streamId: id });
@@ -305,7 +311,7 @@ export default function LiveRoom() {
               </button>
             </div>
           ) : (
-            user?.id === streamData.creatorId ? (
+            String(user?.id) === String(streamData.creatorId) ? (
               <div className="w-full h-full relative group bg-black flex flex-col items-center justify-center overflow-hidden">
                 
                 {/* 📺 La pantalla donde el creador se ve a sí mismo */}
