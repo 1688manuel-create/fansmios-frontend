@@ -6,7 +6,8 @@ import { io, Socket } from 'socket.io-client';
 import { liveService } from '../../../lib/liveService';
 import { paymentService } from '../../../lib/paymentService'; 
 import api from '../../../lib/api';
-import { LiveKitRoom, VideoConference, RoomAudioRenderer } from '@livekit/components-react';
+import { LiveKitRoom, RoomAudioRenderer, GridLayout, ParticipantTile, ControlBar, useTracks } from '@livekit/components-react';
+import { Track } from 'livekit-client';
 import '@livekit/components-styles';
 
 // ICONOS
@@ -253,13 +254,14 @@ export default function LiveRoom() {
         ) : (
           liveKitToken ? (
             <LiveKitRoom
-              video={true}
-              audio={true}
+              video={String(user?.id) === String(streamData.creatorId) || user?.role === 'ADMIN'}
+              audio={String(user?.id) === String(streamData.creatorId) || user?.role === 'ADMIN'}
               token={liveKitToken}
               serverUrl="wss://live.fansmio.com"
               className="w-full h-full"
             >
-              <VideoConference />
+              {/* Le pasamos nuestro nuevo escenario inmersivo */}
+              <StreamStage hasControl={String(user?.id) === String(streamData.creatorId) || user?.role === 'ADMIN'} />
               <RoomAudioRenderer />
             </LiveKitRoom>
           ) : (
@@ -310,6 +312,35 @@ export default function LiveRoom() {
         )}
       </div>
 
+    </div>
+  );
+}
+
+// 🔥 NUEVO COMPONENTE: ESCENARIO VIP INMERSIVO
+function StreamStage({ hasControl }: { hasControl: boolean }) {
+  // Obtenemos únicamente las pistas de cámara de la sala
+  const tracks = useTracks([
+    { source: Track.Source.Camera, withPlaceholder: true },
+    { source: Track.Source.ScreenShare, withPlaceholder: false }
+  ]);
+
+  return (
+    <div className="w-full h-full relative bg-black flex items-center justify-center overflow-hidden">
+      
+      {/* 🎬 VIDEO A PANTALLA COMPLETA (Sin marcos feos) */}
+      <GridLayout tracks={tracks} style={{ width: '100%', height: '100%' }}>
+        <ParticipantTile />
+      </GridLayout>
+
+      {/* 🎛️ PANEL FLOTANTE DE LUJO (Solo para Creadores y Admins) */}
+      {hasControl && (
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 p-1 rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.8)]">
+          <ControlBar
+            variation="minimal"
+            controls={{ microphone: true, camera: true, screenShare: false, leave: false, chat: false }}
+          />
+        </div>
+      )}
     </div>
   );
 }
