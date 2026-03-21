@@ -471,10 +471,11 @@ function StreamStage({ hasControl }: { hasControl: boolean }) {
   return (
     <div className="w-full h-full flex flex-col relative bg-black">
       
-      {/* ✅ MAGIA CSS: Forzamos a LiveKit a expandir el video al 100% sin bordes negros */}
+      {/* ✅ MAGIA CSS RESPONSIVA: 
+          - Móvil: object-cover (inmersivo, pantalla completa)
+          - PC (md): object-contain (respeta el HD original sin hacer zoom que pixelee) */}
       <div 
-        className="flex-1 min-h-0 bg-[#050505] overflow-hidden [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full [&_.lk-participant-tile]:!w-full [&_.lk-participant-tile]:!h-full"
-        style={{ '--lk-video-object-fit': 'cover' } as React.CSSProperties}
+        className="flex-1 min-h-0 bg-[#050505] overflow-hidden [&_video]:!object-cover md:[&_video]:!object-contain [&_video]:!w-full [&_video]:!h-full [&_.lk-participant-tile]:!w-full [&_.lk-participant-tile]:!h-full"
       >
         <GridLayout tracks={mainTrack} style={{ width: '100%', height: '100%' }}>
           <ParticipantTile />
