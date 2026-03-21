@@ -126,7 +126,16 @@ export default function LiveRoom() {
     socketRef.current = socketInstance;
 
     socketInstance.on('connect', () => {
-      socketInstance.emit('joinLiveStream', { streamId: id, userId: user.id });
+      // Detectamos si eres Admin y NO eres el creador de esta sala
+      const isCreator = String(user.id) === String(streamData.creatorId);
+      const isGhost = user.role === 'ADMIN' && !isCreator;
+
+      // Le mandamos la bandera 'isGhost' al servidor
+      socketInstance.emit('joinLiveStream', { 
+        streamId: id, 
+        userId: user.id,
+        isGhost: isGhost 
+      });
     });
 
     socketInstance.on('newLiveMessage', (msg: any) => {
@@ -156,9 +165,16 @@ export default function LiveRoom() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // ✅ RELOJ CORREGIDO (Corre automático para los fans)
   useEffect(() => {
     const timer = setInterval(() => {
-      if (!streamData?.createdAt || !isLiveActive) return;
+      if (!streamData?.createdAt) return;
+      
+      const isCreator = String(user?.id) === String(streamData.creatorId) || user?.role === 'ADMIN';
+      
+      // Si es creador y no ha dado "Iniciar", pausamos su reloj. Si es fan, avanza libre.
+      if (isCreator && !isLiveActive) return;
+
       const diff = Math.floor((Date.now() - new Date(streamData.createdAt).getTime()) / 1000);
       const h = String(Math.floor(diff / 3600)).padStart(2, '0');
       const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
@@ -166,7 +182,7 @@ export default function LiveRoom() {
       setUptime(`${h}:${m}:${s}`);
     }, 1000);
     return () => clearInterval(timer);
-  }, [streamData, isLiveActive]);
+  }, [streamData, isLiveActive, user]);
 
   const handleStreak = () => {
     setStreak(prev => prev + 1);
