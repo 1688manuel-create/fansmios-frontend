@@ -22,7 +22,7 @@ import '@livekit/components-styles';
 // 🔥 ICONOS PREMIUM (Agregué Send, Power y Play)
 import { Eye, X, Lock, Wifi, Tv, Star, Award, Zap, Diamond, Trophy, Send, Power, Play } from 'lucide-react';
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const SOCKET_URL = 'https://api.fansmio.com';
 
 // 🏆 ECONOMÍA DE LUJO
 interface Gift {
