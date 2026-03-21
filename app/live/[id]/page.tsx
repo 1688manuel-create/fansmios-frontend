@@ -461,7 +461,7 @@ export default function LiveRoom() {
   );
 }
 
-// 🎬 ESCENARIO MULTI-VIDEO SANEADO
+// 🎬 ESCENARIO MULTI-VIDEO SANEADO Y AMPLIADO
 function StreamStage({ hasControl }: { hasControl: boolean }) {
   const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: true }]);
 
@@ -471,8 +471,11 @@ function StreamStage({ hasControl }: { hasControl: boolean }) {
   return (
     <div className="w-full h-full flex flex-col relative bg-black">
       
-      {/* ✅ CORRECCIÓN VISUAL: [&_video]:object-cover fuerza al video a cubrir toda la pantalla sin bordes negros */}
-      <div className="flex-1 min-h-0 bg-[#050505] [&_video]:object-cover [&_video]:w-full [&_video]:h-full">
+      {/* ✅ MAGIA CSS: Forzamos a LiveKit a expandir el video al 100% sin bordes negros */}
+      <div 
+        className="flex-1 min-h-0 bg-[#050505] overflow-hidden [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full [&_.lk-participant-tile]:!w-full [&_.lk-participant-tile]:!h-full"
+        style={{ '--lk-video-object-fit': 'cover' } as React.CSSProperties}
+      >
         <GridLayout tracks={mainTrack} style={{ width: '100%', height: '100%' }}>
           <ParticipantTile />
         </GridLayout>
