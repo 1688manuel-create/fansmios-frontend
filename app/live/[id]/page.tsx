@@ -463,7 +463,7 @@ export default function LiveRoom() {
 
 // 🎬 ESCENARIO MULTI-VIDEO SANEADO Y AMPLIADO
 function StreamStage({ hasControl }: { hasControl: boolean }) {
-  const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: true }]);
+  const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: false }]);
 
   const mainTrack = tracks.slice(0, 1);
   const coHostTracks = tracks.slice(1);
