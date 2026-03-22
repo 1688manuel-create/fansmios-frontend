@@ -19,12 +19,12 @@ import {
 import { Track } from 'livekit-client';
 import '@livekit/components-styles';
 
-// 🔥 ICONOS PREMIUM (Añadidos UserPlus y Heart para la UI Inmersiva)
+// 🔥 ICONOS PREMIUM
 import { Eye, X, Lock, Wifi, Tv, Star, Award, Zap, Diamond, Trophy, Send, Power, Play, UserPlus, Heart } from 'lucide-react';
 
 const SOCKET_URL = 'https://api.fansmio.com';
 
-// 🏆 ECONOMÍA DE LUJO
+// 🏆 ECONOMÍA DE LUJO FANSMIO (Psicología de Conexión y Estatus)
 interface Gift {
   id: number;
   name: string;
@@ -34,11 +34,23 @@ interface Gift {
 }
 
 const GIFTS: Gift[] = [
-  { id: 1, name: "Diamante FansMio", amount: 1, emoji: "💎", style: "text-sky-400 font-bold" },
-  { id: 2, name: "Botella VIP", amount: 5, emoji: "🍾", style: "text-green-400 font-bold" },
-  { id: 3, name: "Orbe de Poder", amount: 20, emoji: "🔮", style: "text-purple-400 font-bold" },
-  { id: 4, name: "Planeta Privado", amount: 100, emoji: "🪐", style: "text-amber-400 font-bold" },
-  { id: 5, name: "Galaxia FansMio", amount: 500, emoji: "🌌", style: "text-white font-extrabold drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" },
+  // 🔹 TIER 1: Rompehielos (Generan volumen y constancia)
+  { id: 1, name: "Rosa de Cristal", amount: 1, emoji: "🌹", style: "text-rose-400 font-bold drop-shadow-[0_0_5px_rgba(251,113,133,0.5)]" },
+  { id: 2, name: "Brindis VIP", amount: 2, emoji: "🥂", style: "text-yellow-200 font-bold drop-shadow-[0_0_6px_rgba(253,230,138,0.5)]" },
+  { id: 3, name: "Beso Neón", amount: 5, emoji: "💋", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
+  
+  // 🔹 TIER 2: Estatus Medio (Para destacar en el chat)
+  { id: 4, name: "Carta Secreta", amount: 10, emoji: "💌", style: "text-fuchsia-400 font-bold drop-shadow-[0_0_8px_rgba(232,121,249,0.6)]" },
+  { id: 5, name: "Corona de Oro", amount: 15, emoji: "👑", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)] tracking-wide" },
+  { id: 6, name: "Llave del Corazón", amount: 20, emoji: "🗝️", style: "text-amber-200 font-black drop-shadow-[0_0_12px_rgba(253,230,138,0.8)]" },
+  
+  // 🔹 TIER 3: Alto Calibre (Para verdaderos fans y Sugar Daddies)
+  { id: 7, name: "Anillo de Diamante", amount: 30, emoji: "💍", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)] tracking-widest" },
+  { id: 8, name: "Deportivo Neón", amount: 40, emoji: "🏎️", style: "text-green-400 font-black drop-shadow-[0_0_18px_rgba(74,222,128,0.9)] italic" },
+  { id: 9, name: "Corazón FansMio", amount: 50, emoji: "❤️‍🔥", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase tracking-[0.2em]" },
+  
+  // 👑 TIER DIOS: El "Whale Bait" (Diseñado para romper la pantalla y el ego)
+  { id: 10, name: "Universo FansMio", amount: 100, emoji: "🌌", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase tracking-[0.3em]" },
 ];
 
 interface Donator {
@@ -51,7 +63,7 @@ export default function LiveRoom() {
   const { id } = useParams();
   const router = useRouter();
 
-  // ✅ TU ESTADO (Intacto)
+  // ✅ ESTADOS
   const [user, setUser] = useState<any>(null);
   const [streamData, setStreamData] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -69,13 +81,16 @@ export default function LiveRoom() {
   const [topDonators, setTopDonators] = useState<Donator[]>([]);
   const [streak, setStreak] = useState(0);
 
+  // ❤️ ESTADO PARA LOS CORAZONES FLOTANTES
+  const [hearts, setHearts] = useState<{id: number, left: number}[]>([]);
+
   const [hasAccess, setHasAccess] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [liveKitToken, setLiveKitToken] = useState("");
 
   const [isLiveActive, setIsLiveActive] = useState(false);
 
-  // ✅ TUS EFECTOS Y LÓGICA (Intactos)
+  // ✅ EFECTOS Y LÓGICA
   useEffect(() => {
     try {
       const storedUser = typeof window !== "undefined" ? localStorage.getItem('user') : null;
@@ -138,6 +153,12 @@ export default function LiveRoom() {
     });
 
     socketInstance.on('newLiveMessage', (msg: any) => {
+      // ❤️ SI LLEGA UNA SEÑAL DE LIKE, MOSTRAMOS CORAZÓN Y SALIMOS
+      if (msg.isLike) {
+        triggerHeart();
+        return;
+      }
+
       setMessages((prev) => [...prev, msg]);
       if (msg.isDonation) {
         const giftData = GIFTS.find(g => g.amount === msg.amount);
@@ -163,7 +184,7 @@ export default function LiveRoom() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // ✅ TU RELOJ CORREGIDO PARA FANS
+  // ✅ RELOJ CORREGIDO
   useEffect(() => {
     const timer = setInterval(() => {
       if (!streamData?.createdAt) return;
@@ -180,7 +201,7 @@ export default function LiveRoom() {
     return () => clearInterval(timer);
   }, [streamData, isLiveActive, user]);
 
-  // ✅ TUS FUNCIONES DE GAMIFICACIÓN Y PAGOS
+  // ✅ FUNCIONES DE GAMIFICACIÓN, PAGOS Y CORAZONES
   const handleStreak = () => {
     setStreak(prev => prev + 1);
     if (streakTimeoutRef.current) clearTimeout(streakTimeoutRef.current);
@@ -203,6 +224,21 @@ export default function LiveRoom() {
       }
       return updated.sort((a, b) => b.amount - a.amount).slice(0, 3);
     });
+  };
+
+  // ❤️ LÓGICA DE CORAZONES (Likes en pantalla)
+  const triggerHeart = () => {
+    const id = Date.now() + Math.random();
+    const left = Math.floor(Math.random() * 40) + 10; // Posición aleatoria
+    setHearts(prev => [...prev, { id, left }]);
+    setTimeout(() => {
+      setHearts(prev => prev.filter(h => h.id !== id));
+    }, 2500); // El corazón vive 2.5s y desaparece
+  };
+
+  const handleSendHeart = () => {
+    triggerHeart(); // Animación local
+    socketRef.current?.emit('broadcastMessage', { streamId: id, isLike: true }); // Avisamos a todos los demás conectados
   };
 
   const sendGift = async (gift: Gift) => {
@@ -259,12 +295,10 @@ export default function LiveRoom() {
 
   const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || user?.role === 'ADMIN';
 
-  // 🎆 AQUÍ EMPIEZA LA CIRUGÍA: UI INMERSIVA (Tu lógica sigue viva)
   return (
     <div className="fixed inset-0 bg-black text-white font-sans overflow-hidden">
       
-      {/* 🎬 CAPA 0: EL VIDEO (Fondo absoluto inmersivo) */}
-      {/* Mantuve tu regla de object-cover para móvil y object-contain para PC */}
+      {/* 🎬 CAPA 0: EL VIDEO */}
       <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover md:[&_video]:!object-contain [&_video]:!w-full [&_video]:!h-full">
         {hasAccess && liveKitToken ? (
           <LiveKitRoom 
@@ -322,10 +356,8 @@ export default function LiveRoom() {
       {hasAccess && (
         <div className="absolute inset-0 z-10 flex flex-col justify-between pointer-events-none">
           
-          {/* 🔝 TOP HUD: Información y Stats */}
+          {/* 🔝 TOP HUD */}
           <div className="p-4 flex justify-between items-start pointer-events-auto">
-            
-            {/* Cápsula Estilo FansMio */}
             <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md rounded-full p-1.5 pr-4 border border-white/10 shadow-lg">
               <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-green-500 to-blue-600 flex items-center justify-center font-bold text-lg shadow-inner">
                 {streamData.title.charAt(0).toUpperCase()}
@@ -341,7 +373,6 @@ export default function LiveRoom() {
               )}
             </div>
 
-            {/* Controles y Espectadores */}
             <div className="flex flex-col items-end gap-2">
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-bold">
@@ -361,7 +392,7 @@ export default function LiveRoom() {
             </div>
           </div>
 
-          {/* 🏆 MIDDLE HUD: Gamificación Flotante */}
+          {/* 🏆 MIDDLE HUD */}
           <div className="absolute right-4 top-24 flex flex-col items-end gap-3 pointer-events-auto">
             {topDonators.length > 0 && (
               <div className="bg-black/40 backdrop-blur-md p-2.5 rounded-2xl border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.15)] min-w-[120px]">
@@ -396,10 +427,27 @@ export default function LiveRoom() {
             </div>
           )}
 
-          {/* 💬 BOTTOM HUD: Chat Flotante y Controles (Transparencia) */}
-          <div className="w-full md:w-[450px] bg-gradient-to-t from-black/90 via-black/40 to-transparent pt-12 pb-4 px-4 flex flex-col justify-end pointer-events-auto mt-auto">
+          {/* ❤️ CSS ANIMACIÓN CORAZONES */}
+          <style>{`
+            @keyframes floatUp {
+              0% { opacity: 1; transform: translateY(0) scale(1); }
+              100% { opacity: 0; transform: translateY(-200px) scale(1.5); }
+            }
+            .animate-float { animation: floatUp 2.5s ease-out forwards; }
+          `}</style>
+
+          {/* 💬 BOTTOM HUD */}
+          <div className="w-full md:w-[450px] bg-gradient-to-t from-black/90 via-black/40 to-transparent pt-12 pb-4 px-4 flex flex-col justify-end pointer-events-auto mt-auto relative">
             
-            {/* Zona de Mensajes Difuminada */}
+            {/* 🔴 CONTENEDOR DE CORAZONES FLOTANTES */}
+            <div className="absolute bottom-16 right-4 w-16 h-64 pointer-events-none overflow-visible z-40">
+              {hearts.map(h => (
+                <div key={h.id} className="absolute bottom-0 text-red-500 animate-float text-3xl drop-shadow-md" style={{ left: `${h.left}%` }}>
+                  ❤️
+                </div>
+              ))}
+            </div>
+
             <div 
               className="max-h-[30vh] overflow-y-auto flex flex-col gap-2 custom-scrollbar pb-2" 
               style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 100%)' }}
@@ -422,7 +470,7 @@ export default function LiveRoom() {
               <div ref={chatEndRef} />
             </div>
 
-            {/* Menú de Regalos Desplegable */}
+            {/* Menú de Regalos */}
             {showGiftMenu && (
               <div className="absolute bottom-20 left-4 right-4 md:w-[420px] bg-[#111]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 grid grid-cols-3 md:grid-cols-5 gap-2 animate-slide-up shadow-2xl z-20">
                 {GIFTS.map((gift) => (
@@ -448,7 +496,11 @@ export default function LiveRoom() {
                 </button>
               </div>
               
-              <button className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+              {/* ❤️ BOTÓN DE LIKES (CORAZÓN ACTIVO) */}
+              <button 
+                onClick={handleSendHeart} 
+                className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 hover:text-red-500 transition-colors active:scale-90"
+              >
                 <Heart className="w-5 h-5" />
               </button>
 
@@ -464,7 +516,7 @@ export default function LiveRoom() {
   );
 }
 
-// 🎬 ESCENARIO LIVEKIT (Totalmente de fondo, sin cuadro fantasma)
+// 🎬 ESCENARIO LIVEKIT
 function StreamStage({ hasControl }: { hasControl: boolean }) {
   const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: false }]);
   const mainTrack = tracks.slice(0, 1);
@@ -472,14 +524,14 @@ function StreamStage({ hasControl }: { hasControl: boolean }) {
 
   return (
     <div className="w-full h-full flex flex-col relative bg-transparent">
-      {/* Video Principal (Fondo total) */}
+      {/* Video Principal */}
       <div className="absolute inset-0 z-0">
         <GridLayout tracks={mainTrack} style={{ width: '100%', height: '100%' }}>
           <ParticipantTile />
         </GridLayout>
       </div>
 
-      {/* Tira para Co-Hosts (Flotante a la derecha) */}
+      {/* Co-Hosts */}
       {coHostTracks.length > 0 && (
         <div className="absolute top-20 right-4 flex flex-col gap-2 z-10 w-24">
           {coHostTracks.map((track, i) => (
@@ -490,7 +542,7 @@ function StreamStage({ hasControl }: { hasControl: boolean }) {
         </div>
       )}
 
-      {/* Controles Ocultos (Los de LiveKit no estorban) */}
+      {/* Controles Ocultos */}
       {hasControl && (
         <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50 bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full opacity-0 hover:opacity-100 transition-opacity">
           <ControlBar variation="minimal" controls={{ microphone: true, camera: true, screenShare: false, leave: false, chat: false }} />
