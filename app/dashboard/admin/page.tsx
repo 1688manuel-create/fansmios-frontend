@@ -83,7 +83,7 @@ export default function AdminDashboard() {
   };
 
   const handleWithdrawalAction = async (id: string, status: string) => {
-    const reason = prompt(`Escribe una nota para el creador:`);
+    const reason = prompt(`Escribe una nota para el creador (opcional):`);
     if (reason === null) return; 
     try {
       await adminService.handleWithdrawal(id, status, reason);
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
             <Crown className="text-red-500 w-8 h-8" />
             <h1 className="text-xl font-black text-red-500">MODO DIOS</h1>
           </div>
-          <button onClick={() => router.push('/dashboard/admin/kyc')} className="nm-btn border border-purple-500/30 text-purple-400 px-4 py-2 rounded-full text-xs font-bold">
+          <button onClick={() => router.push('/dashboard/admin/kyc')} className="nm-btn border border-purple-500/30 text-purple-400 px-4 py-2 rounded-full text-xs font-bold hover:bg-purple-900/20 transition-colors">
             KYC PENDIENTES ({analytics?.metrics?.security?.pendingKyc || 0})
           </button>
         </nav>
@@ -133,19 +133,17 @@ export default function AdminDashboard() {
               <button 
                 key={tab.id} 
                 onClick={() => setActiveTab(tab.id as any)} 
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-xs transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-red-600 text-white' : 'text-gray-400'}`}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-xs transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-red-600 text-white' : 'text-gray-400 hover:text-white'}`}
               >
                 <tab.icon className="w-4 h-4" /> {tab.label}
               </button>
             ))}
           </div>
 
-          {/* 📊 TAB 1: DASHBOARD FINANCIERO (BLINDADO) */}
+          {/* 📊 TAB 1: DASHBOARD FINANCIERO */}
           {activeTab === 'STATS' && (
             <div className="space-y-8 animate-fade-in">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                {/* Volumen Transaccionado */}
                 <div className="nm-btn border border-white/5 p-8 rounded-[2rem]">
                   <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-blue-500"/> Volumen Total
@@ -154,8 +152,6 @@ export default function AdminDashboard() {
                     ${(analytics?.metrics?.finance?.totalVolumeProcessed || 0).toFixed(2)}
                   </p>
                 </div>
-
-                {/* Ganancia Neta Plataforma */}
                 <div className="nm-btn border border-green-500/30 p-8 rounded-[2rem]">
                   <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
                     <PiggyBank className="w-4 h-4 text-green-500"/> Ganancia FansMios
@@ -164,8 +160,6 @@ export default function AdminDashboard() {
                     ${(analytics?.metrics?.finance?.platformNetRevenue || 0).toFixed(2)}
                   </p>
                 </div>
-
-                {/* Pasivos por Retirar */}
                 <div className="nm-btn border border-white/5 p-8 rounded-[2rem]">
                   <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
                     <Wallet className="w-4 h-4 text-orange-500"/> Retiros en Cola
@@ -174,10 +168,9 @@ export default function AdminDashboard() {
                     ${(analytics?.metrics?.finance?.pendingLiability || 0).toFixed(2)}
                   </p>
                 </div>
-
               </div>
 
-              {/* ÚLTIMOS MOVIMIENTOS PAYRAM */}
+              {/* ÚLTIMOS MOVIMIENTOS PAYRAM (Ahora con Creador) */}
               <div className="nm-btn border border-white/5 rounded-[2rem] overflow-hidden">
                 <div className="p-6 bg-[#0e0e0e] border-b border-white/5">
                   <h3 className="font-black text-white text-lg">Historial PayRam (Tiempo Real)</h3>
@@ -188,8 +181,9 @@ export default function AdminDashboard() {
                       <tr>
                         <th className="px-6 py-4">Tipo</th>
                         <th className="px-6 py-4">De Fan</th>
+                        <th className="px-6 py-4">Para Creador</th>
                         <th className="px-6 py-4">Monto</th>
-                        <th className="px-6 py-4">Comisión</th>
+                        <th className="px-6 py-4">Comisión App</th>
                         <th className="px-6 py-4">Fecha</th>
                       </tr>
                     </thead>
@@ -198,6 +192,7 @@ export default function AdminDashboard() {
                         <tr key={tx.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                           <td className="px-6 py-5 font-bold text-blue-400 text-xs">{tx.type}</td>
                           <td className="px-6 py-5">@{tx.sender?.username || 'Anónimo'}</td>
+                          <td className="px-6 py-5 text-purple-400">@{tx.receiver?.username || 'Anónimo'}</td>
                           <td className="px-6 py-5 font-black text-white">${(tx.amount || 0).toFixed(2)}</td>
                           <td className="px-6 py-5 font-black text-green-400">+${(tx.platformFee || 0).toFixed(2)}</td>
                           <td className="px-6 py-5 text-[10px] text-gray-500">{new Date(tx.createdAt).toLocaleString()}</td>
@@ -210,8 +205,141 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* ... Las demás pestañas (USERS, WITHDRAWALS, REPORTS) se mantienen similares ... */}
-          {/* Apliqué la misma lógica preventiva en todos los mapeos de datos */}
+          {/* 💸 TAB 2: RETIROS (WITHDRAWALS) */}
+          {activeTab === 'WITHDRAWALS' && (
+            <div className="space-y-6 animate-fade-in">
+              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Banknote className="text-orange-500"/> Solicitudes de Retiro</h2>
+              {withdrawals.length === 0 ? (
+                <div className="nm-btn border border-white/5 p-10 rounded-[2rem] text-center text-gray-500">
+                  No hay solicitudes de retiro pendientes.
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {withdrawals.map((w: any) => (
+                    <div key={w.id} className="nm-btn border border-white/5 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-center gap-4">
+                      <div className="flex-1">
+                        <p className="text-xs text-gray-500 mb-1">ID: {w.id}</p>
+                        <h4 className="text-lg font-bold text-white flex items-center gap-2">
+                          @{w.creator?.username || 'Usuario Desconocido'} 
+                          <span className={`text-[10px] px-2 py-1 rounded-full font-black ${w.status === 'PENDING' ? 'bg-orange-500/20 text-orange-400' : w.status === 'PAID' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                            {w.status}
+                          </span>
+                        </h4>
+                        <p className="text-sm mt-2"><span className="text-gray-400">Red:</span> {w.cryptoNetwork || 'TRC20'} <span className="text-gray-400 ml-3">Billetera:</span> <span className="text-blue-400 select-all">{w.cryptoAddress}</span></p>
+                        {w.adminNotes && <p className="text-xs text-orange-300 mt-2 bg-orange-500/10 p-2 rounded-lg">{w.adminNotes}</p>}
+                      </div>
+                      <div className="text-right">
+                        <p className="text-3xl font-black text-green-400 mb-4">${w.amount?.toFixed(2)} <span className="text-sm text-gray-500 font-normal">USDT</span></p>
+                        {w.status === 'PENDING' && (
+                          <div className="flex gap-2">
+                            <button onClick={() => handleWithdrawalAction(w.id, 'REJECTED')} className="px-4 py-2 rounded-full border border-red-500/50 text-red-400 font-bold text-xs hover:bg-red-500 hover:text-white transition-colors">Rechazar</button>
+                            <button onClick={() => handleWithdrawalAction(w.id, 'PAID')} className="px-4 py-2 rounded-full bg-green-600 text-white font-bold text-xs hover:bg-green-500 transition-colors">Marcar Pagado</button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 👥 TAB 3: USUARIOS */}
+          {activeTab === 'USERS' && (
+            <div className="space-y-6 animate-fade-in">
+              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Users className="text-blue-500"/> Gestión de Usuarios</h2>
+              <div className="nm-btn border border-white/5 rounded-[2rem] overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="text-[10px] text-gray-500 uppercase tracking-widest bg-[#111] border-b border-white/5">
+                      <tr>
+                        <th className="px-6 py-4">Usuario / Email</th>
+                        <th className="px-6 py-4">Rol</th>
+                        <th className="px-6 py-4">Estado</th>
+                        <th className="px-6 py-4">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {users.map((u: any) => (
+                        <tr key={u.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                          <td className="px-6 py-5">
+                            <p className="font-bold text-white">@{u.username || 'sin_user'}</p>
+                            <p className="text-xs text-gray-500">{u.email}</p>
+                          </td>
+                          <td className="px-6 py-5 font-black text-xs">
+                            <span className={u.role === 'CREATOR' ? 'text-purple-400' : u.role === 'ADMIN' ? 'text-red-500' : 'text-gray-400'}>{u.role}</span>
+                          </td>
+                          <td className="px-6 py-5">
+                            <span className={`text-[10px] px-2 py-1 rounded-full font-black ${u.status === 'ACTIVE' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                              {u.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-5">
+                            {u.status === 'ACTIVE' ? (
+                              <button onClick={() => handleUserStatus(u.id, 'BANNED')} className="text-red-500 hover:text-red-400 flex items-center gap-1 text-xs font-bold"><ShieldBan className="w-4 h-4"/> Banear</button>
+                            ) : (
+                              <button onClick={() => handleUserStatus(u.id, 'ACTIVE')} className="text-green-500 hover:text-green-400 flex items-center gap-1 text-xs font-bold"><CheckCircle className="w-4 h-4"/> Activar</button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 🚩 TAB 4: MODERACIÓN (REPORTS) */}
+          {activeTab === 'REPORTS' && (
+            <div className="space-y-6 animate-fade-in">
+              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Flag className="text-red-500"/> Centro de Reportes</h2>
+              {reports.length === 0 ? (
+                <div className="nm-btn border border-white/5 p-10 rounded-[2rem] text-center text-gray-500">
+                  La comunidad está en paz. No hay reportes pendientes.
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {reports.map((r: any) => (
+                    <div key={r.id} className="nm-btn border border-red-500/20 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <div>
+                        <h4 className="text-lg font-bold text-white mb-1">Motivo: {r.reason}</h4>
+                        <p className="text-sm text-gray-400 mb-2">Reportado por: @{r.reporter?.username} <span className="mx-2">|</span> Acusado: @{r.reportedUser?.username || 'N/A'}</p>
+                        <p className="text-sm bg-black/50 p-3 rounded-xl border border-white/5">{r.description || 'Sin descripción adicional.'}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => handleResolveReport(r.id, 'DISMISSED')} className="px-4 py-2 rounded-full border border-gray-500/50 text-gray-400 font-bold text-xs hover:text-white transition-colors">Descartar</button>
+                        <button onClick={() => handleResolveReport(r.id, 'RESOLVED')} className="px-4 py-2 rounded-full bg-red-600 text-white font-bold text-xs hover:bg-red-500 transition-colors">Tomar Acción</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ⚙️ TAB 5: PLATAFORMA (SETTINGS) */}
+          {activeTab === 'SETTINGS' && (
+            <div className="space-y-6 animate-fade-in max-w-2xl">
+              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Settings className="text-gray-400"/> Configuración Global</h2>
+              <div className="nm-btn border border-white/5 p-8 rounded-[2rem]">
+                <h3 className="font-bold text-white mb-4">Comisión Base de la Plataforma (%)</h3>
+                <p className="text-sm text-gray-400 mb-6">Esta es la tajada automática que toma el sistema de cada venta general (no afecta retiros exprés).</p>
+                <div className="flex gap-4">
+                  <input 
+                    type="number" 
+                    placeholder="Ej. 20" 
+                    value={newFee} 
+                    onChange={(e) => setNewFee(e.target.value)}
+                    className="flex-1 bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500"
+                  />
+                  <button onClick={handleUpdateFee} className="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl transition-colors">
+                    Actualizar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
         </main>
       </div>

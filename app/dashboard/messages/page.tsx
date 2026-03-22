@@ -53,7 +53,7 @@ export default function MessagesDashboard() {
   const [recordingTime, setRecordingTime] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [clientSecret, setClientSecret] = useState('');
@@ -78,17 +78,19 @@ export default function MessagesDashboard() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user && user !== "undefined") {
-      setCurrentUser(JSON.parse(user));
-    } else {
-      router.push('/auth');
+    if (typeof window !== 'undefined') {
+      const user = localStorage.getItem('user');
+      if (user && user !== "undefined") {
+        setCurrentUser(JSON.parse(user));
+      } else {
+        router.push('/auth');
+      }
     }
     fetchConversations(true); 
-  }, []);
+  }, [router]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (activeChat) {
       interval = setInterval(async () => {
         try {
@@ -167,16 +169,67 @@ export default function MessagesDashboard() {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) setSelectedImage(e.target.files[0]);
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedImage(e.target.files[0]);
+    }
   };
 
   const handleBroadcastFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) setBroadcastFile(e.target.files[0]);
+    if (e.target.files && e.target.files.length > 0) {
+      setBroadcastFile(e.target.files[0]);
+    }
   };
 
-  const startRecording = async () => { /* Lógica de grabación */ };
-  const stopRecording = () => { /* Lógica de grabación */ };
-  const cancelRecording = () => { /* Lógica de grabación */ };
+
+  // ==========================================
+  // 🎙️ MOTOR DE GRABACIÓN DE AUDIO
+  // ==========================================
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+
+      mediaRecorderRef.current.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        const audioBlobLocal = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        setAudioBlob(audioBlobLocal);
+        stream.getTracks().forEach(track => track.stop()); // Apagar el mic
+      };
+
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+
+      timerRef.current = setInterval(() => {
+        setRecordingTime((prev) => prev + 1);
+      }, 1000);
+    } catch (err) {
+      console.error("Error accediendo al micrófono:", err);
+      alert("No se pudo acceder al micrófono. Por favor, verifica los permisos de tu navegador.");
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop();
+    }
+    setIsRecording(false);
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+
+  const cancelRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop();
+    }
+    setIsRecording(false);
+    setAudioBlob(null); // Descartar el audio
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+
   const formatTime = (seconds: number) => { return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`; };
 
   const handleSendMessage = async () => {
@@ -246,7 +299,7 @@ export default function MessagesDashboard() {
     }
 
     if (isAdmin) {
-      alert("👑 MODO DIOS ACTIVO: Como Admin, no necesitas pagar. (Nota: Ajustaremos el backend luego para que no te salga este botón).");
+      alert("👑 MODO DIOS ACTIVO: Como Admin, no necesitas pagar.");
       return;
     }
 
@@ -360,7 +413,7 @@ export default function MessagesDashboard() {
                   }`}
                 >
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center text-white font-bold shrink-0 shadow-lg relative border-2 border-[#0e0e0e]">
-                    {chat.user?.username ? chat.user.username[0].toUpperCase() : 'U'}
+                    {chat.user?.username ? chat.user.username.toUpperCase() : 'U'}
                     {chat.unread && (
                       <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-black rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]"></span>
                     )}
@@ -391,7 +444,7 @@ export default function MessagesDashboard() {
                   <ArrowLeft className="w-5 h-5" />
                 </button>
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center text-white font-bold shadow-md border-2 border-[#0a0a0a]">
-                   {activeChat.user?.username ? activeChat.user.username[0].toUpperCase() : 'U'}
+                   {activeChat.user?.username ? activeChat.user.username.toUpperCase() : 'U'}
                 </div>
                 <div>
                   <h3 className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
@@ -509,7 +562,6 @@ export default function MessagesDashboard() {
                                />
                              </div>
                           ) : (
-                             // 📸 MINIATURA BLINDADA
                              <div className="px-2 pb-2 mt-1 relative">
                                <img 
                                  src={`${BACKEND_URL}${msg.mediaUrl}`} 
@@ -530,7 +582,7 @@ export default function MessagesDashboard() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* CONTROLES DE ESCRITURA (Hundidos) */}
+            {/* CONTROLES DE ESCRITURA */}
             <div className="p-4 border-t border-white/5 bg-nm-base relative z-20 min-h-[95px] flex flex-col justify-center shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
               {isBlockedByMe ? (
                 <div className="w-full text-center py-3 text-red-400 text-sm font-bold nm-inset border border-red-500/30 rounded-full shadow-inner flex items-center justify-center gap-2">
@@ -619,9 +671,9 @@ export default function MessagesDashboard() {
         )}
       </div>
 
-      {/* MODAL DE BROADCAST (Neumórfico) */}
+      {/* MODAL DE BROADCAST (Corregido z-index) */}
       {isBroadcastModalOpen && currentUser?.role === 'CREATOR' && (
-        <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-black/90 z- flex items-center justify-center p-4 backdrop-blur-sm">
            <div className="nm-inset border border-teal-500/30 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(20,184,166,0.1)]">
             <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#0e0e0e]">
               <h3 className="text-white font-black flex items-center gap-2">
@@ -698,10 +750,10 @@ export default function MessagesDashboard() {
         />
       )}
 
-      {/* 📸 MODAL DE VISOR DE IMÁGENES (CON MARCA DE AGUA Y ESCUDO INVISIBLE) */}
+      {/* 📸 MODAL DE VISOR DE IMÁGENES (Corregido z-index) */}
       {expandedImage && (
         <div 
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none"
+          className="fixed inset-0 z- flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none"
           onClick={() => setExpandedImage(null)}
           onContextMenu={(e) => e.preventDefault()} 
         >
@@ -714,16 +766,12 @@ export default function MessagesDashboard() {
           </button>
           
           <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-            
-            {/* Imagen con "pointer-events-none" para que sea intocable */}
             <img 
               src={expandedImage} 
               alt="Contenido Exclusivo" 
               className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none"
               draggable="false"
             />
-            
-            {/* 💧 MARCA DE AGUA DINÁMICA */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none overflow-hidden opacity-30 mix-blend-overlay">
                <div className="transform -rotate-45 flex flex-col items-center">
                  <span className="text-white text-5xl md:text-8xl font-black uppercase tracking-widest drop-shadow-[0_5px_5px_rgba(0,0,0,1)]">
@@ -734,13 +782,10 @@ export default function MessagesDashboard() {
                  </span>
                </div>
             </div>
-
-            {/* 🛡️ CAPA ESCUDO INVISIBLE (Trampa para clics) */}
             <div 
               className="absolute inset-0 z-10 w-full h-full cursor-default" 
               onContextMenu={(e) => e.preventDefault()}
             ></div>
-
           </div>
         </div>
       )}
