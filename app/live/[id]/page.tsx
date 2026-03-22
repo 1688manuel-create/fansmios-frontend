@@ -19,8 +19,8 @@ import {
 import { Track } from 'livekit-client';
 import '@livekit/components-styles';
 
-// 🔥 ICONOS PREMIUM (Agregué Send, Power y Play)
-import { Eye, X, Lock, Wifi, Tv, Star, Award, Zap, Diamond, Trophy, Send, Power, Play } from 'lucide-react';
+// 🔥 ICONOS PREMIUM (Añadidos UserPlus y Heart para la UI Inmersiva)
+import { Eye, X, Lock, Wifi, Tv, Star, Award, Zap, Diamond, Trophy, Send, Power, Play, UserPlus, Heart } from 'lucide-react';
 
 const SOCKET_URL = 'https://api.fansmio.com';
 
@@ -51,6 +51,7 @@ export default function LiveRoom() {
   const { id } = useParams();
   const router = useRouter();
 
+  // ✅ TU ESTADO (Intacto)
   const [user, setUser] = useState<any>(null);
   const [streamData, setStreamData] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -72,9 +73,9 @@ export default function LiveRoom() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [liveKitToken, setLiveKitToken] = useState("");
 
-  // ✅ NUEVO: Control de Transmisión del Creador
   const [isLiveActive, setIsLiveActive] = useState(false);
 
+  // ✅ TUS EFECTOS Y LÓGICA (Intactos)
   useEffect(() => {
     try {
       const storedUser = typeof window !== "undefined" ? localStorage.getItem('user') : null;
@@ -121,16 +122,14 @@ export default function LiveRoom() {
     if (!user?.id || !id || !hasAccess) return;
 
     socketRef.current?.disconnect();
-
     const socketInstance = io(SOCKET_URL, { transports: ['websocket'] });
     socketRef.current = socketInstance;
 
     socketInstance.on('connect', () => {
-      // Detectamos si eres Admin y NO eres el creador de esta sala
-      const isCreator = String(user.id) === String(streamData.creatorId);
+      // ✅ TU MODO FANTASMA
+      const isCreator = String(user.id) === String(streamData?.creatorId);
       const isGhost = user.role === 'ADMIN' && !isCreator;
 
-      // Le mandamos la bandera 'isGhost' al servidor
       socketInstance.emit('joinLiveStream', { 
         streamId: id, 
         userId: user.id,
@@ -140,7 +139,6 @@ export default function LiveRoom() {
 
     socketInstance.on('newLiveMessage', (msg: any) => {
       setMessages((prev) => [...prev, msg]);
-
       if (msg.isDonation) {
         const giftData = GIFTS.find(g => g.amount === msg.amount);
         if (giftData) triggerGiftEffect(giftData);
@@ -165,14 +163,12 @@ export default function LiveRoom() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // ✅ RELOJ CORREGIDO (Corre automático para los fans)
+  // ✅ TU RELOJ CORREGIDO PARA FANS
   useEffect(() => {
     const timer = setInterval(() => {
       if (!streamData?.createdAt) return;
-      
       const isCreator = String(user?.id) === String(streamData.creatorId) || user?.role === 'ADMIN';
       
-      // Si es creador y no ha dado "Iniciar", pausamos su reloj. Si es fan, avanza libre.
       if (isCreator && !isLiveActive) return;
 
       const diff = Math.floor((Date.now() - new Date(streamData.createdAt).getTime()) / 1000);
@@ -184,6 +180,7 @@ export default function LiveRoom() {
     return () => clearInterval(timer);
   }, [streamData, isLiveActive, user]);
 
+  // ✅ TUS FUNCIONES DE GAMIFICACIÓN Y PAGOS
   const handleStreak = () => {
     setStreak(prev => prev + 1);
     if (streakTimeoutRef.current) clearTimeout(streakTimeoutRef.current);
@@ -233,7 +230,6 @@ export default function LiveRoom() {
     } catch (e) { console.error(e); }
   };
 
-  // ✅ NUEVO: Función para apagar la transmisión
   const handleEndStream = () => {
     if (window.confirm("🚨 ¿Estás seguro que deseas TERMINAR la transmisión?")) {
       liveService.updateStatus(id as string, 'ENDED').then(() => {
@@ -263,253 +259,240 @@ export default function LiveRoom() {
 
   const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || user?.role === 'ADMIN';
 
+  // 🎆 AQUÍ EMPIEZA LA CIRUGÍA: UI INMERSIVA (Tu lógica sigue viva)
   return (
-    // ✅ CORRECCIÓN MÓVIL: El contenedor ahora divide mejor la pantalla en celulares
-    <div className="h-screen bg-black flex flex-col md:flex-row overflow-hidden font-sans relative">
+    <div className="fixed inset-0 bg-black text-white font-sans overflow-hidden">
       
-      {/* 📺 VIDEO: SECCIÓN IZQUIERDA / SUPERIOR */}
-      <div className="flex-1 relative flex flex-col bg-[#050505] h-[50vh] md:h-screen border-b md:border-b-0 md:border-r border-white/10">
-        
-        {/* Header Flotante */}
-        <div className="absolute top-0 w-full p-4 z-30 flex justify-between items-start bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
-          <div className="flex flex-col gap-1 pointer-events-auto">
-            <div className="flex items-center gap-2">
-              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${isLiveActive || !isCreatorOrAdmin ? 'bg-red-600 text-white animate-pulse' : 'bg-gray-600 text-gray-300'}`}>
-                {isLiveActive || !isCreatorOrAdmin ? 'En Vivo' : 'Preparando'}
-              </span>
-              <span className="flex items-center gap-1 text-xs text-white font-bold bg-black/50 px-2 py-0.5 rounded backdrop-blur-md"><Eye className="w-3.5 h-3.5"/> {viewersCount}</span>
-              <span className="text-xs text-gray-300 font-mono bg-black/50 px-2 py-0.5 rounded backdrop-blur-md">{uptime}</span>
-            </div>
-            <h1 className="text-white font-black text-lg drop-shadow-md">{streamData.title}</h1>
-          </div>
-          
-          {/* Si eres fan, solo sales. Si eres creador, es el botón de Apagar */}
-          {!isCreatorOrAdmin ? (
-            <button onClick={() => router.push('/explore')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-red-600 transition-colors backdrop-blur-md">
-              <X className="w-5 h-5" />
-            </button>
-          ) : (
-            <button onClick={handleEndStream} className="pointer-events-auto bg-red-600 hover:bg-red-700 text-white font-black px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
-              <Power className="w-4 h-4" /> Apagar
-            </button>
-          )}
-        </div>
-
-        {/* Ranking Top Fans */}
-        {hasAccess && topDonators.length > 0 && (
-          <div className="absolute top-4 right-20 md:right-4 z-40 bg-black/60 backdrop-blur-md p-3 rounded-xl border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.2)]">
-            <div className="flex items-center gap-1.5 mb-2 border-b border-white/10 pb-1">
-              <Trophy className="w-3.5 h-3.5 text-yellow-400" />
-              <h3 className="text-[11px] text-yellow-400 font-black uppercase tracking-wider">Top FansMio</h3>
-            </div>
-            {topDonators.map((u, i) => (
-              <div key={i} className={`text-xs flex items-center gap-2 ${i === 0 ? 'text-white font-bold' : 'text-gray-300'}`}>
-                <span className={`font-mono ${i===0?'text-yellow-400':i===1?'text-gray-400':'text-orange-400'}`}>#{i+1}</span>
-                <span className="truncate max-w-[80px]">{u.username}</span>
-                <span className="text-green-400 font-mono ml-auto">${u.amount.toFixed(2)}</span>
-              </div>
-            ))}
+      {/* 🎬 CAPA 0: EL VIDEO (Fondo absoluto inmersivo) */}
+      {/* Mantuve tu regla de object-cover para móvil y object-contain para PC */}
+      <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover md:[&_video]:!object-contain [&_video]:!w-full [&_video]:!h-full">
+        {hasAccess && liveKitToken ? (
+          <LiveKitRoom 
+            video={isCreatorOrAdmin ? isLiveActive : false} 
+            audio={isCreatorOrAdmin ? isLiveActive : false} 
+            token={liveKitToken} 
+            serverUrl="wss://live.fansmio.com" 
+            className="w-full h-full"
+          >
+            <StreamStage hasControl={isCreatorOrAdmin && isLiveActive} />
+            <RoomAudioRenderer />
+          </LiveKitRoom>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center opacity-30">
+            <Tv className="w-16 h-16 animate-pulse" />
           </div>
         )}
-
-        {/* Streak System */}
-        {streak > 1 && (
-          <div className="absolute bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 z-40 bg-black/50 backdrop-blur-xl px-6 py-2 rounded-full border border-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.5)] flex items-center gap-2.5 animate-pulse">
-            <Zap className="w-6 h-6 text-yellow-400 fill-yellow-500" />
-            <div className="text-yellow-400 font-black text-xl md:text-2xl tracking-tight">
-              🔥 Racha x{streak}
-            </div>
-          </div>
-        )}
-
-        {/* Efecto de Regalo Gigante */}
-        {giftEffect && (
-          <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none bg-black/30 backdrop-blur-[2px]">
-            <div className="text-center">
-              <div className="text-[100px] md:text-[150px] font-black drop-shadow-[0_0_50px_rgba(255,255,255,0.7)] animate-bounce">
-                {giftEffect.emoji}
-              </div>
-              <div className={`text-2xl md:text-4xl font-black mt-4 uppercase tracking-wider ${giftEffect.style}`}>
-                ¡ {giftEffect.name} !
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ✅ NUEVO: PANTALLA DE PREPARACIÓN PARA EL CREADOR */}
-        {isCreatorOrAdmin && !isLiveActive && hasAccess && (
-          <div className="absolute inset-0 bg-black/80 z-40 flex flex-col items-center justify-center backdrop-blur-md">
-            <div className="text-center max-w-sm px-6">
-              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Tv className="w-10 h-10 text-green-500" />
-              </div>
-              <h2 className="text-3xl font-black text-white mb-2">Tu sala está lista</h2>
-              <p className="text-gray-400 mb-8">Enciende la cámara y arranca el show cuando estés preparado.</p>
-              
-              <button 
-                onClick={() => setIsLiveActive(true)}
-                className="w-full bg-green-500 hover:bg-green-400 text-black font-black text-xl py-4 rounded-full shadow-[0_0_30px_rgba(34,197,94,0.4)] flex items-center justify-center gap-2 transition-transform hover:scale-105"
-              >
-                <Play className="w-6 h-6 fill-black" /> Iniciar Transmisión
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Zona de Reproducción */}
-        <div className="flex-1 relative overflow-hidden flex items-center justify-center bg-black">
-          {!hasAccess ? (
-            <div className="text-center p-8 bg-[#111] rounded-3xl border border-white/10 z-20 shadow-[0_0_60px_rgba(0,0,0,0.8)] max-w-xs m-4">
-              <Lock className="w-16 h-16 text-red-500 mx-auto mb-5 drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]" />
-              <h2 className="text-white font-black text-3xl mb-3 tracking-tighter">🔒 Acceso VIP</h2>
-              <p className="text-gray-400 text-sm mb-6">Solo fans exclusivos pueden presenciar este contenido.</p>
-              
-              <div className="bg-black p-4 rounded-xl mb-6 border border-white/5">
-                <div className="text-gray-500 text-xs uppercase tracking-widest mb-1">Costo del Ticket</div>
-                <div className="text-5xl font-black text-green-500 font-mono tracking-tight">${streamData.price} <span className="text-base text-gray-500">USD</span></div>
-              </div>
-
-              <button onClick={handleBuyTicket} disabled={isProcessing} className="w-full bg-white text-black font-black py-4 rounded-xl text-lg hover:scale-105 transition-transform disabled:opacity-50 flex items-center justify-center gap-2">
-                {isProcessing ? 'Procesando...' : <><Star className="w-5 h-5"/> Desbloquear Ahora</>}
-              </button>
-            </div>
-          ) : liveKitToken ? (
-            <LiveKitRoom
-              // El creador solo transmite video si ya le dio a "Iniciar"
-              video={isCreatorOrAdmin ? isLiveActive : false} 
-              audio={isCreatorOrAdmin ? isLiveActive : false} 
-              token={liveKitToken}
-              serverUrl="wss://live.fansmio.com"
-              className="w-full h-full"
-            >
-              <StreamStage hasControl={isCreatorOrAdmin && isLiveActive} />
-              <RoomAudioRenderer />
-            </LiveKitRoom>
-          ) : (
-            <div className="text-gray-500 animate-pulse flex flex-col items-center">
-               <Tv className="w-8 h-8 mb-2" />
-               Conectando señal VIP...
-            </div>
-          )}
-        </div>
       </div>
 
-      {/* 💬 CHAT: SECCIÓN DERECHA / INFERIOR */}
-      <div className="w-full md:w-[380px] h-[50vh] md:h-screen flex flex-col bg-[#0a0a0a]">
-        
-        <div className="p-3 border-b border-white/10 flex justify-between items-center bg-[#111]">
-          <h2 className="text-white font-black text-sm uppercase tracking-widest">Chat Público</h2>
-          <Wifi className="w-4 h-4 text-green-500" />
+      {/* 🛑 CAPA PAYWALL */}
+      {!hasAccess && (
+        <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4">
+          <div className="text-center p-8 bg-[#111]/90 rounded-3xl border border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.8)] max-w-sm w-full">
+            <Lock className="w-16 h-16 text-red-500 mx-auto mb-5 drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]" />
+            <h2 className="text-white font-black text-3xl mb-3 tracking-tighter">🔒 Acceso VIP</h2>
+            <p className="text-gray-400 text-sm mb-6">Solo fans exclusivos pueden presenciar este contenido.</p>
+            <div className="bg-black/50 p-4 rounded-xl mb-6 border border-white/5">
+              <div className="text-gray-500 text-xs uppercase tracking-widest mb-1">Costo del Ticket</div>
+              <div className="text-5xl font-black text-green-500 font-mono tracking-tight">${streamData.price} <span className="text-base text-gray-500">USD</span></div>
+            </div>
+            <button onClick={handleBuyTicket} disabled={isProcessing} className="w-full bg-white text-black font-black py-4 rounded-full text-lg hover:scale-105 transition-transform disabled:opacity-50 flex items-center justify-center gap-2">
+              {isProcessing ? 'Procesando...' : <><Star className="w-5 h-5"/> Desbloquear Ahora</>}
+            </button>
+          </div>
         </div>
+      )}
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-          {messages.map((msg, i) => {
-            if (msg.isSystem) return <div key={i} className="text-xs text-center text-gray-600 italic p-1 rounded bg-black/20">{msg.content}</div>;
-            const donationGift = msg.isDonation ? GIFTS.find(g => g.amount === msg.amount) : null;
-            return (
-              <div key={i} className={`text-sm p-2 rounded-lg ${msg.isDonation ? 'bg-green-500/10 border border-green-500/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : 'hover:bg-white/5 transition-colors'}`}>
-                <div className="flex items-center gap-1.5 mb-0.5">
-                    {msg.isDonation && <Award className="w-3.5 h-3.5 text-green-400"/>}
-                    <span className={`font-black ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-400'}`}>
-                        {msg.user?.username || 'Sistema'}:
-                    </span>
-                </div>
-                <span className={`${donationGift ? donationGift.style : 'text-gray-200'}`}>
-                  {msg.content}
-                </span>
-              </div>
-            );
-          })}
-          <div ref={chatEndRef} />
+      {/* 📺 CAPA PREPARACIÓN CREADOR */}
+      {isCreatorOrAdmin && !isLiveActive && hasAccess && (
+        <div className="absolute inset-0 z-40 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-4">
+          <div className="text-center max-w-sm px-6">
+            <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30">
+              <Tv className="w-10 h-10 text-green-500" />
+            </div>
+            <h2 className="text-3xl font-black text-white mb-2">Tu sala inmersiva está lista</h2>
+            <p className="text-gray-400 mb-8">Enciende la cámara y arranca el show cuando estés preparado.</p>
+            <button onClick={() => setIsLiveActive(true)} className="w-full bg-green-500 hover:bg-green-400 text-black font-black text-xl py-4 rounded-full shadow-[0_0_30px_rgba(34,197,94,0.4)] flex items-center justify-center gap-2 transition-transform hover:scale-105">
+              <Play className="w-6 h-6 fill-black" /> Iniciar Transmisión
+            </button>
+          </div>
         </div>
+      )}
 
-        {hasAccess && (
-          <div className="p-3 bg-[#111] border-t border-white/10 relative">
+      {/* 💎 CAPA UI INMERSIVA FLOTANTE */}
+      {hasAccess && (
+        <div className="absolute inset-0 z-10 flex flex-col justify-between pointer-events-none">
+          
+          {/* 🔝 TOP HUD: Información y Stats */}
+          <div className="p-4 flex justify-between items-start pointer-events-auto">
             
-            {showGiftMenu && (
-              <div className="absolute bottom-full left-0 w-full p-4 bg-[#111] border-t border-white/10 grid grid-cols-3 gap-2 animate-slide-up shadow-2xl z-20 max-h-[40vh] overflow-y-auto custom-scrollbar">
-                {GIFTS.map((gift: Gift) => (
-                  <button 
-                    key={gift.id} 
-                    onClick={() => sendGift(gift)} 
-                    className="bg-[#0a0a0a]/50 hover:bg-green-600 p-2 rounded-xl transition-all flex flex-col items-center group border border-white/5 hover:border-green-500"
-                  >
-                    <span className="text-4xl group-hover:animate-bounce">{gift.emoji}</span>
-                    <span className="text-xs text-white font-bold tracking-tight mt-1">{gift.name}</span>
-                    <span className="text-xs text-green-400 group-hover:text-black font-mono font-black px-2 py-0.5 rounded-full mt-1">${gift.amount}</span>
+            {/* Cápsula Estilo FansMio */}
+            <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md rounded-full p-1.5 pr-4 border border-white/10 shadow-lg">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-green-500 to-blue-600 flex items-center justify-center font-bold text-lg shadow-inner">
+                {streamData.title.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-bold leading-none text-white">{streamData.creator?.username || 'Creador'}</span>
+                <span className="text-[10px] text-gray-300 flex items-center gap-1 mt-0.5"><Diamond className="w-2.5 h-2.5 text-sky-400"/> FansMio Live</span>
+              </div>
+              {!isCreatorOrAdmin && (
+                <button className="ml-2 bg-green-500 text-black text-xs font-black px-3 py-1.5 rounded-full flex items-center gap-1 hover:scale-105 transition-transform">
+                  <UserPlus className="w-3 h-3" /> Seguir
+                </button>
+              )}
+            </div>
+
+            {/* Controles y Espectadores */}
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-bold">
+                  <Eye className="w-3.5 h-3.5 text-green-400" /> {viewersCount}
+                </div>
+                {!isCreatorOrAdmin ? (
+                  <button onClick={() => router.push('/explore')} className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center hover:bg-white/20 transition-colors">
+                    <X className="w-4 h-4" />
                   </button>
+                ) : (
+                  <button onClick={handleEndStream} className="bg-red-600/90 backdrop-blur-md hover:bg-red-600 font-black px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg text-xs">
+                    <Power className="w-3.5 h-3.5" /> Salir
+                  </button>
+                )}
+              </div>
+              <span className="text-[10px] font-mono bg-black/30 px-2 py-0.5 rounded-md text-gray-300 backdrop-blur-sm">{uptime}</span>
+            </div>
+          </div>
+
+          {/* 🏆 MIDDLE HUD: Gamificación Flotante */}
+          <div className="absolute right-4 top-24 flex flex-col items-end gap-3 pointer-events-auto">
+            {topDonators.length > 0 && (
+              <div className="bg-black/40 backdrop-blur-md p-2.5 rounded-2xl border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.15)] min-w-[120px]">
+                <div className="flex items-center gap-1 mb-1.5 border-b border-white/10 pb-1">
+                  <Trophy className="w-3 h-3 text-yellow-400" />
+                  <span className="text-[9px] text-yellow-400 font-black uppercase tracking-widest">Top Fans</span>
+                </div>
+                {topDonators.map((u, i) => (
+                  <div key={i} className="text-[10px] flex items-center justify-between gap-3 mt-1">
+                    <span className="text-white font-bold truncate max-w-[60px]">{u.username}</span>
+                    <span className="text-green-400 font-mono">${u.amount}</span>
+                  </div>
                 ))}
               </div>
             )}
             
-            {/* ✅ CORRECCIÓN: Botón de Enviar agregado al lado del Input */}
-            <div className="flex gap-2 relative">
-              <input 
-                type="text" 
-                value={chatInput} 
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder="Escribe un mensaje..." 
-                className="flex-1 bg-black text-white px-4 py-3 rounded-xl outline-none border border-white/10 focus:border-green-500/50 transition-colors"
-              />
+            {streak > 1 && (
+              <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-yellow-500/50 flex items-center gap-1.5 animate-pulse">
+                <Zap className="w-4 h-4 text-yellow-400 fill-yellow-500" />
+                <span className="text-yellow-400 font-black text-sm">x{streak}</span>
+              </div>
+            )}
+          </div>
+
+          {/* 🌌 EFECTO REGALO GIGANTE */}
+          {giftEffect && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
+              <div className="text-center animate-bounce">
+                <div className="text-[120px] drop-shadow-[0_0_40px_rgba(255,255,255,0.6)]">{giftEffect.emoji}</div>
+                <div className={`text-2xl font-black mt-2 uppercase tracking-widest ${giftEffect.style}`}>¡{giftEffect.name}!</div>
+              </div>
+            </div>
+          )}
+
+          {/* 💬 BOTTOM HUD: Chat Flotante y Controles (Transparencia) */}
+          <div className="w-full md:w-[450px] bg-gradient-to-t from-black/90 via-black/40 to-transparent pt-12 pb-4 px-4 flex flex-col justify-end pointer-events-auto mt-auto">
+            
+            {/* Zona de Mensajes Difuminada */}
+            <div 
+              className="max-h-[30vh] overflow-y-auto flex flex-col gap-2 custom-scrollbar pb-2" 
+              style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 100%)' }}
+            >
+              {messages.map((msg, i) => {
+                if (msg.isSystem) return <div key={i} className="text-[11px] text-yellow-400/80 italic font-medium px-2 py-0.5 bg-black/20 rounded w-fit">{msg.content}</div>;
+                const gift = msg.isDonation ? GIFTS.find(g => g.amount === msg.amount) : null;
+                
+                return (
+                  <div key={i} className={`text-sm px-3 py-1.5 rounded-2xl w-fit max-w-[90%] ${msg.isDonation ? 'bg-gradient-to-r from-green-500/20 to-transparent border-l-2 border-green-500' : 'bg-black/30 backdrop-blur-sm'}`}>
+                    <span className={`font-bold mr-1.5 text-xs ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'}`}>
+                      {msg.user?.username || 'Usuario'}:
+                    </span>
+                    <span className={`${gift ? gift.style : 'text-white'} text-[13px] leading-tight drop-shadow-md`}>
+                      {msg.content}
+                    </span>
+                  </div>
+                );
+              })}
+              <div ref={chatEndRef} />
+            </div>
+
+            {/* Menú de Regalos Desplegable */}
+            {showGiftMenu && (
+              <div className="absolute bottom-20 left-4 right-4 md:w-[420px] bg-[#111]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 grid grid-cols-3 md:grid-cols-5 gap-2 animate-slide-up shadow-2xl z-20">
+                {GIFTS.map((gift) => (
+                  <button key={gift.id} onClick={() => sendGift(gift)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-green-500 p-2 rounded-xl transition-all flex flex-col items-center group">
+                    <span className="text-3xl group-hover:scale-110 transition-transform">{gift.emoji}</span>
+                    <span className="text-[10px] text-gray-300 font-bold mt-1 text-center leading-tight">{gift.name}</span>
+                    <span className="text-[11px] text-green-400 font-mono font-black mt-0.5">${gift.amount}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Barra de Input Estilo Cápsula */}
+            <div className="flex gap-2 items-center mt-2 relative z-30">
+              <div className="flex-1 bg-black/50 backdrop-blur-md border border-white/20 rounded-full flex items-center px-4 py-1.5 focus-within:border-green-500 transition-colors">
+                <input 
+                  type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Di algo cool..." 
+                  className="bg-transparent text-white text-sm w-full outline-none py-1 placeholder-gray-400"
+                />
+                <button onClick={handleSendMessage} className="text-gray-400 hover:text-green-400 transition-colors p-1">
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
               
-              {/* Botón de Enviar Mensaje (Nuevo) */}
-              <button 
-                onClick={handleSendMessage} 
-                className="w-12 h-12 rounded-xl border border-white/10 bg-black text-gray-400 hover:text-white hover:border-white flex items-center justify-center transition-all"
-                title="Enviar"
-              >
-                <Send className="w-5 h-5" />
+              <button className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+                <Heart className="w-5 h-5" />
               </button>
 
-              {/* Botón de Regalos */}
-              <button 
-                onClick={() => setShowGiftMenu(!showGiftMenu)} 
-                className={`w-12 h-12 rounded-xl border flex items-center justify-center transition-all ${showGiftMenu ? 'bg-green-500 text-black border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.5)]' : 'bg-black text-green-500 border-white/10 hover:border-green-500'}`}
-              >
-                <Diamond className={`w-5 h-5 ${showGiftMenu ? 'animate-pulse' : ''}`} />
+              <button onClick={() => setShowGiftMenu(!showGiftMenu)} className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${showGiftMenu ? 'bg-green-500 text-black shadow-[0_0_15px_rgba(34,197,94,0.5)]' : 'bg-gradient-to-tr from-green-600 to-emerald-400 text-black hover:scale-105'}`}>
+                <Diamond className="w-5 h-5 fill-current" />
               </button>
             </div>
+
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// 🎬 ESCENARIO MULTI-VIDEO SANEADO Y AMPLIADO
+// 🎬 ESCENARIO LIVEKIT (Totalmente de fondo, sin cuadro fantasma)
 function StreamStage({ hasControl }: { hasControl: boolean }) {
   const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: false }]);
-
   const mainTrack = tracks.slice(0, 1);
   const coHostTracks = tracks.slice(1);
 
   return (
-    <div className="w-full h-full flex flex-col relative bg-black">
-      
-      {/* ✅ MAGIA CSS RESPONSIVA: 
-          - Móvil: object-cover (inmersivo, pantalla completa)
-          - PC (md): object-contain (respeta el HD original sin hacer zoom que pixelee) */}
-      <div 
-        className="flex-1 min-h-0 bg-[#050505] overflow-hidden [&_video]:!object-cover md:[&_video]:!object-contain [&_video]:!w-full [&_video]:!h-full [&_.lk-participant-tile]:!w-full [&_.lk-participant-tile]:!h-full"
-      >
+    <div className="w-full h-full flex flex-col relative bg-transparent">
+      {/* Video Principal (Fondo total) */}
+      <div className="absolute inset-0 z-0">
         <GridLayout tracks={mainTrack} style={{ width: '100%', height: '100%' }}>
           <ParticipantTile />
         </GridLayout>
       </div>
 
+      {/* Tira para Co-Hosts (Flotante a la derecha) */}
       {coHostTracks.length > 0 && (
-        <div className="h-24 md:h-32 flex gap-2 p-2 overflow-x-auto bg-[#0a0a0a] border-t border-white/10 shadow-inner custom-scrollbar">
+        <div className="absolute top-20 right-4 flex flex-col gap-2 z-10 w-24">
           {coHostTracks.map((track, i) => (
-            <div key={i} className="w-32 md:w-40 h-full flex-shrink-0 rounded-xl overflow-hidden border border-white/5 bg-[#111]">
+            <div key={i} className="w-24 h-32 rounded-xl overflow-hidden border-2 border-green-500/50 bg-black/50 backdrop-blur-md shadow-lg">
               <ParticipantTile trackRef={track} />
             </div>
           ))}
         </div>
       )}
 
+      {/* Controles Ocultos (Los de LiveKit no estorban) */}
       {hasControl && (
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-black/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50 bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full opacity-0 hover:opacity-100 transition-opacity">
           <ControlBar variation="minimal" controls={{ microphone: true, camera: true, screenShare: false, leave: false, chat: false }} />
         </div>
       )}
