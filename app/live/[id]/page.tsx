@@ -46,11 +46,11 @@ const GIFTS: Gift[] = [
   
   // 🔹 TIER 3: Alto Calibre (Para verdaderos fans y Sugar Daddies)
   { id: 7, name: "Anillo de Diamante", amount: 30, emoji: "💍", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)] tracking-widest" },
-  { id: 8, name: "Deportivo Neón", amount: 40, emoji: "🏎️", style: "text-green-400 font-black drop-shadow-[0_0_18px_rgba(74,222,128,0.9)] italic" },
-  { id: 9, name: "Corazón FansMio", amount: 50, emoji: "❤️‍🔥", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase tracking-[0.2em]" },
+  { id: 8, name: "Deportivo Neón", amount: 50, emoji: "🏎️", style: "text-green-400 font-black drop-shadow-[0_0_18px_rgba(74,222,128,0.9)] italic" },
+  { id: 9, name: "Corazón FansMio", amount: 100, emoji: "❤️‍🔥", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase tracking-[0.2em]" },
   
   // 👑 TIER DIOS: El "Whale Bait" (Diseñado para romper la pantalla y el ego)
-  { id: 10, name: "Universo FansMio", amount: 100, emoji: "🌌", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase tracking-[0.3em]" },
+  { id: 10, name: "Universo FansMio", amount: 200, emoji: "🌌", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase tracking-[0.3em]" },
 ];
 
 interface Donator {
