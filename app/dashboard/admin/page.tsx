@@ -348,14 +348,42 @@ export default function AdminDashboard() {
                 <div className="grid gap-4">
                   {reports.map((r: any) => (
                     <div key={r.id} className="nm-btn border border-red-500/20 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                      <div>
-                        <h4 className="text-lg font-bold text-white mb-1">Motivo: {r.reason}</h4>
-                        <p className="text-sm text-gray-400 mb-2">Reportado por: @{r.reporter?.username} <span className="mx-2">|</span> Acusado: @{r.reportedUser?.username || 'N/A'}</p>
-                        <p className="text-sm bg-black/50 p-3 rounded-xl border border-white/5">{r.description || 'Sin descripción adicional.'}</p>
+                      <div className="w-full">
+                        <h4 className="text-lg font-bold text-white mb-2">Motivo: {r.reason}</h4>
+                        
+                        {/* 🔥 RADAR ACTIVADO: Quién reportó y a quién */}
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-sm text-gray-400 mb-3 bg-black/30 p-3 rounded-xl border border-white/5">
+                          <p>
+                            🚩 Denunciante: <span className="text-white font-bold">@{r.reporter?.username || 'Anónimo'}</span>
+                          </p>
+                          <span className="hidden sm:inline">|</span>
+                          <p>
+                            🎯 Acusado: <span className="text-red-400 font-bold">@{r.reportedUser?.username || r.reportedUsername || 'N/A'}</span>
+                          </p>
+                        </div>
+
+                        {/* 🔥 QUÉ CONTENIDO ES (Post o Perfil) */}
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          <span className="bg-white/10 text-gray-300 text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest border border-white/10">
+                            Tipo: {r.type || 'POST'}
+                          </span>
+                          {r.targetId && (
+                            <span className="bg-red-500/10 text-red-400 text-[10px] px-2 py-1 rounded font-bold border border-red-500/20 truncate max-w-xs">
+                              ID Ref: {r.targetId}
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-sm bg-black/50 p-4 rounded-xl border border-white/5 text-gray-300 italic">"{r.description || 'Sin descripción adicional.'}"</p>
                       </div>
-                      <div className="flex gap-2">
-                        <button onClick={() => handleResolveReport(r.id, 'DISMISSED')} className="px-4 py-2 rounded-full border border-gray-500/50 text-gray-400 font-bold text-xs hover:text-white transition-colors">Descartar</button>
-                        <button onClick={() => handleResolveReport(r.id, 'RESOLVED')} className="px-4 py-2 rounded-full bg-red-600 text-white font-bold text-xs hover:bg-red-500 transition-colors">Tomar Acción</button>
+
+                      <div className="flex sm:flex-col gap-2 shrink-0 w-full md:w-auto mt-4 md:mt-0">
+                        <button onClick={() => handleResolveReport(r.id, 'RESOLVED')} className="flex-1 px-6 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-500 transition-colors shadow-lg">
+                          Tomar Acción
+                        </button>
+                        <button onClick={() => handleResolveReport(r.id, 'DISMISSED')} className="flex-1 px-6 py-2 rounded-xl border border-gray-600/50 text-gray-400 font-bold text-xs hover:text-white hover:bg-white/5 transition-colors">
+                          Descartar
+                        </button>
                       </div>
                     </div>
                   ))}
