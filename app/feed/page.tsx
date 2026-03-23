@@ -10,6 +10,7 @@ import { chatService } from '../../lib/chatService';
 import api from '../../lib/api'; 
 import PaymentModal from '../../components/PaymentModal';
 import TipModal from '../../components/TipModal';
+import ReportModal from '../../components/ReportModal'; 
 import { liveService } from '../../lib/liveService';
 import AppLayout from '../../components/AppLayout';
 import React from 'react';
@@ -18,7 +19,7 @@ import BoostModal from '../../components/BoostModal';
 import { 
   Image as ImageIcon, Lock, Radio, Bell, MessageCircle, LogOut, 
   Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, X, User,
-  TrendingUp, Zap, Star, ChevronRight, Send
+  TrendingUp, Zap, Star, ChevronRight, Send, Flag
 } from 'lucide-react';
 
 import { requestPushPermission } from '../../lib/firebase';
@@ -40,7 +41,7 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (CON CANDADO)
+// 🌳 NODO DE COMENTARIOS
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
 
@@ -69,7 +70,6 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         </div>
       </div>
       
-      {/* 🔒 CANDADO ABSOLUTO PARA LOS HIJOS */}
       {(isExpanded === true) && comment.replies && comment.replies.length > 0 && (
         <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1">
           {comment.replies.map((reply: any) => (
@@ -93,6 +93,8 @@ export default function Feed() {
   
   const [isTipModalOpen, setIsTipModalOpen] = useState(false);
   const [tipRecipient, setTipRecipient] = useState<any>(null);
+
+  const [reportData, setReportData] = useState<{type: 'POST', targetId: string, reportedUsername: string} | null>(null);
 
   const [newPostContent, setNewPostContent] = useState('');
   const [isPublishing, setIsPublishing] = useState(false);
@@ -143,16 +145,16 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🎯 FRANCOTIRADOR DEFINITIVO
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
       const hash = window.location.hash;
       if (hash && hash.startsWith('#post-')) {
-        
         const hashWithoutHash = hash.substring(1); 
         const parts = hashWithoutHash.split('-comment-');
-        const postIdRaw = parts[0].replace('post-', '');
-        const commentIdRaw = parts[1]; 
+        
+        const firstPart = parts[0] || '';
+        const postIdRaw = firstPart.replace('post-', '');
+        const commentIdRaw = parts[1] || null; 
         
         setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
 
@@ -297,7 +299,7 @@ export default function Feed() {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setSelectedImage(file);
       setImagePreview(URL.createObjectURL(file)); 
@@ -322,11 +324,12 @@ export default function Feed() {
   };
 
   const handleStoryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
       const caption = window.prompt("Mensaje para tus fans (Opcional):");
       setIsUploadingStory(true);
       try {
-        await storyService.createStory(e.target.files[0], caption || '');
+        await storyService.createStory(file, caption || '');
         await fetchData(); 
       } catch (error) { alert("Error al subir historia."); } 
       finally {
@@ -406,7 +409,7 @@ export default function Feed() {
           <div className="flex items-center gap-2 sm:gap-4">
             <span className="text-gray-400 text-sm hidden sm:flex items-center gap-1.5 font-medium bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               {user?.role === 'ADMIN' ? <Crown className="w-4 h-4 text-red-500"/> : user?.role === 'CREATOR' ? <Crown className="w-4 h-4 text-yellow-500"/> : <User className="w-4 h-4 text-blue-400"/>} 
-              <span className="text-white ml-1 font-bold">{user?.username || user?.email?.split('@')[0]}</span>
+              <span className="text-white ml-1 font-bold">{user?.username || user?.email?.split('@')}</span>
             </span>
             
             <button onClick={() => router.push('/dashboard/notifications')} className="relative text-xs nm-btn text-gray-300 px-3 sm:px-4 py-2 rounded-full hover:text-white transition-all font-bold flex items-center gap-1.5">
@@ -462,7 +465,7 @@ export default function Feed() {
                           <img src={getImageUrl(vipCreator.creatorProfile.profileImage)} className="w-full h-full object-cover" alt="Avatar VIP" />
                         ) : (
                           <span className="text-2xl text-yellow-400 font-bold bg-[#111]">
-                            {(vipCreator.username || 'V')[0].toUpperCase()}
+                            {(vipCreator.username || 'V').toUpperCase()}
                           </span>
                         )}
                       </div>
@@ -478,7 +481,7 @@ export default function Feed() {
                 <div key={story.id} onClick={() => openStory(story)} className="flex flex-col items-center gap-1 cursor-pointer group shrink-0">
                   <div className="w-16 h-16 rounded-full p-1 transition-transform group-hover:scale-105 bg-gradient-to-tr from-red-600 to-orange-500 shadow-lg">
                     <div className="w-full h-full rounded-full bg-black border-2 border-black flex items-center justify-center overflow-hidden">
-                      {story.creator?.creatorProfile?.profileImage ? <img src={getImageUrl(story.creator.creatorProfile.profileImage)} alt="Avatar" className="w-full h-full object-cover" /> : <span className="text-xl text-white font-bold">{(story.creator?.username || 'U')[0].toUpperCase()}</span>}
+                      {story.creator?.creatorProfile?.profileImage ? <img src={getImageUrl(story.creator.creatorProfile.profileImage)} alt="Avatar" className="w-full h-full object-cover" /> : <span className="text-xl text-white font-bold">{(story.creator?.username || 'U').toUpperCase()}</span>}
                     </div>
                   </div>
                   <span className="text-xs text-gray-300 max-w-[64px] truncate font-medium">@{story.creator?.username || 'Usuario'}</span>
@@ -507,7 +510,6 @@ export default function Feed() {
               </div>
             )}
 
-            {/* PANEL CREADOR COMPLETO RESTAURADO */}
             {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
               <div className="nm-inset p-6 rounded-[2rem] space-y-4 border border-white/5">
                 <div className="flex gap-4">
@@ -519,12 +521,11 @@ export default function Feed() {
                       return avatarUrl ? (
                         <img src={getImageUrl(avatarUrl)} className="w-full h-full object-cover object-center" alt="Avatar" />
                       ) : (
-                        (user?.username || 'C')[0].toUpperCase()
+                        (user?.username || 'C').toUpperCase()
                       );
                     })()}
                   </div>
                   
-                  {/* AQUÍ ESTÁ TU CUADRO DE TEXTO QUE HABÍA DESAPARECIDO */}
                   <div className="w-full pt-2">
                     <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} className="w-full bg-transparent text-white placeholder-gray-500 outline-none resize-none" placeholder="¿Qué contenido exclusivo vas a subir hoy?" rows={2}></textarea>
                     {imagePreview && (
@@ -581,9 +582,10 @@ export default function Feed() {
                         </div>
                       )}
 
-                      <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
+                      <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border group ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
                         
-                        {isOwner && (
+                        {/* 🔥 BOTONES DE ACCIÓN SUPERIOR (Papelera vs Banderita) */}
+                        {isOwner ? (
                           <button 
                             onClick={() => handleDeletePost(post.id)}
                             className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
@@ -591,16 +593,23 @@ export default function Feed() {
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
+                        ) : (
+                          <button 
+                            onClick={() => setReportData({ type: 'POST', targetId: post.id, reportedUsername: post.user?.username })}
+                            className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20 opacity-50 hover:opacity-100"
+                            title="Reportar esta publicación al Administrador"
+                          >
+                            <Flag className="w-5 h-5" />
+                          </button>
                         )}
 
                         <div className="flex justify-between items-center relative z-10">
                           <div className="flex items-center gap-3">
                             <div onClick={() => router.push(`/${post.user.username}`)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shadow-lg overflow-hidden cursor-pointer border ${post.isPromoted ? 'border-yellow-500' : 'border-white/10'}`}>
-                              {post.user?.creatorProfile?.profileImage ? <img src={getImageUrl(post.user.creatorProfile.profileImage)} className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center ${post.isPromoted ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}>{(post.user?.username || 'U')[0].toUpperCase()}</div>}
+                              {post.user?.creatorProfile?.profileImage ? <img src={getImageUrl(post.user.creatorProfile.profileImage)} className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center ${post.isPromoted ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}>{(post.user?.username || 'U').toUpperCase()}</div>}
                             </div>
                             <div onClick={() => router.push(`/${post.user.username}`)} className="cursor-pointer group">
                               <h3 className={`font-bold text-lg ${post.isPromoted ? 'text-yellow-500' : 'text-white'}`}>@{post.user?.username || 'usuario'}</h3>
-                              {/* 🔥 INDICADOR VIP / PPV ACTUALIZADO */}
                               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
                                 {post.isPPV ? (
                                   <><Unlock className="w-3 h-3 text-green-400"/> {isOwner ? `PPV: $${(post.price || 0).toFixed(2)}` : 'Comprado'}</>
@@ -612,7 +621,7 @@ export default function Feed() {
                               </p>
                             </div>
                           </div>
-                          {post.isPromoted && !isOwner && <button onClick={() => router.push(`/${post.user.username}`)} className="nm-btn border-yellow-500/30 text-yellow-500 px-4 py-2 rounded-full text-xs font-bold">Ver Perfil</button>}
+                          {post.isPromoted && !isOwner && <button onClick={() => router.push(`/${post.user.username}`)} className="nm-btn border-yellow-500/30 text-yellow-500 px-4 py-2 rounded-full text-xs font-bold mr-10">Ver Perfil</button>}
                         </div>
                         
                         {post.content && <p className="text-gray-200 text-base leading-relaxed">{post.content}</p>}
@@ -756,7 +765,7 @@ export default function Feed() {
                     <div key={creator.id} onClick={() => router.push(`/${creator.username}`)} className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 cursor-pointer group">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-yellow-400 to-yellow-600 flex items-center justify-center text-black font-bold border border-yellow-500/50 overflow-hidden shadow-lg">
-                          {creator.creatorProfile?.profileImage ? <img src={getImageUrl(creator.creatorProfile.profileImage)} className="w-full h-full object-cover" /> : (creator.username || 'U')[0].toUpperCase()}
+                          {creator.creatorProfile?.profileImage ? <img src={getImageUrl(creator.creatorProfile.profileImage)} className="w-full h-full object-cover" /> : (creator.username || 'U').toUpperCase()}
                         </div>
                         <div>
                           <p className="text-white font-bold text-sm flex items-center gap-1">{creator.username || 'Usuario'} {idx === 0 && <Star className="w-3 h-3 text-yellow-500 fill-yellow-500"/>}</p>
@@ -786,7 +795,7 @@ export default function Feed() {
                            <img src={getImageUrl(featuredBundle.creator.creatorProfile.profileImage)} className="w-full h-full object-cover" alt="Avatar" />
                          ) : (
                            <span className="w-full h-full flex items-center justify-center text-xl font-bold text-white bg-gradient-to-r from-blue-500 to-purple-500">
-                             {(featuredBundle.creator?.username || 'U')[0].toUpperCase()}
+                             {(featuredBundle.creator?.username || 'U').toUpperCase()}
                            </span>
                          )}
                        </div>
@@ -823,11 +832,11 @@ export default function Feed() {
         
         {/* ================= MODALES ================= */}
         {activeStory && (
-          <div className="fixed inset-0 z-[200] bg-black/95 flex flex-col animate-fade-in select-none">
+          <div className="fixed inset-0 z- bg-black/95 flex flex-col animate-fade-in select-none">
             <div className="flex justify-between items-center p-4 absolute top-0 w-full z-10 bg-gradient-to-b from-black/80 to-transparent">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/20 shadow-lg">
-                  {activeStory.creator?.creatorProfile?.profileImage ? <img src={getImageUrl(activeStory.creator.creatorProfile.profileImage)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white font-bold">{(activeStory.creator?.username || 'U')[0].toUpperCase()}</div>}
+                  {activeStory.creator?.creatorProfile?.profileImage ? <img src={getImageUrl(activeStory.creator.creatorProfile.profileImage)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white font-bold">{(activeStory.creator?.username || 'U').toUpperCase()}</div>}
                 </div>
                 <span className="text-white font-bold drop-shadow-md">@{activeStory.creator?.username}</span>
               </div>
@@ -906,8 +915,18 @@ export default function Feed() {
           />
         )}
 
+        {/* 🔥 MODAL DE REPORTES INTEGRADO AQUÍ */}
+        {reportData && (
+          <ReportModal 
+            type={reportData.type}
+            targetId={reportData.targetId}
+            reportedUsername={reportData.reportedUsername}
+            onClose={() => setReportData(null)}
+          />
+        )}
+
         {expandedImage && (
-          <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" onClick={() => setExpandedImage(null)} onContextMenu={(e) => e.preventDefault()}>
+          <div className="fixed inset-0 z- flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" onClick={() => setExpandedImage(null)} onContextMenu={(e) => e.preventDefault()}>
             <button onClick={() => setExpandedImage(null)} className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all z-50 border border-white/10" title="Cerrar"><X className="w-6 h-6" /></button>
             <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
               <img src={expandedImage.url} alt="Exclusivo" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" />
