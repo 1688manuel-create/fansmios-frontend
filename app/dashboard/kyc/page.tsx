@@ -1,4 +1,3 @@
-// frontend/app/dashboard/kyc/page.tsx
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -46,6 +45,7 @@ export default function KYCVerification() {
 
   // Controladores de Cámara (Fotos y Video)
   const videoRef = useRef<HTMLVideoElement>(null);
+  const directorVideoRef = useRef<HTMLVideoElement>(null); // Ref separada para el modal del director
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeCamera, setActiveCamera] = useState<CameraMode>(null);
 
@@ -55,8 +55,9 @@ export default function KYCVerification() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<BlobPart[]>([]);
+  const directorIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // 🎤 INSTRUCCIONES DEL DIRECTOR VIRTUAL (Cambian cada 3.5 segundos)
+  // 🎤 INSTRUCCIONES DEL DIRECTOR VIRTUAL
   const livenessPrompts = [
     "Centra tu rostro en la cámara... 📷",
     "Gira la cabeza hacia la DERECHA ➡️",
@@ -65,14 +66,16 @@ export default function KYCVerification() {
     "Mueve la cabeza hacia ABAJO ⬇️",
     "Abre la boca y ciérrala 😲",
     "Habla fuerte: Di tu Nombre Completo 🗣️",
-    "Habla fuerte: Di tu Fecha de Nacimiento 📅",
     "Habla fuerte: Di tu Edad actual 🎂",
     "¡Perfecto! Procesando video de seguridad... 🛡️"
   ];
 
   useEffect(() => {
     fetchKycStatus();
-    return () => stopCamera();
+    return () => {
+      stopCamera();
+      if (directorIntervalRef.current) clearInterval(directorIntervalRef.current);
+    };
   }, []);
 
   const fetchKycStatus = async () => {
@@ -93,25 +96,37 @@ export default function KYCVerification() {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
     }
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach(track => track.stop());
-      videoRef.current.srcObject = null;
+    if (videoRef.current) videoRef.current.srcObject = null;
+    if (directorVideoRef.current) directorVideoRef.current.srcObject = null;
+    
+    if (directorIntervalRef.current) {
+      clearInterval(directorIntervalRef.current);
+      directorIntervalRef.current = null;
     }
+    
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop();
+    }
+    
     setActiveCamera(null);
+    setIsRecording(false);
   };
 
   // 📸 ENCENDER LA CÁMARA PARA FOTOS (Frente y Reverso)
   const startPhotoCamera = async (mode: CameraMode) => {
     try {
-      stopCamera(); // Aseguramos que no haya otra cámara abierta
+      stopCamera(); 
       const facingMode = mode === 'FRONT' || mode === 'BACK' ? 'environment' : 'user';
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
       
-      streamRef.current = stream; // Guardar referencia para poder apagarla
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
+      streamRef.current = stream; 
+      
+      // Pequeño timeout para asegurar que el DOM pintó el videoRef
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      }, 100);
       
       setActiveCamera(mode);
       
@@ -124,7 +139,7 @@ export default function KYCVerification() {
     }
   };
 
-  // 📷 TOMAR LA FOTO (Frente y Reverso)
+  // 📷 TOMAR LA FOTO
   const takeSnapshot = () => {
     if (videoRef.current && canvasRef.current && activeCamera) {
       const context = canvasRef.current.getContext('2d');
@@ -155,25 +170,29 @@ export default function KYCVerification() {
     }
   };
 
-  // 🔥 MOTOR DE GRABACIÓN DE VIDEO (PRUEBA DE VIDA) - BLINDADO PARA iPHONE
+  // 🔥 MOTOR DE GRABACIÓN DE VIDEO (PRUEBA DE VIDA)
   const startVideoRecording = async () => {
     try {
-      stopCamera(); // Apagamos fotos si estaban encendidas
+      stopCamera(); 
       setSelfieVideo(null);
       setSelfiePreview(null);
       setRecordingStep(0);
       chunksRef.current = [];
 
-      // Pedir permisos de cámara Y AUDIO
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
+      
+      setIsRecording(true); // Encendemos el flag primero para que React pinte el modal
+      setActiveCamera('SELFIE');
 
-      // 🍎 SOPORTE PARA APPLE / iPHONE (Si webm no es soportado, usa mp4)
+      setTimeout(() => {
+        if (directorVideoRef.current) {
+          directorVideoRef.current.srcObject = stream;
+        }
+      }, 100);
+
       let mimeType = 'video/webm';
-      if (!MediaRecorder.isTypeSupported('video/webm')) {
+      if (typeof MediaRecorder !== 'undefined' && !MediaRecorder.isTypeSupported('video/webm')) {
         mimeType = 'video/mp4'; 
       }
 
@@ -185,36 +204,33 @@ export default function KYCVerification() {
       };
 
       mediaRecorder.onstop = () => {
-        // Usamos el formato en el que se grabó para evitar archivos corruptos
         const recordedMimeType = mediaRecorder.mimeType || mimeType;
         const videoBlob = new Blob(chunksRef.current, { type: recordedMimeType });
         
         setSelfieVideo(videoBlob);
-        setSelfiePreview(URL.createObjectURL(videoBlob)); // Para que el creador vea que se grabó
+        setSelfiePreview(URL.createObjectURL(videoBlob)); 
         stopCamera();
-        setIsRecording(false);
       };
 
-      // Iniciar Grabación
       mediaRecorder.start();
-      setIsRecording(true);
 
-      // El Director Virtual: Cambiar instrucciones cada 3.5 segundos
       let step = 0;
-      const interval = setInterval(() => {
+      directorIntervalRef.current = setInterval(() => {
         step++;
         if (step < livenessPrompts.length) {
           setRecordingStep(step);
         }
         if (step === livenessPrompts.length - 1) {
-          // Detener la grabación al llegar al último paso
-          mediaRecorder.stop();
-          clearInterval(interval);
+          if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+            mediaRecorderRef.current.stop();
+          }
+          if (directorIntervalRef.current) clearInterval(directorIntervalRef.current);
         }
       }, 3500); 
 
     } catch (error) {
-      alert("❌ No se pudo acceder a la cámara o micrófono. Por favor, otorga los permisos en tu navegador.");
+      alert("❌ No se pudo acceder a la cámara o micrófono. Verifica los permisos.");
+      stopCamera();
     }
   };
 
@@ -230,7 +246,6 @@ export default function KYCVerification() {
     formData.append('idFront', idFrontImage);
     formData.append('idBack', idBackImage);
     
-    // 🔥 Determinamos la extensión dinámicamente según el iPhone o Android
     const ext = selfieVideo.type.includes('mp4') ? 'mp4' : 'webm';
     formData.append('idSelfie', selfieVideo, `liveness.${ext}`); 
 
@@ -249,7 +264,7 @@ export default function KYCVerification() {
 
   if (isLoading) return <AppLayout><div className="min-h-screen bg-nm-base flex items-center justify-center"><Loader2 className="w-12 h-12 text-blue-500 animate-spin"/></div></AppLayout>;
 
-  // 🎨 FUNCIÓN RENDERIZADORA (Evita el bug de React de reiniciar la cámara)
+  // 🎨 FUNCIÓN RENDERIZADORA DE FOTOS
   const renderPhotoBox = (title: string, Icon: any, description: string, preview: string | null, mode: CameraMode, activeColorClass: string, hasFile: boolean) => (
     <div className={`p-6 rounded-[2rem] flex flex-col justify-between overflow-hidden transition-all ${hasFile ? 'nm-inset border border-green-500/20' : 'nm-btn border border-white/5'}`}>
       <div className="mb-6 text-center">
@@ -262,7 +277,6 @@ export default function KYCVerification() {
 
       {activeCamera === mode ? (
         <div className={`relative w-full rounded-2xl overflow-hidden border border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.3)] bg-black h-40 md:h-48 nm-inset`}>
-          {/* El tag video está atado a videoRef para mostrar la cámara en vivo */}
           <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
           <button onClick={takeSnapshot} className="absolute bottom-3 left-1/2 transform -translate-x-1/2 nm-btn-primary px-6 py-2.5 rounded-full z-10 flex items-center gap-2 text-sm font-bold shadow-2xl">
             <Camera className="w-4 h-4"/> Capturar
@@ -347,7 +361,6 @@ export default function KYCVerification() {
 
               <div className="grid md:grid-cols-3 gap-6">
                 
-                {/* CAJAS DE FOTOS (FRENTE Y REVERSO) - Pasadas por la función pura */}
                 {renderPhotoBox(
                   "1. Frente del ID", 
                   IdCard, 
@@ -399,36 +412,6 @@ export default function KYCVerification() {
 
               </div>
 
-              {/* 🎥 MODAL FLOTANTE DEL DIRECTOR VIRTUAL */}
-              {isRecording && (
-                <div className="fixed inset-0 z-[500] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 animate-fade-in">
-                  <div className="bg-[#0a0a0a] border border-red-500/50 p-4 rounded-[2rem] w-full max-w-sm flex flex-col items-center shadow-[0_0_50px_rgba(239,68,68,0.15)]">
-                    <h3 className="text-white font-black text-xl mb-4">Prueba de Vida</h3>
-                    
-                    <div className="w-full aspect-[3/4] bg-black rounded-2xl overflow-hidden relative border-2 border-white/10">
-                      {/* Video Ref de Grabación */}
-                      <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover transform -scale-x-100" />
-                      
-                      {/* DIRECTOR VIRTUAL (Instrucciones) */}
-                      <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col items-center justify-end h-1/2">
-                        <div className="bg-black/60 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-center shadow-2xl animate-pulse min-h-[80px] flex items-center justify-center w-full">
-                          <p className="text-white font-black text-lg leading-tight">{livenessPrompts[recordingStep]}</p>
-                        </div>
-                      </div>
-                      
-                      {/* FOCO ROJO DE GRABACIÓN */}
-                      <div className="absolute top-4 right-4 bg-red-600 px-3 py-1 rounded-full text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 animate-pulse shadow-lg">
-                        <div className="w-2 h-2 bg-white rounded-full"></div> REC
-                      </div>
-                    </div>
-
-                    <p className="text-gray-500 text-xs mt-6 font-bold uppercase tracking-widest text-center">
-                      El video se detendrá automáticamente.<br/>Asegúrate de hablar fuerte y claro.
-                    </p>
-                  </div>
-                </div>
-              )}
-
               {/* Canvas oculto para procesar las fotos */}
               <canvas ref={canvasRef} className="hidden" />
 
@@ -452,6 +435,42 @@ export default function KYCVerification() {
             </div>
           )}
         </main>
+
+        {/* 🎥 MODAL FLOTANTE DEL DIRECTOR VIRTUAL (Arreglado el DOM) */}
+        {isRecording && (
+          <div className="fixed inset-0 z- flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 animate-fade-in">
+            <div className="bg-[#0a0a0a] border border-red-500/50 p-4 rounded-[2rem] w-full max-w-sm flex flex-col items-center shadow-[0_0_50px_rgba(239,68,68,0.15)] relative">
+              
+              <button onClick={stopCamera} className="absolute -top-4 -right-4 bg-red-500 text-white p-2 rounded-full shadow-xl hover:bg-red-600 transition-colors z-50">
+                <X className="w-5 h-5"/>
+              </button>
+
+              <h3 className="text-white font-black text-xl mb-4">Prueba de Vida</h3>
+              
+              <div className="w-full aspect-[3/4] bg-black rounded-2xl overflow-hidden relative border-2 border-white/10">
+                {/* Video Ref de Grabación */}
+                <video ref={directorVideoRef} autoPlay muted playsInline className="w-full h-full object-cover transform -scale-x-100" />
+                
+                {/* DIRECTOR VIRTUAL (Instrucciones) */}
+                <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col items-center justify-end h-1/2">
+                  <div className="bg-black/60 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-center shadow-2xl animate-pulse min-h-[80px] flex items-center justify-center w-full">
+                    <p className="text-white font-black text-lg leading-tight">{livenessPrompts[recordingStep]}</p>
+                  </div>
+                </div>
+                
+                {/* FOCO ROJO DE GRABACIÓN */}
+                <div className="absolute top-4 right-4 bg-red-600 px-3 py-1 rounded-full text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 animate-pulse shadow-lg">
+                  <div className="w-2 h-2 bg-white rounded-full"></div> REC
+                </div>
+              </div>
+
+              <p className="text-gray-500 text-xs mt-6 font-bold uppercase tracking-widest text-center">
+                El video se detendrá automáticamente.<br/>Asegúrate de hablar fuerte y claro.
+              </p>
+            </div>
+          </div>
+        )}
+
       </div>
     </AppLayout>
   );
