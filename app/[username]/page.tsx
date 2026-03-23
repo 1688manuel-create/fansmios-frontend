@@ -666,11 +666,24 @@ export default function CreatorProfile() {
         )}
 
         {expandedImage && (
-          <div className="fixed inset-0 z- flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" onClick={() => setExpandedImage(null)} onContextMenu={(e) => e.preventDefault()}>
-            <button onClick={() => setExpandedImage(null)} className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all z-50 border border-white/10" title="Cerrar"><X className="w-6 h-6" /></button>
+          <div 
+            className="fixed inset-0 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" 
+            style={{ zIndex: 99999 }}
+            onClick={() => setExpandedImage(null)} 
+            onContextMenu={(e) => e.preventDefault()}
+          >
+            <button 
+              onClick={() => setExpandedImage(null)} 
+              className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all border border-white/10" 
+              style={{ zIndex: 100000 }} 
+              title="Cerrar"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
             <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
               <img src={expandedImage.url} alt="Exclusivo" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" />
-              <div className="absolute inset-0 z-10 w-full h-full cursor-default"></div>
+              <div className="absolute inset-0 w-full h-full cursor-default" style={{ zIndex: 10 }}></div>
             </div>
           </div>
         )}
