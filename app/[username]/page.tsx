@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { postService } from '../../lib/postService';
@@ -13,7 +13,7 @@ import { paymentService } from '../../lib/paymentService';
 import { 
   ArrowLeft, CheckCircle2, MessageCircle, Star, Lock, 
   Unlock, Trash2, Coins, Package, Ghost, X, Plus, Crown, Send,
-  Instagram, Twitter, Globe
+  Instagram, Twitter, Globe, ShieldAlert
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -35,7 +35,7 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
 
 // 🌳 NODO DE COMENTARIOS PARA EL PERFIL
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
-  const isOwner = currentUser?.id === comment.userId;
+  const isOwner = currentUser?.id === comment.userId || currentUser?.role === 'ADMIN'; // 🔥 Admin también puede borrar comentarios
 
   return (
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
@@ -67,7 +67,7 @@ export default function CreatorProfile() {
   const router = useRouter();
   
   const rawUsername = params?.username;
-  const username = Array.isArray(rawUsername) ? rawUsername[0] : rawUsername;
+  const username = Array.isArray(rawUsername) ? rawUsername : rawUsername;
 
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [creator, setCreator] = useState<any>(null);
@@ -115,8 +115,10 @@ export default function CreatorProfile() {
       if (hash && hash.startsWith('#post-')) {
         const hashWithoutHash = hash.substring(1); 
         const parts = hashWithoutHash.split('-comment-');
-        const postIdRaw = parts[0].replace('post-', '');
-        const commentIdRaw = parts[1]; 
+        
+        const firstPart = parts[0] || '';
+        const postIdRaw = firstPart.replace('post-', '');
+        const commentIdRaw = parts[1] || null; 
         
         setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
 
@@ -314,7 +316,9 @@ export default function CreatorProfile() {
   if (hasError || !creator) return <div className="min-h-screen bg-nm-base text-white flex flex-col items-center justify-center"><Ghost className="w-20 h-20 text-gray-600"/><h2 className="text-3xl font-black">Página no encontrada</h2></div>;
 
   const profile = creator.creatorProfile || {};
-  const isOwner = currentUser && creator && currentUser.id === creator.id;
+  
+  // 🔥 EL BYPASS DIVINO (Dueño O Admin)
+  const isOwnerOrAdmin = currentUser && (currentUser.id === creator.id || currentUser.role === 'ADMIN');
 
   return (
     <AppLayout>
@@ -343,20 +347,21 @@ export default function CreatorProfile() {
                 className="w-32 h-32 rounded-full border-4 border-[#0e0e0e] shadow-[0_0_30px_rgba(0,0,0,0.8)] flex items-center justify-center text-white text-5xl font-black bg-[#0a0a0a] relative overflow-hidden shrink-0 z-10 nm-inset select-none"
                 onContextMenu={(e) => e.preventDefault()}
               >
-                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-blue-600 to-purple-600 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U')[0].toUpperCase()}</span>}
+                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-blue-600 to-purple-600 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase()}</span>}
               </div>
               
               <div className="mt-4">
                 <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-2">
                   {creator.name || creator.username}
                   {profile.isVerified && <CheckCircle2 className="w-6 h-6 text-blue-500 fill-blue-500/20" />}
+                  {currentUser?.role === 'ADMIN' && <span title="Visualizando como Administrador"><ShieldAlert className="w-5 h-5 text-red-500" /></span>}
                 </h1>
                 <p className="text-gray-400 text-sm font-bold mt-1">@{creator.username}</p>
               </div>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-              {(!isOwner) && (
+              {(!isOwnerOrAdmin) && (
                 <>
                   <button 
                     onClick={handleFollowToggle}
@@ -375,8 +380,8 @@ export default function CreatorProfile() {
                 </>
               )}
 
-              {/* BOTÓN DE SUSCRIPCIÓN */}
-              {(!isOwner) && (
+              {/* BOTÓN DE SUSCRIPCIÓN O MODO DIOS */}
+              {(!isOwnerOrAdmin) && (
                 isSubscribed ? (
                   <button disabled className="nm-inset text-yellow-500 border border-yellow-500/30 font-bold py-3 px-8 rounded-xl cursor-default w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
                     <Star className="w-4 h-4 fill-yellow-500/20"/> Eres VIP
@@ -386,6 +391,13 @@ export default function CreatorProfile() {
                     <Crown className="w-5 h-5"/> Suscribirse • ${(profile.monthlyPrice || 0).toFixed(2)}/mes
                   </button>
                 )
+              )}
+              
+              {/* CARTEL DEL MODO DIOS */}
+              {currentUser?.role === 'ADMIN' && !isOwnerOrAdmin && (
+                <div className="nm-inset border border-red-500/30 text-red-500 font-bold py-3 px-8 rounded-xl cursor-default w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-widest text-sm bg-red-900/10">
+                  <ShieldAlert className="w-4 h-4"/> MODO DIOS ACTIVO
+                </div>
               )}
             </div>
           </div>
@@ -440,7 +452,11 @@ export default function CreatorProfile() {
                     <p className="text-sm text-gray-500 mt-2 mb-6 line-clamp-2">{bundle.description}</p>
                     <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
                       <span className="text-xs font-bold text-blue-400 nm-inset px-3 py-1.5 rounded-md border border-blue-500/20">{bundle.posts?.length} Archivos</span>
-                      <button className="nm-btn-primary py-2.5 px-6 text-sm">Comprar ${(bundle.price || 0).toFixed(2)}</button>
+                      {isOwnerOrAdmin ? (
+                        <button className="nm-btn-primary py-2.5 px-6 text-sm bg-red-600">Ver Paquete</button>
+                      ) : (
+                        <button className="nm-btn-primary py-2.5 px-6 text-sm">Comprar ${(bundle.price || 0).toFixed(2)}</button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -451,7 +467,8 @@ export default function CreatorProfile() {
           <div className="space-y-6">
             {posts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5">Aún no hay publicaciones.</div> : (
               posts.map((post) => {
-                const isPostUnlocked = isOwner || post.hasAccess;
+                // 🔥 AQUÍ ROMPEMOS EL CANDADO PARA EL ADMIN
+                const isPostUnlocked = isOwnerOrAdmin || post.hasAccess;
                 const rootComments = buildCommentTree(post.comments || []);
                 const totalComments = post._count?.comments || 0;
                 const isExpanded = expandedComments[post.id] || false;
@@ -462,7 +479,7 @@ export default function CreatorProfile() {
                     <div className="flex justify-between items-center relative z-10">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full nm-inset flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border border-white/5">
-                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center">{creator.username[0].toUpperCase()}</div>}
+                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
                         </div>
                         <div>
                           <h3 className="text-white font-bold text-base">{creator.username}</h3>
@@ -492,7 +509,8 @@ export default function CreatorProfile() {
                 ) : (
                   <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
                     
-                    {isOwner && (
+                    {/* EL ADMIN TAMBIÉN PUEDE BORRAR POSTS */}
+                    {isOwnerOrAdmin && (
                       <button 
                         onClick={() => handleDeletePost(post.id)}
                         className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
@@ -505,13 +523,13 @@ export default function CreatorProfile() {
                     <div className="flex justify-between items-center pr-12">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full nm-inset flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border border-white/5">
-                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-teal-400 flex items-center justify-center">{creator.username[0].toUpperCase()}</div>}
+                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-teal-400 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
                         </div>
                         <div>
                           <h3 className="text-white font-bold text-base">{creator.username}</h3>
                           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
                             {post.isPPV ? (
-                              <><Unlock className="w-3 h-3 text-green-400"/> {isOwner ? `PPV: $${(post.price || 0).toFixed(2)}` : 'Comprado'}</>
+                              <><Unlock className="w-3 h-3 text-green-400"/> {isOwnerOrAdmin ? `PPV: $${(post.price || 0).toFixed(2)}` : 'Comprado'}</>
                             ) : (
                               <><Star className="w-3 h-3 text-yellow-500"/> VIP</>
                             )}
@@ -552,7 +570,7 @@ export default function CreatorProfile() {
                           </button>
                         </div>
                         
-                        {!isOwner && (
+                        {(!isOwnerOrAdmin) && (
                           <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
                             <Coins className="w-5 h-5" />
                             <span className="text-sm hidden sm:inline">Propina</span>
@@ -648,7 +666,7 @@ export default function CreatorProfile() {
         )}
 
         {expandedImage && (
-          <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" onClick={() => setExpandedImage(null)} onContextMenu={(e) => e.preventDefault()}>
+          <div className="fixed inset-0 z- flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" onClick={() => setExpandedImage(null)} onContextMenu={(e) => e.preventDefault()}>
             <button onClick={() => setExpandedImage(null)} className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all z-50 border border-white/10" title="Cerrar"><X className="w-6 h-6" /></button>
             <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
               <img src={expandedImage.url} alt="Exclusivo" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" />
