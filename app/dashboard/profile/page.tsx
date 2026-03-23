@@ -255,7 +255,7 @@ export default function ProfileSettings() {
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Enlace de tu Perfil</label>
                   <div className="flex items-center nm-inset border border-white/5 rounded-xl overflow-hidden focus-within:border-teal-500/50 transition-colors">
-                    <span className="text-gray-500 pl-4 text-sm font-medium">fansmios.com/</span>
+                    <span className="text-gray-500 pl-4 text-sm font-medium">fansmio.com/</span>
                     <input type="text" value={username} disabled className="w-full bg-transparent px-2 py-3.5 text-white font-bold outline-none cursor-not-allowed opacity-50 text-sm" />
                   </div>
                 </div>

@@ -5,9 +5,9 @@ import api from './api';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBiuk5jAnIMkH8Elp2lYQ_KhBxRCi81Qe8",
-  authDomain: "fansmios.firebaseapp.com",
-  projectId: "fansmios",
-  storageBucket: "fansmios.firebasestorage.app",
+  authDomain: "fansmio.firebaseapp.com",
+  projectId: "fansmio",
+  storageBucket: "fansmio.firebasestorage.app",
   messagingSenderId: "33571782042",
   appId: "1:33571782042:web:9802c76c231484d296ce23",
   measurementId: "G-3YV3SPP0WW"

@@ -19,7 +19,7 @@ export default function PrivacyPolicyPage() {
           <div className="space-y-8 text-sm leading-relaxed font-medium">
             <section>
               <h2 className="text-xl font-black text-white mb-3">1. Introducción</h2>
-              <p>En Fansmios VIP ("nosotros", "la Plataforma"), valoramos su privacidad. Esta política describe cómo recopilamos, usamos, protegemos y compartimos su información personal cuando utiliza nuestros servicios. Al usar la plataforma, usted acepta las prácticas descritas en este documento.</p>
+              <p>En Fansmio VIP ("nosotros", "la Plataforma"), valoramos su privacidad. Esta política describe cómo recopilamos, usamos, protegemos y compartimos su información personal cuando utiliza nuestros servicios. Al usar la plataforma, usted acepta las prácticas descritas en este documento.</p>
             </section>
 
             <section>

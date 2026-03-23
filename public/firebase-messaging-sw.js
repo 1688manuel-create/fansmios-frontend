@@ -6,9 +6,9 @@ importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-comp
 
 const firebaseConfig = {
   apiKey: "AIzaSyBiuk5jAnIMkH8Elp2lYQ_KhBxRCi81Qe8",
-  authDomain: "fansmios.firebaseapp.com",
-  projectId: "fansmios",
-  storageBucket: "fansmios.firebasestorage.app",
+  authDomain: "fansmio.firebaseapp.com",
+  projectId: "fansmio",
+  storageBucket: "fansmio.firebasestorage.app",
   messagingSenderId: "33571782042",
   appId: "1:33571782042:web:9802c76c231484d296ce23",
   measurementId: "G-3YV3SPP0WW"
@@ -24,12 +24,12 @@ self.addEventListener('activate', (event) => event.waitUntil(clients.claim()));
 
 // 2. Manejo de mensajes en SEGUNDO PLANO
 messaging.onBackgroundMessage((payload) => {
-  console.log('[FansMios SW] 🔔 Mensaje recibido:', payload);
+  console.log('[FansMio SW] 🔔 Mensaje recibido:', payload);
 
   // Si el mensaje ya trae un objeto "notification" de Firebase, 
   // el navegador podría mostrarlo solo. Si no, lo forzamos aquí:
   if (payload.notification) {
-    const notificationTitle = payload.notification.title || 'FansMios';
+    const notificationTitle = payload.notification.title || 'FansMio';
     const notificationOptions = {
       body: payload.notification.body || 'Tienes una nueva actualización.',
       icon: '/favicon.ico', 

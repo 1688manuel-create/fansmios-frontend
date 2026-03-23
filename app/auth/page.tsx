@@ -95,7 +95,7 @@ export default function AuthPortal() {
       <div className="w-full max-w-md z-10">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 tracking-tight">
-            Fansmios
+            Fansmio
           </h1>
           <p className="text-gray-400 mt-2 text-sm">
             {isLogin ? 'Bienvenido de vuelta a tu espacio VIP.' : 'Únete a la plataforma premium de creadores.'}

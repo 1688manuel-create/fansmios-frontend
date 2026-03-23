@@ -62,7 +62,7 @@ body {
     box-shadow: inset 4px 4px 8px #050505, inset -2px -2px 5px rgba(255, 255, 255, 0.02);
   }
 
-  /* --- BOTÓN PRIMARIO (Rojo FansMios Neumórfico) --- */
+  /* --- BOTÓN PRIMARIO (Rojo FansMio Neumórfico) --- */
   .nm-btn-primary {
     @apply rounded-xl transition-all duration-300 ease-in-out text-red-500 font-bold border border-red-950/30;
     background-color: var(--background);

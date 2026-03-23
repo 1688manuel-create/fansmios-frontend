@@ -186,7 +186,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="nm-btn border border-green-500/30 p-8 rounded-[2rem]">
                   <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <PiggyBank className="w-4 h-4 text-green-500"/> Ganancia FansMios
+                    <PiggyBank className="w-4 h-4 text-green-500"/> Ganancia FansMio
                   </h3>
                   <p className="text-4xl font-black text-green-400">
                     ${(analytics?.metrics?.finance?.platformNetRevenue || 0).toFixed(2)}

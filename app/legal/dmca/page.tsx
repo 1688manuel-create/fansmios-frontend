@@ -17,7 +17,7 @@ export default function DMCAPage() {
           
           <div className="space-y-6 text-sm leading-relaxed font-medium">
             <p>
-              Fansmios VIP ("la Plataforma") respeta la propiedad intelectual de terceros y cumple con las disposiciones de la Ley de Derechos de Autor del Milenio Digital (DMCA, por sus siglas en inglés, 17 U.S.C. § 512).
+              Fansmio VIP ("la Plataforma") respeta la propiedad intelectual de terceros y cumple con las disposiciones de la Ley de Derechos de Autor del Milenio Digital (DMCA, por sus siglas en inglés, 17 U.S.C. § 512).
             </p>
 
             <section>
@@ -37,14 +37,14 @@ export default function DMCAPage() {
               <h2 className="text-lg font-black text-white mb-2">Contacto del Agente Designado DMCA:</h2>
               <p className="text-gray-400">
                 Departamento Legal / DMCA Agent<br />
-                Fansmios VIP<br />
-                Correo electrónico: <a href="mailto:dmca@fansmios.com" className="text-purple-400 hover:underline">dmca@fansmios.com</a>
+                Fansmio VIP<br />
+                Correo electrónico: <a href="mailto:dmca@fansmio.com" className="text-purple-400 hover:underline">dmca@fansmio.com</a>
               </p>
             </section>
 
             <section className="mt-8">
               <h2 className="text-xl font-black text-white mb-3">2. Política de Infractores Reincidentes</h2>
-              <p>De acuerdo con la DMCA y otras leyes aplicables, Fansmios ha adoptado una política de terminación, en circunstancias apropiadas, de los usuarios o creadores que sean considerados infractores reincidentes de derechos de autor.</p>
+              <p>De acuerdo con la DMCA y otras leyes aplicables, Fansmio ha adoptado una política de terminación, en circunstancias apropiadas, de los usuarios o creadores que sean considerados infractores reincidentes de derechos de autor.</p>
             </section>
           </div>
         </div>

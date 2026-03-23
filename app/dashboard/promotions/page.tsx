@@ -75,7 +75,7 @@ export default function PromotionsDashboard() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center gap-2">
-              <Rocket className="w-8 h-8 text-yellow-500" /> Fansmios Boost
+              <Rocket className="w-8 h-8 text-yellow-500" /> Fansmio Boost
             </h1>
             <p className="text-gray-400 font-medium mt-1">Llega a la cima del muro y consigue ballenas de inmediato.</p>
           </div>

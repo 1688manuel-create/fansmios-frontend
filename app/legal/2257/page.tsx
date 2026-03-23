@@ -21,7 +21,7 @@ export default function Compliance2257Page() {
 
           <div className="space-y-6 text-sm leading-relaxed font-medium">
             <p>
-              Fansmios VIP (la "Plataforma") opera como un proveedor de servicios interactivos (Interactive Computer Service) y no como un productor primario de contenido. Todo el contenido visual (imágenes y videos) es subido y generado por usuarios independientes ("Creadores").
+              Fansmio VIP (la "Plataforma") opera como un proveedor de servicios interactivos (Interactive Computer Service) y no como un productor primario de contenido. Todo el contenido visual (imágenes y videos) es subido y generado por usuarios independientes ("Creadores").
             </p>
             <p>
               De conformidad con la ley federal de los Estados Unidos <strong>18 U.S.C. § 2257</strong> y <strong>28 C.F.R. Parte 75</strong>, la Plataforma y sus operadores están exentos de los requisitos de mantenimiento de registros aplicables a los productores primarios. 

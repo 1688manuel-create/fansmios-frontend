@@ -170,7 +170,7 @@ export default function DashboardIndex() {
                   <Sparkles className="w-12 h-12 text-red-500 mx-auto animate-pulse" />
                   <h2 className="text-3xl font-black text-white">¿Quieres empezar a monetizar?</h2>
                   <p className="text-gray-500 font-medium leading-relaxed">
-                    Completa tu verificación oficial de FansMios para activar tu perfil de Creador y empezar a recibir pagos vía <strong>PayRam</strong>.
+                    Completa tu verificación oficial de FansMio para activar tu perfil de Creador y empezar a recibir pagos vía <strong>PayRam</strong>.
                   </p>
                   <button 
                     onClick={() => router.push('/dashboard/kyc')}
