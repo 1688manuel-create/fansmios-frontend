@@ -346,65 +346,72 @@ export default function AdminDashboard() {
                 </div>
               ) : (
                 <div className="grid gap-4">
-                  {reports.map((r: any) => (
-                    <div key={r.id} className="nm-btn border border-red-500/20 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                      <div className="w-full">
-                        <h4 className="text-lg font-bold text-white mb-2">Motivo: {r.reason}</h4>
-                        
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-sm text-gray-400 mb-3 bg-black/30 p-3 rounded-xl border border-white/5">
-                          <p>
-                            🚩 Denunciante: <span className="text-white font-bold">@{r.reporter?.username || 'Anónimo'}</span>
-                          </p>
-                          <span className="hidden sm:inline">|</span>
-                          <p>
-                            🎯 Acusado: <span className="text-red-400 font-bold">@{r.reportedUser?.username || r.reportedUsername || 'N/A'}</span>
-                          </p>
+                  {reports.map((r: any) => {
+                    // 🔥 LÓGICA DE DETECCIÓN INTELIGENTE
+                    const targetUsername = r.reportedUser?.username;
+                    const reportType = r.type || 'POST'; // 'USER', 'POST' o 'MESSAGE'
+                    const referenceId = r.postId || r.messageId || r.reportedUserId || 'N/A'; // Saca el ID real de la BD
+
+                    return (
+                      <div key={r.id} className="nm-btn border border-red-500/20 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div className="w-full">
+                          <h4 className="text-lg font-bold text-white mb-2">Motivo: {r.reason}</h4>
+                          
+                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-sm text-gray-400 mb-3 bg-black/30 p-3 rounded-xl border border-white/5">
+                            <p>
+                              🚩 Denunciante: <span className="text-white font-bold">@{r.reporter?.username || 'Anónimo'}</span>
+                            </p>
+                            <span className="hidden sm:inline">|</span>
+                            <p>
+                              🎯 Acusado: <span className="text-red-400 font-bold">@{targetUsername || 'Desconocido'}</span>
+                            </p>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            <span className="bg-white/10 text-gray-300 text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest border border-white/10">
+                              TIPO: {reportType}
+                            </span>
+                            <span className="bg-red-500/10 text-red-400 text-[10px] px-2 py-1 rounded font-bold border border-red-500/20 truncate max-w-xs font-mono">
+                              ID: {referenceId}
+                            </span>
+                          </div>
+
+                          <p className="text-sm bg-black/50 p-4 rounded-xl border border-white/5 text-gray-300 italic">"{r.description || 'Sin descripción adicional.'}"</p>
                         </div>
 
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          <span className="bg-white/10 text-gray-300 text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest border border-white/10">
-                            TIPO: {r.type || 'POST'}
-                          </span>
+                        <div className="flex flex-col gap-2 shrink-0 w-full md:w-48 mt-4 md:mt-0">
+                          
+                          {/* 🔥 EL TELETRANSPORTADOR DEFINITIVO */}
+                          <button 
+                            onClick={() => {
+                              if (reportType === 'POST' && targetUsername && r.postId) {
+                                router.push(`/${targetUsername}#post-${r.postId}`);
+                              } else if (reportType === 'USER' && targetUsername) {
+                                router.push(`/${targetUsername}`);
+                              } else if (reportType === 'MESSAGE') {
+                                router.push(`/dashboard/messages`);
+                              } else {
+                                // Fallback por si acaso: Al muro general
+                                router.push(`/${targetUsername || ''}`);
+                              }
+                            }} 
+                            className="w-full px-4 py-2 rounded-xl bg-blue-600/20 border border-blue-500/50 text-blue-400 font-bold text-xs hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-2"
+                          >
+                            <Eye className="w-4 h-4"/> Ver Evidencia
+                          </button>
+
+                          <button onClick={() => handleResolveReport(r.id, 'RESOLVED')} className="w-full px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-500 transition-colors shadow-lg flex items-center justify-center gap-2">
+                            <ShieldBan className="w-4 h-4"/> Tomar Acción
+                          </button>
+                          
+                          <button onClick={() => handleResolveReport(r.id, 'DISMISSED')} className="w-full px-4 py-2 rounded-xl border border-gray-600/50 text-gray-400 font-bold text-xs hover:text-white hover:bg-white/5 transition-colors flex items-center justify-center gap-2">
+                            <CheckCircle className="w-4 h-4"/> Descartar
+                          </button>
+
                         </div>
-
-                        <p className="text-sm bg-black/50 p-4 rounded-xl border border-white/5 text-gray-300 italic">"{r.description || 'Sin descripción adicional.'}"</p>
                       </div>
-
-                      <div className="flex flex-col gap-2 shrink-0 w-full md:w-48 mt-4 md:mt-0">
-                        
-                        {/* 🔥 NUEVO BOTÓN: VER EVIDENCIA (EL TELETRANSPORTADOR) */}
-                        <button 
-                          onClick={() => {
-                            const username = r.reportedUser?.username || r.reportedUsername;
-                            if (r.type === 'POST' && username && r.targetId) {
-                              // Te lleva al perfil del usuario y baja automático hasta el post reportado
-                              router.push(`/${username}#post-${r.targetId}`);
-                            } else if (r.type === 'USER' && username) {
-                              // Te lleva al perfil del usuario
-                              router.push(`/${username}`);
-                            } else if (r.type === 'MESSAGE') {
-                              // Te lleva a tu bóveda de mensajes
-                              router.push(`/dashboard/messages`);
-                            } else {
-                              alert('No hay suficientes datos para localizar este contenido. (Quizás ya fue borrado)');
-                            }
-                          }} 
-                          className="w-full px-4 py-2 rounded-xl bg-blue-600/20 border border-blue-500/50 text-blue-400 font-bold text-xs hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-2"
-                        >
-                          <Eye className="w-4 h-4"/> Ver Evidencia
-                        </button>
-
-                        <button onClick={() => handleResolveReport(r.id, 'RESOLVED')} className="w-full px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-500 transition-colors shadow-lg flex items-center justify-center gap-2">
-                          <ShieldBan className="w-4 h-4"/> Tomar Acción
-                        </button>
-                        
-                        <button onClick={() => handleResolveReport(r.id, 'DISMISSED')} className="w-full px-4 py-2 rounded-xl border border-gray-600/50 text-gray-400 font-bold text-xs hover:text-white hover:bg-white/5 transition-colors flex items-center justify-center gap-2">
-                          <CheckCircle className="w-4 h-4"/> Descartar
-                        </button>
-
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
