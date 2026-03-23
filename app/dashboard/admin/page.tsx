@@ -24,6 +24,9 @@ export default function AdminDashboard() {
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]); 
   const [newFee, setNewFee] = useState('');
+  
+  // Nuevo estado para evitar dobles clics al procesar retiros
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -43,16 +46,17 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
+      // Usamos api.get directamente para los retiros nuevos
       const [statsData, usersData, withData, reportsData, analyticsData] = await Promise.all([
         adminService.getStats().catch(() => ({ stats: null })),
         adminService.getAllUsers().catch(() => ({ users: [] })),
-        adminService.getAllWithdrawals().catch(() => ({ withdrawals: [] })),
+        api.get('/admin/payouts/pending').catch(() => ({ data: { withdrawals: [] } })), // 🔥 Nueva ruta PayRam
         api.get('/admin/reports').catch(() => ({ data: { reports: [] } })),
         api.get('/admin/analytics/dashboard').catch(() => ({ data: null }))
       ]);
       setStats(statsData?.stats);
       setUsers(usersData?.users || []);
-      setWithdrawals(withData?.withdrawals || []);
+      setWithdrawals(withData?.data?.withdrawals || []);
       setReports(reportsData?.data?.reports || []);
       setAnalytics(analyticsData?.data);
     } catch (error) {
@@ -82,14 +86,42 @@ export default function AdminDashboard() {
     } catch (error) { alert("Error al cambiar el estado"); }
   };
 
-  const handleWithdrawalAction = async (id: string, status: string) => {
-    const reason = prompt(`Escribe una nota para el creador (opcional):`);
-    if (reason === null) return; 
+  // 🔥 NUEVA LÓGICA DE PAGOS (INTEGRADA AL MODO DIOS)
+  const handleApprovePayout = async (id: string, amount: number, address: string) => {
+    const confirm = window.confirm(`⚠️ ¿Estás seguro de enviar $${amount} USDT a la billetera:\n${address}?`);
+    if (!confirm) return;
+
+    const txHash = prompt("Pega el Hash de Transacción (TXID) de Binance, o déjalo vacío para simularlo:");
+
+    setProcessingId(id);
     try {
-      await adminService.handleWithdrawal(id, status, reason);
-      alert(`✅ Retiro marcado como ${status}`);
+      await api.post(`/admin/payouts/${id}/approve`, { 
+        txHash: txHash || `SIMULATED_TX_${Date.now()}`,
+        adminNotes: 'Pago Cripto Procesado Oficialmente'
+      });
+      alert("✅ ¡Pago Registrado y Creador Notificado!");
       fetchData();
-    } catch (error) { alert("Error al procesar el retiro"); }
+    } catch (error: any) {
+      alert(error.response?.data?.error || "Error al aprobar el retiro.");
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleRejectPayout = async (id: string, amount: number) => {
+    const reason = prompt(`❌ Vas a RECHAZAR el retiro de $${amount} USD.\nEscribe la razón (Ej: "Billetera inválida" o "Fraude"):`);
+    if (!reason) return;
+
+    setProcessingId(id);
+    try {
+      await api.post(`/admin/payouts/${id}/reject`, { adminNotes: reason });
+      alert("🛡️ Retiro rechazado. El dinero volvió a la billetera (saldo disponible) del creador.");
+      fetchData();
+    } catch (error: any) {
+      alert(error.response?.data?.error || "Error al rechazar el retiro.");
+    } finally {
+      setProcessingId(null);
+    }
   };
 
   const handleResolveReport = async (reportId: string, status: 'RESOLVED' | 'DISMISSED') => {
@@ -170,7 +202,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* ÚLTIMOS MOVIMIENTOS PAYRAM (Ahora con Creador) */}
+              {/* ÚLTIMOS MOVIMIENTOS PAYRAM */}
               <div className="nm-btn border border-white/5 rounded-[2rem] overflow-hidden">
                 <div className="p-6 bg-[#0e0e0e] border-b border-white/5">
                   <h3 className="font-black text-white text-lg">Historial PayRam (Tiempo Real)</h3>
@@ -205,37 +237,51 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* 💸 TAB 2: RETIROS (WITHDRAWALS) */}
+          {/* 💸 TAB 2: RETIROS (WITHDRAWALS - AHORA CON PAYRAM) */}
           {activeTab === 'WITHDRAWALS' && (
             <div className="space-y-6 animate-fade-in">
               <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Banknote className="text-orange-500"/> Solicitudes de Retiro</h2>
               {withdrawals.length === 0 ? (
                 <div className="nm-btn border border-white/5 p-10 rounded-[2rem] text-center text-gray-500">
-                  No hay solicitudes de retiro pendientes.
+                  No hay solicitudes de retiro pendientes. Todo está al día, CEO.
                 </div>
               ) : (
                 <div className="grid gap-4">
                   {withdrawals.map((w: any) => (
-                    <div key={w.id} className="nm-btn border border-white/5 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div key={w.id} className="nm-btn border border-white/5 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-center gap-4 hover:bg-white/5 transition-colors">
                       <div className="flex-1">
                         <p className="text-xs text-gray-500 mb-1">ID: {w.id}</p>
                         <h4 className="text-lg font-bold text-white flex items-center gap-2">
                           @{w.creator?.username || 'Usuario Desconocido'} 
-                          <span className={`text-[10px] px-2 py-1 rounded-full font-black ${w.status === 'PENDING' ? 'bg-orange-500/20 text-orange-400' : w.status === 'PAID' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                          <span className="text-[10px] px-2 py-1 rounded-full font-black bg-orange-500/20 text-orange-400">
                             {w.status}
                           </span>
                         </h4>
-                        <p className="text-sm mt-2"><span className="text-gray-400">Red:</span> {w.cryptoNetwork || 'TRC20'} <span className="text-gray-400 ml-3">Billetera:</span> <span className="text-blue-400 select-all">{w.cryptoAddress}</span></p>
+                        <div className="mt-1 flex gap-3 text-[10px] font-bold uppercase tracking-wider mb-2">
+                          <span className="text-green-400">Billetera Activa: ${w.creator?.wallet?.balance?.toFixed(2) || 0}</span>
+                          <span className="text-yellow-400">Retenido: ${w.creator?.wallet?.pendingBalance?.toFixed(2) || 0}</span>
+                        </div>
+                        <p className="text-sm mt-2"><span className="text-gray-400">Red:</span> {w.cryptoNetwork || 'TRC20'} <span className="text-gray-400 ml-3">Billetera:</span> <span className="text-blue-400 select-all font-mono bg-blue-500/10 px-2 py-1 rounded">{w.cryptoAddress || 'No proporcionada'}</span></p>
                         {w.adminNotes && <p className="text-xs text-orange-300 mt-2 bg-orange-500/10 p-2 rounded-lg">{w.adminNotes}</p>}
                       </div>
-                      <div className="text-right">
+                      <div className="text-right shrink-0">
                         <p className="text-3xl font-black text-green-400 mb-4">${w.amount?.toFixed(2)} <span className="text-sm text-gray-500 font-normal">USDT</span></p>
-                        {w.status === 'PENDING' && (
-                          <div className="flex gap-2">
-                            <button onClick={() => handleWithdrawalAction(w.id, 'REJECTED')} className="px-4 py-2 rounded-full border border-red-500/50 text-red-400 font-bold text-xs hover:bg-red-500 hover:text-white transition-colors">Rechazar</button>
-                            <button onClick={() => handleWithdrawalAction(w.id, 'PAID')} className="px-4 py-2 rounded-full bg-green-600 text-white font-bold text-xs hover:bg-green-500 transition-colors">Marcar Pagado</button>
-                          </div>
-                        )}
+                        <div className="flex flex-col gap-2">
+                          <button 
+                            onClick={() => handleApprovePayout(w.id, w.amount, w.cryptoAddress)} 
+                            disabled={processingId === w.id}
+                            className="w-full px-6 py-3 rounded-xl bg-green-600 text-white font-bold text-sm hover:bg-green-500 transition-colors disabled:opacity-50"
+                          >
+                            {processingId === w.id ? 'Procesando...' : '✅ Aprobar (Cripto)'}
+                          </button>
+                          <button 
+                            onClick={() => handleRejectPayout(w.id, w.amount)} 
+                            disabled={processingId === w.id}
+                            className="w-full px-6 py-2 rounded-xl border border-red-500/50 text-red-400 font-bold text-xs hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50"
+                          >
+                            {processingId === w.id ? 'Procesando...' : '❌ Rechazar'}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
