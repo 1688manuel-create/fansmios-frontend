@@ -83,7 +83,7 @@ export default function BoostModal({ onClose, creatorBalance = 0 }: BoostModalPr
         {/* HEADER */}
         <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#0e0e0e]">
           <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500 flex items-center gap-2">
-            <Zap className="w-6 h-6 text-yellow-500 fill-yellow-500" /> Fansmios Boost
+            <Zap className="w-6 h-6 text-yellow-500 fill-yellow-500" /> Fansmio Boost
           </h2>
           <button onClick={onClose} className="text-gray-500 hover:text-white nm-btn p-2 rounded-full transition-colors">
             <X className="w-5 h-5" />

@@ -28,7 +28,7 @@ export default function ReferralsPage() {
       
       // Data simulada para que veas el diseño Neumórfico funcionando
       const mockData = {
-        referralCode: JSON.parse(localStorage.getItem('user') || '{}').referralCode || 'FANSMIOS-VIP-2026',
+        referralCode: JSON.parse(localStorage.getItem('user') || '{}').referralCode || 'FansMio-VIP-2026',
         totalReferred: 14,
         totalEarned: 350.50,
         commissionRate: "5%",

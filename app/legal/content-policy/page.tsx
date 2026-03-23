@@ -16,7 +16,7 @@ export default function ContentPolicyPage() {
           </div>
           
           <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm font-bold mb-8">
-            Fansmios VIP opera bajo una política estricta de TOLERANCIA CERO hacia el contenido ilegal y no consensuado.
+            Fansmio VIP opera bajo una política estricta de TOLERANCIA CERO hacia el contenido ilegal y no consensuado.
           </div>
 
           <div className="space-y-8 text-sm leading-relaxed font-medium">
@@ -35,12 +35,12 @@ export default function ContentPolicyPage() {
 
             <section>
               <h2 className="text-xl font-black text-white mb-3">2. Moderación y Reportes</h2>
-              <p>Fansmios VIP utiliza una combinación de moderación automatizada y revisión humana. Los usuarios (Fans y Creadores) tienen la obligación de reportar cualquier contenido que infrinja estas políticas utilizando el botón de "Reportar" disponible en cada publicación y mensaje.</p>
+              <p>Fansmio VIP utiliza una combinación de moderación automatizada y revisión humana. Los usuarios (Fans y Creadores) tienen la obligación de reportar cualquier contenido que infrinja estas políticas utilizando el botón de "Reportar" disponible en cada publicación y mensaje.</p>
             </section>
 
             <section>
               <h2 className="text-xl font-black text-white mb-3">3. Consecuencias de la Infracción</h2>
-              <p>Cualquier violación a esta política otorga a Fansmios el derecho irrevocable de:</p>
+              <p>Cualquier violación a esta política otorga a Fansmio el derecho irrevocable de:</p>
               <ul className="list-disc pl-6 space-y-2 text-gray-400 mt-2">
                 <li>Eliminar el contenido infractor.</li>
                 <li>Suspender temporal o permanentemente la cuenta del usuario.</li>

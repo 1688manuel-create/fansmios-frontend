@@ -31,7 +31,7 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   if (path.startsWith('http')) {
     if (usernameForWatermark && path.includes('cloudinary.com')) {
       const cleanUsername = usernameForWatermark.replace('@', '');
-      const watermarkTransform = `upload/l_text:Arial_40_bold:fansmios%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
+      const watermarkTransform = `upload/l_text:Arial_40_bold:fansmio%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
       return path.replace('upload/', watermarkTransform);
     }
     return path; 
@@ -403,7 +403,7 @@ export default function Feed() {
         
         <nav className="sticky top-0 z-50 bg-[#0e0e0e]/90 border-b border-white/5 px-4 sm:px-6 py-3 flex justify-between items-center backdrop-blur-xl shadow-md">
           <h1 onClick={() => router.push('/feed')} className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 tracking-tighter cursor-pointer flex items-center gap-1">
-            <span className="text-2xl drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">⚡</span> FANSMIOS
+            <span className="text-2xl drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">⚡</span> FansMio
           </h1>
           
           <div className="flex items-center gap-2 sm:gap-4">

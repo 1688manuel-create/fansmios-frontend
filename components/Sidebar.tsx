@@ -67,7 +67,7 @@ export default function Sidebar() {
         <div className="p-6 pb-2">
           <Link href="/feed" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <span className="text-3xl drop-shadow-[0_0_10px_rgba(20,184,166,0.8)]">⚡</span>
-            <span className="text-2xl font-black tracking-tighter text-white">FANSMIOS</span>
+            <span className="text-2xl font-black tracking-tighter text-white">FansMio</span>
           </Link>
         </div>
 

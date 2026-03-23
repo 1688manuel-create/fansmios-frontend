@@ -23,7 +23,7 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   if (path.startsWith('http')) {
     if (usernameForWatermark && path.includes('cloudinary.com')) {
       const cleanUsername = usernameForWatermark.replace('@', '');
-      const watermarkTransform = `upload/l_text:Arial_40_bold:fansmios%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
+      const watermarkTransform = `upload/l_text:Arial_40_bold:fansmio%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
       return path.replace('upload/', watermarkTransform);
     }
     return path; 

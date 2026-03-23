@@ -775,7 +775,7 @@ export default function MessagesDashboard() {
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none overflow-hidden opacity-30 mix-blend-overlay">
                <div className="transform -rotate-45 flex flex-col items-center">
                  <span className="text-white text-5xl md:text-8xl font-black uppercase tracking-widest drop-shadow-[0_5px_5px_rgba(0,0,0,1)]">
-                   FANSMIOS
+                   FansMio
                  </span>
                  <span className="text-white text-xl md:text-3xl font-bold drop-shadow-[0_5px_5px_rgba(0,0,0,1)] mt-2">
                    @{activeChat?.user?.username || 'EXCLUSIVO'}

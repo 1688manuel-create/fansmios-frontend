@@ -22,7 +22,7 @@ export default function Home() {
             <span className="text-5xl drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]">⚡</span>
           </div>
           <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-center">
-            FANSMIOS <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">VIP</span>
+            FANSMIO <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">VIP</span>
           </h1>
           <p className="text-gray-400 text-center text-sm sm:text-base mt-4 font-medium leading-relaxed max-w-sm">
             La plataforma exclusiva para creadores de élite. <br/>
@@ -100,13 +100,13 @@ export default function Home() {
           {/* TEXTO LEGAL LARGO (Disclaimer) */}
           <div className="text-[11px] text-gray-500 space-y-3 leading-relaxed px-4 text-center max-w-4xl mx-auto font-medium">
             <p>
-              Fansmios opera bajo estrictas políticas de moderación. Todo el contenido es generado por usuarios verificados mediante sistemas biométricos (KYC) y operamos bajo una política de tolerancia cero frente al contenido no consensuado. Todos los modelos han otorgado consentimiento expreso y documentado en estricto cumplimiento con 18 U.S.C. 2257.
+              Fansmio opera bajo estrictas políticas de moderación. Todo el contenido es generado por usuarios verificados mediante sistemas biométricos (KYC) y operamos bajo una política de tolerancia cero frente al contenido no consensuado. Todos los modelos han otorgado consentimiento expreso y documentado en estricto cumplimiento con 18 U.S.C. 2257.
             </p>
             <p>
               Los pagos son procesados por pasarelas seguras compatibles con el sector, garantizando la privacidad absoluta y el cumplimiento normativo internacional. El uso de esta plataforma implica la aceptación de todos nuestros términos legales.
             </p>
             <p className="pt-4 font-black tracking-widest text-gray-600">
-              © {new Date().getFullYear()} FANSMIOS VIP. TODOS LOS DERECHOS RESERVADOS.
+              © {new Date().getFullYear()} FansMio VIP. TODOS LOS DERECHOS RESERVADOS.
             </p>
           </div>
 
