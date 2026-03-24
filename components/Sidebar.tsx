@@ -49,7 +49,7 @@ export default function Sidebar() {
     
     // 🔥 BOTONES FINANCIEROS CORREGIDOS
     { name: 'Estadísticas', href: '/dashboard/analytics', icon: TrendingUp, roles: ['CREATOR', 'ADMIN'] },
-    { name: 'Cupones', href: '/dashboard/coupon', icon: Ticket, roles: ['CREATOR', 'ADMIN'] }, 
+    { name: 'Cupones', href: '/dashboard/coupons', icon: Ticket, roles: ['CREATOR', 'ADMIN'] }, // <-- ¡La "s" salvadora agregada aquí!
     
     { name: 'Mi Billetera', href: '/dashboard/wallet', icon: Wallet, roles: ['CREATOR', 'ADMIN'] },
     { name: 'Identidad KYC', href: '/dashboard/kyc', icon: ShieldCheck, roles: ['CREATOR', 'ADMIN'] },
