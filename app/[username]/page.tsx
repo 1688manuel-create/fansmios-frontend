@@ -447,7 +447,6 @@ export default function CreatorProfile() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {bundles.map(bundle => {
-                  // 🔥 NUEVO: Detectar si ya fue comprado
                   const isPurchased = bundle.hasAccess || bundle.isPurchased; 
 
                   return (
@@ -483,7 +482,6 @@ export default function CreatorProfile() {
           <div className="space-y-6">
             {posts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5">Aún no hay publicaciones.</div> : (
               posts.map((post) => {
-                // 🔥 AQUÍ ROMPEMOS EL CANDADO PARA EL ADMIN
                 const isPostUnlocked = isOwnerOrAdmin || post.hasAccess;
                 const rootComments = buildCommentTree(post.comments || []);
                 const totalComments = post._count?.comments || 0;
@@ -506,8 +504,13 @@ export default function CreatorProfile() {
                       </div>
                     </div>
                     
+                    {/* 🔥 AQUÍ ESTÁ LA MAGIA: IMAGEN BORROSA DE FONDO */}
                     <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 mt-4 overflow-hidden group nm-inset">
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-[#0e0e0e] blur-xl"></div>
+                      {post.mediaUrl && (
+                        <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 select-none pointer-events-none" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 to-[#0e0e0e]/80"></div>
+                      
                       <div className="relative z-10 flex flex-col items-center space-y-4 bg-black/70 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md">
                         <Lock className="w-14 h-14 text-red-500" />
                         {!isSubscribed && !post.isPPV ? (
