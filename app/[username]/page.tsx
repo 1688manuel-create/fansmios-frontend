@@ -409,7 +409,7 @@ export default function CreatorProfile() {
           </div>
 
           {/* ============================================== */}
-          {/* 🔥 PAQUETES EN OFERTA CON MINI GALERÍA BORROSA */}
+          {/* 🔥 PAQUETES EN OFERTA CON MINI GALERÍA INTERACTIVA */}
           {/* ============================================== */}
           {bundles.length > 0 && (
             <div className="mb-12 space-y-6 animate-fade-in">
@@ -431,7 +431,7 @@ export default function CreatorProfile() {
                       <h3 className="text-xl font-bold text-white">{bundle.title}</h3>
                       <p className="text-sm text-gray-500 mt-2 mb-4 line-clamp-2">{bundle.description}</p>
                       
-                      {/* 🔥 MAGIA: GALERÍA DE PREVISUALIZACIÓN */}
+                      {/* 🔥 MAGIA: GALERÍA DE PREVISUALIZACIÓN CLICKABLE */}
                       {bundle.posts && bundle.posts.length > 0 && (
                         <div className="flex items-center gap-3 mb-6">
                           <div className="flex -space-x-3">
@@ -440,8 +440,14 @@ export default function CreatorProfile() {
                                 {p.mediaUrl ? (
                                   <img 
                                     src={getImageUrl(p.mediaUrl)} 
-                                    className={`w-full h-full object-cover transition-all ${!isPurchased && !isOwnerOrAdmin ? 'blur-md opacity-60 scale-125' : 'blur-0 opacity-100'}`} 
+                                    className={`w-full h-full object-cover transition-all ${!isPurchased && !isOwnerOrAdmin ? 'blur-md opacity-60 scale-125' : 'blur-0 opacity-100 cursor-pointer hover:scale-110'}`} 
                                     alt="Media" 
+                                    onClick={(e) => {
+                                      if (isPurchased || isOwnerOrAdmin) {
+                                        e.stopPropagation();
+                                        setExpandedImage({ url: getImageUrl(p.mediaUrl, creator?.username), username: creator?.username });
+                                      }
+                                    }}
                                   />
                                 ) : (
                                   <div className="w-full h-full bg-blue-900/20"></div>
@@ -508,7 +514,6 @@ export default function CreatorProfile() {
                       </div>
                     </div>
                     
-                    {/* 🔥 AQUÍ ESTÁ LA MAGIA: IMAGEN BORROSA DE FONDO EN LOS POSTS INDIVIDUALES */}
                     <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 mt-4 overflow-hidden group nm-inset">
                       {post.mediaUrl && (
                         <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 select-none pointer-events-none" />
