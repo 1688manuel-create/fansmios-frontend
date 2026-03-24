@@ -35,7 +35,7 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
 
 // 🌳 NODO DE COMENTARIOS PARA EL PERFIL
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
-  const isOwner = currentUser?.id === comment.userId || currentUser?.role === 'ADMIN'; // 🔥 Admin también puede borrar comentarios
+  const isOwner = currentUser?.id === comment.userId || currentUser?.role === 'ADMIN'; 
 
   return (
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
@@ -108,7 +108,6 @@ export default function CreatorProfile() {
     fetchProfileAndPosts(false);
   }, [username]);
 
-  // 🔥 FRANCOTIRADOR PARA EL PERFIL TAMBIÉN
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
       const hash = window.location.hash;
@@ -316,8 +315,6 @@ export default function CreatorProfile() {
   if (hasError || !creator) return <div className="min-h-screen bg-nm-base text-white flex flex-col items-center justify-center"><Ghost className="w-20 h-20 text-gray-600"/><h2 className="text-3xl font-black">Página no encontrada</h2></div>;
 
   const profile = creator.creatorProfile || {};
-  
-  // 🔥 EL BYPASS DIVINO (Dueño O Admin)
   const isOwnerOrAdmin = currentUser && (currentUser.id === creator.id || currentUser.role === 'ADMIN');
 
   return (
@@ -341,7 +338,6 @@ export default function CreatorProfile() {
           
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-4">
             <div className="flex flex-col items-start">
-              
               {/* AVATAR */}
               <div 
                 className="w-32 h-32 rounded-full border-4 border-[#0e0e0e] shadow-[0_0_30px_rgba(0,0,0,0.8)] flex items-center justify-center text-white text-5xl font-black bg-[#0a0a0a] relative overflow-hidden shrink-0 z-10 nm-inset select-none"
@@ -380,7 +376,7 @@ export default function CreatorProfile() {
                 </>
               )}
 
-              {/* BOTÓN DE SUSCRIPCIÓN O MODO DIOS */}
+              {/* BOTÓN DE SUSCRIPCIÓN */}
               {(!isOwnerOrAdmin) && (
                 isSubscribed ? (
                   <button disabled className="nm-inset text-yellow-500 border border-yellow-500/30 font-bold py-3 px-8 rounded-xl cursor-default w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
@@ -391,13 +387,6 @@ export default function CreatorProfile() {
                     <Crown className="w-5 h-5"/> Suscribirse • ${(profile.monthlyPrice || 0).toFixed(2)}/mes
                   </button>
                 )
-              )}
-              
-              {/* CARTEL DEL MODO DIOS */}
-              {currentUser?.role === 'ADMIN' && !isOwnerOrAdmin && (
-                <div className="nm-inset border border-red-500/30 text-red-500 font-bold py-3 px-8 rounded-xl cursor-default w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-widest text-sm bg-red-900/10">
-                  <ShieldAlert className="w-4 h-4"/> MODO DIOS ACTIVO
-                </div>
               )}
             </div>
           </div>
@@ -417,29 +406,11 @@ export default function CreatorProfile() {
             <p className="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed font-medium pt-6">
               {profile.bio || '✨ Bienvenido a mi espacio VIP.'}
             </p>
-
-            {/* 🔥 BOTONES DE REDES SOCIALES */}
-            {(profile.instagram || profile.twitter || profile.website) && (
-              <div className="flex gap-4 mt-6 pt-6 border-t border-white/5">
-                {profile.instagram && (
-                  <a href={profile.instagram.startsWith('http') ? profile.instagram : `https://instagram.com/${profile.instagram}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-pink-500 transition-colors">
-                    <Instagram className="w-5 h-5" /> <span className="text-sm font-bold hidden sm:inline">Instagram</span>
-                  </a>
-                )}
-                {profile.twitter && (
-                  <a href={profile.twitter.startsWith('http') ? profile.twitter : `https://twitter.com/${profile.twitter}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-colors">
-                    <Twitter className="w-5 h-5" /> <span className="text-sm font-bold hidden sm:inline">Twitter</span>
-                  </a>
-                )}
-                {profile.website && (
-                  <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors">
-                    <Globe className="w-5 h-5" /> <span className="text-sm font-bold hidden sm:inline">Sitio Web</span>
-                  </a>
-                )}
-              </div>
-            )}
           </div>
 
+          {/* ============================================== */}
+          {/* 🔥 PAQUETES EN OFERTA CON MINI GALERÍA BORROSA */}
+          {/* ============================================== */}
           {bundles.length > 0 && (
             <div className="mb-12 space-y-6 animate-fade-in">
               <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2">
@@ -458,7 +429,39 @@ export default function CreatorProfile() {
                       }`}
                     >
                       <h3 className="text-xl font-bold text-white">{bundle.title}</h3>
-                      <p className="text-sm text-gray-500 mt-2 mb-6 line-clamp-2">{bundle.description}</p>
+                      <p className="text-sm text-gray-500 mt-2 mb-4 line-clamp-2">{bundle.description}</p>
+                      
+                      {/* 🔥 MAGIA: GALERÍA DE PREVISUALIZACIÓN */}
+                      {bundle.posts && bundle.posts.length > 0 && (
+                        <div className="flex items-center gap-3 mb-6">
+                          <div className="flex -space-x-3">
+                            {bundle.posts.slice(0, 3).map((p: any, i: number) => (
+                              <div key={i} className="w-12 h-12 rounded-lg nm-inset border border-white/10 overflow-hidden relative" style={{ zIndex: 3 - i }}>
+                                {p.mediaUrl ? (
+                                  <img 
+                                    src={getImageUrl(p.mediaUrl)} 
+                                    className={`w-full h-full object-cover transition-all ${!isPurchased && !isOwnerOrAdmin ? 'blur-md opacity-60 scale-125' : 'blur-0 opacity-100'}`} 
+                                    alt="Media" 
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-blue-900/20"></div>
+                                )}
+                              </div>
+                            ))}
+                            {bundle.posts.length > 3 && (
+                              <div className="w-12 h-12 rounded-lg nm-inset border border-white/10 bg-black/80 flex items-center justify-center text-xs font-bold text-white z-0">
+                                +{bundle.posts.length - 3}
+                              </div>
+                            )}
+                          </div>
+                          {!isPurchased && !isOwnerOrAdmin && (
+                            <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest flex items-center gap-1 bg-red-500/10 px-2 py-1 rounded">
+                              <Lock className="w-3 h-3"/> Oculto
+                            </span>
+                          )}
+                        </div>
+                      )}
+
                       <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
                         <span className="text-xs font-bold text-blue-400 nm-inset px-3 py-1.5 rounded-md border border-blue-500/20">{bundle.posts?.length} Archivos</span>
                         
@@ -479,6 +482,7 @@ export default function CreatorProfile() {
             </div>
           )}
 
+          {/* EL RESTO DE LOS POSTS EN EL MURO */}
           <div className="space-y-6">
             {posts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5">Aún no hay publicaciones.</div> : (
               posts.map((post) => {
@@ -504,7 +508,7 @@ export default function CreatorProfile() {
                       </div>
                     </div>
                     
-                    {/* 🔥 AQUÍ ESTÁ LA MAGIA: IMAGEN BORROSA DE FONDO */}
+                    {/* 🔥 AQUÍ ESTÁ LA MAGIA: IMAGEN BORROSA DE FONDO EN LOS POSTS INDIVIDUALES */}
                     <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 mt-4 overflow-hidden group nm-inset">
                       {post.mediaUrl && (
                         <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 select-none pointer-events-none" />
