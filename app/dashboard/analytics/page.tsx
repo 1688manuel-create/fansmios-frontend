@@ -5,7 +5,7 @@ import AppLayout from '../../../components/AppLayout';
 import api from '../../../lib/api';
 import { 
   TrendingUp, DollarSign, Users, Eye, Ticket, Plus, 
-  Copy, Power, Loader2, Award, ShieldCheck, Activity, Wallet
+  Copy, Power, Loader2, Award, ShieldCheck, Activity, Wallet, User
 } from 'lucide-react';
 
 export default function AnalyticsDashboard() {
@@ -120,12 +120,30 @@ export default function AnalyticsDashboard() {
                 <p className="text-4xl font-black text-white">${adminStats?.finance?.pendingLiability?.toFixed(2) || '0.00'}</p>
               </div>
 
-              <div className="nm-inset p-6 rounded-3xl border border-purple-500/30 relative overflow-hidden group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 nm-btn rounded-xl text-purple-400"><Users className="w-6 h-6" /></div>
-                  <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest">Usuarios Totales</h3>
+              {/* 🔥 TARJETA DE USUARIOS ACTUALIZADA (DESGLOSE FAN/CREADOR) */}
+              <div className="nm-inset p-6 rounded-3xl border border-purple-500/30 relative overflow-hidden group flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-3 nm-btn rounded-xl text-purple-400"><Users className="w-6 h-6" /></div>
+                    <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest">Usuarios Totales</h3>
+                  </div>
+                  <p className="text-4xl font-black text-white">{adminStats?.users?.total || 0}</p>
                 </div>
-                <p className="text-4xl font-black text-white">{adminStats?.users?.total || 0}</p>
+                
+                {/* Desglose debajo del total */}
+                <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-blue-400" />
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Fans</span>
+                    <span className="text-sm font-black text-blue-400 ml-1">{adminStats?.users?.fans || 0}</span>
+                  </div>
+                  <div className="w-[1px] h-4 bg-white/10"></div>
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-purple-400" />
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Creadores</span>
+                    <span className="text-sm font-black text-purple-400 ml-1">{adminStats?.users?.creators || 0}</span>
+                  </div>
+                </div>
               </div>
             </div>
             

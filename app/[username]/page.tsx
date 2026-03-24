@@ -446,20 +446,36 @@ export default function CreatorProfile() {
                 <Package className="w-5 h-5 text-blue-500"/> Paquetes en Oferta
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {bundles.map(bundle => (
-                  <div key={bundle.id} onClick={() => handleBuyBundle(bundle)} className="nm-btn p-6 rounded-3xl border border-white/5 cursor-pointer group flex flex-col h-full hover:border-blue-500/30">
-                    <h3 className="text-xl font-bold text-white">{bundle.title}</h3>
-                    <p className="text-sm text-gray-500 mt-2 mb-6 line-clamp-2">{bundle.description}</p>
-                    <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
-                      <span className="text-xs font-bold text-blue-400 nm-inset px-3 py-1.5 rounded-md border border-blue-500/20">{bundle.posts?.length} Archivos</span>
-                      {isOwnerOrAdmin ? (
-                        <button className="nm-btn-primary py-2.5 px-6 text-sm bg-red-600">Ver Paquete</button>
-                      ) : (
-                        <button className="nm-btn-primary py-2.5 px-6 text-sm">Comprar ${(bundle.price || 0).toFixed(2)}</button>
-                      )}
+                {bundles.map(bundle => {
+                  // 🔥 NUEVO: Detectar si ya fue comprado
+                  const isPurchased = bundle.hasAccess || bundle.isPurchased; 
+
+                  return (
+                    <div 
+                      key={bundle.id} 
+                      onClick={() => { if (!isOwnerOrAdmin && !isPurchased) handleBuyBundle(bundle); }} 
+                      className={`nm-btn p-6 rounded-3xl border border-white/5 group flex flex-col h-full transition-colors ${
+                        isPurchased ? 'cursor-default border-green-500/20 shadow-[inset_0_0_20px_rgba(34,197,94,0.05)]' : 'cursor-pointer hover:border-blue-500/30'
+                      }`}
+                    >
+                      <h3 className="text-xl font-bold text-white">{bundle.title}</h3>
+                      <p className="text-sm text-gray-500 mt-2 mb-6 line-clamp-2">{bundle.description}</p>
+                      <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
+                        <span className="text-xs font-bold text-blue-400 nm-inset px-3 py-1.5 rounded-md border border-blue-500/20">{bundle.posts?.length} Archivos</span>
+                        
+                        {isOwnerOrAdmin ? (
+                          <button className="nm-btn-primary py-2.5 px-6 text-sm bg-red-600">Ver Paquete</button>
+                        ) : isPurchased ? (
+                          <button className="nm-inset border border-green-500/30 text-green-500 py-2.5 px-6 text-sm flex items-center justify-center gap-2 font-bold cursor-default" onClick={(e) => e.stopPropagation()}>
+                            <CheckCircle2 className="w-4 h-4" /> Adquirido
+                          </button>
+                        ) : (
+                          <button className="nm-btn-primary py-2.5 px-6 text-sm">Comprar ${(bundle.price || 0).toFixed(2)}</button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
