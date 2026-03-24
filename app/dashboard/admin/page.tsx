@@ -10,7 +10,7 @@ import AppLayout from '../../../components/AppLayout';
 import { 
   Crown, Scale, BarChart3, Users, Banknote, Flag, Settings, 
   TrendingUp, PiggyBank, Wallet, Sparkles, Image as ImageIcon,
-  CheckCircle, XCircle, Eye, UserX, Ghost, ShieldBan
+  CheckCircle, XCircle, Eye, UserX, Ghost, ShieldBan, Percent
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -23,7 +23,17 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]); 
-  const [newFee, setNewFee] = useState('');
+  
+  // 🔥 ESTADO DEL MODO DIOS: COMISIONES DINÁMICAS
+  const [fees, setFees] = useState({
+    feeSubscription: 20,
+    feePPV: 20,
+    feeTips: 20,
+    feeLive: 30,
+    feeWithdrawalStd: 2,
+    feeWithdrawalExp: 5,
+  });
+  const [isUpdatingFees, setIsUpdatingFees] = useState(false);
   
   // Nuevo estado para evitar dobles clics al procesar retiros
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -46,19 +56,32 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      // Usamos api.get directamente para los retiros nuevos
-      const [statsData, usersData, withData, reportsData, analyticsData] = await Promise.all([
+      // Usamos api.get directamente para las consultas
+      const [statsData, usersData, withData, reportsData, analyticsData, settingsData] = await Promise.all([
         adminService.getStats().catch(() => ({ stats: null })),
         adminService.getAllUsers().catch(() => ({ users: [] })),
-        api.get('/admin/payouts/pending').catch(() => ({ data: { withdrawals: [] } })), // 🔥 Nueva ruta PayRam
+        api.get('/admin/payouts/pending').catch(() => ({ data: { withdrawals: [] } })),
         api.get('/admin/reports').catch(() => ({ data: { reports: [] } })),
-        api.get('/admin/analytics/dashboard').catch(() => ({ data: null }))
+        api.get('/admin/analytics/dashboard').catch(() => ({ data: null })),
+        api.get('/admin/platform-settings') // 👑 Obtenemos comisiones globales
       ]);
       setStats(statsData?.stats);
       setUsers(usersData?.users || []);
       setWithdrawals(withData?.data?.withdrawals || []);
       setReports(reportsData?.data?.reports || []);
       setAnalytics(analyticsData?.data);
+      
+      // Si el servidor nos devuelve las comisiones reales, las cargamos en la pantalla
+      if (settingsData?.data && settingsData.data.id) {
+        setFees({
+          feeSubscription: settingsData.data.feeSubscription || 20,
+          feePPV: settingsData.data.feePPV || 20,
+          feeTips: settingsData.data.feeTips || 20,
+          feeLive: settingsData.data.feeLive || 30,
+          feeWithdrawalStd: settingsData.data.feeWithdrawalStd || 2,
+          feeWithdrawalExp: settingsData.data.feeWithdrawalExp || 5,
+        });
+      }
     } catch (error) {
       console.error("Error cargando panel de admin", error);
     } finally {
@@ -66,14 +89,22 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleUpdateFee = async () => {
-    if (!newFee) return;
+  // 👑 GUARDAR NUEVAS COMISIONES
+  const handleUpdateFees = async () => {
+    setIsUpdatingFees(true);
     try {
-      await adminService.updateFee(Number(newFee));
-      alert(`✅ Comisión actualizada al ${newFee}%`);
-      setNewFee('');
+      await api.put('/admin/platform-settings', fees)
+      alert("✅ Comisiones globales actualizadas con éxito. Aplicarán a los siguientes pagos de FansMio.");
       fetchData();
-    } catch (error) { alert("Error al actualizar la comisión"); }
+    } catch (error) { 
+      alert("Error al actualizar las comisiones. Revisa tu consola."); 
+    } finally {
+      setIsUpdatingFees(false);
+    }
+  };
+
+  const handleFeeChange = (e: any) => {
+    setFees({ ...fees, [e.target.name]: Number(e.target.value) });
   };
 
   const handleUserStatus = async (userId: string, status: string) => {
@@ -417,25 +448,66 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* ⚙️ TAB 5: PLATAFORMA (SETTINGS) */}
+          {/* ⚙️ TAB 5: PLATAFORMA (SETTINGS) - 🔥 MODO DIOS ACTUALIZADO */}
           {activeTab === 'SETTINGS' && (
-            <div className="space-y-6 animate-fade-in max-w-2xl">
-              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Settings className="text-gray-400"/> Configuración Global</h2>
-              <div className="nm-btn border border-white/5 p-8 rounded-[2rem]">
-                <h3 className="font-bold text-white mb-4">Comisión Base de la Plataforma (%)</h3>
-                <p className="text-sm text-gray-400 mb-6">Esta es la tajada automática que toma el sistema de cada venta general (no afecta retiros exprés).</p>
-                <div className="flex gap-4">
-                  <input 
-                    type="number" 
-                    placeholder="Ej. 20" 
-                    value={newFee} 
-                    onChange={(e) => setNewFee(e.target.value)}
-                    className="flex-1 bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500"
-                  />
-                  <button onClick={handleUpdateFee} className="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl transition-colors">
-                    Actualizar
-                  </button>
+            <div className="space-y-6 animate-fade-in max-w-4xl">
+              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Settings className="text-gray-400"/> Configuración Global de Comisiones</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                
+                {/* BLOQUE: VENTAS */}
+                <div className="nm-btn border border-white/5 p-6 rounded-[2rem]">
+                  <h3 className="text-red-500 font-bold mb-6 flex items-center gap-2"><Percent className="w-5 h-5"/> Comisiones por Ventas (%)</h3>
+                  
+                  <div className="space-y-5">
+                    <div>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Suscripciones Mensuales</label>
+                      <input type="number" name="feeSubscription" value={fees.feeSubscription} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-red-500 outline-none transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Posts PPV y Mensajes</label>
+                      <input type="number" name="feePPV" value={fees.feePPV} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-red-500 outline-none transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Propinas (Tips)</label>
+                      <input type="number" name="feeTips" value={fees.feeTips} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-red-500 outline-none transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Transmisiones en Vivo (Live)</label>
+                      <input type="number" name="feeLive" value={fees.feeLive} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-red-500 outline-none transition-colors" />
+                    </div>
+                  </div>
                 </div>
+
+                {/* BLOQUE: RETIROS */}
+                <div className="nm-btn border border-white/5 p-6 rounded-[2rem]">
+                  <h3 className="text-blue-500 font-bold mb-6 flex items-center gap-2"><Banknote className="w-5 h-5"/> Comisiones por Retiros (%)</h3>
+                  
+                  <div className="space-y-5">
+                    <div>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Retiro Estándar (🐢 7 Días)</label>
+                      <input type="number" name="feeWithdrawalStd" value={fees.feeWithdrawalStd} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-blue-500 outline-none transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Retiro Exprés (⚡ Instantáneo)</label>
+                      <input type="number" name="feeWithdrawalExp" value={fees.feeWithdrawalExp} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-blue-500 outline-none transition-colors" />
+                    </div>
+                  </div>
+
+                  <div className="mt-8 pt-8 border-t border-white/5">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 leading-relaxed">
+                      ⚠️ Estas comisiones se aplicarán automáticamente a nivel base de datos (Prisma). El motor de pagos de FansMio leerá estos números en tiempo real antes de procesar cada transacción.
+                    </p>
+                    <button 
+                      onClick={handleUpdateFees}
+                      disabled={isUpdatingFees}
+                      className="w-full bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest py-4 px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(220,38,38,0.3)] disabled:opacity-50 flex justify-center items-center"
+                    >
+                      {isUpdatingFees ? 'Sincronizando Core...' : 'Guardar y Aplicar a FansMio'}
+                    </button>
+                  </div>
+                </div>
+
               </div>
             </div>
           )}
