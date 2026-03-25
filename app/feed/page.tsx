@@ -584,7 +584,7 @@ export default function Feed() {
 
                       <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border group ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
                         
-                        {/* 🔥 BOTONES DE ACCIÓN SUPERIOR (Papelera vs Banderita) */}
+                        {/* 🔥 BOTONES DE ACCIÓN SUPERIOR */}
                         {isOwner ? (
                           <button 
                             onClick={() => handleDeletePost(post.id)}
@@ -612,7 +612,11 @@ export default function Feed() {
                               <h3 className={`font-bold text-lg ${post.isPromoted ? 'text-yellow-500' : 'text-white'}`}>@{post.user?.username || 'usuario'}</h3>
                               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
                                 {post.isPPV ? (
-                                  <><Unlock className="w-3 h-3 text-green-400"/> {isOwner ? `PPV: $${(post.price || 0).toFixed(2)}` : 'Comprado'}</>
+                                  !post.hasAccess ? (
+                                    <><Lock className="w-3 h-3 text-red-400"/> {isOwner ? `Tu PPV: $${(post.price || 0).toFixed(2)}` : 'Exclusivo PPV'}</>
+                                  ) : (
+                                    <><Unlock className="w-3 h-3 text-green-400"/> {isOwner ? `Tu PPV: $${(post.price || 0).toFixed(2)}` : 'Desbloqueado'}</>
+                                  )
                                 ) : !post.hasAccess ? (
                                   <><Lock className="w-3 h-3 text-red-400"/> Exclusivo VIP</>
                                 ) : (
@@ -627,12 +631,28 @@ export default function Feed() {
                         {post.content && <p className="text-gray-200 text-base leading-relaxed">{post.content}</p>}
 
                         {!post.hasAccess ? (
-                          <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 overflow-hidden group nm-inset">
-                            <div className="relative z-10 flex flex-col items-center bg-black/60 p-8 rounded-3xl border border-white/10 backdrop-blur-md">
-                              <Lock className={`w-16 h-16 mb-4 ${post.isPromoted ? 'text-yellow-500' : 'text-red-500'}`} />
-                              <button onClick={() => handleUnlockClick(post)} className={`py-3 px-8 text-sm flex items-center gap-2 font-bold ${post.isPromoted ? 'bg-yellow-500 text-black rounded-full' : 'nm-btn-primary'}`}>
-                                <Unlock className="w-4 h-4"/> Desbloquear ${post.price}
-                              </button>
+                          <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 overflow-hidden group nm-inset mt-4">
+                            {/* 🔥 FONDO BORROSO COMPATIBLE CON VIDEO E IMAGEN */}
+                            {post.mediaUrl && (
+                              post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                              ) : (
+                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                              )
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
+                            
+                            <div className="relative z-10 flex flex-col items-center bg-black/70 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md">
+                              <Lock className={`w-14 h-14 mb-4 ${post.isPromoted ? 'text-yellow-500' : 'text-red-500'}`} />
+                              {isOwner ? (
+                                <button disabled className="py-3 px-8 text-sm flex items-center gap-2 font-bold nm-inset text-red-500 cursor-default rounded-xl">
+                                  <Lock className="w-4 h-4"/> Tu PPV ($${post.price})
+                                </button>
+                              ) : (
+                                <button onClick={() => handleUnlockClick(post)} className={`py-3 px-8 text-sm flex items-center gap-2 font-bold ${post.isPromoted ? 'bg-yellow-500 text-black rounded-full shadow-[0_0_15px_rgba(234,179,8,0.4)]' : 'nm-btn-primary rounded-xl'}`}>
+                                  <Unlock className="w-4 h-4"/> Desbloquear por ${(post.price || 0).toFixed(2)}
+                                </button>
+                              )}
                             </div>
                           </div>
                         ) : (
