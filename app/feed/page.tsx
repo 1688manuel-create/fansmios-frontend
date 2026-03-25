@@ -635,12 +635,12 @@ export default function Feed() {
                             {/* 🔥 FONDO BORROSO COMPATIBLE CON VIDEO E IMAGEN */}
                             {post.mediaUrl && (
                               post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-10 scale-125 select-none pointer-events-none" />
+                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-95 scale-125 select-none pointer-events-none" />
                               ) : (
-                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-10 scale-125 select-none pointer-events-none" />
+                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-95 scale-125 select-none pointer-events-none" />
                               )
                             )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/20 to-transparent"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/95 to-transparent"></div>
                             
                             <div className="relative z-10 flex flex-col items-center bg-black/70 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md">
                               <Lock className={`w-14 h-14 mb-4 ${post.isPromoted ? 'text-yellow-500' : 'text-red-500'}`} />
