@@ -579,7 +579,7 @@ export default function CreatorProfile() {
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
                       
-                      <div className="relative z-10 flex flex-col items-center space-y-4 bg-black/70 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md">
+                      <div className="relative z-10 flex flex-col items-center space-y-4 bg-black/30 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md">
                         <Lock className="w-14 h-14 text-red-500" />
                         {!isSubscribed && !post.isPPV ? (
                           <button onClick={(e) => { e.stopPropagation(); handleSubscribe(); }} className="mt-2 nm-btn-primary py-3 px-8 text-sm flex items-center gap-2">
