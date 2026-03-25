@@ -9,11 +9,11 @@ import TipModal from '../../components/TipModal';
 import AppLayout from '../../components/AppLayout';
 import { paymentService } from '../../lib/paymentService';
 
-// 🔥 Agregamos iconos de redes sociales
+// 🔥 Agregamos el icono Flag para los reportes
 import { 
   ArrowLeft, CheckCircle2, MessageCircle, Star, Lock, 
   Unlock, Trash2, Coins, Package, Ghost, X, Plus, Crown, Send,
-  Instagram, Twitter, Globe, ShieldAlert
+  Instagram, Twitter, Globe, ShieldAlert, Flag, AlertTriangle
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -97,6 +97,12 @@ export default function CreatorProfile() {
   const [isTipModalOpen, setIsTipModalOpen] = useState(false);
   const [tipRecipient, setTipRecipient] = useState<any>(null);
   const [expandedImage, setExpandedImage] = useState<{url: string, username: string} | null>(null);
+
+  // 🔥 ESTADOS PARA EL SISTEMA DE REPORTES
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [reportDescription, setReportDescription] = useState('');
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -297,6 +303,29 @@ export default function CreatorProfile() {
     router.push('/dashboard/messages');
   };
 
+  // 🔥 FUNCIÓN PARA ENVIAR EL REPORTE AL SERVIDOR
+  const handleSubmitReport = async () => {
+    if (!reportReason) { alert("⚠️ Debes seleccionar un motivo."); return; }
+    setIsSubmittingReport(true);
+    try {
+      // Enviamos el reporte a tu API (Asegúrate de que tu backend soporte type: 'USER')
+      await api.post('/reports', {
+        type: 'USER',
+        reportedUserId: creator.id,
+        reason: reportReason,
+        description: reportDescription
+      });
+      alert("🚩 Reporte enviado con éxito. Nuestro equipo de Moderación lo revisará lo antes posible.");
+      setIsReportModalOpen(false);
+      setReportReason('');
+      setReportDescription('');
+    } catch (error) {
+      alert("Hubo un error al enviar el reporte. Quizás tu servidor aún no tenga configurada la ruta para usuarios.");
+    } finally {
+      setIsSubmittingReport(false);
+    }
+  };
+
   const buildCommentTree = (comments: any[]) => {
     if (!comments) return [];
     const commentMap = new Map();
@@ -369,8 +398,15 @@ export default function CreatorProfile() {
                   </button>
 
                   <div className="flex gap-3 w-full sm:w-auto">
-                    <button onClick={handleMessageClick} className="nm-btn text-gray-300 hover:text-blue-400 font-bold flex-1 sm:w-12 h-12 rounded-xl flex items-center justify-center shrink-0">
+                    <button onClick={handleMessageClick} title="Enviar Mensaje" className="nm-btn text-gray-300 hover:text-blue-400 font-bold flex-1 sm:w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors">
                       <MessageCircle className="w-5 h-5" />
+                    </button>
+                    {/* 🔥 BOTÓN DE REPORTAR USUARIO */}
+                    <button onClick={() => {
+                      if(!currentUser) { alert("Inicia sesión para reportar."); router.push('/auth'); return; }
+                      setIsReportModalOpen(true);
+                    }} title="Reportar Usuario" className="nm-btn text-gray-500 hover:text-red-500 font-bold flex-1 sm:w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors">
+                      <Flag className="w-5 h-5" />
                     </button>
                   </div>
                 </>
@@ -406,11 +442,30 @@ export default function CreatorProfile() {
             <p className="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed font-medium pt-6">
               {profile.bio || '✨ Bienvenido a mi espacio VIP.'}
             </p>
+
+            {/* BOTONES DE REDES SOCIALES */}
+            {(profile.instagram || profile.twitter || profile.website) && (
+              <div className="flex gap-4 mt-6 pt-6 border-t border-white/5">
+                {profile.instagram && (
+                  <a href={profile.instagram.startsWith('http') ? profile.instagram : `https://instagram.com/${profile.instagram}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-pink-500 transition-colors">
+                    <Instagram className="w-5 h-5" /> <span className="text-sm font-bold hidden sm:inline">Instagram</span>
+                  </a>
+                )}
+                {profile.twitter && (
+                  <a href={profile.twitter.startsWith('http') ? profile.twitter : `https://twitter.com/${profile.twitter}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-colors">
+                    <Twitter className="w-5 h-5" /> <span className="text-sm font-bold hidden sm:inline">Twitter</span>
+                  </a>
+                )}
+                {profile.website && (
+                  <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors">
+                    <Globe className="w-5 h-5" /> <span className="text-sm font-bold hidden sm:inline">Sitio Web</span>
+                  </a>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* ============================================== */}
-          {/* 🔥 PAQUETES EN OFERTA CON MINI GALERÍA INTERACTIVA */}
-          {/* ============================================== */}
+          {/* PAQUETES EN OFERTA CON MINI GALERÍA INTERACTIVA */}
           {bundles.length > 0 && (
             <div className="mb-12 space-y-6 animate-fade-in">
               <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2">
@@ -431,7 +486,6 @@ export default function CreatorProfile() {
                       <h3 className="text-xl font-bold text-white">{bundle.title}</h3>
                       <p className="text-sm text-gray-500 mt-2 mb-4 line-clamp-2">{bundle.description}</p>
                       
-                      {/* 🔥 MAGIA: GALERÍA DE PREVISUALIZACIÓN CLICKABLE */}
                       {bundle.posts && bundle.posts.length > 0 && (
                         <div className="flex items-center gap-3 mb-6">
                           <div className="flex -space-x-3">
@@ -666,6 +720,7 @@ export default function CreatorProfile() {
           </div>
         </main>
 
+        {/* MODAL DE PROPINAS */}
         {isTipModalOpen && tipRecipient && (
           <TipModal creatorName={tipRecipient.username} onClose={() => setIsTipModalOpen(false)} onContinue={async (amount, message) => { 
             setIsTipModalOpen(false); 
@@ -676,6 +731,7 @@ export default function CreatorProfile() {
           }} />
         )}
         
+        {/* MODAL DE PAGOS */}
         {isPaymentModalOpen && clientSecret && (
           <PaymentModal 
             clientSecret={clientSecret} 
@@ -693,6 +749,7 @@ export default function CreatorProfile() {
           />
         )}
 
+        {/* MODAL DE IMAGEN EXPANDIDA */}
         {expandedImage && (
           <div 
             className="fixed inset-0 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" 
@@ -712,6 +769,69 @@ export default function CreatorProfile() {
             <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
               <img src={expandedImage.url} alt="Exclusivo" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" />
               <div className="absolute inset-0 w-full h-full cursor-default" style={{ zIndex: 10 }}></div>
+            </div>
+          </div>
+        )}
+
+        {/* 🔥 NUEVO MODAL DE REPORTES */}
+        {isReportModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
+            <div className="bg-[#111] p-6 sm:p-8 rounded-3xl border border-white/10 w-full max-w-md shadow-2xl relative">
+              <button onClick={() => setIsReportModalOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 shrink-0">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-white">Reportar Usuario</h3>
+                  <p className="text-xs text-gray-400">@{creator?.username}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Motivo principal</label>
+                  <select 
+                    value={reportReason} 
+                    onChange={(e) => setReportReason(e.target.value)} 
+                    className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-red-500 transition-colors"
+                  >
+                    <option value="">Selecciona un motivo...</option>
+                    <option value="SPAM">Spam o Perfil Falso</option>
+                    <option value="FRAUD">Estafa o Fraude</option>
+                    <option value="HARASSMENT">Acoso o Comportamiento Molesto</option>
+                    <option value="INAPPROPRIATE">Contenido Inapropiado / Ilegal</option>
+                    <option value="OTHER">Otro (Detallar abajo)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Detalles adicionales (Opcional)</label>
+                  <textarea 
+                    value={reportDescription} 
+                    onChange={(e) => setReportDescription(e.target.value)} 
+                    placeholder="Explica brevemente qué sucedió..."
+                    rows={3}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-red-500 resize-none custom-scrollbar transition-colors"
+                  ></textarea>
+                </div>
+
+                <div className="pt-2">
+                  <button 
+                    onClick={handleSubmitReport}
+                    disabled={isSubmittingReport || !reportReason}
+                    className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {isSubmittingReport ? 'Enviando...' : <><Flag className="w-4 h-4"/> Enviar Reporte</>}
+                  </button>
+                  <p className="text-[10px] text-gray-500 text-center mt-3 leading-relaxed">
+                    Tu reporte será anónimo para el creador. Nuestro equipo de moderación tomará acciones si se violan las políticas de la plataforma.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}
