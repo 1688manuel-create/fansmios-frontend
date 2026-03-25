@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation'; // 🔥 Añadido useSearchParams
 import { chatService } from '../../../lib/chatService';
 import { paymentService } from '../../../lib/paymentService'; 
 import PaymentModal from '../../../components/PaymentModal'; 
@@ -31,6 +31,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'htt
 
 export default function MessagesDashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams(); // 🔥 ATRAPAMOS LAS COORDENADAS
   
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -71,7 +72,6 @@ export default function MessagesDashboard() {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportingMessageId, setReportingMessageId] = useState<string | null>(null);
 
-  // 📸 ESTADO PARA EL VISOR DE IMÁGENES (LIGHTBOX)
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -87,11 +87,11 @@ export default function MessagesDashboard() {
       }
     }
     fetchConversations(true); 
-  }, [router]);
+  }, [router, searchParams]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
-    if (activeChat) {
+    if (activeChat && activeChat.id) { // 🔥 Evitamos recargar si el chat es nuevo y no tiene ID
       interval = setInterval(async () => {
         try {
           const data = await chatService.getMessages(activeChat.id);
@@ -136,7 +136,23 @@ export default function MessagesDashboard() {
       const chats = data.conversations || [];
       setConversations(chats);
 
-      if (isInitialLoad) {
+      // 🔥 LÓGICA DE INTERCEPCIÓN (ABRIR CHAT DESDE EL PERFIL)
+      const chatWithId = searchParams?.get('chatWith');
+      const chatWithName = searchParams?.get('name');
+
+      if (isInitialLoad && chatWithId) {
+        const existingChat = chats.find((c: any) => c.user?.id === chatWithId);
+        if (existingChat) {
+          handleSelectChat(existingChat);
+        } else {
+          // Creamos una sala temporal para que pueda mandar el primer mensaje
+          setActiveChat({
+            id: '', 
+            user: { id: chatWithId, username: chatWithName || 'Usuario' }
+          });
+          setMessages([]);
+        }
+      } else if (isInitialLoad) {
         const lastChatId = localStorage.getItem('lastOpenedChat');
         if (lastChatId) {
           const chatToRestore = chats.find((c: any) => c.id === lastChatId);
@@ -179,7 +195,6 @@ export default function MessagesDashboard() {
       setBroadcastFile(e.target.files[0]);
     }
   };
-
 
   // ==========================================
   // 🎙️ MOTOR DE GRABACIÓN DE AUDIO
@@ -234,14 +249,21 @@ export default function MessagesDashboard() {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() && !selectedImage && !audioBlob) return;
-    if (!activeChat || !activeChat.id) return;
+    if (!activeChat || !activeChat.user?.id) return; // 🔥 Permitir ID de chat vacío para la sala nueva
     setIsSending(true);
 
     try {
       let fileToSend: any = selectedImage;
       if (audioBlob) fileToSend = new File([audioBlob], `audio_${Date.now()}.webm`, { type: 'audio/webm' });
 
-      const data = await chatService.sendMessage(activeChat.id, activeChat.user.id, newMessage, ppvPrice, fileToSend);
+      // 🔥 Pasamos string vacío en el ID si la sala es nueva
+      const data = await chatService.sendMessage(activeChat.id || '', activeChat.user.id, newMessage, ppvPrice, fileToSend);
+
+      // Si el backend crea la sala y nos devuelve un ID nuevo, lo guardamos
+      if (data && data.chatId && !activeChat.id) {
+         setActiveChat((prev: any) => ({ ...prev, id: data.chatId }));
+         localStorage.setItem('lastOpenedChat', data.chatId);
+      }
 
       if (data && data.messageData) {
          const newMsgRight = { ...data.messageData, senderId: 'me' };
@@ -320,7 +342,7 @@ export default function MessagesDashboard() {
   };
 
   const handleToggleBlock = async () => {
-    if (!activeChat) return;
+    if (!activeChat || !activeChat.id) return; // No bloquear en sala temporal
     
     try {
       if (isBlockedByMe) {
@@ -440,7 +462,7 @@ export default function MessagesDashboard() {
             {/* Cabecera del Chat Activo */}
             <div className="p-4 border-b border-white/5 flex justify-between items-center bg-nm-base relative z-20 shadow-md">
               <div className="flex items-center gap-3">
-                <button onClick={() => { setActiveChat(null); localStorage.removeItem('lastOpenedChat'); }} className="sm:hidden nm-btn p-2 rounded-full text-gray-400 hover:text-white transition-colors">
+                <button onClick={() => { setActiveChat(null); localStorage.removeItem('lastOpenedChat'); router.replace('/dashboard/messages'); }} className="sm:hidden nm-btn p-2 rounded-full text-gray-400 hover:text-white transition-colors">
                   <ArrowLeft className="w-5 h-5" />
                 </button>
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center text-white font-bold shadow-md border-2 border-[#0a0a0a]">
@@ -671,7 +693,7 @@ export default function MessagesDashboard() {
         )}
       </div>
 
-      {/* MODAL DE BROADCAST (Corregido z-index) */}
+      {/* MODAL DE BROADCAST */}
       {isBroadcastModalOpen && currentUser?.role === 'CREATOR' && (
         <div className="fixed inset-0 bg-black/90 z- flex items-center justify-center p-4 backdrop-blur-sm">
            <div className="nm-inset border border-teal-500/30 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(20,184,166,0.1)]">
@@ -750,7 +772,7 @@ export default function MessagesDashboard() {
         />
       )}
 
-      {/* 📸 MODAL DE VISOR DE IMÁGENES (Corregido z-index) */}
+      {/* 📸 MODAL DE VISOR DE IMÁGENES */}
       {expandedImage && (
         <div 
           className="fixed inset-0 z- flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none"

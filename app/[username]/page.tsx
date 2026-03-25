@@ -300,7 +300,8 @@ export default function CreatorProfile() {
 
   const handleMessageClick = async () => {
     if (!currentUser) { alert("Debes iniciar sesión para enviar mensajes."); router.push('/auth'); return; }
-    router.push('/dashboard/messages');
+    // 🔥 AQUÍ ENVIAMOS LAS COORDENADAS EXACTAS DEL CREADOR A LA BÓVEDA
+    router.push(`/dashboard/messages?chatWith=${creator.id}&name=${creator.username}`);
   };
 
   // 🔥 FUNCIÓN PARA ENVIAR EL REPORTE AL SERVIDOR
