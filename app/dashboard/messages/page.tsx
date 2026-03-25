@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { chatService } from '../../../lib/chatService';
 import { paymentService } from '../../../lib/paymentService'; 
-import api from '../../../lib/api'; // 🔥 NECESARIO PARA LLAMAR A LA RUTA ADMIN
+import api from '../../../lib/api'; 
 import PaymentModal from '../../../components/PaymentModal'; 
 import ReportModal from '../../../components/ReportModal'; 
 
@@ -25,13 +25,14 @@ import {
   CircleDollarSign, 
   ArrowLeft, 
   Send,
-  Eye // 🔥 ICONO PARA EL MODO DIOS
+  Eye,
+  ImageOff // 🔥 Nuevo icono para archivos perdidos
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
 const getImageUrl = (path: string | null) => {
-  if (!path) return '';
+  if (!path || path === 'null') return '';
   if (path.startsWith('http')) return path;
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
@@ -58,7 +59,6 @@ function MessagesContent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isBlockedByMe, setIsBlockedByMe] = useState(false);
 
-  // 🔥 ESTADO PARA EL MODO DIOS
   const [isGodMode, setIsGodMode] = useState(false);
 
   const [isRecording, setIsRecording] = useState(false);
@@ -100,7 +100,6 @@ function MessagesContent() {
     }
   }, [router, searchParams]);
 
-  // 🔥 EFECTO QUE RECARGA LA LISTA DE CHATS SI SE ACTIVA EL MODO DIOS
   useEffect(() => {
     if (currentUser) {
       fetchConversations(true); 
@@ -153,10 +152,8 @@ function MessagesContent() {
       setIsLoading(true);
       let chats = [];
 
-      // 🔥 INTERCEPTOR DEL MODO DIOS
       if (isGodMode && currentUser?.role === 'ADMIN') {
         const res = await api.get('/messages/admin/all');
-        // Adaptamos el formato de admin para que encaje con el UI del panel izquierdo
         chats = res.data.conversations.map((c: any) => ({
            id: c.id,
            user: { 
@@ -164,9 +161,9 @@ function MessagesContent() {
              username: `${c.creator?.username || 'U1'} 💬 ${c.fan?.username || 'U2'}` 
            },
            lastMsg: c.lastMsg,
-           time: c.time,
+           time: c.time && c.time !== 'Invalid Date' ? c.time : '--:--',
            unread: false,
-           isGodModeChat: true // Etiqueta secreta
+           isGodModeChat: true
         }));
       } else {
         const data = await chatService.getConversations();
@@ -213,9 +210,6 @@ function MessagesContent() {
     
     try {
       const data = await chatService.getMessages(chat.id);
-      
-      // Si estamos en modo Dios, todos los mensajes ajenos llegarán con ID's diferentes a 'me'.
-      // Esto está bien porque así el admin los ve formateados como mensajes recibidos/enviados.
       setMessages(data.messages || []);
       
       if (!isGodMode) {
@@ -223,21 +217,16 @@ function MessagesContent() {
         setIsBlockedByMe(blockData.isBlocked);
       }
       
-      // No recargar toda la lista si estamos en modo dios para no perder posición
       if (!isGodMode) fetchConversations(); 
     } catch (error) {}
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSelectedImage(e.target.files[0]);
-    }
+    if (e.target.files && e.target.files.length > 0) setSelectedImage(e.target.files[0]);
   };
 
   const handleBroadcastFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setBroadcastFile(e.target.files[0]);
-    }
+    if (e.target.files && e.target.files.length > 0) setBroadcastFile(e.target.files[0]);
   };
 
   const startRecording = async () => {
@@ -260,36 +249,28 @@ function MessagesContent() {
       setIsRecording(true);
       setRecordingTime(0);
 
-      timerRef.current = setInterval(() => {
-        setRecordingTime((prev) => prev + 1);
-      }, 1000);
+      timerRef.current = setInterval(() => setRecordingTime((prev) => prev + 1), 1000);
     } catch (err) {
-      console.error("Error accediendo al micrófono:", err);
-      alert("No se pudo acceder al micrófono. Por favor, verifica los permisos de tu navegador.");
+      alert("No se pudo acceder al micrófono.");
     }
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-      mediaRecorderRef.current.stop();
-    }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') mediaRecorderRef.current.stop();
     setIsRecording(false);
     if (timerRef.current) clearInterval(timerRef.current);
   };
 
   const cancelRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-      mediaRecorderRef.current.stop();
-    }
-    setIsRecording(false);
-    setAudioBlob(null); 
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') mediaRecorderRef.current.stop();
+    setIsRecording(false); setAudioBlob(null); 
     if (timerRef.current) clearInterval(timerRef.current);
   };
 
-  const formatTime = (seconds: number) => { return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`; };
+  const formatTime = (seconds: number) => `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
 
   const handleSendMessage = async () => {
-    if (isGodMode) return; // Seguridad extra
+    if (isGodMode) return; 
     if (!newMessage.trim() && !selectedImage && !audioBlob) return;
     if (!activeChat || !activeChat.user?.id) return; 
     setIsSending(true);
@@ -413,8 +394,6 @@ function MessagesContent() {
           {isGodMode ? 'Moderador Global' : 'Mensajes VIP'}
         </h1>
         <div className="flex gap-3">
-          
-          {/* 🔥 BOTÓN DE MODO DIOS PARA ADMINS */}
           {currentUser?.role === 'ADMIN' && (
             <button 
               onClick={() => { setActiveChat(null); setIsGodMode(!isGodMode); }}
@@ -543,19 +522,17 @@ function MessagesContent() {
               {messages.length === 0 && <p className="text-center text-gray-500 mt-10 font-medium">No hay mensajes en este chat.</p>}
               
               {messages.map((msg) => {
-                const isAudio = msg.mediaUrl && (msg.mediaUrl.endsWith('.mp3') || msg.mediaUrl.endsWith('.wav') || msg.mediaUrl.endsWith('.ogg') || msg.mediaUrl.includes('audio_'));
-                const isVideo = msg.mediaUrl && (msg.mediaUrl.endsWith('.mp4') || msg.mediaUrl.endsWith('.mov') || (msg.mediaUrl.endsWith('.webm') && !msg.mediaUrl.includes('audio_')));
+                const hasMedia = msg.mediaUrl && msg.mediaUrl !== 'null';
+                const isAudio = hasMedia && (msg.mediaUrl.match(/\.(mp3|wav|ogg)$/i) || msg.mediaUrl.includes('audio_'));
+                const isVideo = hasMedia && (msg.mediaUrl.match(/\.(mp4|mov|webm)$/i) && !msg.mediaUrl.includes('audio_'));
 
-                // En modo Dios, el Admin es un observador. Si msg.senderId === 'me', significa que es un chat de soporte donde el Admin SÍ participó.
-                // Si el ID es otro, significa que es un mensaje entre dos terceros. Para visualizarlos bien, alineamos a la izquierda a todos.
                 const alignRight = !isGodMode && msg.senderId === 'me';
 
                 return (
                   <div key={msg.id} className={`flex flex-col ${alignRight ? 'items-end' : 'items-start'} animate-fade-in group`}>
                     
-                    {/* EN MODO DIOS, PONEMOS EL ID DEL QUE HABLA PARA SABER QUIÉN ES QUIÉN */}
                     {isGodMode && (
-                      <span className="text-[10px] text-gray-500 mb-1 ml-1">ID Remitente: {msg.senderId}</span>
+                      <span className="text-[10px] text-gray-500 mb-1 ml-1 font-mono">ID Remitente: {msg.senderId}</span>
                     )}
 
                     <div className="flex items-center">
@@ -592,7 +569,7 @@ function MessagesContent() {
 
                         {msg.isPPV && (
                           <div className="bg-[#050505] p-4 rounded-xl flex flex-col items-center justify-center min-h-[140px] border border-white/5 m-1 relative overflow-hidden mb-2 shadow-inner">
-                            {msg.mediaUrl && !msg.isUnlocked && (
+                            {hasMedia && !msg.isUnlocked && (
                               <>
                                 <img src={getImageUrl(msg.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 select-none pointer-events-none" alt="Fondo" />
                                 <div className="absolute inset-0 bg-[#050505]/40"></div>
@@ -620,7 +597,8 @@ function MessagesContent() {
                           </div>
                         )}
                         
-                        {msg.mediaUrl && (!msg.isPPV || msg.isUnlocked) && (
+                        {/* 🔥 RENDERIZADO CORREGIDO DE MULTIMEDIA */}
+                        {hasMedia && (!msg.isPPV || msg.isUnlocked) && (
                           <div className="relative z-10">
                             {isAudio ? (
                                <div className="px-3 pb-2 pt-1">
@@ -635,18 +613,34 @@ function MessagesContent() {
                                    src={getImageUrl(msg.mediaUrl)} 
                                    className="rounded-xl max-h-64 w-full object-cover shadow-md select-none" 
                                    onContextMenu={(e) => e.preventDefault()} 
+                                   onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                      e.currentTarget.parentElement!.innerHTML = '<div class="p-4 flex flex-col items-center text-gray-500 bg-black/20 rounded-xl"><span class="text-xs font-bold">Video eliminado del servidor</span></div>';
+                                   }}
                                  />
                                </div>
                             ) : (
-                               <div className="px-2 pb-2 mt-1 relative">
+                               <div className="px-2 pb-2 mt-1 relative flex justify-center">
                                  <img 
                                    src={getImageUrl(msg.mediaUrl)} 
-                                   alt="Contenido Desbloqueado" 
+                                   alt="Media" 
                                    className="rounded-xl max-h-48 object-cover shadow-md cursor-pointer hover:opacity-80 transition-opacity border border-white/5 select-none" 
                                    onClick={() => setExpandedImage(getImageUrl(msg.mediaUrl))}
                                    onContextMenu={(e) => e.preventDefault()} 
                                    draggable="false"
+                                   onError={(e) => {
+                                      // 🔥 SI LA IMAGEN NO EXISTE, MOSTRAMOS UN ICONO EN VEZ DEL CUADRO ROTO
+                                      e.currentTarget.style.display = 'none';
+                                      if (e.currentTarget.nextElementSibling) {
+                                        (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
+                                      }
+                                   }}
                                  />
+                                 {/* Fallback visual si falla la carga */}
+                                 <div className="hidden flex-col items-center justify-center p-6 bg-black/20 rounded-xl border border-white/5 text-gray-600">
+                                   <ImageOff className="w-8 h-8 mb-2 opacity-50" />
+                                   <span className="text-[10px] font-bold uppercase tracking-widest">Archivo Perdido</span>
+                                 </div>
                                </div>
                             )}
                           </div>
@@ -659,7 +653,6 @@ function MessagesContent() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* 🔥 EN MODO DIOS, EL ADMIN NO PUEDE MANDAR MENSAJES (SÓLO LECTURA) */}
             {!isGodMode && (
               <div className="p-4 border-t border-white/5 bg-nm-base relative z-20 min-h-[95px] flex flex-col justify-center shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
                 {isBlockedByMe ? (
@@ -760,6 +753,7 @@ function MessagesContent() {
         )}
       </div>
 
+      {/* MODALES REUTILIZABLES MANTENIDOS IGUAL */}
       {isBroadcastModalOpen && currentUser?.role === 'CREATOR' && !isGodMode && (
         <div className="fixed inset-0 bg-black/90 z- flex items-center justify-center p-4 backdrop-blur-sm">
            <div className="nm-inset border border-teal-500/30 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(20,184,166,0.1)]">
@@ -857,20 +851,6 @@ function MessagesContent() {
               className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none"
               draggable="false"
             />
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none overflow-hidden opacity-30 mix-blend-overlay">
-               <div className="transform -rotate-45 flex flex-col items-center">
-                 <span className="text-white text-5xl md:text-8xl font-black uppercase tracking-widest drop-shadow-[0_5px_5px_rgba(0,0,0,1)]">
-                   FansMio
-                 </span>
-                 <span className="text-white text-xl md:text-3xl font-bold drop-shadow-[0_5px_5px_rgba(0,0,0,1)] mt-2">
-                   @{activeChat?.user?.username || 'EXCLUSIVO'}
-                 </span>
-               </div>
-            </div>
-            <div 
-              className="absolute inset-0 z-10 w-full h-full cursor-default" 
-              onContextMenu={(e) => e.preventDefault()}
-            ></div>
           </div>
         </div>
       )}
