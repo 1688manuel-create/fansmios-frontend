@@ -27,7 +27,7 @@ import {
   Send,
   Eye,
   ImageOff,
-  Maximize // 🔥 Icono para expandir
+  Maximize
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -81,11 +81,10 @@ function MessagesContent() {
   const broadcastFileInputRef = useRef<HTMLInputElement>(null);
 
   const [isFlashing, setIsFlashing] = useState(false);
-
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportingMessageId, setReportingMessageId] = useState<string | null>(null);
 
-  // 🔥 ESTADO MEJORADO PARA SOPORTAR FOTOS Y VIDEOS
+  // 🔥 ESTADO UNIFICADO PARA EXPANDIR FOTOS Y VIDEOS (CORREGIDO)
   const [expandedMedia, setExpandedMedia] = useState<{url: string, type: 'video'|'image'} | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -163,7 +162,6 @@ function MessagesContent() {
              username: `${c.creator?.username || 'U1'} 💬 ${c.fan?.username || 'U2'}` 
            },
            lastMsg: c.lastMsg,
-           // 🔥 CORRECCIÓN DEL INVALID DATE
            time: (c.time && !c.time.includes('Invalid')) ? c.time : '--:--',
            unread: false,
            isGodModeChat: true
@@ -625,7 +623,7 @@ function MessagesContent() {
                                  {/* BOTÓN PARA EXPANDIR VIDEO */}
                                  <div 
                                    onClick={() => setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'video' })}
-                                   className="absolute top-4 right-4 bg-black/70 hover:bg-teal-500 p-2 rounded-full cursor-pointer opacity-0 group-hover/media:opacity-100 transition-all z-20 shadow-lg"
+                                   className="absolute top-4 right-4 bg-black/70 hover:bg-teal-500 p-2 rounded-full cursor-pointer opacity-100 sm:opacity-0 sm:group-hover/media:opacity-100 transition-all z-20 shadow-lg"
                                    title="Ver en grande"
                                  >
                                    <Maximize className="w-5 h-5 text-white" />
@@ -636,7 +634,8 @@ function MessagesContent() {
                                  <img 
                                    src={getImageUrl(msg.mediaUrl)} 
                                    alt="Media" 
-                                   className="rounded-xl max-h-48 object-cover shadow-md border border-white/5 select-none" 
+                                   className="rounded-xl max-h-48 object-cover shadow-md border border-white/5 select-none cursor-pointer" 
+                                   onClick={() => setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' })}
                                    onContextMenu={(e) => e.preventDefault()} 
                                    draggable="false"
                                    onError={(e) => {
@@ -647,14 +646,6 @@ function MessagesContent() {
                                    }}
                                  />
                                  
-                                 {/* BOTÓN OVERLAY PARA EXPANDIR IMAGEN */}
-                                 <div 
-                                   onClick={() => setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' })}
-                                   className="absolute inset-2 flex items-center justify-center bg-black/40 rounded-xl cursor-pointer opacity-0 group-hover/media:opacity-100 transition-all z-20"
-                                 >
-                                   <Maximize className="w-10 h-10 text-white drop-shadow-lg" />
-                                 </div>
-
                                  {/* Fallback visual si falla la carga */}
                                  <div className="hidden flex-col items-center justify-center p-6 bg-black/20 rounded-xl border border-white/5 text-gray-600">
                                    <ImageOff className="w-8 h-8 mb-2 opacity-50" />
