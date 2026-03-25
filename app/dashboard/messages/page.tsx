@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from 'react'; // 🔥 Importamos Suspense
+import { useState, useEffect, useRef, Suspense } from 'react'; 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { chatService } from '../../../lib/chatService';
 import { paymentService } from '../../../lib/paymentService'; 
@@ -28,7 +28,6 @@ import {
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-// 🔥 SEPARAMOS EL CONTENIDO EN UN COMPONENTE INTERNO
 function MessagesContent() {
   const router = useRouter();
   const searchParams = useSearchParams(); 
@@ -613,7 +612,8 @@ function MessagesContent() {
                   </div>
 
                   <div className="flex items-end gap-2 nm-inset rounded-[2rem] p-1.5 focus-within:border-teal-500/50 transition-colors border border-transparent">
-                    {!isRecording && !audioBlob && (
+                    {/* 🛑 AQUI BLOQUEAMOS EL BOTON DE SUBIR ARCHIVO PARA FANS */}
+                    {!isRecording && !audioBlob && currentUser?.role === 'CREATOR' && (
                       <>
                         <input type="file" accept="image/*,video/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
                         <button onClick={() => fileInputRef.current?.click()} className="nm-btn w-11 h-11 rounded-full text-gray-400 hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
@@ -622,6 +622,7 @@ function MessagesContent() {
                       </>
                     )}
 
+                    {/* 🛑 AQUI BLOQUEAMOS EL BOTON DE COBRAR PPV PARA FANS */}
                     {currentUser?.role === 'CREATOR' && (
                       <button onClick={() => setIsPPVMode(!isPPVMode)} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all shrink-0 ${isPPVMode ? 'nm-inset text-teal-400 border border-teal-500/30' : 'nm-btn text-gray-400 hover:text-teal-400'}`}>
                         <CircleDollarSign className="w-5 h-5" />
@@ -651,10 +652,17 @@ function MessagesContent() {
                       <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Escribe un mensaje privado..." className="flex-1 bg-transparent text-white outline-none px-4 py-3 max-h-32 resize-none custom-scrollbar self-center text-sm md:text-base placeholder:text-gray-600" rows={1} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }} />
                     )}
 
+                    {/* 🛑 AQUI BLOQUEAMOS EL MICROFONO PARA FANS */}
                     {!newMessage.trim() && !selectedImage && !audioBlob && !isRecording ? (
-                      <button onClick={startRecording} className="nm-btn w-11 h-11 rounded-full text-gray-400 hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
-                        <Mic className="w-5 h-5" />
-                      </button>
+                      currentUser?.role === 'CREATOR' ? (
+                        <button onClick={startRecording} className="nm-btn w-11 h-11 rounded-full text-gray-400 hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
+                          <Mic className="w-5 h-5" />
+                        </button>
+                      ) : (
+                        <button disabled className="nm-btn-primary h-11 w-11 sm:w-auto sm:px-6 rounded-full transition-all disabled:opacity-50 shrink-0 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+                          <Send className="w-5 h-5" /> <span className="hidden sm:inline">Enviar</span>
+                        </button>
+                      )
                     ) : (
                       <button onClick={handleSendMessage} disabled={isSending || (isPPVMode && !ppvPrice) || isRecording} className="nm-btn-primary h-11 w-11 sm:w-auto sm:px-6 rounded-full transition-all disabled:opacity-50 shrink-0 flex items-center justify-center gap-2">
                         {isSending ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : <><Send className="w-5 h-5" /> <span className="hidden sm:inline">Enviar</span></>}
@@ -794,7 +802,6 @@ function MessagesContent() {
   );
 }
 
-// 🔥 EXPORTAMOS EL COMPONENTE ENVUELTO EN SUSPENSE PARA QUE NEXT.JS NO EXPLOTE EN EL BUILD
 export default function MessagesDashboard() {
   return (
     <Suspense fallback={<div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-10 h-10 border-4 border-teal-500 rounded-full border-t-transparent animate-spin"></div></div>}>
