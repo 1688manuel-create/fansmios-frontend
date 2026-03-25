@@ -632,21 +632,24 @@ export default function Feed() {
 
                         {!post.hasAccess ? (
                           <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 overflow-hidden group nm-inset mt-4">
-                            {/* 🔥 FONDO BORROSO COMPATIBLE CON VIDEO E IMAGEN */}
+                            {/* 🔥 FONDO BORROSO PREMIUM (FIX APLICADO) */}
                             {post.mediaUrl && (
                               post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-95 scale-125 select-none pointer-events-none" />
+                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-50 scale-110 select-none pointer-events-none" />
                               ) : (
-                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-95 scale-125 select-none pointer-events-none" />
+                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-50 scale-110 select-none pointer-events-none" />
                               )
                             )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/95 to-transparent"></div>
+
+                            {/* 🧊 CAPA GLASS SUAVE */}
+                            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
                             
-                            <div className="relative z-10 flex flex-col items-center bg-black/70 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md">
+                            {/* 🔒 CONTENIDO CENTRAL */}
+                            <div className="relative z-10 flex flex-col items-center bg-black/60 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
                               <Lock className={`w-14 h-14 mb-4 ${post.isPromoted ? 'text-yellow-500' : 'text-red-500'}`} />
                               {isOwner ? (
                                 <button disabled className="py-3 px-8 text-sm flex items-center gap-2 font-bold nm-inset text-red-500 cursor-default rounded-xl">
-                                  <Lock className="w-4 h-4"/> Tu PPV ($${post.price})
+                                  <Lock className="w-4 h-4"/> Tu PPV (${(post.price || 0).toFixed(2)})
                                 </button>
                               ) : (
                                 <button onClick={() => handleUnlockClick(post)} className={`py-3 px-8 text-sm flex items-center gap-2 font-bold ${post.isPromoted ? 'bg-yellow-500 text-black rounded-full shadow-[0_0_15px_rgba(234,179,8,0.4)]' : 'nm-btn-primary rounded-xl'}`}>
