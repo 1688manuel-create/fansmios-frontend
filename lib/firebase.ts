@@ -32,37 +32,47 @@ export const requestPushPermission = async () => {
     const permission = await Notification.requestPermission();
     
     if (permission === 'granted') {
-      console.log("🔔 Permiso de notificaciones concedido.");
+      console.log("🔔 Permiso de notificaciones concedido por el usuario.");
 
-      // 2. REGISTRO MANUAL DEL SERVICE WORKER (Paso B Crítico)
+      // 2. REGISTRO MANUAL DEL SERVICE WORKER
       const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-        scope: '/' // El alcance debe ser la raíz
+        scope: '/' 
       });
 
-      // 🔥 LA LÍNEA MÁGICA: Obligamos a esperar a que el guardia esté 100% "Activo"
+      // Obligamos a esperar a que el guardia esté 100% "Activo"
       await navigator.serviceWorker.ready;
 
-      // 3. Obtener el Token usando el registro que acabamos de crear
-      const token = await getToken(messaging, { 
-        vapidKey: "BHW5cVX7Z_k-zbd5BZgQ-OmF6TFdDWDlZaSbpx_BNAscm2VbEMnSZQoOHsMnornALMV7WkpL_5ebsvhkzMgEq5I",
-        serviceWorkerRegistration: registration // 👈 Le pasamos el SW explícitamente
-      });
+      // 3. Obtener el Token (AQUÍ ESTÁ EL ESCUDO 🛡️)
+      let token = null;
+      try {
+        token = await getToken(messaging, { 
+          vapidKey: "BHW5cVX7Z_k-zbd5BZgQ-OmF6TFdDWDlZaSbpx_BNAscm2VbEMnSZQoOHsMnornALMV7WkpL_5ebsvhkzMgEq5I",
+          serviceWorkerRegistration: registration 
+        });
+      } catch (tokenError) {
+        // 🔥 Silenciamos el 403 Forbidden o el bloqueo por navegadores estrictos (Brave/Incógnito)
+        console.warn("⚠️ Token de notificaciones bloqueado (Error 403 o Antirrastreo). Ignorando silenciosamente...");
+        return null; // Salimos sin romper el resto de la app
+      }
 
       if (token) {
-        console.log("✅ Token de FCM generado con éxito:", token);
+        console.log("✅ Token de FCM generado con éxito."); // Oculto para no hacer ruido
         
-        // 4. Enviar al backend (Tu endpoint actual)
-        await api.post('/users/settings/push-token', { fcmToken: token });
+        // 4. Enviar al backend
+        try {
+           await api.post('/users/settings/push-token', { fcmToken: token });
+        } catch (apiError) {
+           console.warn("⚠️ No se pudo guardar el token en la base de datos.");
+        }
         
         return token;
-      } else {
-        console.error("❌ No se pudo obtener el token de FCM.");
       }
     } else {
       console.warn("🚫 El usuario bloqueó las notificaciones.");
     }
   } catch (error) {
-    console.error("❌ Error fatal en el flujo de notificaciones:", error);
+    // Solo mostramos advertencias amarillas, no errores rojos fatales
+    console.warn("⚠️ Flujo de notificaciones interrumpido:", error);
   }
 };
 

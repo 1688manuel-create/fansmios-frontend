@@ -13,9 +13,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FansMio | Tu contenido. Tus reglas. Tus fans",
-  description: "La plataforma exclusiva para creadores de élite. Únete a FansMio y conecta con tu audiencia de forma VIP.",
-};
+  title: 'FansMio VIP',
+  description: 'La plataforma exclusiva para creadores de élite. Tu contenido. Tus reglas. Tus fans.',
+  icons: {
+    icon: '/favicon.ico',
+  },
+  // 🔥 INYECCIÓN DEL RADAR DE GOOGLE:
+  verification: {
+    google: 'FaGtag_Iz-NRoRwVB-0qvxkeM4-7lFDKy4SmAmJULhY',
+  },
+}
 
 export default function RootLayout({
   children,
