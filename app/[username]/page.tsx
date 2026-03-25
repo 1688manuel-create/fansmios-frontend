@@ -309,7 +309,6 @@ export default function CreatorProfile() {
     if (!reportReason) { alert("⚠️ Debes seleccionar un motivo."); return; }
     setIsSubmittingReport(true);
     try {
-      // Enviamos el reporte a tu API (Asegúrate de que tu backend soporte type: 'USER')
       await api.post('/reports', {
         type: 'USER',
         reportedUserId: creator.id,
@@ -570,10 +569,15 @@ export default function CreatorProfile() {
                     </div>
                     
                     <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 mt-4 overflow-hidden group nm-inset">
+                      {/* 🔥 MEJORA DE VISIBILIDAD Y SOPORTE PARA VIDEOS BORROSOS */}
                       {post.mediaUrl && (
-                        <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 select-none pointer-events-none" />
+                        post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                          <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                        ) : (
+                          <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                        )
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 to-[#0e0e0e]/80"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
                       
                       <div className="relative z-10 flex flex-col items-center space-y-4 bg-black/70 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md">
                         <Lock className="w-14 h-14 text-red-500" />
@@ -621,9 +625,19 @@ export default function CreatorProfile() {
                       </div>
                     </div>
                     {post.content && <p className="text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{post.content}</p>}
+                    
+                    {/* 🔥 AGREGAMOS SOPORTE PARA REPRODUCIR VIDEOS Y AUDIOS DESBLOQUEADOS */}
                     {post.mediaUrl && (
                       <div className="mt-4 rounded-2xl overflow-hidden border border-white/5 nm-inset relative bg-black/50 flex justify-center">
-                        <img src={getImageUrl(post.mediaUrl)} alt="Exclusivo" className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
+                        {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                          <video controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(post.mediaUrl)} className="w-full h-auto object-cover max-h-[600px] shadow-md select-none" onContextMenu={(e) => e.preventDefault()} />
+                        ) : post.mediaUrl.match(/\.(mp3|wav|ogg)$/i) ? (
+                          <div className="w-full p-6 flex justify-center bg-white/5">
+                            <audio controls src={getImageUrl(post.mediaUrl)} className="w-full max-w-md outline-none" />
+                          </div>
+                        ) : (
+                          <img src={getImageUrl(post.mediaUrl)} alt="Exclusivo" className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
+                        )}
                       </div>
                     )}
 
