@@ -527,6 +527,13 @@ function MessagesContent() {
 
                       {msg.isPPV && (
                         <div className="bg-[#050505] p-4 rounded-xl flex flex-col items-center justify-center min-h-[140px] border border-white/5 m-1 relative overflow-hidden mb-2 shadow-inner">
+                          {/* 🔥 INYECTAMOS EL FONDO BORROSO */}
+                          {msg.mediaUrl && !msg.isUnlocked && (
+                            <>
+                              <img src={msg.mediaUrl.startsWith('http') ? msg.mediaUrl : `${BACKEND_URL}${msg.mediaUrl}`} className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 select-none pointer-events-none" alt="Fondo" />
+                              <div className="absolute inset-0 bg-[#050505]/40"></div>
+                            </>
+                          )}
                           {!msg.isUnlocked ? (
                             <>
                               <div className="absolute inset-0 bg-gradient-to-t from-teal-900/40 to-transparent"></div>
@@ -569,10 +576,10 @@ function MessagesContent() {
                           ) : (
                              <div className="px-2 pb-2 mt-1 relative">
                                <img 
-                                 src={`${BACKEND_URL}${msg.mediaUrl}`} 
-                                 alt="Contenido Protegido" 
+                                 src={msg.mediaUrl.startsWith('http') ? msg.mediaUrl : `${BACKEND_URL}${msg.mediaUrl}`} 
+                                 alt="Contenido Desbloqueado" 
                                  className="rounded-xl max-h-48 object-cover shadow-md cursor-pointer hover:opacity-80 transition-opacity border border-white/5 select-none" 
-                                 onClick={() => setExpandedImage(`${BACKEND_URL}${msg.mediaUrl}`)}
+                                 onClick={() => setExpandedImage(msg.mediaUrl.startsWith('http') ? msg.mediaUrl : `${BACKEND_URL}${msg.mediaUrl}`)}
                                  onContextMenu={(e) => e.preventDefault()} 
                                  draggable="false"
                                />
