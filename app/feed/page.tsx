@@ -635,9 +635,9 @@ export default function Feed() {
                             {/* 🔥 FONDO BORROSO COMPATIBLE CON VIDEO E IMAGEN */}
                             {post.mediaUrl && (
                               post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-20 scale-125 select-none pointer-events-none" />
+                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-10 scale-125 select-none pointer-events-none" />
                               ) : (
-                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-20 scale-125 select-none pointer-events-none" />
+                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-10 scale-125 select-none pointer-events-none" />
                               )
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/20 to-transparent"></div>
