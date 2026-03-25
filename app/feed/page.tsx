@@ -635,14 +635,14 @@ export default function Feed() {
                             {/* 🔥 FONDO BORROSO PREMIUM (FIX APLICADO) */}
                             {post.mediaUrl && (
                               post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-40 scale-110 select-none pointer-events-none" />
+                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-50 scale-110 select-none pointer-events-none" />
                               ) : (
-                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-40 scale-110 select-none pointer-events-none" />
+                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-50 scale-110 select-none pointer-events-none" />
                               )
                             )}
 
                             {/* 🧊 CAPA GLASS SUAVE */}
-                            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+                            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
                             
                             {/* 🔒 CONTENIDO CENTRAL */}
                             <div className="relative z-10 flex flex-col items-center bg-black/60 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
