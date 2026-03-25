@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation'; // 🔥 Añadido useSearchParams
+import { useState, useEffect, useRef, Suspense } from 'react'; // 🔥 Importamos Suspense
+import { useRouter, useSearchParams } from 'next/navigation';
 import { chatService } from '../../../lib/chatService';
 import { paymentService } from '../../../lib/paymentService'; 
 import PaymentModal from '../../../components/PaymentModal'; 
 import ReportModal from '../../../components/ReportModal'; 
 
-// 🔥 IMPORTAMOS ICONOS PREMIUM DE LUCIDE
 import { 
   MessageCircle, 
   Megaphone, 
@@ -29,9 +28,10 @@ import {
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-export default function MessagesDashboard() {
+// 🔥 SEPARAMOS EL CONTENIDO EN UN COMPONENTE INTERNO
+function MessagesContent() {
   const router = useRouter();
-  const searchParams = useSearchParams(); // 🔥 ATRAPAMOS LAS COORDENADAS
+  const searchParams = useSearchParams(); 
   
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -91,7 +91,7 @@ export default function MessagesDashboard() {
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
-    if (activeChat && activeChat.id) { // 🔥 Evitamos recargar si el chat es nuevo y no tiene ID
+    if (activeChat && activeChat.id) { 
       interval = setInterval(async () => {
         try {
           const data = await chatService.getMessages(activeChat.id);
@@ -136,7 +136,6 @@ export default function MessagesDashboard() {
       const chats = data.conversations || [];
       setConversations(chats);
 
-      // 🔥 LÓGICA DE INTERCEPCIÓN (ABRIR CHAT DESDE EL PERFIL)
       const chatWithId = searchParams?.get('chatWith');
       const chatWithName = searchParams?.get('name');
 
@@ -145,7 +144,6 @@ export default function MessagesDashboard() {
         if (existingChat) {
           handleSelectChat(existingChat);
         } else {
-          // Creamos una sala temporal para que pueda mandar el primer mensaje
           setActiveChat({
             id: '', 
             user: { id: chatWithId, username: chatWithName || 'Usuario' }
@@ -196,9 +194,6 @@ export default function MessagesDashboard() {
     }
   };
 
-  // ==========================================
-  // 🎙️ MOTOR DE GRABACIÓN DE AUDIO
-  // ==========================================
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -212,7 +207,7 @@ export default function MessagesDashboard() {
       mediaRecorderRef.current.onstop = () => {
         const audioBlobLocal = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         setAudioBlob(audioBlobLocal);
-        stream.getTracks().forEach(track => track.stop()); // Apagar el mic
+        stream.getTracks().forEach(track => track.stop()); 
       };
 
       mediaRecorderRef.current.start();
@@ -241,7 +236,7 @@ export default function MessagesDashboard() {
       mediaRecorderRef.current.stop();
     }
     setIsRecording(false);
-    setAudioBlob(null); // Descartar el audio
+    setAudioBlob(null); 
     if (timerRef.current) clearInterval(timerRef.current);
   };
 
@@ -249,17 +244,15 @@ export default function MessagesDashboard() {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() && !selectedImage && !audioBlob) return;
-    if (!activeChat || !activeChat.user?.id) return; // 🔥 Permitir ID de chat vacío para la sala nueva
+    if (!activeChat || !activeChat.user?.id) return; 
     setIsSending(true);
 
     try {
       let fileToSend: any = selectedImage;
       if (audioBlob) fileToSend = new File([audioBlob], `audio_${Date.now()}.webm`, { type: 'audio/webm' });
 
-      // 🔥 Pasamos string vacío en el ID si la sala es nueva
       const data = await chatService.sendMessage(activeChat.id || '', activeChat.user.id, newMessage, ppvPrice, fileToSend);
 
-      // Si el backend crea la sala y nos devuelve un ID nuevo, lo guardamos
       if (data && data.chatId && !activeChat.id) {
          setActiveChat((prev: any) => ({ ...prev, id: data.chatId }));
          localStorage.setItem('lastOpenedChat', data.chatId);
@@ -342,7 +335,7 @@ export default function MessagesDashboard() {
   };
 
   const handleToggleBlock = async () => {
-    if (!activeChat || !activeChat.id) return; // No bloquear en sala temporal
+    if (!activeChat || !activeChat.id) return; 
     
     try {
       if (isBlockedByMe) {
@@ -377,7 +370,6 @@ export default function MessagesDashboard() {
     <div className="h-screen flex flex-col bg-nm-base overflow-hidden relative">
       <div className="absolute top-[-20%] left-1/2 w-[800px] h-[500px] bg-teal-900/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
 
-      {/* ================= NAVBAR SUPERIOR NEUMÓRFICA ================= */}
       <nav className="bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center z-10 shrink-0 backdrop-blur-xl shadow-md">
         <h1 className="text-xl font-black text-white flex items-center gap-2">
           <MessageCircle className="w-5 h-5 text-teal-500" strokeWidth={2.5}/> Mensajes VIP
@@ -402,7 +394,6 @@ export default function MessagesDashboard() {
 
       <div className={`flex flex-1 overflow-hidden max-w-7xl mx-auto w-full z-10 ${isFlashing ? 'shadow-[inset_0_0_50px_rgba(20,184,166,0.2)] border border-teal-500/30 rounded-xl' : ''}`}>
         
-        {/* ================= BARRA LATERAL (LISTA DE CHATS) ================= */}
         <div className={`w-full sm:w-80 border-r border-white/5 flex flex-col bg-nm-base relative z-20 ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
           <div className="p-4 border-b border-white/5">
             <div className="relative">
@@ -455,11 +446,8 @@ export default function MessagesDashboard() {
           </div>
         </div>
 
-        {/* ================= ÁREA DE CHAT (DERECHA) ================= */}
         {activeChat ? (
           <div className="flex flex-col flex-1 bg-[#0a0a0a] relative z-10 isolate">
-            
-            {/* Cabecera del Chat Activo */}
             <div className="p-4 border-b border-white/5 flex justify-between items-center bg-nm-base relative z-20 shadow-md">
               <div className="flex items-center gap-3">
                 <button onClick={() => { setActiveChat(null); localStorage.removeItem('lastOpenedChat'); router.replace('/dashboard/messages'); }} className="sm:hidden nm-btn p-2 rounded-full text-gray-400 hover:text-white transition-colors">
@@ -500,7 +488,6 @@ export default function MessagesDashboard() {
               </div>
             </div>
 
-            {/* Contenedor de Mensajes */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar relative">
               {messages.length === 0 && <p className="text-center text-gray-500 mt-10 font-medium">No hay mensajes. ¡Inicia la conversación!</p>}
               
@@ -510,8 +497,6 @@ export default function MessagesDashboard() {
 
                 return (
                   <div key={msg.id} className={`flex ${msg.senderId === 'me' ? 'justify-end' : 'justify-start'} animate-fade-in group`}>
-                    
-                    {/* Botones Flotantes del mensaje */}
                     {msg.senderId === 'me' ? (
                       <button 
                         onClick={() => handleDeleteMessage(msg.id)} 
@@ -535,7 +520,6 @@ export default function MessagesDashboard() {
                         ? 'bg-gradient-to-bl from-teal-700 to-blue-700 rounded-tr-none text-white shadow-lg' 
                         : 'nm-inset rounded-tl-none text-gray-200 border border-white/5'
                     }`}>
-                      
                       {msg.content && (
                          <div className={`px-4 py-2.5 text-sm md:text-base whitespace-pre-wrap ${msg.isPPV && !msg.isUnlocked ? 'text-teal-200 italic border-l-2 border-teal-500 ml-2 pl-2 mb-2 bg-black/40 rounded-r-lg' : ''}`}>
                             {msg.content}
@@ -604,7 +588,6 @@ export default function MessagesDashboard() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* CONTROLES DE ESCRITURA */}
             <div className="p-4 border-t border-white/5 bg-nm-base relative z-20 min-h-[95px] flex flex-col justify-center shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
               {isBlockedByMe ? (
                 <div className="w-full text-center py-3 text-red-400 text-sm font-bold nm-inset border border-red-500/30 rounded-full shadow-inner flex items-center justify-center gap-2">
@@ -693,7 +676,6 @@ export default function MessagesDashboard() {
         )}
       </div>
 
-      {/* MODAL DE BROADCAST */}
       {isBroadcastModalOpen && currentUser?.role === 'CREATOR' && (
         <div className="fixed inset-0 bg-black/90 z- flex items-center justify-center p-4 backdrop-blur-sm">
            <div className="nm-inset border border-teal-500/30 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(20,184,166,0.1)]">
@@ -741,7 +723,6 @@ export default function MessagesDashboard() {
         </div>
       )}
 
-      {/* 🚀 MODAL DE PAGO */}
       {isPaymentModalOpen && clientSecret && selectedMessageToUnlock && (
         <PaymentModal 
           clientSecret={clientSecret} 
@@ -762,7 +743,6 @@ export default function MessagesDashboard() {
         />
       )}
 
-      {/* MODAL INTELIGENTE DE REPORTES */}
       {isReportModalOpen && activeChat && (
         <ReportModal 
           type={reportingMessageId ? 'MESSAGE' : 'USER'} 
@@ -772,7 +752,6 @@ export default function MessagesDashboard() {
         />
       )}
 
-      {/* 📸 MODAL DE VISOR DE IMÁGENES */}
       {expandedImage && (
         <div 
           className="fixed inset-0 z- flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none"
@@ -811,7 +790,15 @@ export default function MessagesDashboard() {
           </div>
         </div>
       )}
-
     </div>
+  );
+}
+
+// 🔥 EXPORTAMOS EL COMPONENTE ENVUELTO EN SUSPENSE PARA QUE NEXT.JS NO EXPLOTE EN EL BUILD
+export default function MessagesDashboard() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-10 h-10 border-4 border-teal-500 rounded-full border-t-transparent animate-spin"></div></div>}>
+      <MessagesContent />
+    </Suspense>
   );
 }
