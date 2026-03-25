@@ -598,58 +598,48 @@ function MessagesContent() {
                           </div>
                         )}
                         
-                        {/* 🔥 RENDERIZADO CORREGIDO DE MULTIMEDIA (CON BOTONES DE EXPANDIR) */}
+                        {/* 🔥 RENDERIZADO CORREGIDO DE MULTIMEDIA */}
                         {hasMedia && (!msg.isPPV || msg.isUnlocked) && (
-                          <div className="relative z-10">
+                          <div className="relative z-10 mt-2">
                             {isAudio ? (
                                <div className="px-3 pb-2 pt-1">
                                  <audio controls src={getImageUrl(msg.mediaUrl)} className="max-w-[200px] sm:max-w-[250px] h-10 outline-none" />
                                </div>
                             ) : isVideo ? (
-                               <div className="px-2 pb-2 mt-1 relative group/media flex justify-center">
+                               <div className="px-2 pb-2 relative group/media flex justify-center">
                                  <video 
                                    controls 
                                    controlsList="nodownload noplaybackrate" 
                                    disablePictureInPicture
                                    src={getImageUrl(msg.mediaUrl)} 
-                                   className="rounded-xl max-h-64 w-full object-cover shadow-md select-none" 
+                                   className="rounded-xl max-h-64 w-full object-cover shadow-md select-none relative z-10" 
                                    onContextMenu={(e) => e.preventDefault()} 
-                                   onError={(e) => {
-                                      e.currentTarget.style.display = 'none';
-                                      if (e.currentTarget.nextElementSibling) (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'none';
-                                      e.currentTarget.parentElement!.innerHTML = '<div class="p-4 flex flex-col items-center text-gray-500 bg-black/20 rounded-xl"><span class="text-xs font-bold">Video eliminado del servidor</span></div>';
-                                   }}
                                  />
                                  {/* BOTÓN PARA EXPANDIR VIDEO */}
                                  <div 
-                                   onClick={() => setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'video' })}
-                                   className="absolute top-4 right-4 bg-black/70 hover:bg-teal-500 p-2 rounded-full cursor-pointer opacity-100 sm:opacity-0 sm:group-hover/media:opacity-100 transition-all z-20 shadow-lg"
+                                   onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'video' }); }}
+                                   className="absolute top-4 right-4 bg-black/80 hover:bg-teal-500 p-2.5 rounded-full cursor-pointer opacity-100 sm:opacity-0 sm:group-hover/media:opacity-100 transition-all z-30 shadow-lg border border-white/10"
                                    title="Ver en grande"
                                  >
                                    <Maximize className="w-5 h-5 text-white" />
                                  </div>
                                </div>
                             ) : (
-                               <div className="px-2 pb-2 mt-1 relative flex justify-center group/media">
+                               <div className="px-2 pb-2 relative flex justify-center group/media">
                                  <img 
                                    src={getImageUrl(msg.mediaUrl)} 
                                    alt="Media" 
-                                   className="rounded-xl max-h-48 object-cover shadow-md border border-white/5 select-none cursor-pointer" 
-                                   onClick={() => setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' })}
+                                   className="rounded-xl max-h-48 object-cover shadow-md border border-white/5 select-none cursor-pointer relative z-10" 
+                                   onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' }); }}
                                    onContextMenu={(e) => e.preventDefault()} 
                                    draggable="false"
-                                   onError={(e) => {
-                                      e.currentTarget.style.display = 'none';
-                                      if (e.currentTarget.nextElementSibling) {
-                                        (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
-                                      }
-                                   }}
                                  />
-                                 
-                                 {/* Fallback visual si falla la carga */}
-                                 <div className="hidden flex-col items-center justify-center p-6 bg-black/20 rounded-xl border border-white/5 text-gray-600">
-                                   <ImageOff className="w-8 h-8 mb-2 opacity-50" />
-                                   <span className="text-[10px] font-bold uppercase tracking-widest">Archivo Perdido</span>
+                                 {/* BOTÓN OVERLAY PARA EXPANDIR IMAGEN */}
+                                 <div 
+                                   onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' }); }}
+                                   className="absolute inset-2 flex items-center justify-center bg-black/40 rounded-xl cursor-pointer opacity-0 group-hover/media:opacity-100 transition-all z-20"
+                                 >
+                                   <Maximize className="w-10 h-10 text-white drop-shadow-lg" />
                                  </div>
                                </div>
                             )}
@@ -839,16 +829,18 @@ function MessagesContent() {
         />
       )}
 
-      {/* 🔥 MODAL GIGANTE DE MULTIMEDIA REPARADO CON Z-INDEX CORRECTO */}
+      {/* 🔥 MODAL GIGANTE DE MULTIMEDIA (FIX Z-INDEX FORZADO) */}
       {expandedMedia && (
         <div 
-          className="fixed inset-0 z- flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none"
+          className="fixed inset-0 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none"
+          style={{ zIndex: 999999 }} 
           onClick={() => setExpandedMedia(null)}
           onContextMenu={(e) => e.preventDefault()} 
         >
           <button 
-            onClick={() => setExpandedMedia(null)}
-            className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all z- border border-white/10"
+            onClick={(e) => { e.stopPropagation(); setExpandedMedia(null); }}
+            className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all border border-white/10"
+            style={{ zIndex: 1000000 }}
             title="Cerrar"
           >
             <X className="w-6 h-6" />
@@ -860,18 +852,18 @@ function MessagesContent() {
                 src={expandedMedia.url} 
                 controls 
                 autoPlay 
-                className="max-w-full max-h-[90vh] rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] outline-none" 
+                className="max-w-full max-h-[90vh] rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] outline-none relative z-10" 
               />
             ) : (
               <img 
                 src={expandedMedia.url} 
                 alt="Contenido Exclusivo" 
-                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none"
+                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none relative z-10"
                 draggable="false"
               />
             )}
 
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none overflow-hidden opacity-30 mix-blend-overlay">
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none overflow-hidden opacity-30 mix-blend-overlay z-0">
                <div className="transform -rotate-45 flex flex-col items-center">
                  <span className="text-white text-5xl md:text-8xl font-black uppercase tracking-widest drop-shadow-[0_5px_5px_rgba(0,0,0,1)]">
                    FansMio
@@ -883,7 +875,7 @@ function MessagesContent() {
             </div>
             {expandedMedia.type === 'image' && (
               <div 
-                className="absolute inset-0 z-10 w-full h-full cursor-default pointer-events-auto" 
+                className="absolute inset-0 z-20 w-full h-full cursor-default pointer-events-auto" 
                 onContextMenu={(e) => e.preventDefault()}
               ></div>
             )}
