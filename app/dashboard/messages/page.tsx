@@ -28,6 +28,15 @@ import {
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
+// 🔥 FUNCIÓN PARA LIMPIAR RUTAS DE MEDIOS
+const getImageUrl = (path: string | null) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
+  return `${cleanBase}/${cleanPath}`;
+};
+
 function MessagesContent() {
   const router = useRouter();
   const searchParams = useSearchParams(); 
@@ -527,10 +536,10 @@ function MessagesContent() {
 
                       {msg.isPPV && (
                         <div className="bg-[#050505] p-4 rounded-xl flex flex-col items-center justify-center min-h-[140px] border border-white/5 m-1 relative overflow-hidden mb-2 shadow-inner">
-                          {/* 🔥 INYECTAMOS EL FONDO BORROSO */}
+                          {/* 🔥 INYECTAMOS EL FONDO BORROSO CON GETIMAGEURL */}
                           {msg.mediaUrl && !msg.isUnlocked && (
                             <>
-                              <img src={msg.mediaUrl.startsWith('http') ? msg.mediaUrl : `${BACKEND_URL}${msg.mediaUrl}`} className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 select-none pointer-events-none" alt="Fondo" />
+                              <img src={getImageUrl(msg.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 select-none pointer-events-none" alt="Fondo" />
                               <div className="absolute inset-0 bg-[#050505]/40"></div>
                             </>
                           )}
@@ -560,7 +569,7 @@ function MessagesContent() {
                         <div className="relative z-10">
                           {isAudio ? (
                              <div className="px-3 pb-2 pt-1">
-                               <audio controls src={`${BACKEND_URL}${msg.mediaUrl}`} className="max-w-[200px] sm:max-w-[250px] h-10 outline-none" />
+                               <audio controls src={getImageUrl(msg.mediaUrl)} className="max-w-[200px] sm:max-w-[250px] h-10 outline-none" />
                              </div>
                           ) : isVideo ? (
                              <div className="px-2 pb-2 mt-1 relative group">
@@ -568,7 +577,7 @@ function MessagesContent() {
                                  controls 
                                  controlsList="nodownload noplaybackrate" 
                                  disablePictureInPicture
-                                 src={`${BACKEND_URL}${msg.mediaUrl}`} 
+                                 src={getImageUrl(msg.mediaUrl)} 
                                  className="rounded-xl max-h-64 w-full object-cover shadow-md select-none" 
                                  onContextMenu={(e) => e.preventDefault()} 
                                />
@@ -576,10 +585,10 @@ function MessagesContent() {
                           ) : (
                              <div className="px-2 pb-2 mt-1 relative">
                                <img 
-                                 src={msg.mediaUrl.startsWith('http') ? msg.mediaUrl : `${BACKEND_URL}${msg.mediaUrl}`} 
+                                 src={getImageUrl(msg.mediaUrl)} 
                                  alt="Contenido Desbloqueado" 
                                  className="rounded-xl max-h-48 object-cover shadow-md cursor-pointer hover:opacity-80 transition-opacity border border-white/5 select-none" 
-                                 onClick={() => setExpandedImage(msg.mediaUrl.startsWith('http') ? msg.mediaUrl : `${BACKEND_URL}${msg.mediaUrl}`)}
+                                 onClick={() => setExpandedImage(getImageUrl(msg.mediaUrl))}
                                  onContextMenu={(e) => e.preventDefault()} 
                                  draggable="false"
                                />
