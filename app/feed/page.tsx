@@ -635,9 +635,9 @@ export default function Feed() {
                             {/* 🔥 FONDO BORROSO PREMIUM (FIX APLICADO) */}
                             {post.mediaUrl && (
                               post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-50 scale-110 select-none pointer-events-none" />
+                                <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-40 scale-110 select-none pointer-events-none" />
                               ) : (
-                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-50 scale-110 select-none pointer-events-none" />
+                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-40 scale-110 select-none pointer-events-none" />
                               )
                             )}
 
