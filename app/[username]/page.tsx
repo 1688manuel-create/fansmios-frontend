@@ -386,28 +386,33 @@ export default function CreatorProfile() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-              {(!isOwnerOrAdmin) && (
+              {/* 🔥 FIX: El Admin sí ve el botón de mensaje, pero no el de Seguir ni Reportar */}
+              {currentUser?.id !== creator.id && (
                 <>
-                  <button 
-                    onClick={handleFollowToggle}
-                    className={`font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 w-full sm:w-auto ${
-                      isFollowing ? 'nm-inset text-blue-400 border border-blue-500/30' : 'nm-btn text-blue-400 hover:text-white'
-                    }`}
-                  >
-                    {isFollowing ? <><CheckCircle2 className="w-4 h-4"/> Siguiendo</> : <><Plus className="w-4 h-4"/> Seguir Gratis</>}
-                  </button>
+                  {currentUser?.role !== 'ADMIN' && (
+                    <button 
+                      onClick={handleFollowToggle}
+                      className={`font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 w-full sm:w-auto ${
+                        isFollowing ? 'nm-inset text-blue-400 border border-blue-500/30' : 'nm-btn text-blue-400 hover:text-white'
+                      }`}
+                    >
+                      {isFollowing ? <><CheckCircle2 className="w-4 h-4"/> Siguiendo</> : <><Plus className="w-4 h-4"/> Seguir Gratis</>}
+                    </button>
+                  )}
 
                   <div className="flex gap-3 w-full sm:w-auto">
                     <button onClick={handleMessageClick} title="Enviar Mensaje" className="nm-btn text-gray-300 hover:text-blue-400 font-bold flex-1 sm:w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors">
                       <MessageCircle className="w-5 h-5" />
                     </button>
-                    {/* 🔥 BOTÓN DE REPORTAR USUARIO */}
-                    <button onClick={() => {
-                      if(!currentUser) { alert("Inicia sesión para reportar."); router.push('/auth'); return; }
-                      setIsReportModalOpen(true);
-                    }} title="Reportar Usuario" className="nm-btn text-gray-500 hover:text-red-500 font-bold flex-1 sm:w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors">
-                      <Flag className="w-5 h-5" />
-                    </button>
+                    
+                    {currentUser?.role !== 'ADMIN' && (
+                      <button onClick={() => {
+                        if(!currentUser) { alert("Inicia sesión para reportar."); router.push('/auth'); return; }
+                        setIsReportModalOpen(true);
+                      }} title="Reportar Usuario" className="nm-btn text-gray-500 hover:text-red-500 font-bold flex-1 sm:w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors">
+                        <Flag className="w-5 h-5" />
+                      </button>
+                    )}
                   </div>
                 </>
               )}

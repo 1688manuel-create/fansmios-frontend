@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { chatService } from '../../../lib/chatService';
 import { paymentService } from '../../../lib/paymentService'; 
+import api from '../../../lib/api'; // 🔥 NECESARIO PARA LLAMAR A LA RUTA ADMIN
 import PaymentModal from '../../../components/PaymentModal'; 
 import ReportModal from '../../../components/ReportModal'; 
 
@@ -23,12 +24,12 @@ import {
   X, 
   CircleDollarSign, 
   ArrowLeft, 
-  Send 
+  Send,
+  Eye // 🔥 ICONO PARA EL MODO DIOS
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-// 🔥 FUNCIÓN PARA LIMPIAR RUTAS DE MEDIOS
 const getImageUrl = (path: string | null) => {
   if (!path) return '';
   if (path.startsWith('http')) return path;
@@ -56,6 +57,9 @@ function MessagesContent() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isBlockedByMe, setIsBlockedByMe] = useState(false);
+
+  // 🔥 ESTADO PARA EL MODO DIOS
+  const [isGodMode, setIsGodMode] = useState(false);
 
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -94,8 +98,14 @@ function MessagesContent() {
         router.push('/auth');
       }
     }
-    fetchConversations(true); 
   }, [router, searchParams]);
+
+  // 🔥 EFECTO QUE RECARGA LA LISTA DE CHATS SI SE ACTIVA EL MODO DIOS
+  useEffect(() => {
+    if (currentUser) {
+      fetchConversations(true); 
+    }
+  }, [currentUser, isGodMode]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -110,7 +120,7 @@ function MessagesContent() {
             
             if (incomingMessages.length > prev.length) {
               const lastMsg = incomingMessages[incomingMessages.length - 1];
-              if (lastMsg.senderId !== 'me' && prev.length > 0) {
+              if (lastMsg.senderId !== 'me' && prev.length > 0 && !isGodMode) {
                 triggerNewMessageAlert();
               }
             }
@@ -122,7 +132,7 @@ function MessagesContent() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [activeChat]);
+  }, [activeChat, isGodMode]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -140,14 +150,35 @@ function MessagesContent() {
 
   const fetchConversations = async (isInitialLoad = false) => {
     try {
-      const data = await chatService.getConversations();
-      const chats = data.conversations || [];
+      setIsLoading(true);
+      let chats = [];
+
+      // 🔥 INTERCEPTOR DEL MODO DIOS
+      if (isGodMode && currentUser?.role === 'ADMIN') {
+        const res = await api.get('/messages/admin/all');
+        // Adaptamos el formato de admin para que encaje con el UI del panel izquierdo
+        chats = res.data.conversations.map((c: any) => ({
+           id: c.id,
+           user: { 
+             id: 'admin_view', 
+             username: `${c.creator?.username || 'U1'} 💬 ${c.fan?.username || 'U2'}` 
+           },
+           lastMsg: c.lastMsg,
+           time: c.time,
+           unread: false,
+           isGodModeChat: true // Etiqueta secreta
+        }));
+      } else {
+        const data = await chatService.getConversations();
+        chats = data.conversations || [];
+      }
+
       setConversations(chats);
 
       const chatWithId = searchParams?.get('chatWith');
       const chatWithName = searchParams?.get('name');
 
-      if (isInitialLoad && chatWithId) {
+      if (isInitialLoad && chatWithId && !isGodMode) {
         const existingChat = chats.find((c: any) => c.user?.id === chatWithId);
         if (existingChat) {
           handleSelectChat(existingChat);
@@ -158,7 +189,7 @@ function MessagesContent() {
           });
           setMessages([]);
         }
-      } else if (isInitialLoad) {
+      } else if (isInitialLoad && !isGodMode) {
         const lastChatId = localStorage.getItem('lastOpenedChat');
         if (lastChatId) {
           const chatToRestore = chats.find((c: any) => c.id === lastChatId);
@@ -168,6 +199,7 @@ function MessagesContent() {
         }
       }
     } catch (error) {
+       console.error("Error al cargar conversaciones:", error);
     } finally {
       setIsLoading(false);
     }
@@ -176,17 +208,23 @@ function MessagesContent() {
   const handleSelectChat = async (chat: any) => {
     if (!chat || !chat.id || chat.id === '') return;
     setActiveChat(chat); 
-    localStorage.setItem('lastOpenedChat', chat.id); 
+    if (!isGodMode) localStorage.setItem('lastOpenedChat', chat.id); 
     setIsBlockedByMe(false); 
     
     try {
       const data = await chatService.getMessages(chat.id);
+      
+      // Si estamos en modo Dios, todos los mensajes ajenos llegarán con ID's diferentes a 'me'.
+      // Esto está bien porque así el admin los ve formateados como mensajes recibidos/enviados.
       setMessages(data.messages || []);
       
-      const blockData = await chatService.checkBlockStatus(chat.user.id);
-      setIsBlockedByMe(blockData.isBlocked);
+      if (!isGodMode) {
+        const blockData = await chatService.checkBlockStatus(chat.user.id);
+        setIsBlockedByMe(blockData.isBlocked);
+      }
       
-      fetchConversations(); 
+      // No recargar toda la lista si estamos en modo dios para no perder posición
+      if (!isGodMode) fetchConversations(); 
     } catch (error) {}
   };
 
@@ -251,6 +289,7 @@ function MessagesContent() {
   const formatTime = (seconds: number) => { return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`; };
 
   const handleSendMessage = async () => {
+    if (isGodMode) return; // Seguridad extra
     if (!newMessage.trim() && !selectedImage && !audioBlob) return;
     if (!activeChat || !activeChat.user?.id) return; 
     setIsSending(true);
@@ -311,18 +350,8 @@ function MessagesContent() {
   };
 
   const handleUnlockClick = async (message: any) => {
-    let isAdmin = false;
-    if (typeof window !== 'undefined') {
-      try {
-        const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-        isAdmin = storedUser?.role === 'ADMIN';
-      } catch (e) {
-        console.error("Error leyendo usuario local");
-      }
-    }
-
-    if (isAdmin) {
-      alert("👑 MODO DIOS ACTIVO: Como Admin, no necesitas pagar.");
+    if (currentUser?.role === 'ADMIN') {
+      alert("👑 MODO DIOS: Los Administradores no necesitan pagar, el servidor debió haber desbloqueado esto automáticamente.");
       return;
     }
 
@@ -349,9 +378,9 @@ function MessagesContent() {
       if (isBlockedByMe) {
         await chatService.unblockUser(activeChat.user.id);
         setIsBlockedByMe(false);
-        alert(`✅ Usuario @${activeChat.user?.username} desbloqueado.`);
+        alert(`✅ Usuario desbloqueado.`);
       } else {
-        const confirmBlock = confirm(`🚨 ¿Estás seguro de que quieres bloquear a @${activeChat.user?.username}?`);
+        const confirmBlock = confirm(`🚨 ¿Estás seguro de que quieres bloquear a este usuario?`);
         if (!confirmBlock) return;
         
         try {
@@ -361,7 +390,7 @@ function MessagesContent() {
         }
         
         setIsBlockedByMe(true);
-        alert(`🚫 Usuario @${activeChat.user?.username} ha sido bloqueado.`);
+        alert(`🚫 Usuario ha sido bloqueado.`);
       }
     } catch (error: any) {
       alert(error.response?.data?.error || "Error al actualizar bloqueo.");
@@ -376,14 +405,26 @@ function MessagesContent() {
 
   return (
     <div className="h-screen flex flex-col bg-nm-base overflow-hidden relative">
-      <div className="absolute top-[-20%] left-1/2 w-[800px] h-[500px] bg-teal-900/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
+      <div className={`absolute top-[-20%] left-1/2 w-[800px] h-[500px] rounded-full blur-[120px] pointer-events-none -translate-x-1/2 transition-colors ${isGodMode ? 'bg-red-900/10' : 'bg-teal-900/5'}`}></div>
 
       <nav className="bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center z-10 shrink-0 backdrop-blur-xl shadow-md">
         <h1 className="text-xl font-black text-white flex items-center gap-2">
-          <MessageCircle className="w-5 h-5 text-teal-500" strokeWidth={2.5}/> Mensajes VIP
+          <MessageCircle className={`w-5 h-5 ${isGodMode ? 'text-red-500' : 'text-teal-500'}`} strokeWidth={2.5}/> 
+          {isGodMode ? 'Moderador Global' : 'Mensajes VIP'}
         </h1>
         <div className="flex gap-3">
-          {currentUser?.role === 'CREATOR' && (
+          
+          {/* 🔥 BOTÓN DE MODO DIOS PARA ADMINS */}
+          {currentUser?.role === 'ADMIN' && (
+            <button 
+              onClick={() => { setActiveChat(null); setIsGodMode(!isGodMode); }}
+              className={`text-sm px-4 py-2 rounded-full font-bold flex items-center gap-2 transition-all ${isGodMode ? 'bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.5)]' : 'nm-inset border border-red-500/30 text-red-500 hover:bg-red-500/10'}`}
+            >
+              <Eye className="w-4 h-4" /> <span className="hidden md:inline">Modo Dios</span>
+            </button>
+          )}
+
+          {currentUser?.role === 'CREATOR' && !isGodMode && (
             <button 
               onClick={() => setIsBroadcastModalOpen(true)}
               className="text-sm nm-btn-primary border-teal-500/30 text-teal-400 hover:text-white hover:bg-teal-600 px-4 py-2 rounded-full font-bold flex items-center gap-2"
@@ -410,10 +451,10 @@ function MessagesContent() {
               </span>
               <input 
                 type="text" 
-                placeholder="Buscar fan..." 
+                placeholder={isGodMode ? "Buscar por usuario..." : "Buscar fan..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full nm-inset rounded-xl pl-10 pr-4 py-2.5 text-white outline-none focus:border focus:border-teal-500/50 transition-colors shadow-inner text-sm" 
+                className={`w-full nm-inset rounded-xl pl-10 pr-4 py-2.5 text-white outline-none transition-colors shadow-inner text-sm ${isGodMode ? 'focus:border-red-500/50' : 'focus:border-teal-500/50'}`}
               />
             </div>
           </div>
@@ -429,24 +470,24 @@ function MessagesContent() {
                   onClick={() => handleSelectChat(chat)} 
                   className={`flex items-center gap-3 p-3 mb-1 rounded-xl cursor-pointer transition-all ${
                     activeChat?.id === chat.id 
-                      ? 'nm-inset border border-teal-500/20' 
+                      ? `nm-inset border ${isGodMode ? 'border-red-500/30' : 'border-teal-500/20'}`
                       : 'nm-btn border border-transparent hover:border-white/5'
                   }`}
                 >
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center text-white font-bold shrink-0 shadow-lg relative border-2 border-[#0e0e0e]">
-                    {chat.user?.username ? chat.user.username.toUpperCase() : 'U'}
-                    {chat.unread && (
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-lg relative border-2 border-[#0e0e0e] ${isGodMode ? 'bg-gradient-to-br from-gray-800 to-black' : 'bg-gradient-to-br from-blue-500 to-teal-400'}`}>
+                    {chat.user?.username ? chat.user.username.charAt(0).toUpperCase() : 'U'}
+                    {chat.unread && !isGodMode && (
                       <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-black rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]"></span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-center mb-0.5">
-                      <h4 className={`truncate text-sm ${chat.unread ? 'text-white font-black' : 'text-gray-300 font-bold'}`}>
-                        @{chat.user?.username || 'Usuario'}
+                      <h4 className={`truncate text-sm ${chat.unread && !isGodMode ? 'text-white font-black' : 'text-gray-300 font-bold'}`}>
+                        {chat.user?.username || 'Usuario'}
                       </h4>
-                      <span className={`text-[10px] ${chat.unread ? 'text-teal-400 font-bold' : 'text-gray-500'}`}>{chat.time}</span>
+                      <span className={`text-[10px] ${chat.unread && !isGodMode ? 'text-teal-400 font-bold' : 'text-gray-500'}`}>{chat.time}</span>
                     </div>
-                    <p className={`text-xs truncate ${chat.unread ? 'text-teal-300 font-bold' : 'text-gray-500 font-medium'}`}>{chat.lastMsg}</p>
+                    <p className={`text-xs truncate ${chat.unread && !isGodMode ? 'text-teal-300 font-bold' : 'text-gray-500 font-medium'}`}>{chat.lastMsg}</p>
                   </div>
                 </div>
               ))
@@ -458,144 +499,159 @@ function MessagesContent() {
           <div className="flex flex-col flex-1 bg-[#0a0a0a] relative z-10 isolate">
             <div className="p-4 border-b border-white/5 flex justify-between items-center bg-nm-base relative z-20 shadow-md">
               <div className="flex items-center gap-3">
-                <button onClick={() => { setActiveChat(null); localStorage.removeItem('lastOpenedChat'); router.replace('/dashboard/messages'); }} className="sm:hidden nm-btn p-2 rounded-full text-gray-400 hover:text-white transition-colors">
+                <button onClick={() => { setActiveChat(null); if(!isGodMode) localStorage.removeItem('lastOpenedChat'); router.replace('/dashboard/messages'); }} className="sm:hidden nm-btn p-2 rounded-full text-gray-400 hover:text-white transition-colors">
                   <ArrowLeft className="w-5 h-5" />
                 </button>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center text-white font-bold shadow-md border-2 border-[#0a0a0a]">
-                   {activeChat.user?.username ? activeChat.user.username.toUpperCase() : 'U'}
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-md border-2 border-[#0a0a0a] ${isGodMode ? 'bg-gradient-to-br from-gray-800 to-black' : 'bg-gradient-to-br from-blue-500 to-teal-400'}`}>
+                   {activeChat.user?.username ? activeChat.user.username.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div>
                   <h3 className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
-                    @{activeChat.user?.username || 'Usuario'}
-                    <span className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_5px_rgba(34,197,94,0.8)]"></span>
+                    {activeChat.user?.username || 'Usuario'}
+                    {!isGodMode && <span className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_5px_rgba(34,197,94,0.8)]"></span>}
                   </h3>
-                  <p className="text-[10px] text-gray-400 font-medium">En línea</p>
+                  <p className="text-[10px] text-gray-400 font-medium">{isGodMode ? 'Espiando conexión...' : 'En línea'}</p>
                 </div>
               </div>
               
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => { setReportingMessageId(null); setIsReportModalOpen(true); }}
-                  className="text-xs font-bold p-2 rounded-full transition-all flex items-center text-gray-400 nm-btn hover:text-red-400"
-                  title="Reportar Usuario"
-                >
-                  <Flag className="w-4 h-4" />
-                </button>
+              {!isGodMode && (
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => { setReportingMessageId(null); setIsReportModalOpen(true); }}
+                    className="text-xs font-bold p-2 rounded-full transition-all flex items-center text-gray-400 nm-btn hover:text-red-400"
+                    title="Reportar Usuario"
+                  >
+                    <Flag className="w-4 h-4" />
+                  </button>
 
-                <button 
-                  onClick={handleToggleBlock}
-                  className={`text-xs font-bold px-4 py-2 rounded-full transition-all flex items-center gap-2 ${
-                    isBlockedByMe 
-                      ? 'text-green-400 nm-inset border border-green-500/30' 
-                      : 'text-red-400 nm-btn hover:text-red-300'
-                  }`}
-                >
-                  {isBlockedByMe ? <Unlock className="w-4 h-4"/> : <Ban className="w-4 h-4"/>} 
-                  <span className="hidden sm:inline">{isBlockedByMe ? 'Desbloquear' : 'Bloquear'}</span>
-                </button>
-              </div>
+                  <button 
+                    onClick={handleToggleBlock}
+                    className={`text-xs font-bold px-4 py-2 rounded-full transition-all flex items-center gap-2 ${
+                      isBlockedByMe 
+                        ? 'text-green-400 nm-inset border border-green-500/30' 
+                        : 'text-red-400 nm-btn hover:text-red-300'
+                    }`}
+                  >
+                    {isBlockedByMe ? <Unlock className="w-4 h-4"/> : <Ban className="w-4 h-4"/>} 
+                    <span className="hidden sm:inline">{isBlockedByMe ? 'Desbloquear' : 'Bloquear'}</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar relative">
-              {messages.length === 0 && <p className="text-center text-gray-500 mt-10 font-medium">No hay mensajes. ¡Inicia la conversación!</p>}
+              {messages.length === 0 && <p className="text-center text-gray-500 mt-10 font-medium">No hay mensajes en este chat.</p>}
               
               {messages.map((msg) => {
                 const isAudio = msg.mediaUrl && (msg.mediaUrl.endsWith('.mp3') || msg.mediaUrl.endsWith('.wav') || msg.mediaUrl.endsWith('.ogg') || msg.mediaUrl.includes('audio_'));
                 const isVideo = msg.mediaUrl && (msg.mediaUrl.endsWith('.mp4') || msg.mediaUrl.endsWith('.mov') || (msg.mediaUrl.endsWith('.webm') && !msg.mediaUrl.includes('audio_')));
 
+                // En modo Dios, el Admin es un observador. Si msg.senderId === 'me', significa que es un chat de soporte donde el Admin SÍ participó.
+                // Si el ID es otro, significa que es un mensaje entre dos terceros. Para visualizarlos bien, alineamos a la izquierda a todos.
+                const alignRight = !isGodMode && msg.senderId === 'me';
+
                 return (
-                  <div key={msg.id} className={`flex ${msg.senderId === 'me' ? 'justify-end' : 'justify-start'} animate-fade-in group`}>
-                    {msg.senderId === 'me' ? (
-                      <button 
-                        onClick={() => handleDeleteMessage(msg.id)} 
-                        className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 mr-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full"
-                        title="Borrar mensaje"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={() => { setReportingMessageId(msg.id); setIsReportModalOpen(true); }} 
-                        className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-500 ml-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full order-last"
-                        title="Reportar este mensaje"
-                      >
-                        <Flag className="w-4 h-4" />
-                      </button>
+                  <div key={msg.id} className={`flex flex-col ${alignRight ? 'items-end' : 'items-start'} animate-fade-in group`}>
+                    
+                    {/* EN MODO DIOS, PONEMOS EL ID DEL QUE HABLA PARA SABER QUIÉN ES QUIÉN */}
+                    {isGodMode && (
+                      <span className="text-[10px] text-gray-500 mb-1 ml-1">ID Remitente: {msg.senderId}</span>
                     )}
 
-                    <div className={`max-w-[85%] sm:max-w-[70%] rounded-2xl p-1 relative ${
-                      msg.senderId === 'me' 
-                        ? 'bg-gradient-to-bl from-teal-700 to-blue-700 rounded-tr-none text-white shadow-lg' 
-                        : 'nm-inset rounded-tl-none text-gray-200 border border-white/5'
-                    }`}>
-                      {msg.content && (
-                         <div className={`px-4 py-2.5 text-sm md:text-base whitespace-pre-wrap ${msg.isPPV && !msg.isUnlocked ? 'text-teal-200 italic border-l-2 border-teal-500 ml-2 pl-2 mb-2 bg-black/40 rounded-r-lg' : ''}`}>
-                            {msg.content}
-                         </div>
+                    <div className="flex items-center">
+                      {alignRight ? (
+                        <button 
+                          onClick={() => handleDeleteMessage(msg.id)} 
+                          className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 mr-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full"
+                          title="Borrar mensaje"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        !isGodMode && (
+                          <button 
+                            onClick={() => { setReportingMessageId(msg.id); setIsReportModalOpen(true); }} 
+                            className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-500 ml-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full order-last"
+                            title="Reportar este mensaje"
+                          >
+                            <Flag className="w-4 h-4" />
+                          </button>
+                        )
                       )}
 
-                      {msg.isPPV && (
-                        <div className="bg-[#050505] p-4 rounded-xl flex flex-col items-center justify-center min-h-[140px] border border-white/5 m-1 relative overflow-hidden mb-2 shadow-inner">
-                          {/* 🔥 INYECTAMOS EL FONDO BORROSO CON GETIMAGEURL */}
-                          {msg.mediaUrl && !msg.isUnlocked && (
-                            <>
-                              <img src={getImageUrl(msg.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 select-none pointer-events-none" alt="Fondo" />
-                              <div className="absolute inset-0 bg-[#050505]/40"></div>
-                            </>
-                          )}
-                          {!msg.isUnlocked ? (
-                            <>
-                              <div className="absolute inset-0 bg-gradient-to-t from-teal-900/40 to-transparent"></div>
-                              <Lock className="w-10 h-10 text-teal-500 relative z-10 drop-shadow-[0_0_10px_rgba(20,184,166,0.5)] mb-2" />
-                              <p className="font-bold relative z-10 text-sm text-white">Contenido Privado</p>
-                              {msg.senderId !== 'me' ? (
-                                <button onClick={() => handleUnlockClick(msg)} className="mt-3 bg-teal-500 hover:bg-teal-400 text-black text-xs font-bold py-2 px-6 rounded-full relative z-10 transition-transform hover:scale-105 shadow-[0_0_10px_rgba(20,184,166,0.3)] flex items-center gap-1">
-                                  <Unlock className="w-3 h-3" /> Desbloquear ${msg.price?.toFixed(2)}
-                                </button>
-                              ) : (
-                                 <span className="nm-inset border border-teal-500/50 text-teal-400 font-bold px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest mt-2 relative z-10">Tú cobraste: ${msg.price?.toFixed(2)}</span>
-                              )}
-                            </>
-                          ) : (
-                            <div className="text-center relative z-10 py-2 flex flex-col items-center">
-                               <Unlock className="w-8 h-8 text-teal-400 mb-2 drop-shadow-md" />
-                               <span className="text-[10px] text-teal-300 font-bold nm-inset px-3 py-1 rounded-full border border-teal-500/30 uppercase tracking-widest">¡Desbloqueado por ${msg.price?.toFixed(2)}!</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      
-                      {msg.mediaUrl && (!msg.isPPV || msg.isUnlocked) && (
-                        <div className="relative z-10">
-                          {isAudio ? (
-                             <div className="px-3 pb-2 pt-1">
-                               <audio controls src={getImageUrl(msg.mediaUrl)} className="max-w-[200px] sm:max-w-[250px] h-10 outline-none" />
-                             </div>
-                          ) : isVideo ? (
-                             <div className="px-2 pb-2 mt-1 relative group">
-                               <video 
-                                 controls 
-                                 controlsList="nodownload noplaybackrate" 
-                                 disablePictureInPicture
-                                 src={getImageUrl(msg.mediaUrl)} 
-                                 className="rounded-xl max-h-64 w-full object-cover shadow-md select-none" 
-                                 onContextMenu={(e) => e.preventDefault()} 
-                               />
-                             </div>
-                          ) : (
-                             <div className="px-2 pb-2 mt-1 relative">
-                               <img 
-                                 src={getImageUrl(msg.mediaUrl)} 
-                                 alt="Contenido Desbloqueado" 
-                                 className="rounded-xl max-h-48 object-cover shadow-md cursor-pointer hover:opacity-80 transition-opacity border border-white/5 select-none" 
-                                 onClick={() => setExpandedImage(getImageUrl(msg.mediaUrl))}
-                                 onContextMenu={(e) => e.preventDefault()} 
-                                 draggable="false"
-                               />
-                             </div>
-                          )}
-                        </div>
-                      )}
+                      <div className={`max-w-xs sm:max-w-md rounded-2xl p-1 relative ${
+                        alignRight 
+                          ? 'bg-gradient-to-bl from-teal-700 to-blue-700 rounded-tr-none text-white shadow-lg' 
+                          : `nm-inset rounded-tl-none text-gray-200 border ${isGodMode ? 'border-red-500/20' : 'border-white/5'}`
+                      }`}>
+                        {msg.content && (
+                           <div className={`px-4 py-2.5 text-sm md:text-base whitespace-pre-wrap ${msg.isPPV && !msg.isUnlocked ? 'text-teal-200 italic border-l-2 border-teal-500 ml-2 pl-2 mb-2 bg-black/40 rounded-r-lg' : ''}`}>
+                              {msg.content}
+                           </div>
+                        )}
+
+                        {msg.isPPV && (
+                          <div className="bg-[#050505] p-4 rounded-xl flex flex-col items-center justify-center min-h-[140px] border border-white/5 m-1 relative overflow-hidden mb-2 shadow-inner">
+                            {msg.mediaUrl && !msg.isUnlocked && (
+                              <>
+                                <img src={getImageUrl(msg.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 select-none pointer-events-none" alt="Fondo" />
+                                <div className="absolute inset-0 bg-[#050505]/40"></div>
+                              </>
+                            )}
+                            {!msg.isUnlocked ? (
+                              <>
+                                <div className="absolute inset-0 bg-gradient-to-t from-teal-900/40 to-transparent"></div>
+                                <Lock className="w-10 h-10 text-teal-500 relative z-10 drop-shadow-[0_0_10px_rgba(20,184,166,0.5)] mb-2" />
+                                <p className="font-bold relative z-10 text-sm text-white">Contenido Privado</p>
+                                {msg.senderId !== 'me' && !isGodMode ? (
+                                  <button onClick={() => handleUnlockClick(msg)} className="mt-3 bg-teal-500 hover:bg-teal-400 text-black text-xs font-bold py-2 px-6 rounded-full relative z-10 transition-transform hover:scale-105 shadow-[0_0_10px_rgba(20,184,166,0.3)] flex items-center gap-1">
+                                    <Unlock className="w-3 h-3" /> Desbloquear ${msg.price?.toFixed(2)}
+                                  </button>
+                                ) : (
+                                   <span className="nm-inset border border-teal-500/50 text-teal-400 font-bold px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest mt-2 relative z-10">{isGodMode ? `PPV Bloqueado ($${msg.price})` : `Tú cobraste: $${msg.price?.toFixed(2)}`}</span>
+                                )}
+                              </>
+                            ) : (
+                              <div className="text-center relative z-10 py-2 flex flex-col items-center">
+                                 <Unlock className="w-8 h-8 text-teal-400 mb-2 drop-shadow-md" />
+                                 <span className="text-[10px] text-teal-300 font-bold nm-inset px-3 py-1 rounded-full border border-teal-500/30 uppercase tracking-widest">{isGodMode ? 'PPV Auditado' : `¡Desbloqueado por $${msg.price?.toFixed(2)}!`}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        
+                        {msg.mediaUrl && (!msg.isPPV || msg.isUnlocked) && (
+                          <div className="relative z-10">
+                            {isAudio ? (
+                               <div className="px-3 pb-2 pt-1">
+                                 <audio controls src={getImageUrl(msg.mediaUrl)} className="max-w-[200px] sm:max-w-[250px] h-10 outline-none" />
+                               </div>
+                            ) : isVideo ? (
+                               <div className="px-2 pb-2 mt-1 relative group">
+                                 <video 
+                                   controls 
+                                   controlsList="nodownload noplaybackrate" 
+                                   disablePictureInPicture
+                                   src={getImageUrl(msg.mediaUrl)} 
+                                   className="rounded-xl max-h-64 w-full object-cover shadow-md select-none" 
+                                   onContextMenu={(e) => e.preventDefault()} 
+                                 />
+                               </div>
+                            ) : (
+                               <div className="px-2 pb-2 mt-1 relative">
+                                 <img 
+                                   src={getImageUrl(msg.mediaUrl)} 
+                                   alt="Contenido Desbloqueado" 
+                                   className="rounded-xl max-h-48 object-cover shadow-md cursor-pointer hover:opacity-80 transition-opacity border border-white/5 select-none" 
+                                   onClick={() => setExpandedImage(getImageUrl(msg.mediaUrl))}
+                                   onContextMenu={(e) => e.preventDefault()} 
+                                   draggable="false"
+                                 />
+                               </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -603,104 +659,108 @@ function MessagesContent() {
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-4 border-t border-white/5 bg-nm-base relative z-20 min-h-[95px] flex flex-col justify-center shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
-              {isBlockedByMe ? (
-                <div className="w-full text-center py-3 text-red-400 text-sm font-bold nm-inset border border-red-500/30 rounded-full shadow-inner flex items-center justify-center gap-2">
-                  <Ban className="w-4 h-4" /> Tienes bloqueado a este usuario.
-                </div>
-              ) : (
-                <>
-                  <div className="flex flex-wrap gap-3 mb-3">
-                    {selectedImage && (
-                      <div className="flex items-center gap-2 nm-inset px-3 py-1.5 rounded-lg border border-white/5 animate-fade-in">
-                        <ImageIcon className="w-4 h-4 text-teal-400" />
-                        <span className="text-xs text-gray-300 truncate max-w-[150px]">{selectedImage.name}</span>
-                        <button onClick={() => setSelectedImage(null)} className="text-gray-500 hover:text-red-400 transition-colors"><X className="w-4 h-4"/></button>
-                      </div>
-                    )}
-                    {isPPVMode && currentUser?.role === 'CREATOR' && (
-                      <div className="flex items-center gap-2 nm-inset border border-teal-500/50 w-max px-3 py-1.5 rounded-xl animate-fade-in">
-                        <span className="text-teal-400 font-bold text-xs uppercase tracking-widest">Cobrar: $</span>
-                        <input type="number" min="1" step="0.01" placeholder="0.00" value={ppvPrice} onChange={(e) => setPpvPrice(e.target.value)} className="bg-transparent border-b border-teal-500/30 text-white outline-none w-16 px-1 py-0.5 text-sm font-bold focus:border-teal-400" />
-                        <button onClick={() => { setIsPPVMode(false); setPpvPrice(''); }} className="text-gray-400 hover:text-red-400 ml-1 transition-colors"><X className="w-4 h-4"/></button>
-                      </div>
-                    )}
+            {/* 🔥 EN MODO DIOS, EL ADMIN NO PUEDE MANDAR MENSAJES (SÓLO LECTURA) */}
+            {!isGodMode && (
+              <div className="p-4 border-t border-white/5 bg-nm-base relative z-20 min-h-[95px] flex flex-col justify-center shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
+                {isBlockedByMe ? (
+                  <div className="w-full text-center py-3 text-red-400 text-sm font-bold nm-inset border border-red-500/30 rounded-full shadow-inner flex items-center justify-center gap-2">
+                    <Ban className="w-4 h-4" /> Tienes bloqueado a este usuario.
                   </div>
+                ) : (
+                  <>
+                    <div className="flex flex-wrap gap-3 mb-3">
+                      {selectedImage && (
+                        <div className="flex items-center gap-2 nm-inset px-3 py-1.5 rounded-lg border border-white/5 animate-fade-in">
+                          <ImageIcon className="w-4 h-4 text-teal-400" />
+                          <span className="text-xs text-gray-300 truncate max-w-[150px]">{selectedImage.name}</span>
+                          <button onClick={() => setSelectedImage(null)} className="text-gray-500 hover:text-red-400 transition-colors"><X className="w-4 h-4"/></button>
+                        </div>
+                      )}
+                      {isPPVMode && currentUser?.role === 'CREATOR' && (
+                        <div className="flex items-center gap-2 nm-inset border border-teal-500/50 w-max px-3 py-1.5 rounded-xl animate-fade-in">
+                          <span className="text-teal-400 font-bold text-xs uppercase tracking-widest">Cobrar: $</span>
+                          <input type="number" min="1" step="0.01" placeholder="0.00" value={ppvPrice} onChange={(e) => setPpvPrice(e.target.value)} className="bg-transparent border-b border-teal-500/30 text-white outline-none w-16 px-1 py-0.5 text-sm font-bold focus:border-teal-400" />
+                          <button onClick={() => { setIsPPVMode(false); setPpvPrice(''); }} className="text-gray-400 hover:text-red-400 ml-1 transition-colors"><X className="w-4 h-4"/></button>
+                        </div>
+                      )}
+                    </div>
 
-                  <div className="flex items-end gap-2 nm-inset rounded-[2rem] p-1.5 focus-within:border-teal-500/50 transition-colors border border-transparent">
-                    {/* 🛑 AQUI BLOQUEAMOS EL BOTON DE SUBIR ARCHIVO PARA FANS */}
-                    {!isRecording && !audioBlob && currentUser?.role === 'CREATOR' && (
-                      <>
-                        <input type="file" accept="image/*,video/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
-                        <button onClick={() => fileInputRef.current?.click()} className="nm-btn w-11 h-11 rounded-full text-gray-400 hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
-                          <Paperclip className="w-5 h-5" />
+                    <div className="flex items-end gap-2 nm-inset rounded-[2rem] p-1.5 focus-within:border-teal-500/50 transition-colors border border-transparent">
+                      {!isRecording && !audioBlob && currentUser?.role === 'CREATOR' && (
+                        <>
+                          <input type="file" accept="image/*,video/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
+                          <button onClick={() => fileInputRef.current?.click()} className="nm-btn w-11 h-11 rounded-full text-gray-400 hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
+                            <Paperclip className="w-5 h-5" />
+                          </button>
+                        </>
+                      )}
+
+                      {currentUser?.role === 'CREATOR' && (
+                        <button onClick={() => setIsPPVMode(!isPPVMode)} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all shrink-0 ${isPPVMode ? 'nm-inset text-teal-400 border border-teal-500/30' : 'nm-btn text-gray-400 hover:text-teal-400'}`}>
+                          <CircleDollarSign className="w-5 h-5" />
                         </button>
-                      </>
-                    )}
-
-                    {/* 🛑 AQUI BLOQUEAMOS EL BOTON DE COBRAR PPV PARA FANS */}
-                    {currentUser?.role === 'CREATOR' && (
-                      <button onClick={() => setIsPPVMode(!isPPVMode)} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all shrink-0 ${isPPVMode ? 'nm-inset text-teal-400 border border-teal-500/30' : 'nm-btn text-gray-400 hover:text-teal-400'}`}>
-                        <CircleDollarSign className="w-5 h-5" />
-                      </button>
-                    )}
-                    
-                    {isRecording ? (
-                      <div className="flex-1 flex items-center justify-between nm-inset border border-red-500/30 rounded-full px-4 py-2 self-center">
-                        <span className="text-red-400 font-bold flex items-center gap-2 text-sm tracking-wide">
-                          <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span> Grabando {formatTime(recordingTime)}
-                        </span>
-                        <div className="flex items-center gap-3">
-                          <button onClick={cancelRecording} className="text-gray-400 hover:text-white transition-colors text-sm font-bold">Cancelar</button>
-                          <button onClick={stopRecording} className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold hover:bg-red-600 transition-colors">
-                            <Square className="w-3 h-3 fill-current" />
+                      )}
+                      
+                      {isRecording ? (
+                        <div className="flex-1 flex items-center justify-between nm-inset border border-red-500/30 rounded-full px-4 py-2 self-center">
+                          <span className="text-red-400 font-bold flex items-center gap-2 text-sm tracking-wide">
+                            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span> Grabando {formatTime(recordingTime)}
+                          </span>
+                          <div className="flex items-center gap-3">
+                            <button onClick={cancelRecording} className="text-gray-400 hover:text-white transition-colors text-sm font-bold">Cancelar</button>
+                            <button onClick={stopRecording} className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold hover:bg-red-600 transition-colors">
+                              <Square className="w-3 h-3 fill-current" />
+                            </button>
+                          </div>
+                        </div>
+                      ) : audioBlob ? (
+                        <div className="flex-1 flex items-center justify-between nm-inset border border-teal-500/30 rounded-full px-4 py-1.5 self-center">
+                          <audio controls src={URL.createObjectURL(audioBlob)} className="h-8 w-full max-w-[200px]" />
+                          <button onClick={cancelRecording} className="text-gray-400 hover:text-red-400 transition-colors ml-2 flex items-center gap-1 font-bold text-xs">
+                            <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Borrar</span>
                           </button>
                         </div>
-                      </div>
-                    ) : audioBlob ? (
-                      <div className="flex-1 flex items-center justify-between nm-inset border border-teal-500/30 rounded-full px-4 py-1.5 self-center">
-                        <audio controls src={URL.createObjectURL(audioBlob)} className="h-8 w-full max-w-[200px]" />
-                        <button onClick={cancelRecording} className="text-gray-400 hover:text-red-400 transition-colors ml-2 flex items-center gap-1 font-bold text-xs">
-                          <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Borrar</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Escribe un mensaje privado..." className="flex-1 bg-transparent text-white outline-none px-4 py-3 max-h-32 resize-none custom-scrollbar self-center text-sm md:text-base placeholder:text-gray-600" rows={1} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }} />
-                    )}
-
-                    {/* 🛑 AQUI BLOQUEAMOS EL MICROFONO PARA FANS */}
-                    {!newMessage.trim() && !selectedImage && !audioBlob && !isRecording ? (
-                      currentUser?.role === 'CREATOR' ? (
-                        <button onClick={startRecording} className="nm-btn w-11 h-11 rounded-full text-gray-400 hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
-                          <Mic className="w-5 h-5" />
-                        </button>
                       ) : (
-                        <button disabled className="nm-btn-primary h-11 w-11 sm:w-auto sm:px-6 rounded-full transition-all disabled:opacity-50 shrink-0 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
-                          <Send className="w-5 h-5" /> <span className="hidden sm:inline">Enviar</span>
+                        <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Escribe un mensaje privado..." className="flex-1 bg-transparent text-white outline-none px-4 py-3 max-h-32 resize-none custom-scrollbar self-center text-sm md:text-base placeholder:text-gray-600" rows={1} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }} />
+                      )}
+
+                      {!newMessage.trim() && !selectedImage && !audioBlob && !isRecording ? (
+                        currentUser?.role === 'CREATOR' ? (
+                          <button onClick={startRecording} className="nm-btn w-11 h-11 rounded-full text-gray-400 hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
+                            <Mic className="w-5 h-5" />
+                          </button>
+                        ) : (
+                          <button disabled className="nm-btn-primary h-11 w-11 sm:w-auto sm:px-6 rounded-full transition-all disabled:opacity-50 shrink-0 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+                            <Send className="w-5 h-5" /> <span className="hidden sm:inline">Enviar</span>
+                          </button>
+                        )
+                      ) : (
+                        <button onClick={handleSendMessage} disabled={isSending || (isPPVMode && !ppvPrice) || isRecording} className="nm-btn-primary h-11 w-11 sm:w-auto sm:px-6 rounded-full transition-all disabled:opacity-50 shrink-0 flex items-center justify-center gap-2">
+                          {isSending ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : <><Send className="w-5 h-5" /> <span className="hidden sm:inline">Enviar</span></>}
                         </button>
-                      )
-                    ) : (
-                      <button onClick={handleSendMessage} disabled={isSending || (isPPVMode && !ppvPrice) || isRecording} className="nm-btn-primary h-11 w-11 sm:w-auto sm:px-6 rounded-full transition-all disabled:opacity-50 shrink-0 flex items-center justify-center gap-2">
-                        {isSending ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : <><Send className="w-5 h-5" /> <span className="hidden sm:inline">Enviar</span></>}
-                      </button>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         ) : (
           <div className="hidden sm:flex flex-1 flex-col items-center justify-center bg-[#0a0a0a] border-l border-white/5 text-center p-8 relative z-10 shadow-inner">
-            <div className="w-24 h-24 rounded-3xl nm-inset flex items-center justify-center mb-6 text-teal-500">
-              <MessageCircle className="w-12 h-12 drop-shadow-[0_0_15px_rgba(20,184,166,0.4)]" />
+            <div className={`w-24 h-24 rounded-3xl nm-inset flex items-center justify-center mb-6 ${isGodMode ? 'text-red-500' : 'text-teal-500'}`}>
+              {isGodMode ? (
+                 <Eye className="w-12 h-12 drop-shadow-[0_0_15px_rgba(220,38,38,0.4)]" />
+              ) : (
+                 <MessageCircle className="w-12 h-12 drop-shadow-[0_0_15px_rgba(20,184,166,0.4)]" />
+              )}
             </div>
-            <h2 className="text-2xl font-black text-white mb-2 tracking-tighter">Bóveda de Mensajes</h2>
-            <p className="text-gray-500 max-w-sm font-medium">Selecciona un fan de la lista izquierda para enviar contenido exclusivo o conversar.</p>
+            <h2 className="text-2xl font-black text-white mb-2 tracking-tighter">{isGodMode ? 'Radar Global Activo' : 'Bóveda de Mensajes'}</h2>
+            <p className="text-gray-500 max-w-sm font-medium">{isGodMode ? 'Estás interceptando la base de datos completa. Selecciona un chat para auditarlo.' : 'Selecciona un fan de la lista izquierda para enviar contenido exclusivo o conversar.'}</p>
           </div>
         )}
       </div>
 
-      {isBroadcastModalOpen && currentUser?.role === 'CREATOR' && (
+      {isBroadcastModalOpen && currentUser?.role === 'CREATOR' && !isGodMode && (
         <div className="fixed inset-0 bg-black/90 z- flex items-center justify-center p-4 backdrop-blur-sm">
            <div className="nm-inset border border-teal-500/30 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(20,184,166,0.1)]">
             <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#0e0e0e]">
