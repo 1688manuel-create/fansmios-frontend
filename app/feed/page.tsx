@@ -402,9 +402,16 @@ export default function Feed() {
       <div className="min-h-screen bg-nm-base pb-24 sm:pb-10 relative">
         
         <nav className="sticky top-0 z-50 bg-[#0e0e0e]/90 border-b border-white/5 px-4 sm:px-6 py-3 flex justify-between items-center backdrop-blur-xl shadow-md">
-          <h1 onClick={() => router.push('/feed')} className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 tracking-tighter cursor-pointer flex items-center gap-1">
-            <span className="text-2xl drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">⚡</span> FansMio
-          </h1>
+          
+          {/* 🔥 LOGO OFICIAL UNIFICADO (MÓVIL Y ESCRITORIO) */}
+          <div className="flex items-center">
+            <h1 onClick={() => router.push('/feed')} className="text-[26px] font-black tracking-tighter cursor-pointer flex items-center gap-2 hover:scale-[1.02] transition-transform">
+              {/* Rayo con resplandor naranja */}
+              <span className="text-2xl drop-shadow-[0_0_15px_rgba(249,115,22,0.9)]">⚡</span> 
+              {/* Texto blanco sólido */}
+              <span className="text-white">FansMio</span>
+            </h1>
+          </div>
           
           <div className="flex items-center gap-2 sm:gap-4">
             <span className="text-gray-400 text-sm hidden sm:flex items-center gap-1.5 font-medium bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
