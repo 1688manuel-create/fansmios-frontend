@@ -403,13 +403,17 @@ export default function Feed() {
         
         <nav className="sticky top-0 z-50 bg-[#0e0e0e]/90 border-b border-white/5 px-4 sm:px-6 py-3 flex justify-between items-center backdrop-blur-xl shadow-md">
           
-          {/* 🔥 LOGO OFICIAL UNIFICADO (MÓVIL Y ESCRITORIO) */}
+          {/* 🔥 LOGO INTELIGENTE (ADAPTATIVO) */}
           <div className="flex items-center">
-            <h1 onClick={() => router.push('/feed')} className="text-[26px] font-black tracking-tighter cursor-pointer flex items-center gap-2 hover:scale-[1.02] transition-transform">
-              {/* Rayo con resplandor naranja */}
+            {/* 📱 MÓVIL: Mostramos el logo completo porque el menú lateral está oculto */}
+            <h1 onClick={() => router.push('/feed')} className="md:hidden text-[26px] font-black tracking-tighter cursor-pointer flex items-center gap-2 hover:scale-[1.02] transition-transform">
               <span className="text-2xl drop-shadow-[0_0_15px_rgba(249,115,22,0.9)]">⚡</span> 
-              {/* Texto blanco sólido */}
               <span className="text-white">FansMio</span>
+            </h1>
+            
+            {/* 💻 ESCRITORIO: Como el logo ya está a la izquierda, aquí mostramos la sección actual */}
+            <h1 className="hidden md:block text-xl font-bold text-gray-200 tracking-wide">
+              Feed
             </h1>
           </div>
           
