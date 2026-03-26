@@ -1,4 +1,3 @@
-// frontend/app/explore/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -154,6 +153,8 @@ export default function ExplorePage() {
                             <img 
                               src={getImageUrl(stream.creator.creatorProfile.coverImage || stream.creator.creatorProfile.profileImage)} 
                               alt="Stream Thumbnail" 
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
                               className="w-full h-full object-cover object-center opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
                             />
                           ) : (
@@ -180,11 +181,11 @@ export default function ExplorePage() {
                       <div className="p-5 flex gap-4">
                         <div className="w-12 h-12 rounded-xl nm-inset bg-black flex items-center justify-center overflow-hidden shrink-0 border border-white/10 relative">
                            {stream.creator?.creatorProfile?.profileImage ? (
-                             <img src={getImageUrl(stream.creator.creatorProfile.profileImage)} alt="Avatar" className="w-full h-full object-cover object-center" />
+                             <img src={getImageUrl(stream.creator.creatorProfile.profileImage)} alt="Avatar" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover object-center" />
                            ) : (
-                             <span className="text-white font-black text-lg">{stream.creator?.username?.[0].toUpperCase()}</span>
+                             <span className="text-white font-black text-lg">{stream.creator?.username?.toUpperCase()}</span>
                            )}
-                           <div className="absolute inset-0 border-2 border-red-500 rounded-xl rounded-bl-none"></div>
+                           <div className="absolute inset-0 border-2 border-red-500 rounded-xl rounded-bl-none pointer-events-none"></div>
                         </div>
                         <div className="overflow-hidden">
                           <h3 className="text-white font-bold text-sm truncate group-hover:text-red-400 transition-colors leading-tight">
@@ -226,7 +227,7 @@ export default function ExplorePage() {
                   >
                     <div className="h-28 w-full bg-[#050505] relative overflow-hidden">
                       {creator.creatorProfile?.coverImage ? (
-                        <img src={getImageUrl(creator.creatorProfile.coverImage)} alt="Cover" className="w-full h-full object-cover object-center opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
+                        <img src={getImageUrl(creator.creatorProfile.coverImage)} alt="Cover" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover object-center opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-black group-hover:opacity-80 transition-opacity"></div>
                       )}
@@ -235,10 +236,10 @@ export default function ExplorePage() {
                     <div className="p-5 relative flex-1 flex flex-col pt-12">
                       <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-20 h-20 rounded-full border-4 border-[#0a0a0a] bg-black overflow-hidden shadow-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                         {creator.creatorProfile?.profileImage ? (
-                          <img src={getImageUrl(creator.creatorProfile.profileImage)} alt="Avatar" className="w-full h-full object-cover object-center" />
+                          <img src={getImageUrl(creator.creatorProfile.profileImage)} alt="Avatar" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover object-center" />
                         ) : (
                           <span className="w-full h-full bg-gradient-to-tr from-gray-800 to-gray-600 flex items-center justify-center text-white font-black text-2xl">
-                            {creator.username ? creator.username[0].toUpperCase() : 'U'}
+                            {creator.username ? creator.username.toUpperCase() : 'U'}
                           </span>
                         )}
                         {creator.role === 'ADMIN' && <div className="absolute bottom-0 right-0 w-5 h-5 bg-red-500 rounded-full border-2 border-black flex items-center justify-center"><Crown className="w-3 h-3 text-white"/></div>}

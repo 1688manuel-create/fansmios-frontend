@@ -123,7 +123,7 @@ export default function CreatorProfile() {
         
         const firstPart = parts[0] || '';
         const postIdRaw = firstPart.replace('post-', '');
-        const commentIdRaw = parts[1] || null; 
+        const commentIdRaw = parts[0] || null; 
         
         setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
 
@@ -372,7 +372,7 @@ export default function CreatorProfile() {
                 className="w-32 h-32 rounded-full border-4 border-[#0e0e0e] shadow-[0_0_30px_rgba(0,0,0,0.8)] flex items-center justify-center text-white text-5xl font-black bg-[#0a0a0a] relative overflow-hidden shrink-0 z-10 nm-inset select-none"
                 onContextMenu={(e) => e.preventDefault()}
               >
-                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-blue-600 to-purple-600 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase()}</span>}
+                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <span className="bg-gradient-to-tr from-blue-600 to-purple-600 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase()}</span>}
               </div>
               
               <div className="mt-4">
@@ -501,6 +501,8 @@ export default function CreatorProfile() {
                                     src={getImageUrl(p.mediaUrl)} 
                                     className={`w-full h-full object-cover transition-all ${!isPurchased && !isOwnerOrAdmin ? 'blur-md opacity-60 scale-125' : 'blur-0 opacity-100 cursor-pointer hover:scale-110'}`} 
                                     alt="Media" 
+                                    draggable="false"
+                                    onContextMenu={(e) => e.preventDefault()}
                                     onClick={(e) => {
                                       if (isPurchased || isOwnerOrAdmin) {
                                         e.stopPropagation();
@@ -562,7 +564,7 @@ export default function CreatorProfile() {
                     <div className="flex justify-between items-center relative z-10">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full nm-inset flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border border-white/5">
-                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
+                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
                         </div>
                         <div>
                           <h3 className="text-white font-bold text-base">{creator.username}</h3>
@@ -577,9 +579,9 @@ export default function CreatorProfile() {
                       {/* 🔥 MEJORA DE VISIBILIDAD Y SOPORTE PARA VIDEOS BORROSOS */}
                       {post.mediaUrl && (
                         post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                          <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                          <video src={getImageUrl(post.mediaUrl)} onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
                         ) : (
-                          <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                          <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" draggable="false" onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
                         )
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
@@ -615,7 +617,7 @@ export default function CreatorProfile() {
                     <div className="flex justify-between items-center pr-12">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full nm-inset flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border border-white/5">
-                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-teal-400 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
+                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-teal-400 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
                         </div>
                         <div>
                           <h3 className="text-white font-bold text-base">{creator.username}</h3>
@@ -641,7 +643,7 @@ export default function CreatorProfile() {
                             <audio controls src={getImageUrl(post.mediaUrl)} className="w-full max-w-md outline-none" />
                           </div>
                         ) : (
-                          <img src={getImageUrl(post.mediaUrl)} alt="Exclusivo" className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
+                          <img src={getImageUrl(post.mediaUrl)} alt="Exclusivo" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
                         )}
                       </div>
                     )}
@@ -787,8 +789,8 @@ export default function CreatorProfile() {
             </button>
             
             <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-              <img src={expandedImage.url} alt="Exclusivo" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" />
-              <div className="absolute inset-0 w-full h-full cursor-default" style={{ zIndex: 10 }}></div>
+              <img src={expandedImage.url} alt="Exclusivo" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" onContextMenu={(e) => e.preventDefault()} />
+              <div className="absolute inset-0 w-full h-full cursor-default" onContextMenu={(e) => e.preventDefault()} style={{ zIndex: 10 }}></div>
             </div>
           </div>
         )}

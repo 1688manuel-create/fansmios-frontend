@@ -310,8 +310,11 @@ export default function LiveRoom() {
   return (
     <div className="fixed inset-0 bg-black text-white font-sans overflow-hidden">
       
-      {/* 🎬 CAPA 0: EL VIDEO */}
-      <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover md:[&_video]:!object-contain [&_video]:!w-full [&_video]:!h-full">
+      {/* 🎬 CAPA 0: EL VIDEO (CON ESCUDO ANTI-CLIC DERECHO) */}
+      <div 
+        className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover md:[&_video]:!object-contain [&_video]:!w-full [&_video]:!h-full"
+        onContextMenu={(e) => e.preventDefault()}
+      >
         {hasAccess && liveKitToken ? (
           <LiveKitRoom 
             video={isCreatorOrAdmin ? isLiveActive : false} 
