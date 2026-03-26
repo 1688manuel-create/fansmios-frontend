@@ -148,7 +148,11 @@ export default function ProfileSettings() {
       });
 
       alert('✅ ¡Perfil actualizado con éxito!');
-      router.push(`/${username}`); 
+      
+      // 🚀 MISIL ANTI-CACHÉ: Forzamos al navegador a destruir la memoria vieja
+      // y a pedirle al servidor los datos recién salidos del horno.
+      window.location.href = `/${username}`; 
+      
     } catch (error) {
       console.error("Error guardando:", error);
       alert('Hubo un error al guardar los cambios. Revisa que el nuevo usuario no esté ya en uso.');
