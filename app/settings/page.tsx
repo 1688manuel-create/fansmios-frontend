@@ -143,9 +143,7 @@ export default function ProfileSettings() {
       if (profileFile) formData.append('profileImage', profileFile);
       if (coverFile) formData.append('coverImage', coverFile);
 
-      await api.put('/users/profile', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      await api.put('/users/profile', formData, );
 
       alert('✅ ¡Perfil actualizado con éxito!');
       
