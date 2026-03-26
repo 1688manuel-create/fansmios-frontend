@@ -18,7 +18,7 @@ import {
   Save,
   EyeOff,
   Image as ImageIcon,
-  Instagram, // <-- NUEVOS
+  Instagram,
   Twitter
 } from 'lucide-react';
 
@@ -39,7 +39,7 @@ export default function ProfileSettings() {
   const [monthlyPrice, setMonthlyPrice] = useState('0');
   const [welcomeMessage, setWelcomeMessage] = useState('');
   
-  // 🚀 ESTADOS DE REDES SOCIALES (NUEVO)
+  // 🚀 ESTADOS DE REDES SOCIALES
   const [instagram, setInstagram] = useState('');
   const [twitter, setTwitter] = useState('');
   const [website, setWebsite] = useState('');
@@ -97,7 +97,7 @@ export default function ProfileSettings() {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'cover') => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files && e.target.files) {
       const file = e.target.files[0];
       const previewUrl = URL.createObjectURL(file);
       
@@ -115,13 +115,14 @@ export default function ProfileSettings() {
     setIsSaving(true);
     try {
       const formData = new FormData();
+      // 🔥 FIX 1: AHORA SÍ EMPACAMOS EL USERNAME PARA ENVIARLO AL BACKEND
+      formData.append('username', username);
       formData.append('name', name);
       formData.append('bio', bio);
       formData.append('category', category);
       formData.append('monthlyPrice', monthlyPrice);
       formData.append('welcomeMessage', welcomeMessage);
       
-      // 🔥 Guardamos las redes sociales
       formData.append('instagram', instagram);
       formData.append('twitter', twitter);
       formData.append('website', website);
@@ -146,7 +147,6 @@ export default function ProfileSettings() {
     }
   };
 
-  // Componente Neumórfico (Toggle)
   const NeumorphicToggle = ({ active, onClick }: { active: boolean, onClick: () => void }) => (
     <div 
       onClick={onClick} 
@@ -163,7 +163,6 @@ export default function ProfileSettings() {
     <AppLayout>
       <div className="min-h-screen bg-nm-base text-white pb-20 relative">
         
-        {/* NAVBAR SUPERIOR NEUMÓRFICA */}
         <nav className="sticky top-0 z-50 bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center backdrop-blur-xl shadow-md">
           <h1 className="text-xl font-black flex items-center gap-2">
             <Settings className="w-5 h-5 text-purple-500" strokeWidth={2.5}/> Configurar Perfil
@@ -175,7 +174,6 @@ export default function ProfileSettings() {
 
         <main className="max-w-4xl mx-auto mt-8 px-4 space-y-10 relative z-10">
           
-          {/* SECCIÓN 1: IDENTIDAD VISUAL */}
           <div className="nm-inset rounded-[2rem] border border-white/5 overflow-hidden shadow-xl animate-fade-in">
             <div className="p-6 border-b border-white/5 bg-[#0e0e0e]">
               <h2 className="text-sm font-bold text-blue-400 uppercase tracking-widest flex items-center gap-2">
@@ -186,7 +184,6 @@ export default function ProfileSettings() {
             
             <div className="p-6 md:p-8 bg-[#0a0a0a]">
               <div className="relative rounded-[2rem] overflow-hidden border border-white/10 nm-inset group select-none">
-                {/* Portada */}
                 <div className="h-48 md:h-64 w-full relative">
                   {coverPreview ? (
                     <img 
@@ -206,7 +203,6 @@ export default function ProfileSettings() {
                   </div>
                 </div>
 
-                {/* Avatar Flotante */}
                 <div className="absolute -bottom-10 left-6 md:left-10 z-10">
                   <div 
                     className="relative w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-[#0a0a0a] bg-nm-base overflow-hidden shadow-2xl group/avatar cursor-pointer nm-inset select-none" 
@@ -222,7 +218,7 @@ export default function ProfileSettings() {
                       />
                     ) : (
                       <span className="text-4xl md:text-5xl font-black bg-gradient-to-tr from-blue-600 to-purple-600 w-full h-full flex items-center justify-center text-white">
-                        {username ? username[0].toUpperCase() : 'U'}
+                        {username ? username.toUpperCase() : 'U'}
                       </span>
                     )}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity bg-black/60 backdrop-blur-sm">
@@ -237,7 +233,6 @@ export default function ProfileSettings() {
             </div>
           </div>
 
-          {/* SECCIÓN 2: INFORMACIÓN PÚBLICA */}
           <div className="nm-inset rounded-[2rem] border border-white/5 overflow-hidden shadow-xl animate-fade-in" style={{ animationDelay: '0.1s' }}>
             <div className="p-6 border-b border-white/5 bg-[#0e0e0e]">
               <h2 className="text-sm font-bold text-teal-400 uppercase tracking-widest flex items-center gap-2">
@@ -253,10 +248,17 @@ export default function ProfileSettings() {
                   <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ej. Juan Pérez" className="w-full nm-inset border border-white/5 rounded-xl px-4 py-3.5 text-white outline-none focus:border-teal-500/50 transition-colors text-sm placeholder:text-gray-600" />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Enlace de tu Perfil</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Enlace de tu Perfil (Username)</label>
                   <div className="flex items-center nm-inset border border-white/5 rounded-xl overflow-hidden focus-within:border-teal-500/50 transition-colors">
-                    <span className="text-gray-500 pl-4 text-sm font-medium">fansmio.com/</span>
-                    <input type="text" value={username} disabled className="w-full bg-transparent px-2 py-3.5 text-white font-bold outline-none cursor-not-allowed opacity-50 text-sm" />
+                    <span className="text-gray-500 pl-4 text-sm font-medium select-none">fansmio.com/</span>
+                    {/* 🔥 FIX 2: LE QUITAMOS EL DISABLED Y LE PUSIMOS EL ONCHANGE */}
+                    <input 
+                      type="text" 
+                      value={username} 
+                      onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ''))}
+                      className="w-full bg-transparent px-2 py-3.5 text-white font-bold outline-none text-sm transition-colors" 
+                      placeholder="nuevo_usuario"
+                    />
                   </div>
                 </div>
               </div>
@@ -278,7 +280,6 @@ export default function ProfileSettings() {
                 <textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Cuéntales a tus fans quién eres y qué contenido encontrarán aquí..." rows={4} className="w-full nm-inset border border-white/5 rounded-xl px-4 py-4 text-white outline-none focus:border-teal-500/50 transition-colors resize-none custom-scrollbar text-sm placeholder:text-gray-600 leading-relaxed" />
               </div>
 
-              {/* 🚀 FORMULARIO DE REDES SOCIALES INYECTADO */}
               <div className="pt-6 border-t border-white/5 space-y-5">
                 <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-2"><Globe className="w-4 h-4 text-blue-500"/> Tus Redes Sociales Externas</h3>
                 <p className="text-xs text-gray-500 mb-6 font-medium">Vincula tus otras cuentas para que tus fans puedan seguirte en todos lados.</p>
@@ -302,7 +303,6 @@ export default function ProfileSettings() {
             </div>
           </div>
 
-          {/* SECCIÓN 3: MONETIZACIÓN */}
           <div className="nm-inset rounded-[2rem] border border-white/5 overflow-hidden shadow-xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <div className="p-6 border-b border-white/5 bg-[#0e0e0e]">
               <h2 className="text-sm font-bold text-green-400 uppercase tracking-widest flex items-center gap-2">
@@ -328,7 +328,6 @@ export default function ProfileSettings() {
             </div>
           </div>
 
-          {/* SECCIÓN 4: PRIVACIDAD */}
           <div className="nm-inset rounded-[2rem] border border-white/5 overflow-hidden shadow-xl animate-fade-in" style={{ animationDelay: '0.3s' }}>
             <div className="p-6 border-b border-white/5 bg-[#0e0e0e]">
               <h2 className="text-sm font-bold text-purple-400 uppercase tracking-widest flex items-center gap-2">
@@ -365,7 +364,6 @@ export default function ProfileSettings() {
             </div>
           </div>
 
-          {/* BOTÓN FLOTANTE GUARDAR */}
           <div className="flex justify-end pt-4 pb-10">
             <button onClick={handleSave} disabled={isSaving} className="nm-btn-primary px-10 py-4 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.3)] disabled:opacity-50 flex items-center gap-3 text-base">
               {isSaving ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : <><Save className="w-5 h-5" /> Guardar Todos los Cambios</>}
