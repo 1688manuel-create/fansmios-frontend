@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { ArrowLeft, AlertOctagon } from "lucide-react";
+import { Metadata } from "next";
+
+// 🔥 AQUÍ ESTÁ EL MISIL ANTI "CREATE NEXT APP"
+export const metadata: Metadata = {
+  title: 'Política de Contenido | FansMio',
+  description: 'FansMio VIP opera bajo una política estricta de tolerancia cero hacia el contenido ilegal y no consensuado.',
+};
 
 export default function ContentPolicyPage() {
   return (
