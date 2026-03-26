@@ -26,7 +26,6 @@ import {
   ArrowLeft, 
   Send,
   Eye,
-  ImageOff,
   Maximize
 } from 'lucide-react';
 
@@ -84,7 +83,6 @@ function MessagesContent() {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportingMessageId, setReportingMessageId] = useState<string | null>(null);
 
-  // 🔥 ESTADO UNIFICADO PARA EXPANDIR FOTOS Y VIDEOS (CORREGIDO)
   const [expandedMedia, setExpandedMedia] = useState<{url: string, type: 'video'|'image'} | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -162,7 +160,7 @@ function MessagesContent() {
              username: `${c.creator?.username || 'U1'} 💬 ${c.fan?.username || 'U2'}` 
            },
            lastMsg: c.lastMsg,
-           time: (c.time && !c.time.includes('Invalid')) ? c.time : '--:--',
+           time: c.time, 
            unread: false,
            isGodModeChat: true
         }));
@@ -331,6 +329,36 @@ function MessagesContent() {
     }
   };
 
+  // 🔥 NUEVA FUNCIÓN TÁCTICA: ANIQUILAR CHAT COMPLETO
+  const handleDeleteFullConversation = async () => {
+    if (!activeChat || !activeChat.id) return;
+    
+    const confirmDelete = confirm(`⚠️ ALERTA DE SEGURIDAD: ¿Estás seguro de que quieres eliminar TODA la conversación con @${activeChat.user?.username}? \n\nEsta acción borrará todos los mensajes para ambos y NO se puede deshacer.`);
+    
+    if (!confirmDelete) return;
+
+    try {
+      // 1. Llamamos a la API para destruir la conversación (asegúrate de que exista deleteConversation en chatService)
+      if (chatService.deleteConversation) {
+        await chatService.deleteConversation(activeChat.id);
+      } else {
+        // Fallback si la función no está expuesta en el service pero el endpoint sí
+        await api.delete(`/messages/conversation/${activeChat.id}`);
+      }
+
+      // 2. Limpiamos el campo de batalla (UI)
+      setConversations(prev => prev.filter(c => c.id !== activeChat.id));
+      setMessages([]);
+      setActiveChat(null);
+      if (!isGodMode) localStorage.removeItem('lastOpenedChat');
+
+      alert("💥 Chat eliminado por completo.");
+    } catch (error: any) {
+      console.error("Error al eliminar la conversación:", error);
+      alert(error.response?.data?.error || "Hubo un error al intentar eliminar la conversación del servidor.");
+    }
+  };
+
   const handleUnlockClick = async (message: any) => {
     if (currentUser?.role === 'ADMIN') {
       alert("👑 MODO DIOS: Los Administradores no necesitan pagar, el servidor debió haber desbloqueado esto automáticamente.");
@@ -465,7 +493,9 @@ function MessagesContent() {
                       <h4 className={`truncate text-sm ${chat.unread && !isGodMode ? 'text-white font-black' : 'text-gray-300 font-bold'}`}>
                         {chat.user?.username || 'Usuario'}
                       </h4>
-                      <span className={`text-[10px] ${chat.unread && !isGodMode ? 'text-teal-400 font-bold' : 'text-gray-500'}`}>{chat.time}</span>
+                      <span className={`text-[10px] ${chat.unread && !isGodMode ? 'text-teal-400 font-bold' : 'text-gray-500'}`}>
+                        {(!chat.time || String(chat.time).includes('Invalid')) ? '--:--' : chat.time}
+                      </span>
                     </div>
                     <p className={`text-xs truncate ${chat.unread && !isGodMode ? 'text-teal-300 font-bold' : 'text-gray-500 font-medium'}`}>{chat.lastMsg}</p>
                   </div>
@@ -496,6 +526,15 @@ function MessagesContent() {
               
               {!isGodMode && (
                 <div className="flex gap-2">
+                  {/* 🔥 BOTÓN PARA ANIQUILAR EL CHAT COMPLETO */}
+                  <button 
+                    onClick={handleDeleteFullConversation}
+                    className="text-xs font-bold p-2 rounded-full transition-all flex items-center text-gray-400 nm-btn hover:text-red-500"
+                    title="Eliminar Todo el Chat"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+
                   <button 
                     onClick={() => { setReportingMessageId(null); setIsReportModalOpen(true); }}
                     className="text-xs font-bold p-2 rounded-full transition-all flex items-center text-gray-400 nm-btn hover:text-red-400"
@@ -598,7 +637,6 @@ function MessagesContent() {
                           </div>
                         )}
                         
-                        {/* 🔥 RENDERIZADO CORREGIDO DE MULTIMEDIA */}
                         {hasMedia && (!msg.isPPV || msg.isUnlocked) && (
                           <div className="relative z-10 mt-2">
                             {isAudio ? (
@@ -614,8 +652,13 @@ function MessagesContent() {
                                    src={getImageUrl(msg.mediaUrl)} 
                                    className="rounded-xl max-h-64 w-full object-cover shadow-md select-none relative z-10" 
                                    onContextMenu={(e) => e.preventDefault()} 
+                                   onError={(e) => {
+                                      const parent = e.currentTarget.parentElement;
+                                      if(parent) {
+                                         parent.innerHTML = '<div class="p-4 flex flex-col items-center text-gray-500 bg-black/20 rounded-xl"><svg class="w-8 h-8 mb-2 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"></path><rect x="2" y="6" width="14" height="12" rx="2"></rect><line x1="3" y1="3" x2="21" y2="21"></line></svg><span class="text-xs font-bold uppercase tracking-widest">Video Perdido</span></div>';
+                                      }
+                                   }}
                                  />
-                                 {/* BOTÓN PARA EXPANDIR VIDEO */}
                                  <div 
                                    onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'video' }); }}
                                    className="absolute top-4 right-4 bg-black/80 hover:bg-teal-500 p-2.5 rounded-full cursor-pointer opacity-100 sm:opacity-0 sm:group-hover/media:opacity-100 transition-all z-30 shadow-lg border border-white/10"
@@ -633,8 +676,13 @@ function MessagesContent() {
                                    onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' }); }}
                                    onContextMenu={(e) => e.preventDefault()} 
                                    draggable="false"
+                                   onError={(e) => {
+                                      const parent = e.currentTarget.parentElement;
+                                      if(parent) {
+                                         parent.innerHTML = '<div class="p-4 flex flex-col items-center text-gray-500 bg-black/20 rounded-xl mt-2"><svg class="w-8 h-8 mb-2 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="15" y1="9" x2="15.01" y2="9"></line><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path><path d="M3 3l18 18"></path></svg><span class="text-[10px] font-bold uppercase tracking-widest">Archivo Perdido</span></div>';
+                                      }
+                                   }}
                                  />
-                                 {/* BOTÓN OVERLAY PARA EXPANDIR IMAGEN */}
                                  <div 
                                    onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' }); }}
                                    className="absolute inset-2 flex items-center justify-center bg-black/40 rounded-xl cursor-pointer opacity-0 group-hover/media:opacity-100 transition-all z-20"

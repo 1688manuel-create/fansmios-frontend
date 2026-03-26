@@ -97,5 +97,9 @@ export const chatService = {
   checkBlockStatus: async (userId: string) => {
     const response = await api.get(`/messages/block-status/${userId}`);
     return response.data;
+  },
+  deleteConversation: async (conversationId: string) => {
+    const response = await api.delete(`/messages/conversation/${conversationId}`);
+    return response.data;
   }
 };
