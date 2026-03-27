@@ -151,8 +151,12 @@ export default function ProfileSettings() {
       if (profileFile) formData.append('profileImage', profileFile);
       if (coverFile) formData.append('coverImage', coverFile);
 
-      // 🛡️ FIX 2: SIN HEADERS MANUALES, AXIOS CREA EL BOUNDARY AUTOMÁTICO
-      await api.put('/users/profile', formData);
+      // 🚀 DEVOLVEMOS EL HEADER: Esto obliga al sistema a enviarlo como ARCHIVO y no como texto
+      await api.put('/users/profile', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
 
       alert('✅ ¡Perfil actualizado con éxito!');
       
