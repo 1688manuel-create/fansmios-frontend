@@ -24,13 +24,20 @@ import {
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-// TRADUCTOR DE URLS PARA QUE NO SE ROMPAN LAS IMÁGENES
 const getImageUrl = (path: string | null) => {
   if (!path) return '';
-  if (path.startsWith('http')) return path; 
-  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  // 🛡️ Limpiamos espacios invisibles o retornos de carro que rompen la lectura
+  const cleanPath = path.trim(); 
+  
+  // Si ya es un enlace a la nube, lo dejamos pasar intacto
+  if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
+    return cleanPath;
+  }
+  
+  // Si es un archivo local
+  const finalPath = cleanPath.startsWith('/') ? cleanPath.substring(1) : cleanPath;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
-  return `${cleanBase}/${cleanPath}`; 
+  return `${cleanBase}/${finalPath}`;
 };
 
 const CATEGORIES = ['General', 'Fitness', 'Gaming', 'Música', 'Arte', 'Lifestyle', 'Educación', 'Adulto'];

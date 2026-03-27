@@ -24,6 +24,20 @@ import {
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
+// 🛡️ FUNCION EXTRACTORA DE URLS LIMPIA
+const getImageUrl = (path: string | null) => {
+  if (!path) return '';
+  const cleanPath = path.trim(); 
+  
+  if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
+    return cleanPath;
+  }
+  
+  const finalPath = cleanPath.startsWith('/') ? cleanPath.substring(1) : cleanPath;
+  const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
+  return `${cleanBase}/${finalPath}`;
+};
+
 const CATEGORIES = ['General', 'Fitness', 'Gaming', 'Música', 'Arte', 'Lifestyle', 'Educación', 'Adulto'];
 
 export default function ProfileSettings() {
@@ -83,11 +97,12 @@ export default function ProfileSettings() {
       setHideStats(userData.creatorProfile?.hideStats || false);
       setBlockedCountries(userData.creatorProfile?.blockedCountries || '');
 
+      // 🛡️ FIX 1: USAMOS GETIMAGEURL PARA EVITAR URLS MUTANTES
       if (userData.creatorProfile?.profileImage) {
-        setProfilePreview(`${BACKEND_URL}${userData.creatorProfile.profileImage}`);
+        setProfilePreview(getImageUrl(userData.creatorProfile.profileImage));
       }
       if (userData.creatorProfile?.coverImage) {
-        setCoverPreview(`${BACKEND_URL}${userData.creatorProfile.coverImage}`);
+        setCoverPreview(getImageUrl(userData.creatorProfile.coverImage));
       }
     } catch (error) {
       console.error("Error al cargar perfil:", error);
@@ -113,9 +128,12 @@ export default function ProfileSettings() {
 
   const handleSave = async () => {
     setIsSaving(true);
+    console.log("🚀 BOTÓN GUARDAR PRESIONADO");
+    console.log("📸 Foto Perfil:", profileFile ? profileFile.name : "Misma / Ninguna");
+    console.log("🖼️ Foto Portada:", coverFile ? coverFile.name : "Misma / Ninguna");
+
     try {
       const formData = new FormData();
-      // 🔥 FIX 1: AHORA SÍ EMPACAMOS EL USERNAME PARA ENVIARLO AL BACKEND
       formData.append('username', username);
       formData.append('name', name);
       formData.append('bio', bio);
@@ -133,12 +151,13 @@ export default function ProfileSettings() {
       if (profileFile) formData.append('profileImage', profileFile);
       if (coverFile) formData.append('coverImage', coverFile);
 
-      await api.put('/users/profile', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      // 🛡️ FIX 2: SIN HEADERS MANUALES, AXIOS CREA EL BOUNDARY AUTOMÁTICO
+      await api.put('/users/profile', formData);
 
       alert('✅ ¡Perfil actualizado con éxito!');
-      router.push(`/${username}`); 
+      
+      // 🚀 FIX 3: MISIL ANTI-CACHÉ (FORZAMOS LA RECARGA)
+      window.location.href = `/${username}`; 
     } catch (error) {
       console.error("Error guardando:", error);
       alert('Hubo un error al guardar los cambios.');
@@ -251,7 +270,6 @@ export default function ProfileSettings() {
                   <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Enlace de tu Perfil (Username)</label>
                   <div className="flex items-center nm-inset border border-white/5 rounded-xl overflow-hidden focus-within:border-teal-500/50 transition-colors">
                     <span className="text-gray-500 pl-4 text-sm font-medium select-none">fansmio.com/</span>
-                    {/* 🔥 FIX 2: LE QUITAMOS EL DISABLED Y LE PUSIMOS EL ONCHANGE */}
                     <input 
                       type="text" 
                       value={username} 
