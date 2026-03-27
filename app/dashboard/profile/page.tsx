@@ -128,9 +128,7 @@ export default function ProfileSettings() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    console.log("🚀 BOTÓN GUARDAR PRESIONADO");
-    console.log("📸 Foto Perfil:", profileFile ? profileFile.name : "Ninguna");
-    console.log("🖼️ Foto Portada:", coverFile ? coverFile.name : "Ninguna");
+    console.log("🚀 EMPAQUETANDO ARCHIVOS...");
 
     try {
       const formData = new FormData();
@@ -140,34 +138,60 @@ export default function ProfileSettings() {
       formData.append('category', category);
       formData.append('monthlyPrice', monthlyPrice);
       formData.append('welcomeMessage', welcomeMessage);
-      
       formData.append('instagram', instagram);
       formData.append('twitter', twitter);
       formData.append('website', website);
-      
       formData.append('hideStats', String(hideStats));
       formData.append('blockedCountries', blockedCountries);
 
-      if (profileFile) formData.append('profileImage', profileFile);
-      if (coverFile) formData.append('coverImage', coverFile);
+      if (profileFile) {
+        formData.append('profileImage', profileFile);
+        console.log("✅ Foto de Perfil lista en el paquete:", profileFile.name);
+      }
+      if (coverFile) {
+        formData.append('coverImage', coverFile);
+        console.log("✅ Foto de Portada lista en el paquete:", coverFile.name);
+      }
 
-      // 🚀 LA BALA DE PLATA: Le decimos a Axios "no toques los headers"
-      // Al poner undefined, el navegador inyecta automáticamente el Boundary y la foto pasa intacta.
-      await api.put('/users/profile', formData, {
+      // 🚨 EL BYPASS DEFINITIVO 🚨
+      // Nos saltamos la librería 'api' porque está destruyendo las fotos.
+      
+      // 1. Rastreamos tu token de seguridad
+      let token = localStorage.getItem('token');
+      if (!token) {
+        const userData = localStorage.getItem('user');
+        if (userData) token = JSON.parse(userData).token;
+      }
+
+      // 2. Apuntamos a la base correcta
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+      console.log("🚀 Disparando camión blindado (Fetch Nativo)...");
+
+      // 3. Disparamos (El navegador pondrá los Headers de Boundary automáticamente)
+      const response = await fetch(`${baseUrl}/users/profile`, {
+        method: 'PUT',
         headers: {
-          'Content-Type': undefined
-        }
+          'Authorization': `Bearer ${token}`
+          // ⚠️ NO PONEMOS CONTENT-TYPE. Esto es lo que salva las fotos.
+        },
+        body: formData
       });
+
+      if (!response.ok) {
+        throw new Error('El servidor rechazó el paquete blindado');
+      }
 
       alert('✅ ¡Perfil actualizado con éxito!');
       
-      // Destruimos la caché y recargamos para ver los cambios
+      // 🚀 DESTRUCCIÓN DE CACHÉ
       window.location.href = `/${username}`; 
+      
     } catch (error) {
       console.error("🚨 Error guardando:", error);
       alert('Hubo un error al guardar los cambios.');
     } finally {
-      setIsSaving(false); // Detiene el giro del botón pase lo que pase
+      setIsSaving(false);
     }
   };
 
