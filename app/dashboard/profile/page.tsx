@@ -129,8 +129,8 @@ export default function ProfileSettings() {
   const handleSave = async () => {
     setIsSaving(true);
     console.log("🚀 BOTÓN GUARDAR PRESIONADO");
-    console.log("📸 Foto Perfil:", profileFile ? profileFile.name : "Misma / Ninguna");
-    console.log("🖼️ Foto Portada:", coverFile ? coverFile.name : "Misma / Ninguna");
+    console.log("📸 Foto Perfil:", profileFile ? profileFile.name : "Ninguna");
+    console.log("🖼️ Foto Portada:", coverFile ? coverFile.name : "Ninguna");
 
     try {
       const formData = new FormData();
@@ -151,32 +151,23 @@ export default function ProfileSettings() {
       if (profileFile) formData.append('profileImage', profileFile);
       if (coverFile) formData.append('coverImage', coverFile);
 
-      // 🚀 MISIL BYPASS: Ignoramos el 'api' que nos sabotea y usamos 'fetch' nativo.
-      // Obtenemos tu token de seguridad directamente (ajusta el nombre si lo guardas distinto)
-      const token = localStorage.getItem('token'); 
-
-      const response = await fetch(`${BACKEND_URL}/users/profile`, {
-        method: 'PUT',
+      // 🚀 LA BALA DE PLATA: Le decimos a Axios "no toques los headers"
+      // Al poner undefined, el navegador inyecta automáticamente el Boundary y la foto pasa intacta.
+      await api.put('/users/profile', formData, {
         headers: {
-          'Authorization': `Bearer ${token}`
-          // ⚠️ NUNCA poner 'Content-Type' aquí. El navegador lo pone solo con el Boundary perfecto.
-        },
-        body: formData
+          'Content-Type': undefined
+        }
       });
-
-      if (!response.ok) {
-        throw new Error('El servidor rechazó la petición');
-      }
 
       alert('✅ ¡Perfil actualizado con éxito!');
       
-      // Misil anti-caché
+      // Destruimos la caché y recargamos para ver los cambios
       window.location.href = `/${username}`; 
     } catch (error) {
       console.error("🚨 Error guardando:", error);
       alert('Hubo un error al guardar los cambios.');
     } finally {
-      setIsSaving(false);
+      setIsSaving(false); // Detiene el giro del botón pase lo que pase
     }
   };
 
