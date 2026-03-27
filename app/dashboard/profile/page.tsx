@@ -128,7 +128,7 @@ export default function ProfileSettings() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    console.log("🚀 EMPAQUETANDO ARCHIVOS...");
+    console.log("🚀 INICIANDO PROTOCOLO DE GUARDADO (PRODUCCIÓN)...");
 
     try {
       const formData = new FormData();
@@ -146,52 +146,54 @@ export default function ProfileSettings() {
 
       if (profileFile) {
         formData.append('profileImage', profileFile);
-        console.log("✅ Foto de Perfil lista en el paquete:", profileFile.name);
+        console.log("✅ Empaquetando Foto de Perfil:", profileFile.name);
       }
       if (coverFile) {
         formData.append('coverImage', coverFile);
-        console.log("✅ Foto de Portada lista en el paquete:", coverFile.name);
+        console.log("✅ Empaquetando Foto de Portada:", coverFile.name);
       }
 
-      // 🚨 EL BYPASS DEFINITIVO 🚨
-      // Nos saltamos la librería 'api' porque está destruyendo las fotos.
-      
-      // 1. Rastreamos tu token de seguridad
+      // 1. EXTRACCIÓN SEGURA DEL TOKEN
       let token = localStorage.getItem('token');
       if (!token) {
-        const userData = localStorage.getItem('user');
-        if (userData) token = JSON.parse(userData).token;
+        const userRaw = localStorage.getItem('user');
+        if (userRaw) token = JSON.parse(userRaw).token;
       }
 
-      // 2. Apuntamos a la base correcta
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      // 2. ENRUTAMIENTO ESTRICTO DE PRODUCCIÓN (Cero Localhost)
+      // Usamos tu variable de entorno, y si por algo falla, usamos la ruta relativa '/api'
+      // que funciona perfectamente porque tu frontend y backend comparten dominio en fansmio.com
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+      const cleanApiUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl;
+      const targetEndpoint = `${cleanApiUrl}/users/profile`;
 
-      console.log("🚀 Disparando camión blindado (Fetch Nativo)...");
+      console.log("📡 Disparando conexión blindada a:", targetEndpoint);
 
-      // 3. Disparamos (El navegador pondrá los Headers de Boundary automáticamente)
-      const response = await fetch(`${baseUrl}/users/profile`, {
+      // 3. FETCH NATIVO (Ignoramos Axios para proteger los archivos)
+      const response = await fetch(targetEndpoint, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
-          // ⚠️ NO PONEMOS CONTENT-TYPE. Esto es lo que salva las fotos.
+          // 🛑 Cero 'Content-Type'. El navegador se encarga.
         },
         body: formData
       });
 
       if (!response.ok) {
-        throw new Error('El servidor rechazó el paquete blindado');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Error HTTP: ${response.status}`);
       }
 
-      alert('✅ ¡Perfil actualizado con éxito!');
+      alert('✅ ¡Perfil e Imágenes actualizados con éxito!');
       
-      // 🚀 DESTRUCCIÓN DE CACHÉ
+      // 4. LIMPIEZA DE CACHÉ Y REDIRECCIÓN
       window.location.href = `/${username}`; 
       
-    } catch (error) {
-      console.error("🚨 Error guardando:", error);
-      alert('Hubo un error al guardar los cambios.');
+    } catch (error: any) {
+      console.error("🚨 Falla en el sistema de guardado:", error);
+      alert(`Hubo un error al guardar: ${error.message}`);
     } finally {
-      setIsSaving(false);
+      setIsSaving(false); 
     }
   };
 
