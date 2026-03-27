@@ -151,19 +151,29 @@ export default function ProfileSettings() {
       if (profileFile) formData.append('profileImage', profileFile);
       if (coverFile) formData.append('coverImage', coverFile);
 
-      // 🚀 DEVOLVEMOS EL HEADER: Esto obliga al sistema a enviarlo como ARCHIVO y no como texto
-      await api.put('/users/profile', formData, {
+      // 🚀 MISIL BYPASS: Ignoramos el 'api' que nos sabotea y usamos 'fetch' nativo.
+      // Obtenemos tu token de seguridad directamente (ajusta el nombre si lo guardas distinto)
+      const token = localStorage.getItem('token'); 
+
+      const response = await fetch(`${BACKEND_URL}/users/profile`, {
+        method: 'PUT',
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Authorization': `Bearer ${token}`
+          // ⚠️ NUNCA poner 'Content-Type' aquí. El navegador lo pone solo con el Boundary perfecto.
+        },
+        body: formData
       });
+
+      if (!response.ok) {
+        throw new Error('El servidor rechazó la petición');
+      }
 
       alert('✅ ¡Perfil actualizado con éxito!');
       
-      // 🚀 FIX 3: MISIL ANTI-CACHÉ (FORZAMOS LA RECARGA)
+      // Misil anti-caché
       window.location.href = `/${username}`; 
     } catch (error) {
-      console.error("Error guardando:", error);
+      console.error("🚨 Error guardando:", error);
       alert('Hubo un error al guardar los cambios.');
     } finally {
       setIsSaving(false);
