@@ -122,6 +122,10 @@ export default function ProfileSettings() {
 
   const handleSave = async () => {
     setIsSaving(true);
+    // 🎤 MICRÓFONO OCULTO: Veamos qué tiene el Frontend antes de enviar
+    console.log("🚀 BOTÓN GUARDAR PRESIONADO");
+    console.log("📸 Foto de Perfil seleccionada:", profileFile ? profileFile.name : "NINGUNA");
+    console.log("🖼️ Foto de Portada seleccionada:", coverFile ? coverFile.name : "NINGUNA");
     try {
       const formData = new FormData();
       
