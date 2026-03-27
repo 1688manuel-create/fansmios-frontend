@@ -39,7 +39,7 @@ export default function ProfileSettings() {
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
 
-  // ☢️ NUEVO: Estados para guardar la imagen como Texto Base64
+  // ☢️ ESTADOS BASE64
   const [profileBase64, setProfileBase64] = useState<string | null>(null);
   const [coverBase64, setCoverBase64] = useState<string | null>(null);
 
@@ -76,24 +76,24 @@ export default function ProfileSettings() {
     }
   };
 
-  // ☢️ NUEVO: Convertidor de Archivo a Texto Base64
+  // ☢️ CONVERTIDOR BASE64
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'cover') => {
-    if (e.target.files && e.target.files.length > 0) { // 🔥 Agregar .length > 0
-      const file = e.target.files[0]; // 🔥 Acceder al primer archivo con [0]
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
       const reader = new FileReader();
       
       reader.onloadend = () => {
         const base64String = reader.result as string;
         if (type === 'profile') {
           setProfileBase64(base64String);
-          setProfilePreview(base64String); // La preview usa el mismo texto
+          setProfilePreview(base64String); 
         } else {
           setCoverBase64(base64String);
           setCoverPreview(base64String);
         }
       };
       
-      reader.readAsDataURL(file); // Activa el convertidor
+      reader.readAsDataURL(file);
     }
   };
 
@@ -102,7 +102,6 @@ export default function ProfileSettings() {
     console.log("🚀 ENVIANDO PAQUETE JSON (SIN MULTIPART)...");
 
     try {
-      // ☢️ NUEVO: Enviamos un objeto JSON normal y corriente. Es imposible que el servidor lo vacíe.
       const payload = {
         username, name, bio, category, monthlyPrice, welcomeMessage,
         instagram, twitter, website, hideStats, blockedCountries,
@@ -122,7 +121,19 @@ export default function ProfileSettings() {
     }
   };
 
-  // ... (El resto del UI sigue exactamente igual, copialo de tu archivo original desde el return)
+  // 🛠️ COMPONENTE RESTAURADO: El Botón Toggle para ocultar estadísticas
+  const NeumorphicToggle = ({ active, onClick }: { active: boolean, onClick: () => void }) => (
+    <div 
+      onClick={onClick} 
+      className={`w-14 h-8 nm-inset rounded-full flex items-center p-1 cursor-pointer transition-colors duration-300 border ${active ? 'border-purple-500/30 bg-[#0e0e0e]' : 'border-transparent bg-[#0a0a0a]'}`}
+    >
+      <div className={`w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 flex items-center justify-center ${active ? 'translate-x-6 bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.6)]' : 'translate-x-0 bg-gray-500'}`}>
+      </div>
+    </div>
+  );
+
+  // 🛠️ PANTALLA DE CARGA RESTAURADA
+  if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-10 h-10 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div></div>;
 
   return (
     <AppLayout>
