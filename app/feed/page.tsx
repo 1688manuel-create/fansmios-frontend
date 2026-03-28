@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { postService } from '../../lib/postService';
 import { paymentService } from '../../lib/paymentService';
@@ -31,8 +31,13 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   if (path.startsWith('http')) {
     if (usernameForWatermark && path.includes('cloudinary.com')) {
       const cleanUsername = usernameForWatermark.replace('@', '');
-      const watermarkTransform = `upload/l_text:Arial_40_bold:fansmio%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
+      // 🔥 INYECCIÓN DE TURBO: f_auto,q_auto 
+      const watermarkTransform = `upload/f_auto,q_auto/l_text:Arial_40_bold:fansmio%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
       return path.replace('upload/', watermarkTransform);
+    }
+    // 🔥 Comprimimos también las fotos normales
+    if (path.includes('cloudinary.com')) {
+        return path.replace('upload/', 'upload/f_auto,q_auto/v1/');
     }
     return path; 
   }
@@ -126,6 +131,47 @@ export default function Feed() {
   const [vipCreator, setVipCreator] = useState<any>(null);
   const [walletBalance, setWalletBalance] = useState(0);
 
+  // 1. PRIMERO: Definimos la función (Lógica blindada)
+  const fetchData = useCallback(async () => {
+    try {
+      const [
+        postData, storyData, notifData, liveData, chatData, 
+        trendingData, featuredBundleData, vipCreatorData, walletData
+      ] = await Promise.all([
+        postService.getAllPosts(),
+        storyService.getFeedStories(),
+        notificationService.getNotifications().catch(() => ({ unreadCount: 0 })),
+        liveService.getActiveStreams().catch(() => ({ activeStreams: [] })),
+        chatService.getUnreadCount().catch(() => ({ unreadCount: 0 })),
+        api.get('/users/trending').catch(() => ({ data: { trending: [] } })),
+        api.get('/bundles/featured').catch(() => ({ data: { bundle: null } })),
+        api.get('/users/vip-story').catch(() => ({ data: { vip: null } })),
+        api.get('/wallet').catch(() => ({ data: { wallet: { balance: 0 } } }))
+      ]);
+      
+      let feedPosts = postData.posts || [];
+      // Agregamos tipos (any) para que TypeScript no se queje
+      feedPosts = feedPosts.filter((post: any, index: number, self: any[]) => 
+        index === self.findIndex((t) => t.id === post.id)
+      );
+      
+      setPosts(feedPosts); 
+      setStories(storyData.stories || []);
+      setUnreadNotifications(notifData.unreadCount || 0); 
+      setActiveStreams(liveData.activeStreams || []);
+      setUnreadMessages(chatData.unreadCount || 0); 
+      setTrendingCreators(trendingData.data.trending || []);
+      setFeaturedBundle(featuredBundleData.data?.bundle || null);
+      setVipCreator(vipCreatorData.data?.vip || null);
+      setWalletBalance(walletData.data?.wallet?.balance || 0);
+    } catch (error) { 
+      console.error('Error cargando datos:', error); 
+    } finally { 
+      setIsLoading(false); 
+    }
+  }, []); 
+
+  // 2. SEGUNDO: Los efectos que usan esa función
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
@@ -133,9 +179,8 @@ export default function Feed() {
     if (storedUser && storedUser !== "undefined") {
       try { setUser(JSON.parse(storedUser)); } catch (e) {}
     }
-    fetchData(); 
-    requestPushPermission();
-  }, [router]);
+    fetchData(); // Ahora sí sabe qué es fetchData
+  }, [fetchData, router]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -175,37 +220,7 @@ export default function Feed() {
         }, 800); 
       }
     }
-  }, [isLoading, posts]); 
-
-  const fetchData = async () => {
-    try {
-      const [postData, storyData, notifData, liveData, chatData, trendingData, featuredBundleData, vipCreatorData, walletData] = await Promise.all([
-        postService.getAllPosts(),
-        storyService.getFeedStories(),
-        notificationService.getNotifications().catch(() => ({ unreadCount: 0 })),
-        liveService.getActiveStreams().catch(() => ({ activeStreams: [] })),
-        chatService.getUnreadCount().catch(() => ({ unreadCount: 0 })),
-        api.get('/users/trending').catch(() => ({ data: { trending: [] } })),
-        api.get('/bundles/featured').catch(() => ({ data: { bundle: null } })),
-        api.get('/users/vip-story').catch(() => ({ data: { vip: null } })),
-        api.get('/wallet').catch(() => ({ data: { wallet: { balance: 0 } } }))
-      ]);
-      
-      let feedPosts = postData.posts || [];
-      feedPosts = feedPosts.filter((post: any, index: number, self: any[]) => index === self.findIndex((t) => t.id === post.id));
-      
-      setPosts(feedPosts); 
-      setStories(storyData.stories || []);
-      setUnreadNotifications(notifData.unreadCount || 0); 
-      setActiveStreams(liveData.activeStreams || []);
-      setUnreadMessages(chatData.unreadCount || 0); 
-      setTrendingCreators(trendingData.data.trending || []);
-      setFeaturedBundle(featuredBundleData.data?.bundle || null);
-      setVipCreator(vipCreatorData.data?.vip || null);
-      setWalletBalance(walletData.data?.wallet?.balance || 0);
-    } catch (error) { console.error('Error cargando datos:', error); }
-    finally { setIsLoading(false); }
-  };
+  }, [isLoading, posts]);
 
   const handleReact = async (postId: string, emoji: string) => {
     if (!user) return;
