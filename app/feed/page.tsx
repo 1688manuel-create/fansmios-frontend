@@ -866,32 +866,42 @@ export default function Feed() {
         
         {/* ================= MODALES ================= */}
         {activeStory && (
+          // 🔥 FIX: Añadimos z-50 para que el modal flote sobre todo lo demás
           <div className="fixed inset-0 z- bg-black/95 flex flex-col animate-fade-in select-none">
-            <div className="flex justify-between items-center p-4 absolute top-0 w-full z-10 bg-gradient-to-b from-black/80 to-transparent">
+            
+            {/* 🔥 BARRA SUPERIOR DE CONTROLES */}
+            <div className="flex justify-between items-center p-4 absolute top-0 w-full z- bg-gradient-to-b from-black/90 pb-10 to-transparent">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/20 shadow-lg">
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/20 shadow-lg cursor-pointer" onClick={() => router.push(`/${activeStory.creator?.username}`)}>
                   {activeStory.creator?.creatorProfile?.profileImage ? <img src={getImageUrl(activeStory.creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white font-bold">{(activeStory.creator?.username || 'U').toUpperCase()}</div>}
                 </div>
-                <span className="text-white font-bold drop-shadow-md">@{activeStory.creator?.username}</span>
+                <span className="text-white font-bold drop-shadow-md cursor-pointer hover:underline" onClick={() => router.push(`/${activeStory.creator?.username}`)}>@{activeStory.creator?.username}</span>
               </div>
               
               <div className="flex items-center gap-3">
-                {user?.id === activeStory.creator?.id && (
+                {/* 🗑️ BOTÓN ELIMINAR (Solo visible si eres el dueño) */}
+                {(user?.id === activeStory.creator?.id || user?.role === 'ADMIN') && (
                   <button 
-                    onClick={() => handleDeleteStory(activeStory.id)} 
-                    className="w-10 h-10 bg-black/50 hover:bg-red-600 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg"
+                    onClick={(e) => { e.stopPropagation(); handleDeleteStory(activeStory.id); }} 
+                    className="w-10 h-10 bg-black/50 hover:bg-red-600 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg pointer-events-auto"
                     title="Eliminar historia"
                   >
                     <Trash2 className="w-5 h-5"/>
                   </button>
                 )}
                 
-                <button onClick={() => setActiveStory(null)} className="w-10 h-10 bg-black/50 hover:bg-white/20 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg">
+                {/* ❌ BOTÓN CERRAR */}
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setActiveStory(null); }} 
+                  className="w-10 h-10 bg-black/50 hover:bg-white/20 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg pointer-events-auto"
+                  title="Cerrar"
+                >
                   <X className="w-6 h-6"/>
                 </button>
               </div>
             </div>
 
+            {/* CONTENIDO MULTIMEDIA */}
             <div className="flex-1 flex justify-center items-center p-4 pt-20">
               {activeStory.mediaUrl?.match(/\.(mp4|mov|webm)$/i) ? (
                 <video src={getImageUrl(activeStory.mediaUrl)} autoPlay controls controlsList="nodownload noplaybackrate" disablePictureInPicture onContextMenu={(e) => e.preventDefault()} className="max-w-full max-h-full rounded-2xl shadow-2xl" />
@@ -899,6 +909,15 @@ export default function Feed() {
                 <img src={getImageUrl(activeStory.mediaUrl, activeStory.creator?.username)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain pointer-events-none" />
               )}
             </div>
+
+            {/* 🔥 MENSAJE INFERIOR (CAPTION) */}
+            {activeStory.caption && (
+               <div className="absolute bottom-10 left-0 w-full text-center px-4 z-">
+                 <span className="bg-black/70 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl text-white font-medium shadow-2xl inline-block max-w-xl text-shadow-sm">
+                   {activeStory.caption}
+                 </span>
+               </div>
+            )}
           </div>
         )}
 
