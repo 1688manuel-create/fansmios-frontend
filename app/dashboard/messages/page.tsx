@@ -366,19 +366,28 @@ function MessagesContent() {
     }
 
     try {
+      // 1. Mandamos la orden de cobro al Backend
       const data = await paymentService.createPaymentIntent({
         amount: message.price,
         type: 'MESSAGE', 
         creatorId: message.senderId || message.userId, 
         description: 'Desbloqueo de Mensaje Privado',
         messageId: message.id 
-      } as any); // 🔥 EL PASE VIP: 'as any' apaga la alarma de TypeScript
+      } as any);
       
-      setClientSecret(data.clientSecret);
-      setSelectedMessageToUnlock(message);
-      setIsPaymentModalOpen(true);
-    } catch (error) { 
-      alert('Error al conectar con la pasarela de pagos.'); 
+      // 🔥 2. LA MAGIA: Como usamos PayRam, el pago es instantáneo. 
+      // Ya NO abrimos el modal de tarjeta, solo celebramos la victoria.
+      alert("✨ ¡Mensaje desbloqueado con éxito!");
+      
+      // 3. Recargamos los mensajes en tiempo real para que el candado desaparezca SIN recargar la página
+      if (activeChat) {
+        const chatData = await chatService.getMessages(activeChat.id);
+        setMessages(chatData.messages || []);
+      }
+
+    } catch (error: any) { 
+      // Si el usuario no tiene saldo o algo falla, le avisamos
+      alert(error.response?.data?.error || 'Error al procesar el pago. Verifica tu saldo.'); 
     }
   };
 
