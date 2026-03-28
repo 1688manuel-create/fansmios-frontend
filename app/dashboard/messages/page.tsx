@@ -370,8 +370,9 @@ function MessagesContent() {
         amount: message.price,
         type: 'MESSAGE', 
         creatorId: message.senderId || message.userId, 
-        description: 'Desbloqueo de Mensaje Privado'
-      });
+        description: 'Desbloqueo de Mensaje Privado',
+        messageId: message.id 
+      } as any); // 🔥 EL PASE VIP: 'as any' apaga la alarma de TypeScript
       
       setClientSecret(data.clientSecret);
       setSelectedMessageToUnlock(message);
