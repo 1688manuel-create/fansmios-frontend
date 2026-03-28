@@ -152,9 +152,9 @@ export default function Feed() {
         const hashWithoutHash = hash.substring(1); 
         const parts = hashWithoutHash.split('-comment-');
         
-        const firstPart = parts[0] || '';
+        const firstPart = parts[0]|| '';
         const postIdRaw = firstPart.replace('post-', '');
-        const commentIdRaw = parts[1] || null; 
+        const commentIdRaw = parts[1]|| null; 
         
         setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
 
@@ -268,7 +268,7 @@ export default function Feed() {
       };
       const data = await paymentService.createPaymentIntent(payload);
       if (data.success || data.receipt) {
-        alert('✅ ¡Paquete comprado con éxito por PayRam!');
+        alert('✅ ¡Paquete comprado con éxito por Covra Pay!');
         fetchData();
       } else {
         setClientSecret(data.clientSecret);
@@ -288,7 +288,7 @@ export default function Feed() {
         description: 'Desbloqueo de Post'
       });
       if (data.success || data.receipt) {
-        alert('✅ ¡Contenido desbloqueado con PayRam!');
+        alert('✅ ¡Contenido desbloqueado con Covra Pay!');
         fetchData();
       } else {
         setClientSecret(data.clientSecret);
@@ -866,61 +866,81 @@ export default function Feed() {
         
         {/* ================= MODALES ================= */}
         {activeStory && (
-          // 🔥 FIX: Añadimos z-50 para que el modal flote sobre todo lo demás
-          <div className="fixed inset-0 z- bg-black/95 flex flex-col animate-fade-in select-none">
+          <div className="fixed inset-0 z-[99999] bg-black/95 flex flex-col animate-fade-in select-none pointer-events-auto">
             
-            {/* 🔥 BARRA SUPERIOR DE CONTROLES */}
-            <div className="flex justify-between items-center p-4 absolute top-0 w-full z- bg-gradient-to-b from-black/90 pb-10 to-transparent">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/20 shadow-lg cursor-pointer" onClick={() => router.push(`/${activeStory.creator?.username}`)}>
-                  {activeStory.creator?.creatorProfile?.profileImage ? <img src={getImageUrl(activeStory.creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white font-bold">{(activeStory.creator?.username || 'U').toUpperCase()}</div>}
-                </div>
-                <span className="text-white font-bold drop-shadow-md cursor-pointer hover:underline" onClick={() => router.push(`/${activeStory.creator?.username}`)}>@{activeStory.creator?.username}</span>
-              </div>
+            {/* HEADER */}
+            <div className="fixed top-0 left-0 w-full z-[100000] flex justify-between items-center p-4 bg-gradient-to-b from-black/80 to-transparent">
               
               <div className="flex items-center gap-3">
-                {/* 🗑️ BOTÓN ELIMINAR (Solo visible si eres el dueño) */}
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/20 shadow-lg">
+                  {activeStory.creator?.creatorProfile?.profileImage ? (
+                    <img src={getImageUrl(activeStory.creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-white font-bold">
+                      {(activeStory.creator?.username || 'U').toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <span className="text-white font-bold drop-shadow-md">
+                  @{activeStory.creator?.username}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3 z-[100001]">
                 {(user?.id === activeStory.creator?.id || user?.role === 'ADMIN') && (
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); handleDeleteStory(activeStory.id); }} 
-                    className="w-10 h-10 bg-black/50 hover:bg-red-600 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg pointer-events-auto"
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDeleteStory(activeStory.id); }}
+                    className="w-10 h-10 bg-black/50 hover:bg-red-600 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg cursor-pointer"
                     title="Eliminar historia"
                   >
-                    <Trash2 className="w-5 h-5"/>
+                    <Trash2 className="w-5 h-5" />
                   </button>
                 )}
-                
-                {/* ❌ BOTÓN CERRAR */}
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setActiveStory(null); }} 
-                  className="w-10 h-10 bg-black/50 hover:bg-white/20 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg pointer-events-auto"
+
+                <button
+                  onClick={(e) => { e.stopPropagation(); setActiveStory(null); }}
+                  className="w-10 h-10 bg-black/50 hover:bg-white/20 text-gray-300 hover:text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all shadow-lg cursor-pointer"
                   title="Cerrar"
                 >
-                  <X className="w-6 h-6"/>
+                  <X className="w-6 h-6" />
                 </button>
               </div>
             </div>
 
-            {/* CONTENIDO MULTIMEDIA */}
-            <div className="flex-1 flex justify-center items-center p-4 pt-20">
+            {/* MEDIA */}
+            <div className="flex-1 flex justify-center items-center p-4 pt-24 relative z-10">
               {activeStory.mediaUrl?.match(/\.(mp4|mov|webm)$/i) ? (
-                <video src={getImageUrl(activeStory.mediaUrl)} autoPlay controls controlsList="nodownload noplaybackrate" disablePictureInPicture onContextMenu={(e) => e.preventDefault()} className="max-w-full max-h-full rounded-2xl shadow-2xl" />
+                <video
+                  src={getImageUrl(activeStory.mediaUrl)}
+                  autoPlay
+                  controls
+                  controlsList="nodownload noplaybackrate"
+                  disablePictureInPicture
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="max-w-full max-h-full rounded-2xl shadow-2xl"
+                />
               ) : (
-                <img src={getImageUrl(activeStory.mediaUrl, activeStory.creator?.username)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain pointer-events-none" />
+                <img
+                  src={getImageUrl(activeStory.mediaUrl, activeStory.creator?.username)}
+                  draggable="false"
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain pointer-events-none"
+                />
               )}
             </div>
 
-            {/* 🔥 MENSAJE INFERIOR (CAPTION) */}
+            {/* CAPTION */}
             {activeStory.caption && (
-               <div className="absolute bottom-10 left-0 w-full text-center px-4 z-">
-                 <span className="bg-black/70 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl text-white font-medium shadow-2xl inline-block max-w-xl text-shadow-sm">
-                   {activeStory.caption}
-                 </span>
-               </div>
+              <div className="fixed bottom-10 left-0 w-full text-center px-4 z-[100000]">
+                <span className="bg-black/70 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl text-white font-medium shadow-2xl inline-block max-w-xl">
+                  {activeStory.caption}
+                </span>
+              </div>
             )}
           </div>
         )}
 
+        {/* 🔥 MODAL DE PROPINAS RESTAURADO */}
         {isTipModalOpen && tipRecipient && (
           <TipModal 
             creatorName={tipRecipient.username} 
@@ -930,7 +950,7 @@ export default function Feed() {
               try { 
                 const data = await paymentService.createPaymentIntent({ amount: amount || 0, type: 'TIP', creatorId: tipRecipient.id, description: `Propina: ${message}` }); 
                 if (data.success || data.receipt) {
-                  alert('✅ ¡Propina enviada con PayRam!');
+                  alert('✅ ¡Propina enviada con Covra Pay!');
                   fetchData();
                 } else {
                   setClientSecret(data.clientSecret); setSelectedPost({ id: 'tip', price: amount }); setIsPaymentModalOpen(true); 
@@ -939,7 +959,7 @@ export default function Feed() {
             }} 
           />
         )}
-
+        
         {isPaymentModalOpen && clientSecret && selectedPost && (
           <PaymentModal 
             clientSecret={clientSecret} 
