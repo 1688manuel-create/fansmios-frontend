@@ -162,9 +162,17 @@ export default function Feed() {
       feedPosts = feedPosts.filter((post: any, index: number, self: any[]) => 
         index === self.findIndex((t) => t.id === post.id)
       );
+      // 1. Obtenemos todas las historias
+      const allStories = storyData.stories || [];
       
+      // 2. 🔥 FILTRO ANTI-DUPLICADOS: Solo un círculo por creador
+      const uniqueStories = allStories.filter((story: any, index: number, self: any[]) =>
+        index === self.findIndex((s) => s.creator?.id === story.creator?.id)
+      );
+      
+      // 3. Guardamos la lista limpia
+      setStories(uniqueStories);
       setPosts(feedPosts); 
-      setStories(storyData.stories || []);
       setUnreadNotifications(notifData.unreadCount || 0); 
       setActiveStreams(liveData.activeStreams || []);
       setUnreadMessages(chatData.unreadCount || 0); 
