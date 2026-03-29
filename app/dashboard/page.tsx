@@ -32,28 +32,46 @@ export default function DashboardIndex() {
   const [isProcessingPago, setIsProcessingPago] = useState(false);
   const [customAmount, setCustomAmount] = useState('');
 
-  // Lógica para recargar
+  // Lógica para recargar (Blindada y con actualización en tiempo real)
   const handleTopUp = async (amount: number) => {
     if (isProcessingPago) return;
     setIsProcessingPago(true);
+    
+    console.log(`🚀 Iniciando recarga de: $${amount} USD...`);
+    
     try {
       // Creamos la intención de pago tipo 'CREDIT_TOPUP'
       const res = await paymentService.createPaymentIntent({
         amount: amount,
         type: 'CREDIT_TOPUP',
-        creatorId: user.id, // Es una auto-recarga, enviamos el propio ID
+        creatorId: user.id, // Es una auto-recarga
         description: `Recarga de Billetera: $${amount} USD`
       });
 
-      if (res.success && res.checkoutUrl) {
-        // Redirigir a la pasarela (Covra / PayRam)
-        window.location.href = res.checkoutUrl;
+      console.log("📦 Respuesta del servidor:", res);
+
+      if (res.success) {
+        // 1. Mostrar mensaje de éxito
+        alert(`✅ ¡Bóveda recargada con $${amount} USD exitosamente!`);
+        
+        // 2. Actualizar el saldo visualmente al instante
+        const nuevoSaldo = (parseFloat(user.walletBalance) || 0) + amount;
+        const usuarioActualizado = { ...user, walletBalance: nuevoSaldo };
+        
+        // 3. Guardar el nuevo saldo en memoria y en localStorage
+        setUser(usuarioActualizado);
+        localStorage.setItem('user', JSON.stringify(usuarioActualizado));
+        
+        // 4. Cerrar el modal
+        setShowTopUpModal(false);
+        setCustomAmount(''); // Limpiamos el input libre
+        
       } else {
-        alert("Error al conectar con la pasarela.");
+        alert("⚠️ Error: " + (res.error || "El servidor no devolvió éxito."));
       }
     } catch (error) {
-      console.error(error);
-      alert("Fallo al iniciar el pago.");
+      console.error("❌ Fallo crítico en frontend:", error);
+      alert("Fallo al iniciar el pago. Revisa la consola (F12).");
     } finally {
       setIsProcessingPago(false);
     }
