@@ -196,7 +196,7 @@ export default function DashboardIndex() {
                   <CreditCard className="w-8 h-8 text-green-500" />
                 </div>
                 
-                <h2 className="text-2xl font-black text-white mb-2">Comprar Créditos</h2>
+                <h2 className="text-2xl font-black text-white mb-2">Agregar Créditos</h2>
                 <p className="text-gray-400 text-sm mb-6">Elige un paquete o ingresa el monto exacto que deseas agregar a tu billetera.</p>
 
                 {/* Botones Rápidos */}
