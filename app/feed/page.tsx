@@ -130,7 +130,8 @@ export default function Feed() {
   const [activeStreams, setActiveStreams] = useState<any[]>([]);
 
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-  const [unreadMessages, setUnreadMessages] = useState(0); 
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0); 
   
   const [expandedImage, setExpandedImage] = useState<{url: string, username: string} | null>(null);
   const [isBoostModalOpen, setIsBoostModalOpen] = useState(false);
@@ -139,7 +140,7 @@ export default function Feed() {
   const [vipCreator, setVipCreator] = useState<any>(null);
   const [walletBalance, setWalletBalance] = useState(0);
 
-  // 1. PRIMERO: Definimos la función (Lógica blindada)
+  // 1. LA FUNCIÓN DE CARGA (Guarda TODO en memoria)
   const fetchData = useCallback(async () => {
     try {
       const [
@@ -158,20 +159,13 @@ export default function Feed() {
       ]);
       
       let feedPosts = postData.posts || [];
-      // Agregamos tipos (any) para que TypeScript no se queje
       feedPosts = feedPosts.filter((post: any, index: number, self: any[]) => 
         index === self.findIndex((t) => t.id === post.id)
       );
-      // 1. Obtenemos todas las historias
-      const allStories = storyData.stories || [];
       
-      // 2. 🔥 FILTRO ANTI-DUPLICADOS: Solo un círculo por creador
-      const uniqueStories = allStories.filter((story: any, index: number, self: any[]) =>
-        index === self.findIndex((s) => s.creator?.id === story.creator?.id)
-      );
+      // 🔥 IMPORTANTE: Guardamos TODAS las historias en la memoria para el temporizador
+      setStories(storyData.stories || []); 
       
-      // 3. Guardamos la lista limpia
-      setStories(uniqueStories);
       setPosts(feedPosts); 
       setUnreadNotifications(notifData.unreadCount || 0); 
       setActiveStreams(liveData.activeStreams || []);
@@ -185,9 +179,32 @@ export default function Feed() {
     } finally { 
       setIsLoading(false); 
     }
-  }, []); 
+  }, []);
 
-  // 2. SEGUNDO: Los efectos que usan esa función
+  // 2. EL TEMPORIZADOR (5 Segundos)
+  useEffect(() => {
+    let timer: any;
+    if (activeStory) {
+      // Buscamos todas las historias de este usuario en la memoria
+      const userStories = stories.filter((s: any) => s.creator?.id === activeStory.creator?.id);
+      
+      timer = setTimeout(() => {
+        if (currentStoryIndex < userStories.length - 1) {
+          // Hay más historias: pasamos a la siguiente
+          const nextIndex = currentStoryIndex + 1;
+          setCurrentStoryIndex(nextIndex);
+          setActiveStory(userStories[nextIndex]);
+        } else {
+          // Se acabaron: cerramos el modal
+          setActiveStory(null);
+          setCurrentStoryIndex(0);
+        }
+      }, 5000); 
+    }
+    return () => clearTimeout(timer);
+  }, [activeStory, currentStoryIndex, stories]);
+
+  // 3. LOS EFECTOS DE CARGA INICIAL
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
@@ -195,7 +212,7 @@ export default function Feed() {
     if (storedUser && storedUser !== "undefined") {
       try { setUser(JSON.parse(storedUser)); } catch (e) {}
     }
-    fetchData(); // Ahora sí sabe qué es fetchData
+    fetchData(); 
   }, [fetchData, router]);
 
   useEffect(() => {
@@ -212,7 +229,6 @@ export default function Feed() {
       if (hash && hash.startsWith('#post-')) {
         const hashWithoutHash = hash.substring(1); 
         const parts = hashWithoutHash.split('-comment-');
-        
         const firstPart = parts[0]|| '';
         const postIdRaw = firstPart.replace('post-', '');
         const commentIdRaw = parts[1]|| null; 
@@ -222,15 +238,12 @@ export default function Feed() {
         setTimeout(() => {
           const targetId = commentIdRaw ? `comment-${commentIdRaw}` : `post-${postIdRaw}`;
           const element = document.getElementById(targetId);
-          
           if (element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
-            
             setTimeout(() => {
               element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
             }, 4000);
-
             window.history.replaceState(null, '', window.location.pathname);
           }
         }, 800); 
@@ -381,7 +394,11 @@ export default function Feed() {
 
   const openStory = async (story: any) => {
     setActiveStory(story);
-    try { await storyService.viewStory(story.id); fetchData(); } catch (error) {}
+    setCurrentStoryIndex(0); // 🔥 LA PIEZA CLAVE: Reiniciamos el reloj al abrir
+    try { 
+      await storyService.viewStory(story.id); 
+      fetchData(); 
+    } catch (error) {}
   };
 
   const handleDeleteStory = async (storyId: string) => {
@@ -519,7 +536,11 @@ export default function Feed() {
                 </div>
               )}
 
-              {stories.map(story => (
+              {stories
+              .filter((story: any, index: number, self: any[]) => 
+                index === self.findIndex((s: any) => s.creator?.id === story.creator?.id)
+              )
+              .map(story => (
                 <div key={story.id} onClick={() => openStory(story)} className="flex flex-col items-center gap-1 cursor-pointer group shrink-0">
                   <div className="w-16 h-16 rounded-full p-1 transition-transform group-hover:scale-105 bg-gradient-to-tr from-red-600 to-orange-500 shadow-lg">
                     <div className="w-full h-full rounded-full bg-black border-2 border-black flex items-center justify-center overflow-hidden">
