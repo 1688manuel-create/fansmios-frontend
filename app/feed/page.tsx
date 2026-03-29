@@ -974,25 +974,60 @@ export default function Feed() {
             </div>
 
             {/* MEDIA */}
-            <div className="flex-1 flex justify-center items-center p-4 pt-24 relative z-10">
-              {activeStory.mediaUrl?.match(/\.(mp4|mov|webm)$/i) ? (
-                <video
-                  src={getImageUrl(activeStory.mediaUrl)}
-                  autoPlay
-                  controls
-                  controlsList="nodownload noplaybackrate"
-                  disablePictureInPicture
-                  onContextMenu={(e) => e.preventDefault()}
-                  className="max-w-full max-h-full rounded-2xl shadow-2xl"
-                />
-              ) : (
-                <img
-                  src={getImageUrl(activeStory.mediaUrl, activeStory.creator?.username)}
-                  draggable="false"
-                  onContextMenu={(e) => e.preventDefault()}
-                  className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain pointer-events-none"
-                />
-              )}
+            <div className="flex-1 flex justify-center items-center p-4 pt-24 relative z-10 w-full h-full">
+              
+              {/* 👈 ZONA TÁCTIL IZQUIERDA (Retroceder) */}
+              <div 
+                className="absolute top-0 left-0 w-1/3 h-full z-20 cursor-pointer" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const userStories = stories.filter((s: any) => s.creator?.id === activeStory.creator?.id);
+                  if (currentStoryIndex > 0) {
+                    const prevIdx = currentStoryIndex - 1;
+                    setCurrentStoryIndex(prevIdx);
+                    setActiveStory(userStories[prevIdx]);
+                  }
+                }} 
+              />
+
+              {/* 👉 ZONA TÁCTIL DERECHA (Avanzar / Cerrar) */}
+              <div 
+                className="absolute top-0 right-0 w-2/3 h-full z-20 cursor-pointer" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const userStories = stories.filter((s: any) => s.creator?.id === activeStory.creator?.id);
+                  if (currentStoryIndex < userStories.length - 1) {
+                    const nextIdx = currentStoryIndex + 1;
+                    setCurrentStoryIndex(nextIdx);
+                    setActiveStory(userStories[nextIdx]);
+                  } else {
+                    setActiveStory(null);
+                    setCurrentStoryIndex(0);
+                  }
+                }} 
+              />
+
+              {/* CONTENIDO (Imagen o Video) */}
+              <div className="relative z-10 max-w-full max-h-full flex justify-center items-center pointer-events-none">
+                {activeStory.mediaUrl?.match(/\.(mp4|mov|webm)$/i) ? (
+                  <video
+                    src={getImageUrl(activeStory.mediaUrl)}
+                    autoPlay
+                    controls
+                    controlsList="nodownload noplaybackrate"
+                    disablePictureInPicture
+                    onContextMenu={(e) => e.preventDefault()}
+                    className="max-w-full max-h-full rounded-2xl shadow-2xl relative z-30 pointer-events-auto"
+                  />
+                ) : (
+                  <img
+                    src={getImageUrl(activeStory.mediaUrl, activeStory.creator?.username)}
+                    draggable="false"
+                    onContextMenu={(e) => e.preventDefault()}
+                    className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain"
+                  />
+                )}
+              </div>
             </div>
 
             {/* CAPTION */}
