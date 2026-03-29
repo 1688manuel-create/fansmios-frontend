@@ -16,13 +16,47 @@ import {
   Bookmark, 
   ArrowLeft,
   Sparkles,
-  Crown 
+  Crown,
+  Zap,
+  CreditCard
 } from 'lucide-react';
 import AppLayout from '../../components/AppLayout';
+import { paymentService } from '../../lib/paymentService';
 
 export default function DashboardIndex() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  
+  // 💰 ESTADOS FINANCIEROS
+  const [showTopUpModal, setShowTopUpModal] = useState(false);
+  const [isProcessingPago, setIsProcessingPago] = useState(false);
+
+  // Lógica para recargar
+  const handleTopUp = async (amount: number) => {
+    if (isProcessingPago) return;
+    setIsProcessingPago(true);
+    try {
+      // Creamos la intención de pago tipo 'CREDIT_TOPUP'
+      const res = await paymentService.createPaymentIntent({
+        amount: amount,
+        type: 'CREDIT_TOPUP',
+        creatorId: user.id, // Es una auto-recarga, enviamos el propio ID
+        description: `Recarga de Billetera: $${amount} USD`
+      });
+
+      if (res.success && res.checkoutUrl) {
+        // Redirigir a la pasarela (Covra / PayRam)
+        window.location.href = res.checkoutUrl;
+      } else {
+        alert("Error al conectar con la pasarela.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Fallo al iniciar el pago.");
+    } finally {
+      setIsProcessingPago(false);
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -120,14 +154,74 @@ export default function DashboardIndex() {
               </h2>
               <p className="text-gray-500 mt-2 text-lg font-medium">¿Qué parte de tu imperio quieres gestionar hoy?</p>
             </div>
-            
-            {/* 🔥 CORREGIDO EL DIV ROTO Y RENDERIZADO */}
+            {/* CORREGIDO EL DIV ROTO Y RENDERIZADO */}
             {user?.role === 'CREATOR' && (
                <div className="nm-btn px-6 py-3 flex items-center gap-2 border border-red-500/20 text-red-400 font-bold uppercase tracking-widest text-xs rounded-full cursor-default shadow-[0_0_15px_rgba(239,68,68,0.2)]">
                  <Crown className="w-5 h-5" /> Creador VIP
                </div>
             )}
           </div>
+
+          {/* =========================================
+              💰 BILLETERA VIRTUAL DEL FAN
+          ========================================= */}
+          <div className="bg-[#111] border border-green-500/20 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_0_40px_rgba(34,197,94,0.1)] mb-10">
+            <div>
+              <h3 className="text-gray-400 text-xs uppercase tracking-[0.2em] font-bold mb-1 flex items-center gap-2">
+                <Wallet className="w-4 h-4 text-green-400"/> Saldo en FansMio
+              </h3>
+              <div className="flex items-baseline gap-2">
+                <span className="text-5xl font-black text-white font-mono drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">
+                  ${user?.walletBalance || '0.00'}
+                </span>
+                <span className="text-green-500 font-bold tracking-widest">USD</span>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setShowTopUpModal(true)}
+              className="w-full md:w-auto bg-green-500 hover:bg-green-400 text-black font-black px-8 py-4 rounded-2xl flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+            >
+              <Zap className="w-5 h-5 fill-current" /> Recargar Créditos
+            </button>
+          </div>
+
+          {/* 🔥 MODAL DE RECARGA */}
+          {showTopUpModal && (
+            <div className="fixed inset-0 z-[200000] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+              <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] p-8 text-center relative">
+                
+                <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
+                  <CreditCard className="w-8 h-8 text-green-500" />
+                </div>
+                
+                <h2 className="text-2xl font-black text-white mb-2">Comprar Créditos</h2>
+                <p className="text-gray-400 text-sm mb-8">Elige cuánto saldo deseas agregar a tu billetera para dar propinas y desbloquear contenido.</p>
+
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  {[10, 20, 50, 100].map((amount) => (
+                    <button 
+                      key={amount}
+                      onClick={() => handleTopUp(amount)}
+                      disabled={isProcessingPago}
+                      className="nm-btn border border-white/5 hover:border-green-500/50 py-4 rounded-xl text-xl font-black text-white transition-all disabled:opacity-50 group flex flex-col items-center justify-center"
+                    >
+                      <span className="text-green-400 text-xs uppercase tracking-widest font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity">+ Saldo</span>
+                      ${amount}
+                    </button>
+                  ))}
+                </div>
+
+                <button 
+                  onClick={() => setShowTopUpModal(false)} 
+                  disabled={isProcessingPago}
+                  className="w-full text-gray-500 font-bold hover:text-white transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
 
           {(user?.role === 'CREATOR' || user?.role === 'ADMIN') ? (
             <div className="space-y-12 animate-fade-in">
