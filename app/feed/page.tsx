@@ -920,8 +920,22 @@ export default function Feed() {
         {activeStory && (
           <div className="fixed inset-0 z-[99999] bg-black/95 flex flex-col animate-fade-in select-none pointer-events-auto">
             
+            {/* 📊 BARRAS DE PROGRESO TIPO INSTAGRAM */}
+            <div className="absolute top-4 left-0 right-0 z-[100001] flex gap-1 px-4 max-w-lg mx-auto w-full">
+              {stories
+                .filter((s: any) => s.creator?.id === activeStory.creator?.id)
+                .map((s: any, index: number) => (
+                  <div key={s.id || index} className="h-1 flex-1 bg-white/30 rounded-full overflow-hidden shadow-sm">
+                    <div 
+                      className={"h-full bg-white transition-all duration-300 " + (index <= currentStoryIndex ? "w-full" : "w-0")}
+                    />
+                  </div>
+                ))
+              }
+            </div>
+
             {/* HEADER */}
-            <div className="fixed top-0 left-0 w-full z-[100000] flex justify-between items-center p-4 bg-gradient-to-b from-black/80 to-transparent">
+            <div className="fixed top-0 left-0 w-full z-[100000] flex justify-between items-center p-4 bg-gradient-to-b from-black/80 to-transparent pt-8">
               
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/20 shadow-lg">
