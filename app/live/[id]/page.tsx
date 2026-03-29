@@ -554,19 +554,24 @@ export default function LiveRoom() {
               {connectedUsers.length === 0 ? (
                 <div className="text-center text-gray-500 py-8 font-medium text-sm">Nadie ha entrado a la sala aún...</div>
               ) : (
-                connectedUsers.map((p, i) => (
-                  <div key={p.identity || i} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl transition-all cursor-default">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-green-500 to-blue-600 flex items-center justify-center font-black text-white shadow-lg border border-white/20">
-                      {p.name ? p.name.charAt(0).toUpperCase() : 'U'}
+                connectedUsers.map((p, i) => {
+                  // 🕵️ Buscamos el nombre en el "name" o en el "identity" de LiveKit
+                  const displayName = p.name || p.identity || 'Usuario';
+                  
+                  return (
+                    <div key={p.identity || i} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl transition-all cursor-default">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-green-500 to-blue-600 flex items-center justify-center font-black text-white shadow-lg border border-white/20">
+                        {displayName.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-white">{displayName}</span>
+                        <span className="text-[10px] text-green-400 font-mono flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Conectado
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold text-white">{p.name || 'Usuario'}</span>
-                      <span className="text-[10px] text-green-400 font-mono flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Conectado
-                      </span>
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>
