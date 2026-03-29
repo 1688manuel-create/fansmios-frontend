@@ -30,6 +30,7 @@ export default function DashboardIndex() {
   // 💰 ESTADOS FINANCIEROS
   const [showTopUpModal, setShowTopUpModal] = useState(false);
   const [isProcessingPago, setIsProcessingPago] = useState(false);
+  const [customAmount, setCustomAmount] = useState('');
 
   // Lógica para recargar
   const handleTopUp = async (amount: number) => {
@@ -186,7 +187,7 @@ export default function DashboardIndex() {
             </button>
           </div>
 
-          {/* 🔥 MODAL DE RECARGA */}
+          {/* 🔥 MODAL DE RECARGA CON MONTO LIBRE */}
           {showTopUpModal && (
             <div className="fixed inset-0 z-[200000] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
               <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] p-8 text-center relative">
@@ -196,20 +197,46 @@ export default function DashboardIndex() {
                 </div>
                 
                 <h2 className="text-2xl font-black text-white mb-2">Comprar Créditos</h2>
-                <p className="text-gray-400 text-sm mb-8">Elige cuánto saldo deseas agregar a tu billetera para dar propinas y desbloquear contenido.</p>
+                <p className="text-gray-400 text-sm mb-6">Elige un paquete o ingresa el monto exacto que deseas agregar a tu billetera.</p>
 
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  {[10, 20, 50, 100].map((amount) => (
+                {/* Botones Rápidos */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  {[10, 20, 50, 100, 200, 500, 1000].map((amount) => (
                     <button 
                       key={amount}
                       onClick={() => handleTopUp(amount)}
                       disabled={isProcessingPago}
-                      className="nm-btn border border-white/5 hover:border-green-500/50 py-4 rounded-xl text-xl font-black text-white transition-all disabled:opacity-50 group flex flex-col items-center justify-center"
+                      className="nm-btn border border-white/5 hover:border-green-500/50 py-3 rounded-xl text-xl font-black text-white transition-all disabled:opacity-50 group flex flex-col items-center justify-center"
                     >
-                      <span className="text-green-400 text-xs uppercase tracking-widest font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity">+ Saldo</span>
+                      <span className="text-green-400 text-[10px] uppercase tracking-widest font-bold opacity-0 group-hover:opacity-100 transition-opacity">+ Saldo</span>
                       ${amount}
                     </button>
                   ))}
+                </div>
+
+                {/* 🎯 Input de Monto Libre */}
+                <div className="mb-6 relative">
+                  <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                    <span className="text-gray-500 font-black text-xl">$</span>
+                  </div>
+                  <input 
+                    type="number" 
+                    min="5" 
+                    placeholder="Otro monto (Mín. $5)"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    disabled={isProcessingPago}
+                    className="w-full bg-[#0a0a0a] border border-white/10 focus:border-green-500/50 rounded-xl pl-10 pr-24 py-4 text-white font-bold outline-none transition-colors placeholder:text-gray-600"
+                  />
+                  {customAmount && Number(customAmount) >= 5 && (
+                    <button 
+                      onClick={() => handleTopUp(Number(customAmount))}
+                      disabled={isProcessingPago}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-green-500 hover:bg-green-400 text-black px-4 py-2 rounded-lg font-black text-xs transition-colors shadow-[0_0_10px_rgba(34,197,94,0.3)] animate-fade-in"
+                    >
+                      Cargar
+                    </button>
+                  )}
                 </div>
 
                 <button 
