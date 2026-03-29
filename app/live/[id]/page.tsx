@@ -13,7 +13,8 @@ import {
   GridLayout,
   ParticipantTile,
   ControlBar,
-  useTracks
+  useTracks,
+  useParticipants // 👈 ¡AGREGAR ESTA LÍNEA!
 } from '@livekit/components-react';
 
 import { Track } from 'livekit-client';
@@ -89,6 +90,10 @@ export default function LiveRoom() {
   const [liveKitToken, setLiveKitToken] = useState("");
 
   const [isLiveActive, setIsLiveActive] = useState(false);
+
+  // 👁️ ESTADOS PARA ESPECTADORES
+  const [showViewersModal, setShowViewersModal] = useState(false);
+  const [connectedUsers, setConnectedUsers] = useState<any[]>([]);
 
   // ✅ EFECTOS Y LÓGICA
   useEffect(() => {
@@ -323,6 +328,8 @@ export default function LiveRoom() {
             serverUrl="wss://live.fansmio.com" 
             className="w-full h-full"
           >
+            {/* 👈 NUEVO RASTREADOR INYECTADO AQUÍ */}
+            <ParticipantsTracker onUpdate={setConnectedUsers} />
             <StreamStage hasControl={isCreatorOrAdmin && isLiveActive} />
             <RoomAudioRenderer />
           </LiveKitRoom>
@@ -390,9 +397,13 @@ export default function LiveRoom() {
 
             <div className="flex flex-col items-end gap-2">
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-bold">
-                  <Eye className="w-3.5 h-3.5 text-green-400" /> {viewersCount}
-                </div>
+                {/* 👁️ BOTÓN INTERACTIVO DE ESPECTADORES */}
+                <button 
+                  onClick={() => setShowViewersModal(true)}
+                  className="flex items-center gap-1.5 bg-black/40 hover:bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-bold transition-colors cursor-pointer shadow-lg"
+                >
+                  <Eye className="w-3.5 h-3.5 text-green-400" /> {connectedUsers.length > 0 ? connectedUsers.length : viewersCount}
+                </button>
                 {!isCreatorOrAdmin ? (
                   <button onClick={() => router.push('/explore')} className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center hover:bg-white/20 transition-colors">
                     <X className="w-4 h-4" />
@@ -527,6 +538,40 @@ export default function LiveRoom() {
           </div>
         </div>
       )}
+      {/* 👁️ MODAL LISTA DE ESPECTADORES */}
+      {showViewersModal && (
+        <div className="absolute inset-0 z-[200000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 pointer-events-auto">
+          <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] animate-fade-in">
+            <div className="flex items-center justify-between p-5 border-b border-white/10 bg-gradient-to-b from-white/5 to-transparent">
+              <h3 className="text-white font-black text-lg flex items-center gap-2">
+                <Eye className="w-5 h-5 text-green-400" /> Espectadores ({connectedUsers.length})
+              </h3>
+              <button onClick={() => setShowViewersModal(false)} className="text-gray-400 hover:text-white p-1.5 bg-white/5 hover:bg-red-500 rounded-full transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-3 max-h-[40vh] overflow-y-auto custom-scrollbar">
+              {connectedUsers.length === 0 ? (
+                <div className="text-center text-gray-500 py-8 font-medium text-sm">Nadie ha entrado a la sala aún...</div>
+              ) : (
+                connectedUsers.map((p, i) => (
+                  <div key={p.identity || i} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl transition-all cursor-default">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-green-500 to-blue-600 flex items-center justify-center font-black text-white shadow-lg border border-white/20">
+                      {p.name ? p.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-white">{p.name || 'Usuario'}</span>
+                      <span className="text-[10px] text-green-400 font-mono flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Conectado
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -536,6 +581,7 @@ function StreamStage({ hasControl }: { hasControl: boolean }) {
   const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: false }]);
   const mainTrack = tracks.slice(0, 1);
   const coHostTracks = tracks.slice(1);
+  
 
   return (
     <div className="w-full h-full flex flex-col relative bg-transparent">
@@ -565,4 +611,12 @@ function StreamStage({ hasControl }: { hasControl: boolean }) {
       )}
     </div>
   );
+}
+// 🕵️ RASTREADOR DE ESPECTADORES DE LIVEKIT
+function ParticipantsTracker({ onUpdate }: { onUpdate: (participants: any[]) => void }) {
+  const participants = useParticipants();
+  useEffect(() => {
+    onUpdate(participants);
+  }, [participants, onUpdate]);
+  return null;
 }
