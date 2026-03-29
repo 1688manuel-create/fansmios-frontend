@@ -28,19 +28,27 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'htt
 
 const getImageUrl = (path: string | null, usernameForWatermark: string | null = null) => {
   if (!path) return '';
+  
   if (path.startsWith('http')) {
-    if (usernameForWatermark && path.includes('cloudinary.com')) {
-      const cleanUsername = usernameForWatermark.replace('@', '');
-      // 🔥 INYECCIÓN DE TURBO: f_auto,q_auto 
-      const watermarkTransform = `upload/f_auto,q_auto/l_text:Arial_40_bold:fansmio%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
-      return path.replace('upload/', watermarkTransform);
-    }
-    // 🔥 Comprimimos también las fotos normales
+    // Si es Cloudinary, aplicamos optimización inteligente
     if (path.includes('cloudinary.com')) {
-        return path.replace('upload/', 'upload/f_auto,q_auto/v1/');
+      // 1. Limpiamos cualquier transformación previa para no duplicar
+      const cleanPath = path.replace(/upload\/.*\/(v\d+)/, 'upload/$1');
+      
+      if (usernameForWatermark) {
+        const cleanUsername = usernameForWatermark.replace('@', '');
+        // Marca de agua + Optimización (sin el /v1/ extra)
+        const wm = `upload/f_auto,q_auto/l_text:Arial_40_bold:fansmio%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
+        return cleanPath.replace('upload/', wm);
+      }
+      
+      // Optimización simple para fotos de perfil y trending
+      return cleanPath.replace('upload/', 'upload/f_auto,q_auto/');
     }
     return path; 
   }
+
+  // Para imágenes locales del servidor
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
   return `${cleanBase}/${cleanPath}`; 
