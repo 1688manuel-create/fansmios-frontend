@@ -1052,6 +1052,7 @@ export default function Feed() {
                 const data = await paymentService.createPaymentIntent({ amount: amount || 0, type: 'TIP', creatorId: tipRecipient.id, description: `Propina: ${message}` }); 
                 if (data.success || data.receipt) {
                   alert('✅ ¡Propina enviada con Covra Pay!');
+                  router.refresh();
                   fetchData();
                 } else {
                   setClientSecret(data.clientSecret); setSelectedPost({ id: 'tip', price: amount }); setIsPaymentModalOpen(true); 

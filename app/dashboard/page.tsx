@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import AppLayout from '../../components/AppLayout';
 import { paymentService } from '../../lib/paymentService';
+import api from '../../lib/api';
 
 export default function DashboardIndex() {
   const router = useRouter();
@@ -78,54 +79,43 @@ export default function DashboardIndex() {
     }
   };
 
-  // 🔥 EL SINCRONIZADOR AGRESIVO (Reemplaza a tus dos useEffect anteriores) 🔥
+  // 🔥 EL SINCRONIZADOR FINTECH (La Verdad Absoluta) 🔥
   useEffect(() => {
-    // 1. Función maestra que lee la memoria fresca
-    const syncEmpire = () => {
-      if (typeof window !== 'undefined') {
-        try {
-          const storedUser = localStorage.getItem('user');
-          if (storedUser && storedUser !== "undefined") {
-            const parsedUser = JSON.parse(storedUser);
-            if (!parsedUser?.role) throw new Error("Sesión corrupta");
-            
-            // ¡PUM! Actualiza la pantalla con el saldo exacto del momento
-            setUser(parsedUser); 
-          } else {
-            router.push('/auth');
-          }
-        } catch (error) {
-          console.error("Error en sesión:", error);
-          localStorage.removeItem('user');
+    const fetchRealBalance = async () => {
+      if (typeof window === 'undefined') return;
+
+      try {
+        // 1. Cargamos lo que hay en memoria rápido para que la pantalla no parpadee
+        const storedUser = localStorage.getItem('user');
+        if (storedUser && storedUser !== "undefined") {
+          setUser(JSON.parse(storedUser)); 
+        } else {
           router.push('/auth');
+          return;
         }
+
+        // 2. 🎯 EL TIRO DE GRACIA: Consultamos a la Base de Datos el saldo real
+        const res = await api.get('/profile/me'); 
+        
+        if (res.data) {
+          // Atrapamos los datos frescos (dependiendo de cómo los envíe tu backend)
+          const datosFrescos = res.data.profile || res.data.user || res.data;
+          
+          // 3. ¡PUM! Actualizamos la pantalla y la memoria con la verdad absoluta de la BD
+          setUser((prev: any) => {
+            const actualizado = { ...prev, ...datosFrescos };
+            localStorage.setItem('user', JSON.stringify(actualizado));
+            return actualizado;
+          });
+        }
+
+      } catch (error) {
+        console.error("Error sincronizando bóveda Covra Pay:", error);
       }
     };
 
-    // Ejecutamos la sincronización al instante
-    syncEmpire();
-
-    // 2. Radar Covra Pay (Escucha eventos internos)
-    const handleBalanceUpdate = (e: any) => {
-      const nuevoSaldo = e.detail;
-      setUser((prev: any) => {
-        if (!prev) return prev;
-        return { ...prev, walletBalance: nuevoSaldo };
-      });
-    };
-
-    window.addEventListener('covraPayBalanceUpdate', handleBalanceUpdate);
-    
-    // 3. 🔥 TRUCO PRO: Escuchar cuando la ventana vuelve a tener el foco o cambia el localStorage
-    window.addEventListener('focus', syncEmpire);
-    window.addEventListener('storage', syncEmpire);
-    
-    return () => {
-      window.removeEventListener('covraPayBalanceUpdate', handleBalanceUpdate);
-      window.removeEventListener('focus', syncEmpire);
-      window.removeEventListener('storage', syncEmpire);
-    };
-  }, [router, pathname]); // 👈 Al vigilar "pathname", obligamos a Next.js a actualizar al cambiar de página
+    fetchRealBalance();
+  }, [router, pathname]); // 👈 Al vigilar "pathname", destrozamos el caché de Next.js
 
   if (!user) return <div className="min-h-screen bg-nm-base flex items-center justify-center text-gray-500 font-bold uppercase tracking-widest animate-pulse">Sincronizando Imperio...</div>;
 
