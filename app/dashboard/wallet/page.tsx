@@ -29,13 +29,16 @@ import {
   CheckCircle, 
   XCircle, 
   ShieldCheck,
-  History
+  History,
+  ArrowUpRight,
+  ArrowDownLeft
 } from 'lucide-react';
 
 export default function WalletDashboard() {
   const router = useRouter();
   const [financeData, setFinanceData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string>('FAN'); // 👈 Estado para el Rol
   
   // Estados para Retiros
   const [withdrawAmount, setWithdrawAmount] = useState('');
@@ -48,6 +51,13 @@ export default function WalletDashboard() {
   const [isSavingWallet, setIsSavingWallet] = useState(false);
 
   useEffect(() => {
+    // 👈 Obtenemos el rol del usuario desde el localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser && storedUser !== "undefined") {
+      const parsedUser = JSON.parse(storedUser);
+      setUserRole(parsedUser.role || 'FAN');
+    }
+    
     fetchWallet();
   }, []);
 
@@ -124,13 +134,122 @@ export default function WalletDashboard() {
     }
   };
 
-  if (isLoading) return <AppLayout><div className="min-h-screen bg-nm-base flex items-center justify-center"><Loader2 className="w-12 h-12 text-green-500 animate-spin drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]"/></div></AppLayout>;
+  if (isLoading) {
+    return (
+      <AppLayout>
+        <div className="min-h-screen bg-nm-base flex items-center justify-center">
+          <Loader2 className="w-12 h-12 text-green-500 animate-spin drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]"/>
+        </div>
+      </AppLayout>
+    );
+  }
 
   // 🛡️ VARIABLES SEGURAS (El Escudo PayRam contra Nulos)
   const availableBalance = financeData?.wallet?.balance || 0;
   const pendingBalance = financeData?.wallet?.pendingBalance || 0;
   const totalEarned = financeData?.totalEarnedHistorial || 0;
+  const allTransactions = financeData?.recentTransactions || [];
 
+  // ============================================================================
+  // 🌟 VISTA EXCLUSIVA PARA FANS
+  // ============================================================================
+  if (userRole === 'FAN') {
+    return (
+      <AppLayout>
+        <div className="min-h-screen pb-24 bg-nm-base relative">
+          <div className="absolute top-0 left-1/2 w-[800px] h-[400px] bg-green-900/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
+          
+          <nav className="sticky top-0 z-50 bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center backdrop-blur-xl shadow-md">
+            <h1 className="text-xl font-black text-white flex items-center gap-3 tracking-wide">
+              <div className="w-10 h-10 nm-inset bg-black rounded-xl flex items-center justify-center text-green-400 border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+                <Wallet className="w-5 h-5" />
+              </div>
+              Estado de Cuenta
+            </h1>
+            <button onClick={() => router.push('/dashboard')} className="text-sm nm-btn text-gray-300 px-5 py-2.5 rounded-full hover:text-white transition-colors font-bold flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Volver</span>
+            </button>
+          </nav>
+
+          <main className="max-w-4xl mx-auto mt-8 px-4 space-y-8 relative z-10">
+            {/* SALDO DEL FAN */}
+            <div className="nm-inset p-8 rounded-[2rem] border border-green-500/20 flex flex-col md:flex-row justify-between items-center gap-6">
+              <div>
+                <h3 className="text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2 mb-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-400" /> Saldo Covra Pay
+                </h3>
+                <p className="text-gray-400 text-sm font-medium">Este dinero está listo para enviarse como propinas, suscripciones o PPV.</p>
+              </div>
+              <div className="bg-[#0a0a0a] border border-green-500/20 px-10 py-6 rounded-3xl shadow-[inset_0_0_20px_rgba(34,197,94,0.05)] text-center">
+                <div className="flex items-baseline justify-center gap-1">
+                  <span className="text-5xl font-black text-white font-mono drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">
+                    ${availableBalance.toFixed(2)}
+                  </span>
+                  <span className="text-green-500 font-bold text-xl">USD</span>
+                </div>
+              </div>
+            </div>
+
+            {/* HISTORIAL DE MOVIMIENTOS DEL FAN */}
+            <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default">
+              <h2 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
+                <History className="w-5 h-5 text-green-500" /> Historial de Movimientos
+              </h2>
+              
+              {allTransactions.length === 0 ? (
+                <div className="text-center text-gray-600 py-12 font-medium">Aún no tienes movimientos en tu bóveda.</div>
+              ) : (
+                <div className="space-y-4">
+                  {allTransactions.map((tx: any) => {
+                    const isTopUp = tx.type === 'CREDIT_TOPUP';
+                    const isIncome = tx.isIncome || isTopUp;
+                    
+                    const Icon = isIncome ? ArrowDownLeft : ArrowUpRight;
+                    const colorClass = isIncome ? 'text-green-400' : 'text-white';
+                    const sign = isIncome ? '+' : '-';
+                    const bgClass = isIncome ? 'border-green-500/20 hover:border-green-500/40 bg-green-500/5' : 'border-white/5 hover:border-red-500/20 nm-inset';
+
+                    let concept = "Transacción";
+                    if (isTopUp) concept = "Recarga de Billetera";
+                    else if (tx.type === 'TIP') concept = `Propina para @${tx.receiver?.username || 'creador'}`;
+                    else if (tx.type === 'SUBSCRIPTION') concept = `Suscripción a @${tx.receiver?.username || 'creador'}`;
+                    else if (tx.type === 'PPV_MESSAGE') concept = `Mensaje PPV de @${tx.receiver?.username || 'creador'}`;
+                    else concept = `Pago a @${tx.receiver?.username || 'creador'}`;
+
+                    return (
+                      <div key={tx.id} className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${bgClass}`}>
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${isIncome ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-black border-white/5 text-gray-400'}`}>
+                            {isTopUp ? <Wallet className="w-5 h-5" /> : tx.type === 'TIP' ? <DollarSign className="w-5 h-5" /> : tx.type === 'SUBSCRIPTION' ? <Star className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+                          </div>
+                          <div>
+                            <p className="text-sm text-white font-black tracking-wide">{concept}</p>
+                            <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mt-1">
+                              {new Date(tx.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute:'2-digit' })}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className={`font-black text-lg font-mono tracking-tight ${colorClass}`}>
+                            {sign}${parseFloat(tx.amount || tx.netAmount || 0).toFixed(2)}
+                          </p>
+                          <p className="text-[10px] text-gray-500 font-bold uppercase mt-1">Completado</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </main>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // ============================================================================
+  // 🏦 VISTA PARA CREADORES / ADMINS
+  // ============================================================================
   return (
     <AppLayout>
       <div className="min-h-screen pb-24 bg-nm-base relative">
@@ -400,19 +519,25 @@ export default function WalletDashboard() {
                         <div className={`w-10 h-10 rounded-xl nm-inset bg-black flex items-center justify-center border ${
                           w.status === 'PENDING' ? 'border-yellow-500/30 text-yellow-500' : 
                           w.status === 'PROCESSING' ? 'border-orange-500/30 text-orange-400' : 
-                          w.status === 'APPROVED' || w.status === 'PAID' ? 'border-blue-500/30 text-blue-400' : 
+                          (w.status === 'APPROVED' || w.status === 'PAID') ? 'border-blue-500/30 text-blue-400' : 
                           'border-red-500/30 text-red-500'
                         }`}>
-                          {w.status === 'PENDING' ? <Clock className="w-4 h-4" /> : w.status === 'PROCESSING' ? <Loader2 className="w-4 h-4 animate-spin" /> : w.status === 'PAID' ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+                          {w.status === 'PENDING' ? <Clock className="w-4 h-4" /> : 
+                           w.status === 'PROCESSING' ? <Loader2 className="w-4 h-4 animate-spin" /> : 
+                           (w.status === 'APPROVED' || w.status === 'PAID') ? <CheckCircle className="w-4 h-4" /> : 
+                           <XCircle className="w-4 h-4" />}
                         </div>
                         <div>
                           <p className={`text-[11px] font-black uppercase tracking-widest ${
                             w.status === 'PENDING' ? 'text-yellow-500' : 
                             w.status === 'PROCESSING' ? 'text-orange-400' :
-                            w.status === 'PAID' ? 'text-blue-400' : 
+                            (w.status === 'APPROVED' || w.status === 'PAID') ? 'text-blue-400' : 
                             'text-red-500'
                           }`}>
-                            {w.status === 'PENDING' ? 'En Espera' : w.status === 'PROCESSING' ? 'Procesando' : w.status === 'PAID' ? 'Transferido' : 'Rechazado'}
+                            {w.status === 'PENDING' ? 'En Espera' : 
+                             w.status === 'PROCESSING' ? 'Procesando' : 
+                             w.status === 'APPROVED' ? 'Aprobado' : 
+                             w.status === 'PAID' ? 'Transferido' : 'Rechazado'}
                           </p>
                           <p className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-widest">{new Date(w.createdAt).toLocaleDateString()}</p>
                         </div>

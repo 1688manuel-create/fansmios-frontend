@@ -18,7 +18,12 @@ import {
   Sparkles,
   Crown,
   Zap,
-  CreditCard
+  CreditCard,
+  History,         
+  ArrowUpRight,    
+  ArrowDownLeft,   
+  Lock,
+  DollarSign             
 } from 'lucide-react';
 import AppLayout from '../../components/AppLayout';
 import { paymentService } from '../../lib/paymentService';
@@ -33,6 +38,7 @@ export default function DashboardIndex() {
   const [showTopUpModal, setShowTopUpModal] = useState(false);
   const [isProcessingPago, setIsProcessingPago] = useState(false);
   const [customAmount, setCustomAmount] = useState('');
+  const [transactions, setTransactions] = useState<any[]>([]); // 👈 Estado del Historial
 
   // Lógica para recargar (Blindada y con actualización en tiempo real)
   const handleTopUp = async (amount: number) => {
@@ -85,7 +91,7 @@ export default function DashboardIndex() {
       if (typeof window === 'undefined') return;
 
       try {
-        // 1. Cargamos lo que hay en memoria rápido para que la pantalla no parpadee
+        // 1. Cargamos memoria
         const storedUser = localStorage.getItem('user');
         if (storedUser && storedUser !== "undefined") {
           setUser(JSON.parse(storedUser)); 
@@ -94,19 +100,21 @@ export default function DashboardIndex() {
           return;
         }
 
-        // 2. 🎯 EL TIRO DE GRACIA: Consultamos a la Base de Datos el saldo real
+        // 2. Consultamos saldo real al perfil
         const res = await api.get('/profile/me'); 
-        
         if (res.data) {
-          // Atrapamos los datos frescos (dependiendo de cómo los envíe tu backend)
           const datosFrescos = res.data.profile || res.data.user || res.data;
-          
-          // 3. ¡PUM! Actualizamos la pantalla y la memoria con la verdad absoluta de la BD
           setUser((prev: any) => {
             const actualizado = { ...prev, ...datosFrescos };
             localStorage.setItem('user', JSON.stringify(actualizado));
             return actualizado;
           });
+        }
+
+        // 3. 🎯 NUEVO: Traemos el historial de movimientos de la Bóveda
+        const resWallet = await api.get('/wallet/dashboard');
+        if (resWallet.data && resWallet.data.recentTransactions) {
+          setTransactions(resWallet.data.recentTransactions);
         }
 
       } catch (error) {
@@ -115,7 +123,7 @@ export default function DashboardIndex() {
     };
 
     fetchRealBalance();
-  }, [router, pathname]); // 👈 Al vigilar "pathname", destrozamos el caché de Next.js
+  }, [router, pathname]);
 
   if (!user) return <div className="min-h-screen bg-nm-base flex items-center justify-center text-gray-500 font-bold uppercase tracking-widest animate-pulse">Sincronizando Imperio...</div>;
 
@@ -193,7 +201,6 @@ export default function DashboardIndex() {
               </h2>
               <p className="text-gray-500 mt-2 text-lg font-medium">¿Qué parte de tu imperio quieres gestionar hoy?</p>
             </div>
-            {/* CORREGIDO EL DIV ROTO Y RENDERIZADO */}
             {user?.role === 'CREATOR' && (
                <div className="nm-btn px-6 py-3 flex items-center gap-2 border border-red-500/20 text-red-400 font-bold uppercase tracking-widest text-xs rounded-full cursor-default shadow-[0_0_15px_rgba(239,68,68,0.2)]">
                  <Crown className="w-5 h-5" /> Creador VIP
@@ -227,7 +234,7 @@ export default function DashboardIndex() {
 
           {/* 🔥 MODAL DE RECARGA CON MONTO LIBRE */}
           {showTopUpModal && (
-            <div className="fixed inset-0 z-[200000] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+            <div className="fixed inset-0 z- flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
               <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] p-8 text-center relative">
                 
                 <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
@@ -237,9 +244,9 @@ export default function DashboardIndex() {
                 <h2 className="text-2xl font-black text-white mb-2">Agregar Créditos</h2>
                 <p className="text-gray-400 text-sm mb-6">Elige un paquete o ingresa el monto exacto que deseas agregar a tu billetera.</p>
 
-                {/* Botones Rápidos */}
+                {/* Botones Rápidos (CORREGIDO EL ARRAY AQUÍ) */}
                 <div className="grid grid-cols-2 gap-4 mb-4">
-                  {[10, 20, 50, 100, 200, 500, 1000].map((amount) => (
+                  {[ 10, 20, 50, 100, 200, 500, 1000 ].map((amount) => (
                     <button 
                       key={amount}
                       onClick={() => handleTopUp(amount)}
@@ -337,6 +344,64 @@ export default function DashboardIndex() {
                   >
                     Verificar mi Identidad
                   </button>
+                </div>
+              </div>
+              
+              {/* =========================================
+                  📜 HISTORIAL DE MOVIMIENTOS INCRUSTADO (SOLO PARA EL FAN)
+              ========================================= */}
+              <div className="mt-16 animate-fade-in">
+                <h3 className="text-[10px] font-black text-gray-600 mb-6 border-b border-white/5 pb-3 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <History className="w-3 h-3 text-green-500" /> Movimientos Recientes
+                </h3>
+                
+                <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default">
+                  {transactions.length === 0 ? (
+                    <div className="text-center text-gray-600 py-12 font-medium">
+                      Aún no tienes movimientos en tu bóveda.
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {transactions.map((tx: any) => {
+                        const isTopUp = tx.type === 'CREDIT_TOPUP';
+                        const isIncome = tx.isIncome || isTopUp;
+                        
+                        const Icon = isIncome ? ArrowDownLeft : ArrowUpRight;
+                        const colorClass = isIncome ? 'text-green-400' : 'text-white';
+                        const sign = isIncome ? '+' : '-';
+                        const bgClass = isIncome ? 'border-green-500/20 hover:border-green-500/40 bg-green-500/5' : 'border-white/5 hover:border-red-500/20 nm-inset';
+
+                        let concept = "Transacción";
+                        if (isTopUp) concept = "Recarga de Billetera";
+                        else if (tx.type === 'TIP') concept = `Propina para @${tx.receiver?.username || 'creador'}`;
+                        else if (tx.type === 'SUBSCRIPTION') concept = `Suscripción a @${tx.receiver?.username || 'creador'}`;
+                        else if (tx.type === 'PPV_MESSAGE') concept = `Mensaje PPV de @${tx.receiver?.username || 'creador'}`;
+                        else concept = `Pago a @${tx.receiver?.username || 'creador'}`;
+
+                        return (
+                          <div key={tx.id} className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${bgClass}`}>
+                            <div className="flex items-center gap-4">
+                              <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${isIncome ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-black border-white/5 text-gray-400'}`}>
+                                {isTopUp ? <Wallet className="w-5 h-5" /> : tx.type === 'TIP' ? <DollarSign className="w-5 h-5" /> : tx.type === 'SUBSCRIPTION' ? <Star className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+                              </div>
+                              <div>
+                                <p className="text-sm text-white font-black tracking-wide">{concept}</p>
+                                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mt-1">
+                                  {new Date(tx.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute:'2-digit' })}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className={`font-black text-lg font-mono tracking-tight ${colorClass}`}>
+                                {sign}${parseFloat(tx.amount || tx.netAmount || 0).toFixed(2)}
+                              </p>
+                              <p className="text-[10px] text-gray-500 font-bold uppercase mt-1">Completado</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
