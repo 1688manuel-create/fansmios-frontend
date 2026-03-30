@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 // 🔥 ICONOS PREMIUM DE LUCIDE
 import { 
   UserCircle, 
@@ -25,6 +25,7 @@ import { paymentService } from '../../lib/paymentService';
 
 export default function DashboardIndex() {
   const router = useRouter();
+  const pathname = usePathname(); // 👈 El nuevo radar de rutas
   const [user, setUser] = useState<any>(null);
   
   // 💰 ESTADOS FINANCIEROS
@@ -77,28 +78,34 @@ export default function DashboardIndex() {
     }
   };
 
+  // 🔥 EL SINCRONIZADOR AGRESIVO (Reemplaza a tus dos useEffect anteriores) 🔥
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser && storedUser !== "undefined") {
-          const parsedUser = JSON.parse(storedUser);
-          // Blindaje: Si el objeto existe pero no tiene rol, lo mandamos a re-loguear
-          if (!parsedUser?.role) throw new Error("Sesión corrupta");
-          setUser(parsedUser);
-        } else {
+    // 1. Función maestra que lee la memoria fresca
+    const syncEmpire = () => {
+      if (typeof window !== 'undefined') {
+        try {
+          const storedUser = localStorage.getItem('user');
+          if (storedUser && storedUser !== "undefined") {
+            const parsedUser = JSON.parse(storedUser);
+            if (!parsedUser?.role) throw new Error("Sesión corrupta");
+            
+            // ¡PUM! Actualiza la pantalla con el saldo exacto del momento
+            setUser(parsedUser); 
+          } else {
+            router.push('/auth');
+          }
+        } catch (error) {
+          console.error("Error en sesión:", error);
+          localStorage.removeItem('user');
           router.push('/auth');
         }
-      } catch (error) {
-        console.error("Error en sesión:", error);
-        localStorage.removeItem('user');
-        router.push('/auth');
       }
-    }
-  }, [router]);
+    };
 
-  // 📻 RADAR COVRA PAY: Escucha los gastos en tiempo real en todo el imperio
-  useEffect(() => {
+    // Ejecutamos la sincronización al instante
+    syncEmpire();
+
+    // 2. Radar Covra Pay (Escucha eventos internos)
     const handleBalanceUpdate = (e: any) => {
       const nuevoSaldo = e.detail;
       setUser((prev: any) => {
@@ -109,9 +116,16 @@ export default function DashboardIndex() {
 
     window.addEventListener('covraPayBalanceUpdate', handleBalanceUpdate);
     
-    // Apagamos el radar cuando el usuario sale del Dashboard para ahorrar memoria
-    return () => window.removeEventListener('covraPayBalanceUpdate', handleBalanceUpdate);
-  }, []);
+    // 3. 🔥 TRUCO PRO: Escuchar cuando la ventana vuelve a tener el foco o cambia el localStorage
+    window.addEventListener('focus', syncEmpire);
+    window.addEventListener('storage', syncEmpire);
+    
+    return () => {
+      window.removeEventListener('covraPayBalanceUpdate', handleBalanceUpdate);
+      window.removeEventListener('focus', syncEmpire);
+      window.removeEventListener('storage', syncEmpire);
+    };
+  }, [router, pathname]); // 👈 Al vigilar "pathname", obligamos a Next.js a actualizar al cambiar de página
 
   if (!user) return <div className="min-h-screen bg-nm-base flex items-center justify-center text-gray-500 font-bold uppercase tracking-widest animate-pulse">Sincronizando Imperio...</div>;
 
