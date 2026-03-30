@@ -762,24 +762,19 @@ export default function CreatorProfile() {
                 if (res.data.success) { 
                   alert('✅ ¡Propina enviada con Covra Pay!'); 
 
-                  // 🎯 ACTUALIZACIÓN DE SALDO EN TIEMPO REAL
-                  if (currentUser) {
-                    const saldoActual = parseFloat(currentUser.walletBalance) || 0;
-                    const nuevoSaldo = saldoActual - Number(amount);
-                    
-                    const usuarioActualizado = { 
-                      ...currentUser, 
-                      walletBalance: nuevoSaldo 
-                    };
-                    
-                    // Actualizamos el estado en la pantalla
-                    setCurrentUser(usuarioActualizado);
-                    // Guardamos en la memoria del navegador
-                    localStorage.setItem('user', JSON.stringify(usuarioActualizado));
-                    
-                    // Disparamos un aviso para que el Header (arriba) también se entere del nuevo saldo
-                    window.dispatchEvent(new Event('storage'));
-                  }
+                  // 1. Calculamos el nuevo saldo
+                  const saldoActual = parseFloat(currentUser.walletBalance) || 0;
+                  const nuevoSaldo = saldoActual - Number(amount);
+                  
+                  // 2. Actualizamos el estado de esta página
+                  const usuarioActualizado = { ...currentUser, walletBalance: nuevoSaldo };
+                  setCurrentUser(usuarioActualizado);
+                  localStorage.setItem('user', JSON.stringify(usuarioActualizado));
+                  
+                  // 3. 🎯 LA VÍA PROFESIONAL: Emitimos un evento global silencioso
+                  window.dispatchEvent(new CustomEvent('covraPayBalanceUpdate', { 
+                    detail: nuevoSaldo 
+                  }));
 
                   fetchProfileAndPosts(true); 
                 }

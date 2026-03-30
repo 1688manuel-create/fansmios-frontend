@@ -97,6 +97,22 @@ export default function DashboardIndex() {
     }
   }, [router]);
 
+  // 📻 RADAR COVRA PAY: Escucha los gastos en tiempo real en todo el imperio
+  useEffect(() => {
+    const handleBalanceUpdate = (e: any) => {
+      const nuevoSaldo = e.detail;
+      setUser((prev: any) => {
+        if (!prev) return prev;
+        return { ...prev, walletBalance: nuevoSaldo };
+      });
+    };
+
+    window.addEventListener('covraPayBalanceUpdate', handleBalanceUpdate);
+    
+    // Apagamos el radar cuando el usuario sale del Dashboard para ahorrar memoria
+    return () => window.removeEventListener('covraPayBalanceUpdate', handleBalanceUpdate);
+  }, []);
+
   if (!user) return <div className="min-h-screen bg-nm-base flex items-center justify-center text-gray-500 font-bold uppercase tracking-widest animate-pulse">Sincronizando Imperio...</div>;
 
   // 👑 HERRAMIENTAS EXCLUSIVAS DEL CREADOR (Motor PayRam Integrado)

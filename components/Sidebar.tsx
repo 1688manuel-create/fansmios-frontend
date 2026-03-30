@@ -32,6 +32,20 @@ export default function Sidebar() {
     }
   }, []);
 
+  // 📻 RADAR COVRA PAY: Escucha los gastos en tiempo real
+  useEffect(() => {
+    const handleBalanceUpdate = (e: any) => {
+      const nuevoSaldo = e.detail;
+      setUser((prev: any) => {
+        if (!prev) return prev;
+        return { ...prev, walletBalance: nuevoSaldo };
+      });
+    };
+
+    window.addEventListener('covraPayBalanceUpdate', handleBalanceUpdate);
+    return () => window.removeEventListener('covraPayBalanceUpdate', handleBalanceUpdate);
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
