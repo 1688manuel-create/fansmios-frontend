@@ -9,6 +9,7 @@ import TipModal from '../../components/TipModal';
 import AppLayout from '../../components/AppLayout';
 import { paymentService } from '../../lib/paymentService';
 
+
 // 🔥 Agregamos el icono Flag para los reportes
 import { 
   ArrowLeft, CheckCircle2, MessageCircle, Star, Lock, 
@@ -744,13 +745,50 @@ export default function CreatorProfile() {
 
         {/* MODAL DE PROPINAS */}
         {isTipModalOpen && tipRecipient && (
-          <TipModal creatorName={tipRecipient.username} onClose={() => setIsTipModalOpen(false)} onContinue={async (amount, message) => { 
-            setIsTipModalOpen(false); 
-            try { 
-              const res = await api.post('/payments/create-intent', { amount, type: 'TIP', creatorId: tipRecipient.id, description: `Propina: ${message}` }); 
-              if (res.data.success) { alert('✅ ¡Propina enviada con PayRam!'); fetchProfileAndPosts(true); }
-            } catch (error) { alert('Error al enviar la propina.'); } 
-          }} />
+          <TipModal 
+            creatorName={tipRecipient.username} 
+            onClose={() => setIsTipModalOpen(false)} 
+            onContinue={async (amount, message) => { 
+              setIsTipModalOpen(false); 
+              try { 
+                // 1. Enviamos la orden al servidor
+                const res = await api.post('/payments/create-intent', { 
+                  amount: Number(amount), // Forzamos número
+                  type: 'TIP', 
+                  creatorId: tipRecipient.id, 
+                  description: `Propina de $${amount}: ${message}` 
+                }); 
+
+                if (res.data.success) { 
+                  alert('✅ ¡Propina enviada con Covra Pay!'); 
+
+                  // 🎯 ACTUALIZACIÓN DE SALDO EN TIEMPO REAL
+                  if (currentUser) {
+                    const saldoActual = parseFloat(currentUser.walletBalance) || 0;
+                    const nuevoSaldo = saldoActual - Number(amount);
+                    
+                    const usuarioActualizado = { 
+                      ...currentUser, 
+                      walletBalance: nuevoSaldo 
+                    };
+                    
+                    // Actualizamos el estado en la pantalla
+                    setCurrentUser(usuarioActualizado);
+                    // Guardamos en la memoria del navegador
+                    localStorage.setItem('user', JSON.stringify(usuarioActualizado));
+                    
+                    // Disparamos un aviso para que el Header (arriba) también se entere del nuevo saldo
+                    window.dispatchEvent(new Event('storage'));
+                  }
+
+                  fetchProfileAndPosts(true); 
+                }
+              } catch (error) { 
+                console.error("Error al enviar propina:", error);
+                alert('Error al enviar la propina. Revisa tu saldo.'); 
+              } 
+            }} 
+          />
         )}
         
         {/* MODAL DE PAGOS */}
