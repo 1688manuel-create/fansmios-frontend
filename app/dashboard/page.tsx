@@ -209,24 +209,36 @@ export default function DashboardIndex() {
           </div>
 
           {/* =========================================
-              💰 BILLETERA VIRTUAL DEL FAN
+              💰 BILLETERA VIRTUAL DEL FAN (CON ACCESO PROFESIONAL)
           ========================================= */}
           <div className="bg-[#111] border border-green-500/20 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_0_40px_rgba(34,197,94,0.1)] mb-10">
-            <div>
-              <h3 className="text-gray-400 text-xs uppercase tracking-[0.2em] font-bold mb-1 flex items-center gap-2">
-                <Wallet className="w-4 h-4 text-green-400"/> Saldo en FansMio
-              </h3>
-              <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-black text-white font-mono drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">
-                  ${user?.walletBalance || '0.00'}
-                </span>
-                <span className="text-green-500 font-bold tracking-widest">USD</span>
+            {/* Contenedor Izquierdo: Saldo + Botón Historial */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 w-full md:w-auto text-center sm:text-left">
+              <div>
+                <h3 className="text-gray-400 text-xs uppercase tracking-[0.2em] font-bold mb-1 flex items-center justify-center sm:justify-start gap-2">
+                  <Wallet className="w-4 h-4 text-green-400"/> Saldo en FansMio
+                </h3>
+                <div className="flex items-baseline justify-center sm:justify-start gap-2">
+                  <span className="text-5xl font-black text-white font-mono drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">
+                    ${user?.walletBalance || '0.00'}
+                  </span>
+                  <span className="text-green-500 font-bold tracking-widest">USD</span>
+                </div>
               </div>
+              
+              {/* 👈 BOTÓN PROFESIONAL DE ESTADO DE CUENTA */}
+              <button 
+                onClick={() => router.push('/dashboard/wallet')}
+                className="nm-btn border border-white/5 px-4 py-2 rounded-xl text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-white hover:border-green-500/30 transition-all flex items-center gap-2 mb-1 sm:mb-2 mx-auto sm:mx-0"
+              >
+                <History className="w-3 h-3" /> Ver Estado de Cuenta
+              </button>
             </div>
 
+            {/* Contenedor Derecho: Botón Recargar */}
             <button 
               onClick={() => setShowTopUpModal(true)}
-              className="w-full md:w-auto bg-green-500 hover:bg-green-400 text-black font-black px-8 py-4 rounded-2xl flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+              className="w-full md:w-auto bg-green-500 hover:bg-green-400 text-black font-black px-8 py-4 rounded-2xl flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-[0_0_20px_rgba(34,197,94,0.3)] shrink-0"
             >
               <Zap className="w-5 h-5 fill-current" /> Recargar Créditos
             </button>
@@ -234,7 +246,7 @@ export default function DashboardIndex() {
 
           {/* 🔥 MODAL DE RECARGA CON MONTO LIBRE */}
           {showTopUpModal && (
-            <div className="fixed inset-0 z- flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
               <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] p-8 text-center relative">
                 
                 <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
