@@ -38,7 +38,8 @@ export default function WalletDashboard() {
   const router = useRouter();
   const [financeData, setFinanceData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [userRole, setUserRole] = useState<string>('FAN'); // 👈 Estado para el Rol
+  const [userRole, setUserRole] = useState<string>('FAN'); 
+  const [localUser, setLocalUser] = useState<any>(null); // 👈 NUEVO: Memoria blindada del usuario
   
   // Estados para Retiros
   const [withdrawAmount, setWithdrawAmount] = useState('');
@@ -51,11 +52,12 @@ export default function WalletDashboard() {
   const [isSavingWallet, setIsSavingWallet] = useState(false);
 
   useEffect(() => {
-    // 👈 Obtenemos el rol del usuario desde el localStorage
+    // 👈 Obtenemos el rol y los datos exactos del usuario
     const storedUser = localStorage.getItem('user');
     if (storedUser && storedUser !== "undefined") {
       const parsedUser = JSON.parse(storedUser);
       setUserRole(parsedUser.role || 'FAN');
+      setLocalUser(parsedUser); // Guardamos el usuario para usar su saldo real
     }
     
     fetchWallet();
@@ -144,11 +146,14 @@ export default function WalletDashboard() {
     );
   }
 
-  // 🛡️ VARIABLES SEGURAS (El Escudo PayRam contra Nulos)
+  // 🛡️ VARIABLES SEGURAS
   const availableBalance = financeData?.wallet?.balance || 0;
   const pendingBalance = financeData?.wallet?.pendingBalance || 0;
   const totalEarned = financeData?.totalEarnedHistorial || 0;
   const allTransactions = financeData?.recentTransactions || [];
+
+  // 🎯 FIX: Saldo Exacto del Fan garantizado desde la memoria
+  const fanExactBalance = parseFloat(localUser?.walletBalance || financeData?.wallet?.balance || 0).toFixed(2);
 
   // ============================================================================
   // 🌟 VISTA EXCLUSIVA PARA FANS
@@ -176,14 +181,14 @@ export default function WalletDashboard() {
             <div className="nm-inset p-8 rounded-[2rem] border border-green-500/20 flex flex-col md:flex-row justify-between items-center gap-6">
               <div>
                 <h3 className="text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2 mb-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-400" /> Saldo Covra Pay
+                  <CheckCircle2 className="w-5 h-5 text-green-400" /> Saldo en FansMio
                 </h3>
-                <p className="text-gray-400 text-sm font-medium">Este dinero está listo para enviarse como propinas, suscripciones o PPV.</p>
+                <p className="text-gray-400 text-sm font-medium">Estos son tus créditos actuales. Úsalos para dar propinas, suscribirte o desbloquear PPV.</p>
               </div>
               <div className="bg-[#0a0a0a] border border-green-500/20 px-10 py-6 rounded-3xl shadow-[inset_0_0_20px_rgba(34,197,94,0.05)] text-center">
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-5xl font-black text-white font-mono drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">
-                    ${availableBalance.toFixed(2)}
+                    ${fanExactBalance}
                   </span>
                   <span className="text-green-500 font-bold text-xl">USD</span>
                 </div>
@@ -262,7 +267,7 @@ export default function WalletDashboard() {
             <div className="w-10 h-10 nm-inset bg-black rounded-xl flex items-center justify-center text-green-400 border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
               <Wallet className="w-5 h-5" />
             </div>
-            Mi Bóveda
+            Mi Bóveda Covra Pay
           </h1>
           <button onClick={() => router.push('/dashboard')} className="text-sm nm-btn text-gray-300 px-5 py-2.5 rounded-full hover:text-white transition-colors font-bold flex items-center gap-2">
             <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Volver</span>
@@ -272,7 +277,7 @@ export default function WalletDashboard() {
         <main className="max-w-6xl mx-auto mt-8 px-4 space-y-8 relative z-10">
           
           {/* =========================================
-              📊 FILA 1: TARJETAS DE MÉTRICAS (Blindadas)
+              📊 FILA 1: TARJETAS DE MÉTRICAS
           ========================================= */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
@@ -471,7 +476,7 @@ export default function WalletDashboard() {
           </div>
 
           {/* =========================================
-              📜 FILA 3: TABLAS HISTÓRICAS (Blindadas)
+              📜 FILA 3: TABLAS HISTÓRICAS
           ========================================= */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
             
