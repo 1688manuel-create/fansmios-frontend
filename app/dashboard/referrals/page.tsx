@@ -44,7 +44,7 @@ export default function ReferralsPage() {
 
   const handleCopyLink = () => {
     // Genera el enlace que apunta a tu página de registro con el código
-    const link = `${window.location.origin}/auth?ref=${referralData?.referralCode}`;
+    const link = `${window.location.origin}/?ref=${referralData?.referralCode}`;
     navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
@@ -89,7 +89,7 @@ export default function ReferralsPage() {
                 <input 
                   type="text" 
                   readOnly 
-                  value={`${window.location.origin}/auth?ref=${referralData?.referralCode}`}
+                  value={`${window.location.origin}/?ref=${referralData?.referralCode}`}
                   className="w-full nm-inset bg-[#050505] rounded-xl pl-12 pr-4 py-4 text-white font-mono text-sm outline-none border border-white/5"
                 />
               </div>
