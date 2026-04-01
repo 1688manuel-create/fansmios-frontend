@@ -49,7 +49,7 @@ export default function StatisticsDashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const res = await api.get('/analytics/dashboard');
+        const res = await api.get('/stats');
         setFinancialStats(res.data.financialStats);
         setSocialStats(res.data.socialStats);
         setTopFans(res.data.topFans);
