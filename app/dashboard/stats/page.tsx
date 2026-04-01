@@ -1,4 +1,3 @@
-// frontend/app/dashboard/stats/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -35,21 +34,15 @@ export default function StatisticsDashboard() {
 
   const [topFans, setTopFans] = useState<any[]>([]);
 
-  // Gráfica (Temporalmente estática hasta conectar al backend de fechas)
-  const chartData = [
-    { name: 'Lun', ingresos: 120, suscriptores: 2 },
-    { name: 'Mar', ingresos: 250, suscriptores: 5 },
-    { name: 'Mié', ingresos: 180, suscriptores: 3 },
-    { name: 'Jue', ingresos: 450, suscriptores: 8 },
-    { name: 'Vie', ingresos: 300, suscriptores: 4 },
-    { name: 'Sáb', ingresos: 580, suscriptores: 12 },
-    { name: 'Dom', ingresos: 490, suscriptores: 9 },
-  ];
+  // Gráfica (Conectada al backend)
+  const [chartData, setChartData] = useState<any[]>([]);
 
+  // 🧹 FIX: useEffect limpio y sin repeticiones
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         const res = await api.get('/stats');
+        setChartData(res.data.chartData || []);
         setFinancialStats(res.data.financialStats);
         setSocialStats(res.data.socialStats);
         setTopFans(res.data.topFans);
@@ -154,10 +147,9 @@ export default function StatisticsDashboard() {
             {/* Gráfica Ingresos */}
             <div className="nm-inset p-6 sm:p-8 rounded-[2rem] border border-white/5">
               <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-blue-500" /> Evolución de Ingresos (Demo)
+                <TrendingUp className="w-4 h-4 text-blue-500" /> Evolución de Ingresos
               </h3>
               <div className="h-64 w-full">
-                {/* 🔥 PARCHE DE PERFECCIÓN APLICADO AQUÍ (minWidth={1} minHeight={1}) */}
                 <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                   <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
@@ -176,10 +168,9 @@ export default function StatisticsDashboard() {
             {/* Gráfica Suscriptores */}
             <div className="nm-inset p-6 sm:p-8 rounded-[2rem] border border-white/5">
               <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <Users className="w-4 h-4 text-purple-500" /> Nuevos Suscriptores (Demo)
+                <Users className="w-4 h-4 text-purple-500" /> Nuevos Suscriptores
               </h3>
               <div className="h-64 w-full">
-                {/* 🔥 PARCHE DE PERFECCIÓN APLICADO AQUÍ (minWidth={1} minHeight={1}) */}
                 <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
