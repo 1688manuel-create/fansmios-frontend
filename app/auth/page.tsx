@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
-import { Loader2, Mail } from 'lucide-react';
+import { Loader2, Mail, Gift, CheckCircle2 } from 'lucide-react';
 
 export default function AuthPortal() {
   const router = useRouter();
@@ -23,6 +23,19 @@ export default function AuthPortal() {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [role, setRole] = useState<'FAN' | 'CREATOR'>('FAN');
+  
+  // 🔥 ESTADO DEL RADAR DE REFERIDOS
+  const [referralCode, setReferralCode] = useState('');
+
+  // 🔥 RADAR DE ENLACES: Atrapa el código de la URL al cargar
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      setReferralCode(ref);
+      setIsLogin(false); // 👈 MAGIA UX: Si trae código, lo pasamos directo a Registrarse
+    }
+  }, []);
 
   const isFormValid = isLogin 
     ? email.includes('@') && password.length >= 6 
@@ -52,8 +65,14 @@ export default function AuthPortal() {
         }
         
       } else {
-        // LÓGICA DE REGISTRO
-        await api.post('/auth/register', { username, email, password, role });
+        // LÓGICA DE REGISTRO (🔥 Ahora incluye el código de referido)
+        await api.post('/auth/register', { 
+          username, 
+          email, 
+          password, 
+          role,
+          referralCode: referralCode || undefined
+        });
         
         setIsLogin(true);
         alert('✨ ¡Cuenta creada! Hemos enviado un enlace de seguridad a tu correo para activarla.');
@@ -148,6 +167,17 @@ export default function AuthPortal() {
             
             {!isLogin && (
               <div className="space-y-5 animate-fade-in">
+                
+                {/* 🔥 NOTIFICACIÓN VISUAL VIP: Solo si hay código de referido */}
+                {referralCode && (
+                  <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3 flex items-center justify-center gap-2 animate-fade-in shadow-[0_0_15px_rgba(34,197,94,0.15)]">
+                    <Gift className="w-5 h-5 text-green-400" />
+                    <span className="text-sm text-green-400 font-bold tracking-wide">
+                      ¡Invitación VIP Activada!
+                    </span>
+                  </div>
+                )}
+
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Quiero ser un...</label>
                   <div className="grid grid-cols-2 gap-3">
