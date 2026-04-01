@@ -1,13 +1,15 @@
-// frontend/app/register/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService } from '../../lib/authService';
 import Link from 'next/link';
 
 export default function Register() {
   const router = useRouter();
+  
+  // 🔥 NUEVO: Añadimos el estado del Username que faltaba
+  const [username, setUsername] = useState(''); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('FAN'); // Por defecto es Fan
@@ -15,14 +17,24 @@ export default function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // 🔥 RADAR DE ENLACES: Atrapa el código si entra por fansmio.com/register?ref=CODIGO
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      setReferralCode(ref);
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      // 🌉 Enviamos los datos al Backend
+      // 🌉 Enviamos los datos al Backend (ahora incluyendo el username)
       await authService.register({ 
+        username,
         email, 
         password, 
         role, 
@@ -74,18 +86,29 @@ export default function Register() {
           </div>
 
           <div className="space-y-4">
+            
+            {/* 🔥 NUEVO: CAMPO DE USERNAME */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Nombre de Usuario</label>
+              <input type="text" required value={username} onChange={(e) => setUsername(e.target.value)}
+                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+                placeholder="ej: guapa_123" />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico</label>
               <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
                 placeholder="tu@email.com" />
             </div>
+            
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
               <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
                 placeholder="••••••••" />
             </div>
+            
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">Código de Referido (Opcional)</label>
               <input type="text" value={referralCode} onChange={(e) => setReferralCode(e.target.value)}
