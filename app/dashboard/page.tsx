@@ -23,6 +23,7 @@ import {
   ArrowUpRight,    
   ArrowDownLeft,   
   Lock,
+  Users,
   DollarSign             
 } from 'lucide-react';
 import AppLayout from '../../components/AppLayout';
@@ -135,6 +136,8 @@ export default function DashboardIndex() {
     { title: 'Paquetes (Bundles)', icon: PackageSearch, path: '/dashboard/bundles', color: 'text-purple-500' },
     { title: 'Cupones de Descuento', icon: TicketPercent, path: '/dashboard/coupons', color: 'text-red-500' }, 
     { title: 'Estadísticas de Venta', icon: TrendingUp, path: '/dashboard/stats', color: 'text-blue-400' },
+    // 🔥 NUEVO: Centro de Referidos
+    { title: 'Programa de Referidos', icon: Users, path: '/dashboard/referrals', color: 'text-yellow-400' },
   ];
 
   // ⭐ HERRAMIENTAS DEL FAN
@@ -348,7 +351,7 @@ export default function DashboardIndex() {
                   <Sparkles className="w-12 h-12 text-red-500 mx-auto animate-pulse" />
                   <h2 className="text-3xl font-black text-white">¿Quieres empezar a monetizar?</h2>
                   <p className="text-gray-500 font-medium leading-relaxed">
-                    Completa tu verificación oficial de FansMio para activar tu perfil de Creador y empezar a recibir pagos vía <strong>PayRam</strong>.
+                    Completa tu verificación oficial de FansMio para activar tu perfil de Creador y empezar a recibir pagos vía <strong>CovraPay</strong>.
                   </p>
                   <button 
                     onClick={() => router.push('/dashboard/kyc')}

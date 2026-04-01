@@ -156,7 +156,7 @@ export default function PaymentModal({
           )}
 
           <p className="text-[10px] text-gray-500 text-center mt-5 flex items-center justify-center gap-1.5 font-bold uppercase tracking-widest">
-            <Lock className="w-3 h-3"/> Encriptación AES-256 PayRam
+            <Lock className="w-3 h-3"/> Encriptación AES-256 Covra Pay
           </p>
         </div>
 

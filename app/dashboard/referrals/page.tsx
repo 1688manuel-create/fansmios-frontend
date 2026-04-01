@@ -23,24 +23,20 @@ export default function ReferralsPage() {
 
   const fetchReferrals = async () => {
     try {
-      // Reemplazar con endpoint real cuando se cree la ruta específica
-      // res = await api.get('/referrals/my-stats');
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
       
-      // Data simulada para que veas el diseño Neumórfico funcionando
-      const mockData = {
-        referralCode: JSON.parse(localStorage.getItem('user') || '{}').referralCode || 'FansMio-VIP-2026',
-        totalReferred: 14,
-        totalEarned: 350.50,
-        commissionRate: "5%",
-        recentReferrals: [
-          { username: 'modelo_vip', date: '2026-03-01', status: 'Activo' },
-          { username: 'fitness_coach', date: '2026-02-28', status: 'Activo' },
-          { username: 'gamer_pro', date: '2026-02-20', status: 'Inactivo' },
-        ]
-      };
-      setReferralData(mockData);
+      // 🌉 Ahora SÍ conectamos con el Backend Real
+      const res = await api.get('/referrals/stats');
+      
+      setReferralData({
+        referralCode: storedUser.referralCode || 'Sin código',
+        totalReferred: res.data.totalReferred || 0,
+        totalEarned: res.data.totalEarned || 0,
+        commissionRate: res.data.commissionRate || "5%",
+        recentReferrals: res.data.recentReferrals || []
+      });
     } catch (error) {
-      console.error(error);
+      console.error('Error cargando referidos:', error);
     } finally {
       setIsLoading(false);
     }

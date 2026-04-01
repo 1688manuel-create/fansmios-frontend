@@ -236,7 +236,7 @@ export default function AdminDashboard() {
               {/* ÚLTIMOS MOVIMIENTOS PAYRAM */}
               <div className="nm-btn border border-white/5 rounded-[2rem] overflow-hidden">
                 <div className="p-6 bg-[#0e0e0e] border-b border-white/5">
-                  <h3 className="font-black text-white text-lg">Historial PayRam (Tiempo Real)</h3>
+                  <h3 className="font-black text-white text-lg">Historial Covra Pay (Tiempo Real)</h3>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">

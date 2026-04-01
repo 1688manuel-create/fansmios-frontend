@@ -105,7 +105,7 @@ export default function LiveSetupLobby() {
                   </div>
                   <div>
                     <p className="text-white font-black text-sm uppercase tracking-wide">Acceso Privado (PPV)</p>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Cobrar entrada con PayRam</p>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Cobrar entrada con Covra Pay</p>
                   </div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -162,7 +162,7 @@ export default function LiveSetupLobby() {
             </button>
             
             <p className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em] text-center flex items-center justify-center gap-2">
-              <ShieldCheck className="w-3 h-3" /> Transmisión Protegida por PayRam
+              <ShieldCheck className="w-3 h-3" /> Transmisión Protegida por Covra Pay
             </p>
           </form>
         </div>

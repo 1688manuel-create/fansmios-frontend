@@ -121,7 +121,7 @@ export default function LiveRoom() {
         const isCreatorOrAdmin = String(currentUser.id) === String(data.stream.creatorId) || currentUser.role === 'ADMIN';
 
         setMessages([
-          { isSystem: true, content: `👋 Conexión segura PayRam activa para @${currentUser.username}.` },
+          { isSystem: true, content: `👋 Conexión segura Covra Pay activa para @${currentUser.username}.` },
           ...(data.stream.messages || [])
         ]);
 
@@ -308,7 +308,7 @@ export default function LiveRoom() {
     }
   };
 
-  if (!streamData) return <div className="min-h-screen bg-black flex items-center justify-center text-white font-mono animate-pulse">Sincronizando con PayRam...</div>;
+  if (!streamData) return <div className="min-h-screen bg-black flex items-center justify-center text-white font-mono animate-pulse">Sincronizando con Covra Pay...</div>;
 
   const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || user?.role === 'ADMIN';
 
