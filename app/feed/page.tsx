@@ -54,98 +54,61 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS MEJORADO (Estilo Instagram + Auto-Focus)
+// 🌳 NODO DE COMENTARIOS: SISTEMA DE AUTO-DESPLIEGUE POR ADN
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
-  
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
-  // 🔥 RADAR DE NAVEGACIÓN: Abre automáticamente si la notificación apunta a un hijo/nieto
+  // 📡 RADAR DE PROFUNDIDAD: Si mi "tataranieto" es el objetivo, yo me abro.
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const hash = window.location.hash;
-      if (hash && hash.includes('-comment-')) {
-        // Corregido: Extraemos el ID real después del separador
-        const targetCommentId = hash.split('-comment-');
-        
-        // Buscador recursivo profundo
-        const containsTarget = (replies: any[]): boolean => {
-          if (!replies) return false;
-          return replies.some(r => r.id === targetCommentId || containsTarget(r.replies));
-        };
+    const hash = window.location.hash;
+    if (hash && hash.includes('-comment-')) {
+      const targetId = hash.split('-comment-'); // ID puro del tataranieto
 
-        // Si el objetivo está en mis profundidades, despliego mis hijos
-        if (containsTarget(comment.replies)) {
-          setShowReplies(true);
-        }
+      // Función que rastrea todo el árbol genealógico hacia abajo
+      const isTargetInMyDescendants = (node: any): boolean => {
+        if (!node.replies) return false;
+        return node.replies.some((r: any) => 
+          String(r.id) === String(targetId) || isTargetInMyDescendants(r)
+        );
+      };
+
+      // Si el objetivo está en mi linaje, abro este nivel
+      if (isTargetInMyDescendants(comment)) {
+        setShowReplies(true);
       }
     }
-  }, [comment.replies]);
+  }, [comment, comment.replies]);
 
   return (
-    <div 
-      id={`comment-${comment.id}`} 
-      className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl"
-    >
-      {/* CUERPO DEL COMENTARIO */}
-      <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative transition-all duration-700">
+    <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-40 transition-all duration-500">
+      <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative transition-all duration-500">
         <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
         <span className="text-gray-400">{comment.content}</span>
         
         <div className="flex items-center gap-4 mt-1.5">
-          <button 
-            onClick={() => onReply(postId, comment.id)} 
-            className="text-[11px] text-blue-400 hover:underline font-bold"
-          >
-            Responder
-          </button>
-          
+          <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:underline font-bold">Responder</button>
           {isOwner && (
-            <button 
-              onClick={() => onDelete(comment.id)} 
-              className="text-[11px] text-red-500 hover:underline font-bold hidden group-hover/comment:block"
-            >
-              Eliminar
-            </button>
+            <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:underline font-bold hidden group-hover/comment:block">Eliminar</button>
           )}
         </div>
       </div>
       
-      {/* BOTONES DE CONTROL DE HILO */}
       {hasReplies && (
         <>
-          {!showReplies ? (
-            <button 
-              onClick={() => setShowReplies(true)}
-              className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors"
-            >
-              <div className="w-6 h-[1px] bg-gray-600"></div>
-              Ver {comment.replies.length} {comment.replies.length === 1 ? 'respuesta' : 'respuestas'}
-            </button>
-          ) : (
-            <button 
-              onClick={() => setShowReplies(false)}
-              className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors"
-            >
-              <div className="w-6 h-[1px] bg-gray-600"></div>
-              Ocultar respuestas
-            </button>
-          )}
+          <button 
+            onClick={() => setShowReplies(!showReplies)}
+            className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors"
+          >
+            <div className="w-6 h-[1px] bg-gray-600"></div>
+            {showReplies ? 'Ocultar respuestas' : `Ver ${comment.replies.length} ${comment.replies.length === 1 ? 'respuesta' : 'respuestas'}`}
+          </button>
 
-          {/* RENDERIZADO RECURSIVO DE RESPUESTAS */}
           {showReplies && (
             <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1 animate-fade-in">
               {comment.replies.map((reply: any) => (
-                <CommentNode 
-                  key={reply.id} 
-                  comment={reply} 
-                  postId={postId} 
-                  currentUser={currentUser} 
-                  onReply={onReply} 
-                  onDelete={onDelete} 
-                  isExpanded={isExpanded} 
-                />
+                <CommentNode key={reply.id} comment={reply} postId={postId} currentUser={currentUser} onReply={onReply} onDelete={onDelete} isExpanded={isExpanded} />
               ))}
             </div>
           )}
@@ -284,7 +247,7 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🧭 BUSCADOR INTELIGENTE DE NOTIFICACIONES (PASO 2 ACTUALIZADO)
+  // 🧭 BUSCADOR DE OBJETIVOS VIP (PASO 2)
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
       const hash = window.location.hash;
@@ -294,37 +257,35 @@ export default function Feed() {
         const postId = postPart.replace('post-', '');
         const targetId = commentPart ? `comment-${commentPart}` : `post-${postId}`;
 
-        // 1. Abrimos el post principal para que los comentarios existan
+        // 1. Abrimos el post principal
         setExpandedComments(prev => ({ ...prev, [postId]: true }));
 
-        // 2. Iniciamos el Radar Persistente (Check cada 100ms)
+        // 2. Radar de búsqueda (Check cada 150ms)
         let attempts = 0;
         const findAndScroll = setInterval(() => {
           const element = document.getElementById(targetId);
           attempts++;
 
           if (element) {
-            // ¡OBJETIVO LOCALIZADO! 🎯 Detenemos el radar.
             clearInterval(findAndScroll);
             
-            // Navegamos al comentario
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // ✨ EFECTO DE BRILLO VIP (Highlight)
-            element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10', 'z-50');
-            
+            // 🎯 Pequeño delay extra para que la animación de apertura termine
             setTimeout(() => {
-              element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10', 'z-50');
-              // Limpiamos la URL para que no brille de nuevo si el usuario recarga
-              window.history.replaceState(null, '', window.location.pathname);
-            }, 3000);
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              
+              // ✨ EFECTO BRILLO IMPERIAL
+              element.classList.add('ring-4', 'ring-red-600', 'shadow-[0_0_50px_rgba(220,38,38,0.5)]', 'bg-red-600/10', 'z-50');
+              
+              setTimeout(() => {
+                element.classList.remove('ring-4', 'ring-red-600', 'shadow-[0_0_50px_rgba(220,38,38,0.5)]', 'bg-red-600/10', 'z-50');
+                window.history.replaceState(null, '', window.location.pathname);
+              }, 3000);
+            }, 300); 
           }
 
-          // Si después de 30 intentos (3 segundos) no aparece, nos rendimos por seguridad
-          if (attempts > 30) clearInterval(findAndScroll);
-        }, 100);
+          if (attempts > 40) clearInterval(findAndScroll); // 6 segundos de búsqueda max
+        }, 150);
 
-        // Limpieza de seguridad si el componente se desmonta
         return () => clearInterval(findAndScroll);
       }
     }
