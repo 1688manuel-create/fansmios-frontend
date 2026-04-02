@@ -54,7 +54,7 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (Plano con Escáner y PODERES DE MODERACIÓN)
+// 🌳 NODO DE COMENTARIOS (Plano con Escáner y PODERES DE MODERACIÓN TIMIDOS)
 const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDelete, onReport, onBlock, isExpanded }: { comment: any, postId: string, postOwnerId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, onReport: (commentId: string, username: string) => void, onBlock: (userId: string, username: string) => void, isExpanded: boolean }) => {
   
   // 🛡️ PODERES DE JERARQUÍA
@@ -73,7 +73,7 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
     const checkAndOpen = (hashToCheck: string) => {
       if (hashToCheck && hashToCheck.includes('-comment-')) {
         const parts = hashToCheck.split('-comment-');
-        const targetId = parts; 
+        const targetId = parts[1]; 
         if (comment.replies && comment.replies.some((r: any) => String(r.id) === String(targetId))) {
           setShowReplies(true);
         }
@@ -96,20 +96,20 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
         <span className="text-gray-400">{comment.content}</span>
         
         <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-          <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:underline font-bold">Responder</button>
+          <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:text-blue-300 font-bold transition-colors">Responder</button>
           
-          {/* BOTÓN ELIMINAR (Autor o Dueño del Post) */}
+          {/* BOTÓN ELIMINAR (Aparece en Hover) */}
           {canDelete && (
-            <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:underline font-bold hidden group-hover/comment:block transition-all">Eliminar</button>
+            <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:text-red-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">Eliminar</button>
           )}
           
-          {/* BOTONES DE MODERACIÓN (No puedes reportarte/bloquearte a ti mismo) */}
+          {/* BOTONES DE MODERACIÓN (Aparecen en Hover) */}
           {!isCommentAuthor && (
             <>
-              <button onClick={() => onReport(comment.id, comment.user?.username)} className="text-[11px] text-yellow-500 hover:underline font-bold hidden group-hover/comment:block transition-all">Reportar</button>
+              <button onClick={() => onReport(comment.id, comment.user?.username)} className="text-[11px] text-yellow-500 hover:text-yellow-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">Reportar</button>
               
               {(isPostOwner || isAdmin) && (
-                <button onClick={() => onBlock(comment.userId, comment.user?.username)} className="text-[11px] text-orange-500 hover:underline font-bold hidden group-hover/comment:block transition-all">Bloquear</button>
+                <button onClick={() => onBlock(comment.userId, comment.user?.username)} className="text-[11px] text-orange-500 hover:text-orange-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">Bloquear</button>
               )}
             </>
           )}
