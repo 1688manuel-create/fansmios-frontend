@@ -54,36 +54,37 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (Plano con Escáner Activo anti-Next.js)
+// 🌳 NODO DE COMENTARIOS (Plano con Escáner Activo Corregido)
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
-  // 📡 RADAR POR LATIDOS: Revisa la URL 3 veces por segundo
   useEffect(() => {
     let currentHash = window.location.hash;
 
     const checkAndOpen = (hashToCheck: string) => {
       if (hashToCheck && hashToCheck.includes('-comment-')) {
-        const targetId = hashToCheck.split('-comment-');
-        // Si el objetivo (nieto/bisnieto) está en mi lista plana, me abro
+        // ✅ CORRECCIÓN: Extraemos el índice para obtener el ID puro
+        const parts = hashToCheck.split('-comment-');
+        const targetId = parts[1]; 
+        
+        // Si el objetivo está en mis respuestas, me abro obligatoriamente
         if (comment.replies && comment.replies.some((r: any) => String(r.id) === String(targetId))) {
+          console.log("🎯 Objetivo detectado en mis hijos, abriendo hilo...");
           setShowReplies(true);
         }
       }
     };
 
-    // Escaneo inicial
     checkAndOpen(currentHash);
 
-    // Escáner continuo (Polling)
     const scanner = setInterval(() => {
       if (window.location.hash !== currentHash) {
         currentHash = window.location.hash;
         checkAndOpen(currentHash);
       }
-    }, 300);
+    }, 400);
 
     return () => clearInterval(scanner);
   }, [comment.replies]);
@@ -254,7 +255,7 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🧭 BUSCADOR DE OBJETIVOS VIP (Sincronizado con latidos de URL)
+  // 🧭 BUSCADOR DE OBJETIVOS VIP (Sincronización Total)
   useEffect(() => {
     if (isLoading || posts.length === 0) return;
 
@@ -267,10 +268,10 @@ export default function Feed() {
         const postId = postPart.replace('post-', '');
         const targetId = commentPart ? `comment-${commentPart}` : `post-${postId}`;
 
-        // 1. Aseguramos que el post principal esté abierto en el feed
+        // 1. Forzamos la apertura del post principal
         setExpandedComments(prev => ({ ...prev, [postId]: true }));
 
-        // 2. Radar de búsqueda y Scroll (Check cada 150ms)
+        // 2. Iniciamos el perro de caza (Check cada 200ms)
         let attempts = 0;
         const findAndScroll = setInterval(() => {
           const element = document.getElementById(targetId);
@@ -279,36 +280,34 @@ export default function Feed() {
           if (element) {
             clearInterval(findAndScroll);
             
-            // 🎯 Esperamos 400ms a que el Acordeón del comentario termine de abrirse
+            // 🎯 Esperamos un poco más para que el scroll sea fluido después de que el DOM se estire
             setTimeout(() => {
               element.scrollIntoView({ behavior: 'smooth', block: 'center' });
               
-              // ✨ EFECTO BRILLO IMPERIAL
+              // ✨ EFECTO BRILLO IMPERIAL (Red Highlight)
               element.classList.add('ring-4', 'ring-red-600', 'shadow-[0_0_50px_rgba(220,38,38,0.5)]', 'bg-red-600/10', 'z-50');
               
               setTimeout(() => {
                 element.classList.remove('ring-4', 'ring-red-600', 'shadow-[0_0_50px_rgba(220,38,38,0.5)]', 'bg-red-600/10', 'z-50');
                 window.history.replaceState(null, '', window.location.pathname);
-                currentHash = ''; // Reseteamos para que pueda volver a brillar luego
-              }, 3000);
-            }, 400); 
+                currentHash = ''; 
+              }, 4000);
+            }, 500); 
           }
 
-          if (attempts > 40) clearInterval(findAndScroll); // 6 segundos límite
-        }, 150);
+          if (attempts > 50) clearInterval(findAndScroll); // 10 segundos límite
+        }, 200);
       }
     };
 
-    // Tiro inicial
     if (currentHash) huntForTarget(currentHash);
 
-    // 🔥 EL PARCHE MAESTRO: Escáner constante cada 300ms
     const scanner = setInterval(() => {
       if (window.location.hash !== currentHash) {
         currentHash = window.location.hash;
         huntForTarget(currentHash);
       }
-    }, 300);
+    }, 400);
 
     return () => clearInterval(scanner);
   }, [isLoading, posts]);
