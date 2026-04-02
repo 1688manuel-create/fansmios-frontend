@@ -54,23 +54,29 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (Plano estilo Instagram)
+// 🌳 NODO DE COMENTARIOS (Plano estilo Instagram con Escáner en Vivo)
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
-  // 📡 RADAR DIRECTO: Como todos los hijos están en el mismo nivel, la búsqueda es instantánea.
+  // 📡 RADAR DIRECTO: Escucha cambios en la URL incluso si ya estamos en la página
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash && hash.includes('-comment-')) {
-      const targetId = hash.split('-comment-');
-      
-      // Si el objetivo está en mis respuestas, me abro
-      if (comment.replies && comment.replies.some((r: any) => String(r.id) === String(targetId))) {
-        setShowReplies(true);
+    const checkHashAndOpen = () => {
+      const hash = window.location.hash;
+      if (hash && hash.includes('-comment-')) {
+        const targetId = hash.split('-comment-');
+        
+        // Si el objetivo está en mis respuestas, me abro
+        if (comment.replies && comment.replies.some((r: any) => String(r.id) === String(targetId))) {
+          setShowReplies(true);
+        }
       }
-    }
+    };
+
+    checkHashAndOpen(); // Escaneo inicial
+    window.addEventListener('hashchange', checkHashAndOpen); // Escucha activa
+    return () => window.removeEventListener('hashchange', checkHashAndOpen);
   }, [comment.replies]);
 
   return (
@@ -87,7 +93,6 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         </div>
       </div>
       
-      {/* BOTÓN PARA ABRIR/OCULTAR EL HILO COMPLETO */}
       {hasReplies && (
         <>
           <button 
@@ -98,7 +103,6 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
             {showReplies ? 'Ocultar respuestas' : `Ver ${comment.replies.length} ${comment.replies.length === 1 ? 'respuesta' : 'respuestas'}`}
           </button>
 
-          {/* LISTA PLANA DE RESPUESTAS */}
           {showReplies && (
             <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1 animate-fade-in">
               {comment.replies.map((reply: any) => (
@@ -241,9 +245,11 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🧭 BUSCADOR DE OBJETIVOS VIP (PASO 2)
+  // 🧭 BUSCADOR DE OBJETIVOS VIP (Sincronizado con cambios en vivo)
   useEffect(() => {
-    if (!isLoading && posts.length > 0) {
+    if (isLoading || posts.length === 0) return;
+
+    const huntForTarget = () => {
       const hash = window.location.hash;
       if (hash && hash.startsWith('#post-')) {
         const hashContent = hash.substring(1);
@@ -251,7 +257,7 @@ export default function Feed() {
         const postId = postPart.replace('post-', '');
         const targetId = commentPart ? `comment-${commentPart}` : `post-${postId}`;
 
-        // 1. Abrimos el post principal
+        // 1. Abrimos el post principal para que los comentarios existan en el HTML
         setExpandedComments(prev => ({ ...prev, [postId]: true }));
 
         // 2. Radar de búsqueda (Check cada 150ms)
@@ -272,6 +278,7 @@ export default function Feed() {
               
               setTimeout(() => {
                 element.classList.remove('ring-4', 'ring-red-600', 'shadow-[0_0_50px_rgba(220,38,38,0.5)]', 'bg-red-600/10', 'z-50');
+                // Limpiamos la URL
                 window.history.replaceState(null, '', window.location.pathname);
               }, 3000);
             }, 300); 
@@ -279,10 +286,16 @@ export default function Feed() {
 
           if (attempts > 40) clearInterval(findAndScroll); // 6 segundos de búsqueda max
         }, 150);
-
-        return () => clearInterval(findAndScroll);
       }
-    }
+    };
+
+    // Ejecutamos el radar al cargar la página por primera vez
+    huntForTarget();
+
+    // 🔥 EL PARCHE MAESTRO: Escuchamos si la URL cambia MIENTRAS ya estamos en el Feed
+    window.addEventListener('hashchange', huntForTarget);
+    return () => window.removeEventListener('hashchange', huntForTarget);
+
   }, [isLoading, posts]);
 
   const handleReact = async (postId: string, emoji: string) => {
