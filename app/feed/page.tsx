@@ -54,32 +54,24 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS: SISTEMA DE AUTO-DESPLIEGUE POR ADN
+// 🌳 NODO DE COMENTARIOS (Plano estilo Instagram)
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
-  // 📡 RADAR DE PROFUNDIDAD: Si mi "tataranieto" es el objetivo, yo me abro.
+  // 📡 RADAR DIRECTO: Como todos los hijos están en el mismo nivel, la búsqueda es instantánea.
   useEffect(() => {
     const hash = window.location.hash;
     if (hash && hash.includes('-comment-')) {
-      const targetId = hash.split('-comment-'); // ID puro del tataranieto
-
-      // Función que rastrea todo el árbol genealógico hacia abajo
-      const isTargetInMyDescendants = (node: any): boolean => {
-        if (!node.replies) return false;
-        return node.replies.some((r: any) => 
-          String(r.id) === String(targetId) || isTargetInMyDescendants(r)
-        );
-      };
-
-      // Si el objetivo está en mi linaje, abro este nivel
-      if (isTargetInMyDescendants(comment)) {
+      const targetId = hash.split('-comment-');
+      
+      // Si el objetivo está en mis respuestas, me abro
+      if (comment.replies && comment.replies.some((r: any) => String(r.id) === String(targetId))) {
         setShowReplies(true);
       }
     }
-  }, [comment, comment.replies]);
+  }, [comment.replies]);
 
   return (
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-40 transition-all duration-500">
@@ -95,6 +87,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         </div>
       </div>
       
+      {/* BOTÓN PARA ABRIR/OCULTAR EL HILO COMPLETO */}
       {hasReplies && (
         <>
           <button 
@@ -105,6 +98,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
             {showReplies ? 'Ocultar respuestas' : `Ver ${comment.replies.length} ${comment.replies.length === 1 ? 'respuesta' : 'respuestas'}`}
           </button>
 
+          {/* LISTA PLANA DE RESPUESTAS */}
           {showReplies && (
             <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1 animate-fade-in">
               {comment.replies.map((reply: any) => (
@@ -462,24 +456,40 @@ export default function Feed() {
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
 
+  // 🌳 CONSTRUCTOR DE COMENTARIOS (ESTILO FACEBOOK/INSTAGRAM - 1 SOLO NIVEL)
   const buildCommentTree = (comments: any[]) => {
     if (!comments) return [];
-    const commentMap = new Map();
+    
     const roots: any[] = [];
-    
-    comments.forEach(comment => {
-      commentMap.set(comment.id, { ...comment, replies: [] });
-    });
-    
-    comments.forEach(comment => {
-      if (comment.parentId) {
-        const parent = commentMap.get(comment.parentId);
-        if (parent) parent.replies.push(commentMap.get(comment.id));
-      } else {
-        roots.push(commentMap.get(comment.id));
+    const rootMap = new Map();
+
+    // 1. Identificar los Comentarios Principales (Abuelos)
+    comments.forEach(c => {
+      if (!c.parentId) {
+        const rootNode = { ...c, replies: [] };
+        rootMap.set(c.id, rootNode);
+        roots.push(rootNode);
       }
     });
-    
+
+    // 2. Función para encontrar al "Abuelo" de cualquier comentario
+    const getRootId = (parentId: string): string | null => {
+      if (rootMap.has(parentId)) return parentId;
+      const parent = comments.find(c => c.id === parentId);
+      return parent ? getRootId(parent.parentId) : null;
+    };
+
+    // 3. Agrupar TODOS (hijos, nietos, bisnietos) directamente bajo el Abuelo
+    comments.forEach(c => {
+      if (c.parentId) {
+        const rootId = getRootId(c.parentId);
+        if (rootId && rootMap.has(rootId)) {
+          // Los agregamos como "texto plano" sin sub-respuestas para evitar escaleras
+          rootMap.get(rootId).replies.push({ ...c, replies: [] });
+        }
+      }
+    });
+
     return roots;
   };
 
