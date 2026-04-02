@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { liveService } from '../../../lib/liveService';
+import api from '../../../lib/api'; // Inyectamos API para traer balance
 import { 
   Tv, 
   ArrowLeft, 
@@ -10,7 +11,8 @@ import {
   DollarSign, 
   ShieldCheck, 
   Sparkles, 
-  Lock 
+  Lock,
+  Wallet
 } from 'lucide-react';
 
 export default function LiveSetupLobby() {
@@ -19,41 +21,85 @@ export default function LiveSetupLobby() {
   const [isPPV, setIsPPV] = useState(false);
   const [price, setPrice] = useState<number | ''>('');
   const [isStarting, setIsStarting] = useState(false);
+  const [userBalance, setUserBalance] = useState<number | null>(null);
 
-  const handleStartLive = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // 🛡️ VALIDACIONES DE SEGURIDAD PAYRAM
-    if (!title.trim()) return alert("⚠️ Ponle un título atractivo a tu transmisión.");
-    
-    const finalPrice = isPPV ? Number(price) : 0;
-    
-    if (isPPV && (isNaN(finalPrice) || finalPrice < 1)) {
-      return alert("⚠️ El precio mínimo para un evento PPV es de $1.00 USD.");
+  // 🔥 CARGA DE BALANCE MOTIVACIONAL
+  useEffect(() => {
+    api.get('/wallet/balance')
+      .then(res => setUserBalance(res.data.balance))
+      .catch(() => setUserBalance(0));
+  }, []);
+
+  const handleStartLive = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  const cleanTitle = title.trim();
+
+  // 🛡️ VALIDACIÓN DE TÍTULO
+  if (!cleanTitle) {
+    alert("⚠️ Ponle un título atractivo a tu transmisión.");
+    return;
+  }
+
+  const finalPrice = isPPV ? Number(price) : 0;
+
+  // 💰 VALIDACIÓN DE PRECIO PPV
+  if (isPPV && (!Number.isFinite(finalPrice) || finalPrice < 1)) {
+    alert("⚠️ El precio mínimo para un evento PPV es de $1.00 USD.");
+    return;
+  }
+
+  setIsStarting(true);
+
+  try {
+    // 🚀 CREACIÓN DEL EVENTO EN EL SERVIDOR
+    const res = await liveService.createStream(cleanTitle, isPPV, finalPrice);
+    const streamId = res?.streamId || res?.liveStream?.id;
+
+    if (!streamId) {
+      throw new Error("No se pudo obtener el ID de la sala.");
     }
 
-    setIsStarting(true);
-    try {
-      // 🚀 CREACIÓN DEL EVENTO EN EL MOTOR CENTRAL
-      const res = await liveService.createStream(title, isPPV, finalPrice);
+    // ⚡ TELETRANSPORTACIÓN A LA SALA
+    await router.push(`/live/${streamId}`);
+    
+  } catch (error: unknown) {
+    console.error("🚨 Error crítico al iniciar Live:", error);
 
-      const streamId = res.streamId || res.liveStream?.id;
+    let errorMessage = "Error al conectar con el servidor de streaming.";
 
-      if (!streamId) throw new Error("No se pudo obtener el ID de la sala.");
-
-      // ⚡ TELETRANSPORTACIÓN A LA CABINA DE TRANSMISIÓN
-      router.push(`/live/${streamId}`);
-    } catch (error: any) {
-      console.error("Error al iniciar Live:", error);
-      alert(error.response?.data?.error || "Error al conectar con el servidor de streaming.");
-      setIsStarting(false);
+    // 🕵️ ESTRATEGIA DE DETECCIÓN DE ERRORES
+    if (error instanceof Error) {
+      errorMessage = error.message;
     }
-  };
+
+    if (typeof error === "object" && error !== null && "response" in error) {
+      const err = error as {
+        response?: {
+          data?: {
+            error?: string;
+            message?: string;
+          };
+        };
+      };
+
+      errorMessage =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
+
+    alert(`⚠️ FansMio Lobby: ${errorMessage}`);
+  } finally {
+    // ✅ SIEMPRE LIBERAMOS EL BOTÓN, PASE LO QUE PASE
+    setIsStarting(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-nm-base flex items-center justify-center p-4 relative overflow-hidden">
       
-      {/* Luces de ambiente sutiles (PayRam Rojo/Púrpura) */}
+      {/* Luces de ambiente sutiles */}
       <div className="absolute top-0 left-1/2 w-[600px] h-[300px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
       
       {/* BOTÓN VOLVER */}
@@ -73,9 +119,14 @@ export default function LiveSetupLobby() {
               <Tv className="w-10 h-10 text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
             </div>
             <h1 className="text-3xl font-black text-white tracking-tight">Iniciar Transmisión</h1>
-            <p className="text-gray-500 text-sm mt-3 font-medium leading-relaxed">
-              Configura los parámetros de acceso para tus fans antes de salir al aire.
-            </p>
+            
+            {/* Widget de Balance Táctico */}
+            {userBalance !== null && (
+               <div className="inline-flex items-center gap-2 mt-4 bg-white/5 px-4 py-1.5 rounded-full border border-white/5">
+                  <Wallet className="w-3.5 h-3.5 text-green-500" />
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Balance Covra: <span className="text-white">${userBalance.toFixed(2)}</span></span>
+               </div>
+            )}
           </div>
 
           <form onSubmit={handleStartLive} className="space-y-8">
