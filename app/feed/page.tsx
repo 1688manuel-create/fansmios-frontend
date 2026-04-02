@@ -61,24 +61,21 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
-  // 🔥 MAGIA DE NAVEGACIÓN: Detecta si la notificación busca un comentario oculto aquí
+  // 🔥 RADAR DE NAVEGACIÓN: Abre automáticamente si la notificación apunta a un hijo/nieto
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash;
       if (hash && hash.includes('-comment-')) {
-        const targetId = hash.split('-comment-');
+        // Corregido: Extraemos el ID real después del separador
+        const targetCommentId = hash.split('-comment-');
         
-        // Buscador recursivo (por si es una respuesta de una respuesta)
+        // Buscador recursivo profundo
         const containsTarget = (replies: any[]): boolean => {
           if (!replies) return false;
-          for (const r of replies) {
-            if (r.id === targetId) return true;
-            if (containsTarget(r.replies)) return true;
-          }
-          return false;
+          return replies.some(r => r.id === targetCommentId || containsTarget(r.replies));
         };
 
-        // Si el comentario buscado está aquí dentro, nos abrimos solos
+        // Si el objetivo está en mis profundidades, despliego mis hijos
         if (containsTarget(comment.replies)) {
           setShowReplies(true);
         }
@@ -87,8 +84,12 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
   }, [comment.replies]);
 
   return (
-    <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
-      <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative">
+    <div 
+      id={`comment-${comment.id}`} 
+      className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl"
+    >
+      {/* CUERPO DEL COMENTARIO */}
+      <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative transition-all duration-700">
         <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
         <span className="text-gray-400">{comment.content}</span>
         
@@ -111,43 +112,44 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         </div>
       </div>
       
-      {/* BOTÓN PARA DESPLEGAR */}
-      {hasReplies && !showReplies && (
-        <button 
-          onClick={() => setShowReplies(true)}
-          className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors"
-        >
-          <div className="w-6 h-[1px] bg-gray-600"></div>
-          Ver {comment.replies.length} {comment.replies.length === 1 ? 'respuesta' : 'respuestas'}
-        </button>
-      )}
+      {/* BOTONES DE CONTROL DE HILO */}
+      {hasReplies && (
+        <>
+          {!showReplies ? (
+            <button 
+              onClick={() => setShowReplies(true)}
+              className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors"
+            >
+              <div className="w-6 h-[1px] bg-gray-600"></div>
+              Ver {comment.replies.length} {comment.replies.length === 1 ? 'respuesta' : 'respuestas'}
+            </button>
+          ) : (
+            <button 
+              onClick={() => setShowReplies(false)}
+              className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors"
+            >
+              <div className="w-6 h-[1px] bg-gray-600"></div>
+              Ocultar respuestas
+            </button>
+          )}
 
-      {/* BOTÓN PARA OCULTAR */}
-      {hasReplies && showReplies && (
-        <button 
-          onClick={() => setShowReplies(false)}
-          className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors"
-        >
-          <div className="w-6 h-[1px] bg-gray-600"></div>
-          Ocultar respuestas
-        </button>
-      )}
-      
-      {/* RESPUESTAS ANIDADAS */}
-      {hasReplies && showReplies && (
-        <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1 animate-fade-in">
-          {comment.replies.map((reply: any) => (
-            <CommentNode 
-              key={reply.id} 
-              comment={reply} 
-              postId={postId} 
-              currentUser={currentUser} 
-              onReply={onReply} 
-              onDelete={onDelete} 
-              isExpanded={isExpanded} 
-            />
-          ))}
-        </div>
+          {/* RENDERIZADO RECURSIVO DE RESPUESTAS */}
+          {showReplies && (
+            <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1 animate-fade-in">
+              {comment.replies.map((reply: any) => (
+                <CommentNode 
+                  key={reply.id} 
+                  comment={reply} 
+                  postId={postId} 
+                  currentUser={currentUser} 
+                  onReply={onReply} 
+                  onDelete={onDelete} 
+                  isExpanded={isExpanded} 
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -282,30 +284,48 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
+  // 🧭 BUSCADOR INTELIGENTE DE NOTIFICACIONES (PASO 2 ACTUALIZADO)
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
       const hash = window.location.hash;
       if (hash && hash.startsWith('#post-')) {
-        const hashWithoutHash = hash.substring(1); 
-        const parts = hashWithoutHash.split('-comment-');
-        const firstPart = parts[0]|| '';
-        const postIdRaw = firstPart.replace('post-', '');
-        const commentIdRaw = parts[1]|| null; 
-        
-        setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
+        const hashContent = hash.substring(1);
+        const [postPart, commentPart] = hashContent.split('-comment-');
+        const postId = postPart.replace('post-', '');
+        const targetId = commentPart ? `comment-${commentPart}` : `post-${postId}`;
 
-        setTimeout(() => {
-          const targetId = commentIdRaw ? `comment-${commentIdRaw}` : `post-${postIdRaw}`;
+        // 1. Abrimos el post principal para que los comentarios existan
+        setExpandedComments(prev => ({ ...prev, [postId]: true }));
+
+        // 2. Iniciamos el Radar Persistente (Check cada 100ms)
+        let attempts = 0;
+        const findAndScroll = setInterval(() => {
           const element = document.getElementById(targetId);
+          attempts++;
+
           if (element) {
+            // ¡OBJETIVO LOCALIZADO! 🎯 Detenemos el radar.
+            clearInterval(findAndScroll);
+            
+            // Navegamos al comentario
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
+            
+            // ✨ EFECTO DE BRILLO VIP (Highlight)
+            element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10', 'z-50');
+            
             setTimeout(() => {
-              element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
-            }, 4000);
-            window.history.replaceState(null, '', window.location.pathname);
+              element.classList.remove('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10', 'z-50');
+              // Limpiamos la URL para que no brille de nuevo si el usuario recarga
+              window.history.replaceState(null, '', window.location.pathname);
+            }, 3000);
           }
-        }, 800); 
+
+          // Si después de 30 intentos (3 segundos) no aparece, nos rendimos por seguridad
+          if (attempts > 30) clearInterval(findAndScroll);
+        }, 100);
+
+        // Limpieza de seguridad si el componente se desmonta
+        return () => clearInterval(findAndScroll);
       }
     }
   }, [isLoading, posts]);
