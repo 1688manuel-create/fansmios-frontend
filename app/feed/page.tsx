@@ -54,29 +54,38 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (Plano estilo Instagram con Escáner en Vivo)
+// 🌳 NODO DE COMENTARIOS (Plano con Escáner Activo anti-Next.js)
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
-  // 📡 RADAR DIRECTO: Escucha cambios en la URL incluso si ya estamos en la página
+  // 📡 RADAR POR LATIDOS: Revisa la URL 3 veces por segundo
   useEffect(() => {
-    const checkHashAndOpen = () => {
-      const hash = window.location.hash;
-      if (hash && hash.includes('-comment-')) {
-        const targetId = hash.split('-comment-');
-        
-        // Si el objetivo está en mis respuestas, me abro
+    let currentHash = window.location.hash;
+
+    const checkAndOpen = (hashToCheck: string) => {
+      if (hashToCheck && hashToCheck.includes('-comment-')) {
+        const targetId = hashToCheck.split('-comment-');
+        // Si el objetivo (nieto/bisnieto) está en mi lista plana, me abro
         if (comment.replies && comment.replies.some((r: any) => String(r.id) === String(targetId))) {
           setShowReplies(true);
         }
       }
     };
 
-    checkHashAndOpen(); // Escaneo inicial
-    window.addEventListener('hashchange', checkHashAndOpen); // Escucha activa
-    return () => window.removeEventListener('hashchange', checkHashAndOpen);
+    // Escaneo inicial
+    checkAndOpen(currentHash);
+
+    // Escáner continuo (Polling)
+    const scanner = setInterval(() => {
+      if (window.location.hash !== currentHash) {
+        currentHash = window.location.hash;
+        checkAndOpen(currentHash);
+      }
+    }, 300);
+
+    return () => clearInterval(scanner);
   }, [comment.replies]);
 
   return (
@@ -245,22 +254,23 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🧭 BUSCADOR DE OBJETIVOS VIP (Sincronizado con cambios en vivo)
+  // 🧭 BUSCADOR DE OBJETIVOS VIP (Sincronizado con latidos de URL)
   useEffect(() => {
     if (isLoading || posts.length === 0) return;
 
-    const huntForTarget = () => {
-      const hash = window.location.hash;
-      if (hash && hash.startsWith('#post-')) {
-        const hashContent = hash.substring(1);
+    let currentHash = window.location.hash;
+
+    const huntForTarget = (hashToHunt: string) => {
+      if (hashToHunt && hashToHunt.startsWith('#post-')) {
+        const hashContent = hashToHunt.substring(1);
         const [postPart, commentPart] = hashContent.split('-comment-');
         const postId = postPart.replace('post-', '');
         const targetId = commentPart ? `comment-${commentPart}` : `post-${postId}`;
 
-        // 1. Abrimos el post principal para que los comentarios existan en el HTML
+        // 1. Aseguramos que el post principal esté abierto en el feed
         setExpandedComments(prev => ({ ...prev, [postId]: true }));
 
-        // 2. Radar de búsqueda (Check cada 150ms)
+        // 2. Radar de búsqueda y Scroll (Check cada 150ms)
         let attempts = 0;
         const findAndScroll = setInterval(() => {
           const element = document.getElementById(targetId);
@@ -269,7 +279,7 @@ export default function Feed() {
           if (element) {
             clearInterval(findAndScroll);
             
-            // 🎯 Pequeño delay extra para que la animación de apertura termine
+            // 🎯 Esperamos 400ms a que el Acordeón del comentario termine de abrirse
             setTimeout(() => {
               element.scrollIntoView({ behavior: 'smooth', block: 'center' });
               
@@ -278,24 +288,29 @@ export default function Feed() {
               
               setTimeout(() => {
                 element.classList.remove('ring-4', 'ring-red-600', 'shadow-[0_0_50px_rgba(220,38,38,0.5)]', 'bg-red-600/10', 'z-50');
-                // Limpiamos la URL
                 window.history.replaceState(null, '', window.location.pathname);
+                currentHash = ''; // Reseteamos para que pueda volver a brillar luego
               }, 3000);
-            }, 300); 
+            }, 400); 
           }
 
-          if (attempts > 40) clearInterval(findAndScroll); // 6 segundos de búsqueda max
+          if (attempts > 40) clearInterval(findAndScroll); // 6 segundos límite
         }, 150);
       }
     };
 
-    // Ejecutamos el radar al cargar la página por primera vez
-    huntForTarget();
+    // Tiro inicial
+    if (currentHash) huntForTarget(currentHash);
 
-    // 🔥 EL PARCHE MAESTRO: Escuchamos si la URL cambia MIENTRAS ya estamos en el Feed
-    window.addEventListener('hashchange', huntForTarget);
-    return () => window.removeEventListener('hashchange', huntForTarget);
+    // 🔥 EL PARCHE MAESTRO: Escáner constante cada 300ms
+    const scanner = setInterval(() => {
+      if (window.location.hash !== currentHash) {
+        currentHash = window.location.hash;
+        huntForTarget(currentHash);
+      }
+    }, 300);
 
+    return () => clearInterval(scanner);
   }, [isLoading, posts]);
 
   const handleReact = async (postId: string, emoji: string) => {
