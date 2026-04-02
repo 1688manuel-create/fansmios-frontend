@@ -55,14 +55,8 @@ export default function AuthPortal() {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         
-        // REDIRECCIÓN INTELIGENTE
-        if (res.data.user.role === 'CREATOR') {
-            router.push('/dashboard');
-        } else if (res.data.user.role === 'FAN' && res.data.user.creatorProfile?.kycStatus !== 'NONE') {
-            router.push('/dashboard/kyc');
-        } else {
-            router.push('/feed');
-        }
+        // 🔥 REDIRECCIÓN DIRECTA: Todos van al Feed a consumir contenido
+        router.push('/feed');
         
       } else {
         // LÓGICA DE REGISTRO (🔥 Ahora incluye el código de referido)
