@@ -78,9 +78,9 @@ export default function ReferralsPage() {
             <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
             
             <Network className="w-16 h-16 text-yellow-500 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]" />
-            <h2 className="text-3xl font-black text-white mb-2">Gana Dinero de por Vida</h2>
+            <h2 className="text-3xl font-black text-white mb-2">Gana Dinero Pasivo</h2>
             <p className="text-gray-400 font-medium mb-8 max-w-xl mx-auto">
-              Invita a otros creadores a unirse a la plataforma. Ganarás un <strong className="text-yellow-400">{referralData?.commissionRate}</strong> de TODAS sus ganancias para siempre.
+              Invita a otros creadores a unirse a la plataforma. Ganarás un <strong className="text-yellow-400">{referralData?.commissionRate} extra</strong> de todas sus <strong className="text-white border-b border-yellow-500/50">suscripciones mensuales</strong> durante sus primeros 5 meses.
             </p>
 
             <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center gap-4">

@@ -54,9 +54,13 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS
+// 🌳 NODO DE COMENTARIOS MEJORADO (Estilo Instagram)
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
+  
+  // 🔥 NUEVO: Estado local e independiente para controlar solo este hilo
+  const [showReplies, setShowReplies] = useState(false);
+  const hasReplies = comment.replies && comment.replies.length > 0;
 
   return (
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
@@ -83,10 +87,40 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         </div>
       </div>
       
-      {(isExpanded === true) && comment.replies && comment.replies.length > 0 && (
-        <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1">
+      {/* 🔥 NUEVO: Botón sutil con la línea gris para desplegar respuestas */}
+      {hasReplies && !showReplies && (
+        <button 
+          onClick={() => setShowReplies(true)}
+          className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors"
+        >
+          <div className="w-6 h-[1px] bg-gray-600"></div>
+          Ver {comment.replies.length} {comment.replies.length === 1 ? 'respuesta' : 'respuestas'}
+        </button>
+      )}
+
+      {hasReplies && showReplies && (
+        <button 
+          onClick={() => setShowReplies(false)}
+          className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors"
+        >
+          <div className="w-6 h-[1px] bg-gray-600"></div>
+          Ocultar respuestas
+        </button>
+      )}
+      
+      {/* Las respuestas se muestran con una animación suave al hacer clic */}
+      {hasReplies && showReplies && (
+        <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1 animate-fade-in">
           {comment.replies.map((reply: any) => (
-            <CommentNode key={reply.id} comment={reply} postId={postId} currentUser={currentUser} onReply={onReply} onDelete={onDelete} isExpanded={isExpanded} />
+            <CommentNode 
+              key={reply.id} 
+              comment={reply} 
+              postId={postId} 
+              currentUser={currentUser} 
+              onReply={onReply} 
+              onDelete={onDelete} 
+              isExpanded={isExpanded} 
+            />
           ))}
         </div>
       )}
