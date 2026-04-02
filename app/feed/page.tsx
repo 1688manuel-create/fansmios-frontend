@@ -54,13 +54,37 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS MEJORADO (Estilo Instagram)
+// 🌳 NODO DE COMENTARIOS MEJORADO (Estilo Instagram + Auto-Focus)
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const isOwner = currentUser?.id === comment.userId;
   
-  // 🔥 NUEVO: Estado local e independiente para controlar solo este hilo
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
+
+  // 🔥 MAGIA DE NAVEGACIÓN: Detecta si la notificación busca un comentario oculto aquí
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      if (hash && hash.includes('-comment-')) {
+        const targetId = hash.split('-comment-');
+        
+        // Buscador recursivo (por si es una respuesta de una respuesta)
+        const containsTarget = (replies: any[]): boolean => {
+          if (!replies) return false;
+          for (const r of replies) {
+            if (r.id === targetId) return true;
+            if (containsTarget(r.replies)) return true;
+          }
+          return false;
+        };
+
+        // Si el comentario buscado está aquí dentro, nos abrimos solos
+        if (containsTarget(comment.replies)) {
+          setShowReplies(true);
+        }
+      }
+    }
+  }, [comment.replies]);
 
   return (
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
@@ -87,7 +111,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         </div>
       </div>
       
-      {/* 🔥 NUEVO: Botón sutil con la línea gris para desplegar respuestas */}
+      {/* BOTÓN PARA DESPLEGAR */}
       {hasReplies && !showReplies && (
         <button 
           onClick={() => setShowReplies(true)}
@@ -98,6 +122,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         </button>
       )}
 
+      {/* BOTÓN PARA OCULTAR */}
       {hasReplies && showReplies && (
         <button 
           onClick={() => setShowReplies(false)}
@@ -108,7 +133,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         </button>
       )}
       
-      {/* Las respuestas se muestran con una animación suave al hacer clic */}
+      {/* RESPUESTAS ANIDADAS */}
       {hasReplies && showReplies && (
         <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1 animate-fade-in">
           {comment.replies.map((reply: any) => (
