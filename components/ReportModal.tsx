@@ -6,7 +6,7 @@ import { Flag, X, Loader2, AlertTriangle, ShieldAlert } from 'lucide-react';
 import api from '../lib/api';
 
 interface ReportModalProps {
-  type?: 'USER' | 'POST' | 'MESSAGE'; 
+  type?: 'USER' | 'POST' | 'MESSAGE'| 'COMMENT'; 
   targetId?: string; 
   reportedUsername?: string; 
   onClose: () => void;

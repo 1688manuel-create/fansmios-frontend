@@ -54,38 +54,38 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (Plano con Escáner Activo Corregido)
-const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
-  const isOwner = currentUser?.id === comment.userId;
+// 🌳 NODO DE COMENTARIOS (Plano con Escáner y PODERES DE MODERACIÓN)
+const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDelete, onReport, onBlock, isExpanded }: { comment: any, postId: string, postOwnerId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, onReport: (commentId: string, username: string) => void, onBlock: (userId: string, username: string) => void, isExpanded: boolean }) => {
+  
+  // 🛡️ PODERES DE JERARQUÍA
+  const isCommentAuthor = currentUser?.id === comment.userId;
+  const isPostOwner = currentUser?.id === postOwnerId;
+  const isAdmin = currentUser?.role === 'ADMIN';
+  
+  // Puedes borrar si: lo escribiste tú, o es tu post, o eres el CEO (Admin).
+  const canDelete = isCommentAuthor || isPostOwner || isAdmin;
+  
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
   useEffect(() => {
     let currentHash = window.location.hash;
-
     const checkAndOpen = (hashToCheck: string) => {
       if (hashToCheck && hashToCheck.includes('-comment-')) {
-        // ✅ CORRECCIÓN: Extraemos el índice para obtener el ID puro
         const parts = hashToCheck.split('-comment-');
-        const targetId = parts[1]; 
-        
-        // Si el objetivo está en mis respuestas, me abro obligatoriamente
+        const targetId = parts; 
         if (comment.replies && comment.replies.some((r: any) => String(r.id) === String(targetId))) {
-          console.log("🎯 Objetivo detectado en mis hijos, abriendo hilo...");
           setShowReplies(true);
         }
       }
     };
-
     checkAndOpen(currentHash);
-
     const scanner = setInterval(() => {
       if (window.location.hash !== currentHash) {
         currentHash = window.location.hash;
         checkAndOpen(currentHash);
       }
     }, 400);
-
     return () => clearInterval(scanner);
   }, [comment.replies]);
 
@@ -95,20 +95,30 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
         <span className="text-gray-400">{comment.content}</span>
         
-        <div className="flex items-center gap-4 mt-1.5">
+        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
           <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:underline font-bold">Responder</button>
-          {isOwner && (
-            <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:underline font-bold hidden group-hover/comment:block">Eliminar</button>
+          
+          {/* BOTÓN ELIMINAR (Autor o Dueño del Post) */}
+          {canDelete && (
+            <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:underline font-bold hidden group-hover/comment:block transition-all">Eliminar</button>
+          )}
+          
+          {/* BOTONES DE MODERACIÓN (No puedes reportarte/bloquearte a ti mismo) */}
+          {!isCommentAuthor && (
+            <>
+              <button onClick={() => onReport(comment.id, comment.user?.username)} className="text-[11px] text-yellow-500 hover:underline font-bold hidden group-hover/comment:block transition-all">Reportar</button>
+              
+              {(isPostOwner || isAdmin) && (
+                <button onClick={() => onBlock(comment.userId, comment.user?.username)} className="text-[11px] text-orange-500 hover:underline font-bold hidden group-hover/comment:block transition-all">Bloquear</button>
+              )}
+            </>
           )}
         </div>
       </div>
       
       {hasReplies && (
         <>
-          <button 
-            onClick={() => setShowReplies(!showReplies)}
-            className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors"
-          >
+          <button onClick={() => setShowReplies(!showReplies)} className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors">
             <div className="w-6 h-[1px] bg-gray-600"></div>
             {showReplies ? 'Ocultar respuestas' : `Ver ${comment.replies.length} ${comment.replies.length === 1 ? 'respuesta' : 'respuestas'}`}
           </button>
@@ -116,7 +126,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
           {showReplies && (
             <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1 animate-fade-in">
               {comment.replies.map((reply: any) => (
-                <CommentNode key={reply.id} comment={reply} postId={postId} currentUser={currentUser} onReply={onReply} onDelete={onDelete} isExpanded={isExpanded} />
+                <CommentNode key={reply.id} comment={reply} postId={postId} postOwnerId={postOwnerId} currentUser={currentUser} onReply={onReply} onDelete={onDelete} onReport={onReport} onBlock={onBlock} isExpanded={isExpanded} />
               ))}
             </div>
           )}
@@ -139,7 +149,7 @@ export default function Feed() {
   const [isTipModalOpen, setIsTipModalOpen] = useState(false);
   const [tipRecipient, setTipRecipient] = useState<any>(null);
 
-  const [reportData, setReportData] = useState<{type: 'POST', targetId: string, reportedUsername: string} | null>(null);
+  const [reportData, setReportData] = useState<{type: 'POST' | 'COMMENT', targetId: string, reportedUsername: string} | null>(null);
 
   const [newPostContent, setNewPostContent] = useState('');
   const [isPublishing, setIsPublishing] = useState(false);
@@ -362,25 +372,15 @@ export default function Feed() {
     }
   };
 
-  const handleUnlockBundle = async (bundle: any) => {
+  const handleBlockUser = async (userId: string, username: string) => {
+    if (!window.confirm(`🚨 ¿Estás seguro de que deseas BLOQUEAR a @${username}? Ya no podrá interactuar contigo.`)) return;
     try {
-      const payload: any = {
-        amount: bundle.price || 0,
-        type: 'BUNDLE',
-        creatorId: bundle.creatorId || bundle.creator?.id,
-        bundleId: bundle.id,
-        description: `Compra de Paquete VIP: ${bundle.title}`
-      };
-      const data = await paymentService.createPaymentIntent(payload);
-      if (data.success || data.receipt) {
-        alert('✅ ¡Paquete comprado con éxito por Covra Pay!');
-        fetchData();
-      } else {
-        setClientSecret(data.clientSecret);
-        setSelectedPost({ id: bundle.id, price: bundle.price, user: bundle.creator, isBundle: true });
-        setIsPaymentModalOpen(true);
-      }
-    } catch (error) { alert('Error al procesar el pago del paquete.'); }
+      await api.post(`/users/${userId}/block`); // Asegúrate de tener este endpoint en tu backend
+      alert(`🚫 Has bloqueado a @${username}.`);
+      fetchData(); 
+    } catch (error) {
+      alert("Error al intentar bloquear al usuario.");
+    }
   };
 
   const handleUnlockClick = async (post: any) => {
@@ -401,6 +401,29 @@ export default function Feed() {
         setIsPaymentModalOpen(true);
       }
     } catch (error) { alert('Error con la pasarela.'); }
+  };
+
+  const handleUnlockBundle = async (bundle: any) => {
+    try {
+      const payload: any = {
+        amount: bundle.price || 0,
+        type: 'BUNDLE',
+        creatorId: bundle.creatorId || bundle.creator?.id,
+        bundleId: bundle.id,
+        description: `Compra de Paquete VIP: ${bundle.title}`
+      };
+      const data = await paymentService.createPaymentIntent(payload);
+      if (data.success || data.receipt) {
+        alert('✅ ¡Paquete comprado con éxito por Covra Pay!');
+        fetchData();
+      } else {
+        setClientSecret(data.clientSecret);
+        setSelectedPost({ id: bundle.id, price: bundle.price, user: bundle.creator, isBundle: true });
+        setIsPaymentModalOpen(true);
+      }
+    } catch (error) { 
+      alert('Error al procesar el pago del paquete.'); 
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -885,10 +908,13 @@ export default function Feed() {
                                       <CommentNode 
                                         key={comment.id} 
                                         comment={comment} 
-                                        postId={post.id} 
+                                        postId={post.id}
+                                        postOwnerId={post.user?.id} 
                                         currentUser={user}
                                         onReply={handleReplyClick} 
                                         onDelete={handleDeleteComment}
+                                        onReport={(commentId, username) => setReportData({ type: 'COMMENT', targetId: commentId, reportedUsername: username })}
+                                        onBlock={handleBlockUser}
                                         isExpanded={isExpanded}
                                       />
                                    ))}
