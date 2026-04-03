@@ -167,7 +167,9 @@ function MessagesContent() {
 
   const fetchConversations = async (isInitialLoad = false) => {
     try {
-      setIsLoading(true);
+      // 🔥 BLINDAJE UX: Solo encendemos la pantalla de carga en la entrada inicial
+      if (isInitialLoad) setIsLoading(true);
+      
       let chats = [];
 
       if (isGodMode && currentUser?.role === 'ADMIN') {
@@ -211,7 +213,6 @@ function MessagesContent() {
           if (chatToRestore) {
             handleSelectChat(chatToRestore); 
           } else {
-            // 🔥 BLINDAJE DE LOGIN: Borra la memoria si el chat no es de este usuario
             localStorage.removeItem('lastOpenedChat');
           }
         }
@@ -219,7 +220,8 @@ function MessagesContent() {
     } catch (error) {
        console.error("Error al cargar conversaciones:", error);
     } finally {
-      setIsLoading(false);
+      // 🔥 Solo apagamos el loader si estábamos en la carga inicial
+      if (isInitialLoad) setIsLoading(false);
     }
   };
 
