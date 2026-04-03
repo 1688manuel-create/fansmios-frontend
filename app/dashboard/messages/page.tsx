@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
-const QUICK_EMOJIS = ['🌹', '🔥', '💋', '💎', '👑', '❤️‍🔥'];
+const QUICK_EMOJIS = ['❤️', '❤️‍🔥', '🫦', '🤤','😋', '😘', '😍','💔','😡','😢', '😏', '😄'];
 
 const getImageUrl = (path: string | null) => {
   if (!path || path === 'null') return '';
