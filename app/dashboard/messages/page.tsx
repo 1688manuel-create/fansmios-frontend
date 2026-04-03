@@ -216,18 +216,35 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
     };
 
     setMessages(prev => [...prev, optimistic]);
+    
+    // Guardamos las variables antes de limpiar la interfaz
+    const textToSend = newMessage.trim() === "" ? " " : newMessage.trim(); // Enviamos un espacio si solo es un audio/foto
+    const mediaToSend = selectedMedia; 
+
     setNewMessage('');
     setIsPPVMode(false);
     setSelectedMedia(null);
     setShowEmojis(false);
 
     try {
-      const res = await chatService.sendMessage(activeChat.id, targetUserId, optimistic.content, String(finalPrice), null);
-      setMessages(prev => prev.map(m => m.id === tempId ? res.messageData : m));
-      socketRef.current?.send(JSON.stringify({ type: 'NEW_MESSAGE', message: res.messageData, chatId: activeChat.id }));
+      // 🔥 CORRECCIÓN: Le pasamos 'mediaToSend' a tu backend en lugar de 'null'
+      const res = await chatService.sendMessage(activeChat.id, targetUserId, textToSend, String(finalPrice), mediaToSend);
+      
+      // 🔥 BLINDAJE VISUAL: Fusionamos la respuesta del backend con nuestro audio temporal 
+      // (Por si tu backend aún no procesa las URLs de los archivos correctamente)
+      const finalMessage = {
+        ...res.messageData,
+        mediaUrl: res.messageData.mediaUrl || optimistic.mediaUrl,
+        isAudio: res.messageData.isAudio !== undefined ? res.messageData.isAudio : optimistic.isAudio,
+        isVideo: res.messageData.isVideo !== undefined ? res.messageData.isVideo : optimistic.isVideo
+      };
+
+      setMessages(prev => prev.map(m => m.id === tempId ? finalMessage : m));
+      socketRef.current?.send(JSON.stringify({ type: 'NEW_MESSAGE', message: finalMessage, chatId: activeChat.id }));
     } catch (err) {
+      console.error("Error enviando mensaje:", err);
       setMessages(prev => prev.filter(m => m.id !== tempId));
-      alert("Error al enviar el mensaje.");
+      alert("Error al enviar el archivo multimedia.");
     }
   };
 
