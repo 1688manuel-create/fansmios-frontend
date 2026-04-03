@@ -10,7 +10,6 @@ import {
 
 const BACKEND_WS = process.env.NEXT_PUBLIC_WS_URL || 'wss://api.fansmio.com';
 
-// Emojis exclusivos por defecto
 const QUICK_EMOJIS = ['🌹', '🔥', '💋', '💎', '👑', '❤️‍🔥'];
 
 // ============================================================================
@@ -30,7 +29,13 @@ function MessagesContainer() {
   const [isLoadingChats, setIsLoadingChats] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // 🔥 1. MEMORIA DE CHAT: RECUPERAR AL ENTRAR
   useEffect(() => {
+    const savedChat = sessionStorage.getItem('fansmio_active_chat');
+    if (savedChat) {
+      try { setActiveChat(JSON.parse(savedChat)); } catch (e) {}
+    }
+
     const loadChats = async () => {
       try {
         const res = await chatService.getConversations(); 
@@ -79,7 +84,11 @@ function MessagesContainer() {
             filteredChats.map(chat => ( 
               <button
                 key={chat.id}
-                onClick={() => setActiveChat(chat)}
+                onClick={() => {
+                  // 🔥 2. MEMORIA DE CHAT: GUARDAR AL SELECCIONAR
+                  setActiveChat(chat);
+                  sessionStorage.setItem('fansmio_active_chat', JSON.stringify(chat));
+                }}
                 className={`w-full text-left p-3 rounded-2xl flex items-center gap-4 transition-all ${
                   activeChat?.id === chat.id 
                     ? 'bg-[#1a1a1a] shadow-sm' 
@@ -104,7 +113,14 @@ function MessagesContainer() {
       {/* 👉 COLUMNA DERECHA: CHAT */}
       <div className={`${!activeChat ? 'hidden md:flex' : 'flex'} flex-1 flex-col bg-[#050505] relative`}>
         {activeChat ? (
-          <ChatEngine activeChat={activeChat} onBack={() => setActiveChat(null)} />
+          <ChatEngine 
+            activeChat={activeChat} 
+            onBack={() => {
+              // 🔥 3. MEMORIA DE CHAT: BORRAR AL SALIR
+              setActiveChat(null);
+              sessionStorage.removeItem('fansmio_active_chat');
+            }} 
+          />
         ) : (
           <div className="hidden md:flex h-full flex-col items-center justify-center text-gray-600">
             <div className="w-20 h-20 rounded-full bg-[#111] flex items-center justify-center mb-6 border border-white/5 shadow-inner">
@@ -115,20 +131,18 @@ function MessagesContainer() {
           </div>
         )}
       </div>
-
     </div>
   );
 }
 
 // ============================================================================
-// 💬 MOTOR DE CHAT VIP (Estética Limpia + Multimedia)
+// 💬 MOTOR DE CHAT VIP
 // ============================================================================
 function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => void }) {
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   
-  // 🔥 ESTADOS MULTIMEDIA Y UI
   const [isPPVMode, setIsPPVMode] = useState(false); 
   const [openMenuId, setOpenMenuId] = useState<string | null>(null); 
   const [showEmojis, setShowEmojis] = useState(false);
@@ -138,7 +152,10 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
   const fileInputRef = useRef<HTMLInputElement>(null);
   const socketRef = useRef<WebSocket | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const emojiMenuRef = useRef<HTMLDivElement>(null); // 👈 Nuevo Ref para los emojis
+  const emojiMenuRef = useRef<HTMLDivElement>(null); 
+  
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   useEffect(() => {
     if (!activeChat?.id) return;
@@ -166,19 +183,14 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
     return () => ws.close();
   }, [activeChat.id]);
 
-  // 👈 Nuevo useEffect para cerrar emojis al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (emojiMenuRef.current && !emojiMenuRef.current.contains(event.target as Node)) {
         setShowEmojis(false);
       }
     };
-    if (showEmojis) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    if (showEmojis) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showEmojis]);
 
   const handleSend = async () => {
@@ -186,13 +198,11 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
     
     const tempId = `temp-${Date.now()}`;
     const targetUserId = activeChat.user.id as string;
-    
-    // Precio Dinámico / Fijo simulado
     const finalPrice = isPPVMode ? 10 : 0; 
     
-    // Creamos una URL temporal si hay imagen
     const mediaUrl = selectedMedia ? URL.createObjectURL(selectedMedia) : null;
     const isVideo = selectedMedia?.type.startsWith('video');
+    const isAudio = selectedMedia?.type.startsWith('audio'); 
 
     const optimistic = { 
       id: tempId, 
@@ -201,7 +211,8 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
       pending: true, 
       price: finalPrice,
       mediaUrl: mediaUrl,
-      isVideo: isVideo
+      isVideo: isVideo,
+      isAudio: isAudio 
     };
 
     setMessages(prev => [...prev, optimistic]);
@@ -211,7 +222,6 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
     setShowEmojis(false);
 
     try {
-      // 🚨 NOTA: Para archivos reales, chatService.sendMessage deberá aceptar FormData
       const res = await chatService.sendMessage(activeChat.id, targetUserId, optimistic.content, String(finalPrice), null);
       setMessages(prev => prev.map(m => m.id === tempId ? res.messageData : m));
       socketRef.current?.send(JSON.stringify({ type: 'NEW_MESSAGE', message: res.messageData, chatId: activeChat.id }));
@@ -222,14 +232,41 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files) { // 👈 Pequeña corrección de seguridad aquí
+    // 🔥 CORRECCIÓN SEGURA DEL ARCHIVO CON
+    if (e.target.files && e.target.files) { 
       setSelectedMedia(e.target.files[0]);
     }
   };
 
-  const toggleRecording = () => {
-    setIsRecording(!isRecording);
-    // 🚨 NOTA: Aquí iría la lógica del MediaRecorder API para audio real.
+  const toggleRecording = async () => {
+    if (isRecording) {
+      if (mediaRecorderRef.current) mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+        audioChunksRef.current = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) audioChunksRef.current.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          const audioFile = new File([audioBlob], `nota_voz_${Date.now()}.webm`, { type: 'audio/webm' });
+          setSelectedMedia(audioFile); 
+          stream.getTracks().forEach(track => track.stop()); 
+        };
+
+        mediaRecorder.start();
+        setIsRecording(true);
+      } catch (error) {
+        console.error("Error accediendo al micrófono:", error);
+        alert("Por favor permite el acceso al micrófono para enviar notas de voz.");
+      }
+    }
   };
 
   useEffect(() => {
@@ -278,7 +315,6 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
             <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'} group relative`}>
               <div className={`flex items-end gap-2 max-w-[80%] sm:max-w-[65%]`}>
                 
-                {/* ⚙️ MENÚ MODERACIÓN */}
                 <div className={`opacity-0 group-hover:opacity-100 transition-opacity relative ${isMe ? 'order-1' : 'order-2'}`}>
                   <button onClick={() => setOpenMenuId(openMenuId === msg.id ? null : msg.id)} className="p-1.5 text-gray-500 hover:text-white rounded-full">
                     <MoreVertical className="w-4 h-4" />
@@ -298,10 +334,8 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
                   )}
                 </div>
 
-                {/* 🎈 BURBUJA DE MENSAJE LÍMPIA */}
                 <div className={`relative rounded-[20px] overflow-hidden flex flex-col ${isMe ? 'order-2 bg-teal-600 text-white rounded-br-[4px]' : 'order-1 bg-[#1a1a1a] border border-white/5 text-gray-100 rounded-bl-[4px]'}`}>
                   
-                  {/* Etiqueta PPV Superior */}
                   {isPPV && (
                     <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 border-b border-black/20 flex items-center gap-1.5 w-full">
                       <Lock className="w-3 h-3 text-white"/>
@@ -309,18 +343,18 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
                     </div>
                   )}
 
-                  {/* Renderizado de Media */}
                   {msg.mediaUrl && (
-                    <div className="relative max-w-sm">
+                    <div className="relative max-w-sm p-1">
                       {msg.isVideo ? (
-                        <video src={msg.mediaUrl} controls className="w-full h-auto max-h-64 object-cover" />
+                        <video src={msg.mediaUrl} controls className="w-full h-auto max-h-64 object-cover rounded-xl" />
+                      ) : msg.isAudio ? (
+                        <audio src={msg.mediaUrl} controls className="w-full h-10 max-w-[220px] mt-2 mb-1" />
                       ) : (
-                        <img src={msg.mediaUrl} alt="media" className="w-full h-auto max-h-64 object-cover" />
+                        <img src={msg.mediaUrl} alt="media" className="w-full h-auto max-h-64 object-cover rounded-xl" />
                       )}
                     </div>
                   )}
 
-                  {/* Texto del mensaje */}
                   {msg.content && (
                     <p className="px-4 py-2.5 text-[15px] leading-relaxed break-words">{msg.content}</p>
                   )}
@@ -331,15 +365,18 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
         })}
       </div>
 
-      {/* 📎 PREVIEW DE ARCHIVO SELECCIONADO */}
       {selectedMedia && (
         <div className="px-6 py-3 bg-[#111] border-t border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center border border-white/10 overflow-hidden">
-              {selectedMedia.type.startsWith('video') ? <Play className="w-5 h-5 text-teal-500"/> : <ImageIcon className="w-5 h-5 text-teal-500"/>}
+              {selectedMedia.type.startsWith('video') ? <Play className="w-5 h-5 text-teal-500"/> 
+               : selectedMedia.type.startsWith('audio') ? <Mic className="w-5 h-5 text-teal-500"/> 
+               : <ImageIcon className="w-5 h-5 text-teal-500"/>}
             </div>
             <div>
-              <p className="text-sm font-medium text-white truncate max-w-[200px]">{selectedMedia.name}</p>
+              <p className="text-sm font-medium text-white truncate max-w-[200px]">
+                {selectedMedia.type.startsWith('audio') ? 'Nota de voz lista' : selectedMedia.name}
+              </p>
               <p className="text-[10px] text-gray-500">{(selectedMedia.size / 1024 / 1024).toFixed(2)} MB</p>
             </div>
           </div>
@@ -349,25 +386,20 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
         </div>
       )}
 
-      {/* ✍️ BARRA DE HERRAMIENTAS Y ESCRITURA */}
       <div className="p-4 bg-[#0a0a0a] border-t border-white/5 w-full">
         <div className="max-w-4xl mx-auto flex items-end gap-2">
           
-          {/* Botón Adjuntar */}
           <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/*,video/*" className="hidden" />
           <button onClick={() => fileInputRef.current?.click()} className="p-3 rounded-full text-gray-400 hover:text-white hover:bg-[#1a1a1a] transition-colors shrink-0">
             <Paperclip className="w-5 h-5" />
           </button>
 
-          {/* Botón Notas de Voz */}
           <button onClick={toggleRecording} className={`p-3 rounded-full transition-colors shrink-0 ${isRecording ? 'text-red-500 bg-red-500/10 animate-pulse' : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'}`}>
             <Mic className="w-5 h-5" />
           </button>
 
-          {/* Input Principal */}
           <div className="flex-1 relative bg-[#151515] border border-white/10 rounded-3xl flex items-center transition-all focus-within:border-white/30">
             
-            {/* PPV Toggle */}
             <button 
               onClick={() => setIsPPVMode(!isPPVMode)} 
               className={`ml-2 p-2 rounded-full transition-colors ${isPPVMode ? 'text-teal-400 bg-teal-400/10' : 'text-gray-500 hover:text-white'}`}
@@ -379,8 +411,8 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
             <textarea
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder={isPPVMode ? "Mensaje de cobro..." : isRecording ? "Grabando audio..." : "Escribe un mensaje..."}
-              className={`flex-1 bg-transparent border-none text-white text-[15px] outline-none px-3 py-3.5 max-h-32 resize-none overflow-y-auto ${isRecording ? 'opacity-50 cursor-not-allowed' : ''} ${isPPVMode ? 'text-teal-50' : ''}`}
+              placeholder={isPPVMode ? "Mensaje de cobro..." : isRecording ? "Grabando audio... (Toca el micro para detener)" : "Escribe un mensaje..."}
+              className={`flex-1 bg-transparent border-none text-white text-[15px] outline-none px-3 py-3.5 max-h-32 resize-none overflow-y-auto ${isRecording ? 'opacity-50 cursor-not-allowed text-red-400 font-bold' : ''} ${isPPVMode ? 'text-teal-50' : ''}`}
               rows={1}
               disabled={isRecording}
               onKeyDown={(e) => {
@@ -388,9 +420,8 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
               }}
             />
 
-            {/* 👈 Selector de Emojis VIP con Ref */}
             <div className="relative mr-2" ref={emojiMenuRef}>
-              <button onClick={() => setShowEmojis(!showEmojis)} className="p-2 text-gray-400 hover:text-white transition-colors">
+              <button onClick={() => setShowEmojis(!showEmojis)} className="p-2 text-gray-400 hover:text-white transition-colors" disabled={isRecording}>
                 <Smile className="w-5 h-5" />
               </button>
               {showEmojis && (
@@ -405,7 +436,6 @@ function ChatEngine({ activeChat, onBack }: { activeChat: any, onBack: () => voi
             </div>
           </div>
 
-          {/* Botón Enviar */}
           <button 
             onClick={handleSend} 
             disabled={(!newMessage.trim() && !selectedMedia) || isRecording} 
