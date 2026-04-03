@@ -16,9 +16,11 @@ export const chatService = {
     return response.data;
   },
 
-  getMessages: async (conversationId: string) => {
+  // 🔥 CORRECCIÓN: Ahora recibe el número de página (page) y lo envía al backend
+  getMessages: async (conversationId: string, page: number = 1) => {
     if (!conversationId) throw new Error("Falta el ID de la conversación");
-    const response = await api.get(`/messages/${conversationId}`);
+    // Enviamos el parámetro de página en la URL (Query Params)
+    const response = await api.get(`/messages/${conversationId}?page=${page}`);
     return response.data;
   },
 
@@ -27,13 +29,12 @@ export const chatService = {
   // ==========================================
 
   sendMessage: async (conversationId: string, receiverId: string, content: string, price: string = '', media: File | Blob | null = null) => {
-    // 🔥 CORRECCIÓN: Ya no bloqueamos si no hay conversationId (porque puede ser un chat nuevo)
     if (!receiverId) {
       throw new Error("Datos de destinatario incompletos para enviar el mensaje");
     }
 
     const formData = new FormData();
-    formData.append('conversationId', conversationId || ''); // Mandamos vacío si es nuevo
+    formData.append('conversationId', conversationId || ''); 
     formData.append('receiverId', receiverId);
     
     if (content) formData.append('content', content);
@@ -98,6 +99,7 @@ export const chatService = {
     const response = await api.get(`/messages/block-status/${userId}`);
     return response.data;
   },
+  
   deleteConversation: async (conversationId: string) => {
     const response = await api.delete(`/messages/conversation/${conversationId}`);
     return response.data;

@@ -27,12 +27,10 @@ import {
   Send,
   Eye,
   Maximize,
-  Smile // 🔥 Icono de Emoji agregado
+  Smile
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
-
-// 🔥 Emojis rápidos agregados
 const QUICK_EMOJIS = ['🌹', '🔥', '💋', '💎', '👑', '❤️‍🔥'];
 
 const getImageUrl = (path: string | null) => {
@@ -54,6 +52,12 @@ function MessagesContent() {
   const [activeChat, setActiveChat] = useState<any>(null);
   const [conversations, setConversations] = useState<any[]>([]); 
   const [messages, setMessages] = useState<any[]>([]); 
+  
+  // 🔥 ESTADOS PARA LA PAGINACIÓN (ESCALABILIDAD)
+  const [page, setPage] = useState(1);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
   
   const [newMessage, setNewMessage] = useState('');
   const [isPPVMode, setIsPPVMode] = useState(false);
@@ -89,7 +93,6 @@ function MessagesContent() {
 
   const [expandedMedia, setExpandedMedia] = useState<{url: string, type: 'video'|'image'} | null>(null);
 
-  // 🔥 Estado y Ref para Emojis
   const [showEmojis, setShowEmojis] = useState(false);
   const emojiMenuRef = useRef<HTMLDivElement>(null);
 
@@ -108,12 +111,9 @@ function MessagesContent() {
   }, [router, searchParams]);
 
   useEffect(() => {
-    if (currentUser) {
-      fetchConversations(true); 
-    }
+    if (currentUser) fetchConversations(true); 
   }, [currentUser, isGodMode]);
 
-  // 🔥 Cerrar menú de emojis al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (emojiMenuRef.current && !emojiMenuRef.current.contains(event.target as Node)) {
@@ -124,24 +124,33 @@ function MessagesContent() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showEmojis]);
 
+  // 🔥 POLLING BLINDADO PARA MENSAJES NUEVOS
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (activeChat && activeChat.id) { 
       interval = setInterval(async () => {
         try {
-          const data = await chatService.getMessages(activeChat.id);
+          // Solo pedimos la página 1 para ver si hay algo nuevo, protegiendo el servidor
+          const data = await chatService.getMessages(activeChat.id, 1);
           const incomingMessages = data.messages || [];
           
           setMessages(prev => {
-            if (incomingMessages.length === prev.length) return prev;
+            if (incomingMessages.length === 0) return prev;
             
-            if (incomingMessages.length > prev.length) {
-              const lastMsg = incomingMessages[incomingMessages.length - 1];
-              if (lastMsg.senderId !== 'me' && prev.length > 0 && !isGodMode) {
-                triggerNewMessageAlert();
-              }
+            const lastPrevMsg = prev[prev.length - 1];
+            const lastIncomingMsg = incomingMessages[incomingMessages.length - 1];
+
+            // Si hay un mensaje nuevo que no teníamos, lo añadimos sin borrar el historial
+            if (lastPrevMsg && lastIncomingMsg && lastPrevMsg.id !== lastIncomingMsg.id) {
+               const newMsgs = incomingMessages.filter((incMsg: any) => !prev.some((pMsg: any) => pMsg.id === incMsg.id));
+               if (newMsgs.length > 0) {
+                 if (newMsgs[newMsgs.length - 1].senderId !== 'me' && !isGodMode) triggerNewMessageAlert();
+                 return [...prev, ...newMsgs];
+               }
+            } else if (prev.length === 0 && incomingMessages.length > 0) {
+               return incomingMessages;
             }
-            return incomingMessages;
+            return prev;
           });
         } catch (error) {}
       }, 3000); 
@@ -150,10 +159,6 @@ function MessagesContent() {
       if (interval) clearInterval(interval);
     };
   }, [activeChat, isGodMode]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages.length]); 
 
   const triggerNewMessageAlert = () => {
     try {
@@ -167,9 +172,7 @@ function MessagesContent() {
 
   const fetchConversations = async (isInitialLoad = false) => {
     try {
-      // 🔥 BLINDAJE UX: Solo encendemos la pantalla de carga en la entrada inicial
       if (isInitialLoad) setIsLoading(true);
-      
       let chats = [];
 
       if (isGodMode && currentUser?.role === 'ADMIN') {
@@ -220,7 +223,6 @@ function MessagesContent() {
     } catch (error) {
        console.error("Error al cargar conversaciones:", error);
     } finally {
-      // 🔥 Solo apagamos el loader si estábamos en la carga inicial
       if (isInitialLoad) setIsLoading(false);
     }
   };
@@ -231,9 +233,18 @@ function MessagesContent() {
     if (!isGodMode) localStorage.setItem('lastOpenedChat', chat.id); 
     setIsBlockedByMe(false); 
     
+    // Resetear paginación al abrir chat
+    setPage(1);
+    setHasMoreMessages(true);
+    setMessages([]);
+
     try {
-      const data = await chatService.getMessages(chat.id);
-      setMessages(data.messages || []);
+      const data = await chatService.getMessages(chat.id, 1);
+      const initialMsgs = data.messages || [];
+      setMessages(initialMsgs);
+      
+      // Si devolvió muy pocos, asumimos que no hay más historial arriba
+      if (initialMsgs.length < 20) setHasMoreMessages(false);
       
       if (!isGodMode) {
         const blockData = await chatService.checkBlockStatus(chat.user.id);
@@ -241,7 +252,44 @@ function MessagesContent() {
       }
       
       if (!isGodMode) fetchConversations(); 
+      setTimeout(() => messagesEndRef.current?.scrollIntoView(), 100);
     } catch (error) {}
+  };
+
+  // 🔥 LÓGICA DE INFINITE SCROLL (PAGINACIÓN HACIA ARRIBA)
+  const handleScroll = async () => {
+    if (!chatScrollRef.current || isLoadingMore || !hasMoreMessages || !activeChat) return;
+
+    // Si el usuario llega al tope superior del chat
+    if (chatScrollRef.current.scrollTop === 0) {
+      setIsLoadingMore(true);
+      const nextPage = page + 1;
+      
+      try {
+        const data = await chatService.getMessages(activeChat.id, nextPage);
+        const olderMessages = data.messages || [];
+
+        if (olderMessages.length === 0) {
+          setHasMoreMessages(false);
+        } else {
+          // Guardamos altura para no brincar al inicio
+          const prevScrollHeight = chatScrollRef.current.scrollHeight;
+          
+          setMessages(prev => [...olderMessages, ...prev]);
+          setPage(nextPage);
+
+          setTimeout(() => {
+            if (chatScrollRef.current) {
+              chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight - prevScrollHeight;
+            }
+          }, 0);
+        }
+      } catch (error) {
+        console.error("Error paginando:", error);
+      } finally {
+        setIsLoadingMore(false);
+      }
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -302,9 +350,7 @@ function MessagesContent() {
       let fileToSend: any = selectedImage;
       if (audioBlob) fileToSend = new File([audioBlob], `audio_${Date.now()}.webm`, { type: 'audio/webm' });
 
-      // 🔥 Blindaje para enviar siempre un espacio si solo se envía un archivo multimedia sin texto
       const textToSend = newMessage.trim() === "" ? " " : newMessage.trim();
-
       const data = await chatService.sendMessage(activeChat.id || '', activeChat.user.id, textToSend, ppvPrice, fileToSend);
 
       if (data && data.chatId && !activeChat.id) {
@@ -315,6 +361,7 @@ function MessagesContent() {
       if (data && data.messageData) {
          const newMsgRight = { ...data.messageData, senderId: 'me' };
          setMessages(prev => [...prev, newMsgRight]); 
+         setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
       }
       
       setNewMessage(''); setIsPPVMode(false); setPpvPrice(''); setSelectedImage(null); setAudioBlob(null); setShowEmojis(false);
@@ -377,8 +424,7 @@ function MessagesContent() {
 
       alert("💥 Chat eliminado por completo.");
     } catch (error: any) {
-      console.error("Error al eliminar la conversación:", error);
-      alert(error.response?.data?.error || "Hubo un error al intentar eliminar la conversación del servidor.");
+      alert("Hubo un error al intentar eliminar la conversación.");
     }
   };
 
@@ -400,7 +446,7 @@ function MessagesContent() {
       alert("✨ ¡Mensaje desbloqueado con éxito!");
       
       if (activeChat) {
-        const chatData = await chatService.getMessages(activeChat.id);
+        const chatData = await chatService.getMessages(activeChat.id, 1);
         setMessages(chatData.messages || []);
       }
 
@@ -411,7 +457,6 @@ function MessagesContent() {
 
   const handleToggleBlock = async () => {
     if (!activeChat || !activeChat.id) return; 
-    
     try {
       if (isBlockedByMe) {
         await chatService.unblockUser(activeChat.user.id);
@@ -420,13 +465,11 @@ function MessagesContent() {
       } else {
         const confirmBlock = confirm("🚨 ¿Estás seguro de que quieres bloquear a este usuario?");
         if (!confirmBlock) return;
-        
         try {
           await chatService.blockUser(activeChat.user.id);
         } catch (err: any) {
           if (err.response?.data?.error !== 'El usuario ya estaba bloqueado.') throw err;
         }
-        
         setIsBlockedByMe(true);
         alert("🚫 Usuario ha sido bloqueado.");
       }
@@ -585,12 +628,23 @@ function MessagesContent() {
               )}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar relative">
-              {messages.length === 0 && <p className="text-center text-gray-500 mt-10 font-medium">No hay mensajes en este chat.</p>}
+            {/* 🔥 CONTENEDOR DE MENSAJES CON INFINITE SCROLL */}
+            <div 
+              ref={chatScrollRef}
+              onScroll={handleScroll}
+              className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar relative"
+            >
+              {isLoadingMore && (
+                <div className="flex justify-center py-2 mb-4">
+                  <span className="w-6 h-6 border-2 border-teal-500/30 border-t-teal-500 rounded-full animate-spin"></span>
+                </div>
+              )}
+              
+              {messages.length === 0 && !isLoadingMore && <p className="text-center text-gray-500 mt-10 font-medium">No hay mensajes en este chat.</p>}
               
               {messages.map((msg) => {
                 const hasMedia = msg.mediaUrl && msg.mediaUrl !== 'null';
-                const isAudio = hasMedia && (msg.mediaUrl.match(/\.(mp3|wav|ogg)$/i) || msg.mediaUrl.includes('audio_'));
+                const isAudio = hasMedia && (msg.mediaUrl.match(/\.(mp3|wav|ogg)$/i) || msg.mediaUrl.includes('audio_') || msg.isAudio);
                 const isVideo = hasMedia && (msg.mediaUrl.match(/\.(mp4|mov|webm)$/i) && !msg.mediaUrl.includes('audio_'));
 
                 const alignRight = !isGodMode && msg.senderId === 'me';
@@ -679,12 +733,6 @@ function MessagesContent() {
                                    src={getImageUrl(msg.mediaUrl)} 
                                    className="rounded-xl max-h-64 w-full object-cover shadow-md select-none relative z-10" 
                                    onContextMenu={(e) => e.preventDefault()} 
-                                   onError={(e) => {
-                                      const parent = e.currentTarget.parentElement;
-                                      if(parent) {
-                                         parent.innerHTML = '<div class="p-4 flex flex-col items-center text-gray-500 bg-black/20 rounded-xl"><svg class="w-8 h-8 mb-2 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"></path><rect x="2" y="6" width="14" height="12" rx="2"></rect><line x1="3" y1="3" x2="21" y2="21"></line></svg><span class="text-xs font-bold uppercase tracking-widest">Video Perdido</span></div>';
-                                      }
-                                   }}
                                  />
                                  <div 
                                    onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'video' }); }}
@@ -703,12 +751,6 @@ function MessagesContent() {
                                    onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' }); }}
                                    onContextMenu={(e) => e.preventDefault()} 
                                    draggable="false"
-                                   onError={(e) => {
-                                      const parent = e.currentTarget.parentElement;
-                                      if(parent) {
-                                         parent.innerHTML = '<div class="p-4 flex flex-col items-center text-gray-500 bg-black/20 rounded-xl mt-2"><svg class="w-8 h-8 mb-2 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="15" y1="9" x2="15.01" y2="9"></line><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path><path d="M3 3l18 18"></path></svg><span class="text-[10px] font-bold uppercase tracking-widest">Archivo Perdido</span></div>';
-                                      }
-                                   }}
                                  />
                                  <div 
                                    onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' }); }}
@@ -756,7 +798,7 @@ function MessagesContent() {
                     <div className="flex items-end gap-2 nm-inset rounded-[2rem] p-1.5 focus-within:border-teal-500/50 transition-colors border border-transparent">
                       {!isRecording && !audioBlob && currentUser?.role === 'CREATOR' && (
                         <>
-                          <input type="file" accept="image/*,video/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
+                          <input type="file" accept="image/*,video/*,audio/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
                           <button onClick={() => fileInputRef.current?.click()} className="nm-btn w-11 h-11 rounded-full text-gray-400 hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
                             <Paperclip className="w-5 h-5" />
                           </button>
@@ -792,7 +834,7 @@ function MessagesContent() {
                         <div className="flex-1 relative flex items-center bg-transparent self-center">
                           <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Escribe un mensaje privado..." className="flex-1 bg-transparent text-white outline-none px-4 py-3 max-h-32 resize-none custom-scrollbar text-sm md:text-base placeholder:text-gray-600" rows={1} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }} />
                           
-                          {/* 🔥 MENÚ DE EMOJIS INTEGRADO AL TEXTAREA */}
+                          {/* 🔥 MENÚ DE EMOJIS RÁPIDOS */}
                           <div className="relative mr-2" ref={emojiMenuRef}>
                             <button onClick={() => setShowEmojis(!showEmojis)} className="p-2 text-gray-400 hover:text-teal-400 transition-colors">
                               <Smile className="w-5 h-5" />
@@ -905,7 +947,7 @@ function MessagesContent() {
               await paymentService.confirmPurchase(selectedMessageToUnlock.id); 
               alert("✨ ¡Contenido desbloqueado con éxito!"); 
               if (activeChat) { 
-                const data = await chatService.getMessages(activeChat.id); 
+                const data = await chatService.getMessages(activeChat.id, 1); 
                 setMessages(data.messages || []); 
               } 
             } catch (error) {} 
@@ -922,7 +964,7 @@ function MessagesContent() {
         />
       )}
 
-      {/* 🔥 MODAL GIGANTE DE MULTIMEDIA */}
+      {/* 🔥 MODAL GIGANTE DE MULTIMEDIA (FIX Z-INDEX FORZADO) */}
       {expandedMedia && (
         <div 
           className="fixed inset-0 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none"
