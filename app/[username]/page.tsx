@@ -9,12 +9,11 @@ import TipModal from '../../components/TipModal';
 import AppLayout from '../../components/AppLayout';
 import { paymentService } from '../../lib/paymentService';
 
-
-// 🔥 Agregamos el icono Flag para los reportes
 import { 
   ArrowLeft, CheckCircle2, MessageCircle, Star, Lock, 
   Unlock, Trash2, Coins, Package, Ghost, X, Plus, Crown, Send,
-  Instagram, Twitter, Globe, ShieldAlert, Flag, AlertTriangle
+  Instagram, Twitter, Globe, ShieldAlert, Flag, AlertTriangle,
+  LayoutGrid, Image as ImageIcon, Video, Eye // 👈 ¡Agrega 'Eye' aquí!
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -81,12 +80,14 @@ export default function CreatorProfile() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [posts, setPosts] = useState<any[]>([]);
   
+  // 🔥 ESTADO PARA LOS TABS DEL PERFIL
+  const [activeTab, setActiveTab] = useState<'all' | 'photos' | 'videos' | 'locked'>('all');
+
   const [bundles, setBundles] = useState<any[]>([]);
 
   const [clientSecret, setClientSecret] = useState('');
   const [pendingPayment, setPendingPayment] = useState<any>(null);
   
-  const [paymentData, setPaymentData] = useState<{ payAddress: string, amountUsd: number, transactionId: string, clientSecret?: string } | null>(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   
   const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null);
@@ -99,7 +100,6 @@ export default function CreatorProfile() {
   const [tipRecipient, setTipRecipient] = useState<any>(null);
   const [expandedImage, setExpandedImage] = useState<{url: string, username: string} | null>(null);
 
-  // 🔥 ESTADOS PARA EL SISTEMA DE REPORTES
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [reportDescription, setReportDescription] = useState('');
@@ -124,7 +124,7 @@ export default function CreatorProfile() {
         
         const firstPart = parts[0] || '';
         const postIdRaw = firstPart.replace('post-', '');
-        const commentIdRaw = parts[0] || null; 
+        const commentIdRaw = parts[1] || null; 
         
         setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
 
@@ -301,11 +301,9 @@ export default function CreatorProfile() {
 
   const handleMessageClick = async () => {
     if (!currentUser) { alert("Debes iniciar sesión para enviar mensajes."); router.push('/auth'); return; }
-    // 🔥 AQUÍ ENVIAMOS LAS COORDENADAS EXACTAS DEL CREADOR A LA BÓVEDA
     router.push(`/dashboard/messages?chatWith=${creator.id}&name=${creator.username}`);
   };
 
-  // 🔥 FUNCIÓN PARA ENVIAR EL REPORTE AL SERVIDOR
   const handleSubmitReport = async () => {
     if (!reportReason) { alert("⚠️ Debes seleccionar un motivo."); return; }
     setIsSubmittingReport(true);
@@ -341,7 +339,20 @@ export default function CreatorProfile() {
     return roots;
   };
 
-  if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-10 h-10 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div></div>;
+  // 🔥 LÓGICA DE FILTRADO DE TABS
+  const filteredPosts = posts.filter(post => {
+    if (activeTab === 'all') return true;
+    const hasMedia = post.mediaUrl && post.mediaUrl !== 'null';
+    const isVideo = hasMedia && post.mediaUrl.match(/\.(mp4|mov|webm)$/i);
+    const isPhoto = hasMedia && !isVideo && !post.mediaUrl.match(/\.(mp3|wav|ogg)$/i);
+    
+    if (activeTab === 'photos') return isPhoto;
+    if (activeTab === 'videos') return isVideo;
+    if (activeTab === 'locked') return post.isPPV || (!isSubscribed && currentUser?.role !== 'ADMIN' && currentUser?.id !== creator?.id);
+    return true;
+  });
+
+  if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-10 h-10 border-4 border-teal-500 rounded-full border-t-transparent animate-spin"></div></div>;
   if (hasError || !creator) return <div className="min-h-screen bg-nm-base text-white flex flex-col items-center justify-center"><Ghost className="w-20 h-20 text-gray-600"/><h2 className="text-3xl font-black">Página no encontrada</h2></div>;
 
   const profile = creator.creatorProfile || {};
@@ -357,125 +368,136 @@ export default function CreatorProfile() {
           style={profile.coverImage ? { backgroundImage: `url(${getImageUrl(profile.coverImage)})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
           onContextMenu={(e) => e.preventDefault()}
         >
-          {!profile.coverImage && <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20"></div>}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] to-transparent pointer-events-none"></div> 
-          <button onClick={() => router.back()} className="absolute top-4 left-4 nm-btn text-white px-5 py-2.5 rounded-full z-20 flex items-center gap-2 font-bold text-sm hover:text-blue-400">
+          {!profile.coverImage && <div className="absolute inset-0 bg-gradient-to-br from-teal-900/20 to-blue-900/20"></div>}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none"></div> 
+          <button onClick={() => router.back()} className="absolute top-4 left-4 bg-black/40 backdrop-blur-md border border-white/10 text-white px-5 py-2.5 rounded-full z-20 flex items-center gap-2 font-bold text-sm hover:bg-white/10 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Volver
           </button>
         </div>
 
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 relative -mt-20 z-10">
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 -mt-16 sm:-mt-20">
           
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-4">
-            <div className="flex flex-col items-start">
-              {/* AVATAR */}
+          {/* 🔥 1. AVATAR FLOTANTE Y CABECERA REDISEÑADA */}
+          <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-end mb-8 gap-4">
+            <div className="flex flex-col items-start relative">
               <div 
-                className="w-32 h-32 rounded-full border-4 border-[#0e0e0e] shadow-[0_0_30px_rgba(0,0,0,0.8)] flex items-center justify-center text-white text-5xl font-black bg-[#0a0a0a] relative overflow-hidden shrink-0 z-10 nm-inset select-none"
+                className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-[6px] border-[#050505] shadow-2xl flex items-center justify-center text-white text-5xl font-black bg-[#0a0a0a] relative overflow-hidden shrink-0 z-10 nm-inset select-none ${profile.isVerified ? 'shadow-[0_0_30px_rgba(20,184,166,0.3)]' : ''}`}
                 onContextMenu={(e) => e.preventDefault()}
               >
-                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <span className="bg-gradient-to-tr from-blue-600 to-purple-600 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase()}</span>}
+                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase()}</span>}
               </div>
               
-              <div className="mt-4">
-                <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-2">
+              <div className="mt-3 px-2">
+                <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-2 drop-shadow-md">
                   {creator.name || creator.username}
-                  {profile.isVerified && <CheckCircle2 className="w-6 h-6 text-blue-500 fill-blue-500/20" />}
+                  {profile.isVerified && <span title="Verificado"><CheckCircle2 className="w-6 h-6 text-teal-400 fill-teal-400/20 drop-shadow-[0_0_5px_rgba(20,184,166,0.8)]" /></span>}
                   {currentUser?.role === 'ADMIN' && <span title="Visualizando como Administrador"><ShieldAlert className="w-5 h-5 text-red-500" /></span>}
                 </h1>
-                <p className="text-gray-400 text-sm font-bold mt-1">@{creator.username}</p>
+                <p className="text-gray-400 text-sm font-bold mt-0.5">@{creator.username}</p>
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-              {/* 🔥 FIX: El Admin sí ve el botón de mensaje, pero no el de Seguir ni Reportar */}
-              {currentUser?.id !== creator.id && (
-                <>
-                  {currentUser?.role !== 'ADMIN' && (
-                    <button 
-                      onClick={handleFollowToggle}
-                      className={`font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 w-full sm:w-auto ${
-                        isFollowing ? 'nm-inset text-blue-400 border border-blue-500/30' : 'nm-btn text-blue-400 hover:text-white'
-                      }`}
-                    >
-                      {isFollowing ? <><CheckCircle2 className="w-4 h-4"/> Siguiendo</> : <><Plus className="w-4 h-4"/> Seguir Gratis</>}
-                    </button>
-                  )}
-
-                  <div className="flex gap-3 w-full sm:w-auto">
-                    <button onClick={handleMessageClick} title="Enviar Mensaje" className="nm-btn text-gray-300 hover:text-blue-400 font-bold flex-1 sm:w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors">
-                      <MessageCircle className="w-5 h-5" />
-                    </button>
-                    
-                    {currentUser?.role !== 'ADMIN' && (
-                      <button onClick={() => {
-                        if(!currentUser) { alert("Inicia sesión para reportar."); router.push('/auth'); return; }
-                        setIsReportModalOpen(true);
-                      }} title="Reportar Usuario" className="nm-btn text-gray-500 hover:text-red-500 font-bold flex-1 sm:w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors">
-                        <Flag className="w-5 h-5" />
-                      </button>
-                    )}
-                  </div>
-                </>
-              )}
-
-              {/* BOTÓN DE SUSCRIPCIÓN */}
-              {(!isOwnerOrAdmin) && (
+            {/* 🔥 2. BOTONES DE ACCIÓN (CTAs) AGRESIVOS */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto mt-4 sm:mt-0">
+              
+              {(!isOwnerOrAdmin) ? (
                 isSubscribed ? (
-                  <button disabled className="nm-inset text-yellow-500 border border-yellow-500/30 font-bold py-3 px-8 rounded-xl cursor-default w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
-                    <Star className="w-4 h-4 fill-yellow-500/20"/> Eres VIP
+                  <button disabled className="nm-inset text-yellow-500 border border-yellow-500/30 font-bold py-3.5 px-8 rounded-2xl cursor-default w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-widest text-sm shadow-inner">
+                    <Star className="w-5 h-5 fill-yellow-500/20"/> Eres VIP
                   </button>
                 ) : (
-                  <button onClick={handleSubscribe} className="nm-btn-primary py-3 px-8 rounded-xl w-full sm:w-auto flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                  <button onClick={handleSubscribe} className="bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-black py-3.5 px-10 rounded-2xl w-full sm:w-auto flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(20,184,166,0.3)] hover:scale-105 transition-all">
                     <Crown className="w-5 h-5"/> Suscribirse • ${(profile.monthlyPrice || 0).toFixed(2)}/mes
                   </button>
                 )
+              ) : (
+                <div className="nm-inset px-6 py-3.5 rounded-2xl border border-white/5 flex items-center gap-2">
+                  <Eye className="w-5 h-5 text-teal-500" /> <span className="text-sm font-bold text-gray-300">Tu Perfil Público</span>
+                </div>
+              )}
+
+              {currentUser?.id !== creator.id && (
+                <div className="flex gap-2 w-full sm:w-auto">
+                  {currentUser?.role !== 'ADMIN' && (
+                    <button 
+                      onClick={handleFollowToggle}
+                      className={`font-bold py-3.5 px-5 rounded-2xl transition-all flex items-center justify-center flex-1 sm:w-auto ${
+                        isFollowing ? 'nm-inset text-teal-400 border border-teal-500/30' : 'bg-[#151515] border border-white/5 text-gray-300 hover:text-white hover:border-white/20 shadow-md'
+                      }`}
+                      title={isFollowing ? "Dejar de seguir" : "Seguir gratis"}
+                    >
+                      {isFollowing ? <CheckCircle2 className="w-5 h-5"/> : <Plus className="w-5 h-5"/>}
+                    </button>
+                  )}
+                  
+                  <button onClick={handleMessageClick} title="Enviar Mensaje" className="bg-[#151515] border border-white/5 text-gray-300 hover:text-teal-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
+                    <MessageCircle className="w-5 h-5" />
+                  </button>
+                  
+                  {currentUser?.role !== 'ADMIN' && (
+                    <>
+                      <button onClick={() => { setTipRecipient(creator); setIsTipModalOpen(true); }} title="Dar Propina" className="bg-[#151515] border border-white/5 text-gray-300 hover:text-green-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
+                        <Coins className="w-5 h-5" />
+                      </button>
+                      <button onClick={() => {
+                        if(!currentUser) { alert("Inicia sesión para reportar."); router.push('/auth'); return; }
+                        setIsReportModalOpen(true);
+                      }} title="Reportar Usuario" className="bg-[#151515] border border-white/5 text-gray-500 hover:text-red-500 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
+                        <Flag className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
+                </div>
               )}
             </div>
           </div>
 
-          <div className="mb-10 nm-inset p-6 md:p-8 rounded-[2rem] border border-white/5 relative overflow-hidden">
-            <div className="flex gap-8 text-sm font-bold text-gray-300 border-b border-white/5 pb-6">
-              <div className="flex flex-col">
-                <span className="text-white text-xl font-black">{followersCount}</span>
-                <span className="text-gray-500 uppercase tracking-widest text-[10px] mt-1">Fans</span>
+          {/* 🔥 3. PANEL DE ESTADÍSTICAS NEUMÓRFICO Y BIO */}
+          <div className="mb-10 bg-[#0a0a0a] nm-inset rounded-[2rem] border border-white/5 relative overflow-hidden shadow-2xl p-1">
+            <div className="p-6 md:p-8">
+              <div className="flex gap-10 text-sm font-bold text-gray-300 border-b border-white/10 pb-6">
+                <div className="flex flex-col items-center">
+                  <span className="text-white text-2xl font-black drop-shadow-md">{followersCount}</span>
+                  <span className="text-teal-500 font-black uppercase tracking-widest text-[10px] mt-1">Fans</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-white text-2xl font-black drop-shadow-md">{posts.length}</span>
+                  <span className="text-blue-500 font-black uppercase tracking-widest text-[10px] mt-1">Posts</span>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-white text-xl font-black">{posts.length}</span>
-                <span className="text-gray-500 uppercase tracking-widest text-[10px] mt-1">Posts</span>
-              </div>
-            </div>
-            
-            <p className="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed font-medium pt-6">
-              {profile.bio || '✨ Bienvenido a mi espacio VIP.'}
-            </p>
+              
+              <p className="text-gray-300 whitespace-pre-wrap text-base leading-relaxed font-medium pt-6">
+                {profile.bio || '✨ Bienvenido a mi espacio VIP. Suscríbete para acceder a todo mi contenido exclusivo.'}
+              </p>
 
-            {/* BOTONES DE REDES SOCIALES */}
-            {(profile.instagram || profile.twitter || profile.website) && (
-              <div className="flex gap-4 mt-6 pt-6 border-t border-white/5">
-                {profile.instagram && (
-                  <a href={profile.instagram.startsWith('http') ? profile.instagram : `https://instagram.com/${profile.instagram}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-pink-500 transition-colors">
-                    <Instagram className="w-5 h-5" /> <span className="text-sm font-bold hidden sm:inline">Instagram</span>
-                  </a>
-                )}
-                {profile.twitter && (
-                  <a href={profile.twitter.startsWith('http') ? profile.twitter : `https://twitter.com/${profile.twitter}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-colors">
-                    <Twitter className="w-5 h-5" /> <span className="text-sm font-bold hidden sm:inline">Twitter</span>
-                  </a>
-                )}
-                {profile.website && (
-                  <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors">
-                    <Globe className="w-5 h-5" /> <span className="text-sm font-bold hidden sm:inline">Sitio Web</span>
-                  </a>
-                )}
-              </div>
-            )}
+              {/* 🔥 4. PÍLDORAS SOCIALES */}
+              {(profile.instagram || profile.twitter || profile.website) && (
+                <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-white/10">
+                  {profile.instagram && (
+                    <a href={profile.instagram.startsWith('http') ? profile.instagram : `https://instagram.com/${profile.instagram}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-[#151515] hover:bg-pink-500/10 text-gray-400 hover:text-pink-500 border border-white/5 hover:border-pink-500/30 px-4 py-2 rounded-full transition-all shadow-sm">
+                      <Instagram className="w-4 h-4" /> <span className="text-xs font-bold uppercase tracking-widest">Instagram</span>
+                    </a>
+                  )}
+                  {profile.twitter && (
+                    <a href={profile.twitter.startsWith('http') ? profile.twitter : `https://twitter.com/${profile.twitter}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-[#151515] hover:bg-blue-400/10 text-gray-400 hover:text-blue-400 border border-white/5 hover:border-blue-400/30 px-4 py-2 rounded-full transition-all shadow-sm">
+                      <Twitter className="w-4 h-4" /> <span className="text-xs font-bold uppercase tracking-widest">Twitter</span>
+                    </a>
+                  )}
+                  {profile.website && (
+                    <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-[#151515] hover:bg-teal-400/10 text-gray-400 hover:text-teal-400 border border-white/5 hover:border-teal-400/30 px-4 py-2 rounded-full transition-all shadow-sm">
+                      <Globe className="w-4 h-4" /> <span className="text-xs font-bold uppercase tracking-widest">Web</span>
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* PAQUETES EN OFERTA CON MINI GALERÍA INTERACTIVA */}
           {bundles.length > 0 && (
             <div className="mb-12 space-y-6 animate-fade-in">
               <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2">
-                <Package className="w-5 h-5 text-blue-500"/> Paquetes en Oferta
+                <Package className="w-5 h-5 text-teal-500"/> Paquetes en Oferta
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {bundles.map(bundle => {
@@ -485,8 +507,8 @@ export default function CreatorProfile() {
                     <div 
                       key={bundle.id} 
                       onClick={() => { if (!isOwnerOrAdmin && !isPurchased) handleBuyBundle(bundle); }} 
-                      className={`nm-btn p-6 rounded-3xl border border-white/5 group flex flex-col h-full transition-colors ${
-                        isPurchased ? 'cursor-default border-green-500/20 shadow-[inset_0_0_20px_rgba(34,197,94,0.05)]' : 'cursor-pointer hover:border-blue-500/30'
+                      className={`bg-[#0a0a0a] p-6 rounded-3xl border border-white/5 group flex flex-col h-full transition-colors shadow-lg ${
+                        isPurchased ? 'cursor-default border-green-500/20 shadow-[inset_0_0_20px_rgba(34,197,94,0.05)] nm-inset' : 'cursor-pointer hover:border-teal-500/30 hover:shadow-[0_10px_30px_rgba(20,184,166,0.1)]'
                       }`}
                     >
                       <h3 className="text-xl font-bold text-white">{bundle.title}</h3>
@@ -512,7 +534,7 @@ export default function CreatorProfile() {
                                     }}
                                   />
                                 ) : (
-                                  <div className="w-full h-full bg-blue-900/20"></div>
+                                  <div className="w-full h-full bg-teal-900/20"></div>
                                 )}
                               </div>
                             ))}
@@ -531,16 +553,16 @@ export default function CreatorProfile() {
                       )}
 
                       <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
-                        <span className="text-xs font-bold text-blue-400 nm-inset px-3 py-1.5 rounded-md border border-blue-500/20">{bundle.posts?.length} Archivos</span>
+                        <span className="text-xs font-bold text-teal-400 nm-inset px-3 py-1.5 rounded-md border border-teal-500/20">{bundle.posts?.length} Archivos</span>
                         
                         {isOwnerOrAdmin ? (
-                          <button className="nm-btn-primary py-2.5 px-6 text-sm bg-red-600">Ver Paquete</button>
+                          <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors">Ver Paquete</button>
                         ) : isPurchased ? (
-                          <button className="nm-inset border border-green-500/30 text-green-500 py-2.5 px-6 text-sm flex items-center justify-center gap-2 font-bold cursor-default" onClick={(e) => e.stopPropagation()}>
+                          <button className="nm-inset border border-green-500/30 text-green-500 py-2.5 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-bold cursor-default" onClick={(e) => e.stopPropagation()}>
                             <CheckCircle2 className="w-4 h-4" /> Adquirido
                           </button>
                         ) : (
-                          <button className="nm-btn-primary py-2.5 px-6 text-sm">Comprar ${(bundle.price || 0).toFixed(2)}</button>
+                          <button className="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors shadow-lg shadow-teal-500/20">Comprar ${(bundle.price || 0).toFixed(2)}</button>
                         )}
                       </div>
                     </div>
@@ -550,10 +572,28 @@ export default function CreatorProfile() {
             </div>
           )}
 
+          {/* 🔥 5. TABS DE FILTRO */}
+          {posts.length > 0 && (
+            <div className="flex overflow-x-auto custom-scrollbar gap-2 mb-6 pb-2">
+              <button onClick={() => setActiveTab('all')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'all' ? 'bg-white text-black shadow-md' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
+                <LayoutGrid className="w-4 h-4" /> Todos los posts
+              </button>
+              <button onClick={() => setActiveTab('photos')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'photos' ? 'bg-teal-500 text-white shadow-[0_0_15px_rgba(20,184,166,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
+                <ImageIcon className="w-4 h-4" /> Fotos
+              </button>
+              <button onClick={() => setActiveTab('videos')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'videos' ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
+                <Video className="w-4 h-4" /> Videos
+              </button>
+              <button onClick={() => setActiveTab('locked')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'locked' ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
+                <Lock className="w-4 h-4" /> Exclusivos
+              </button>
+            </div>
+          )}
+
           {/* EL RESTO DE LOS POSTS EN EL MURO */}
           <div className="space-y-6">
-            {posts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5">Aún no hay publicaciones.</div> : (
-              posts.map((post) => {
+            {filteredPosts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5 font-medium">No hay publicaciones en esta categoría.</div> : (
+              filteredPosts.map((post) => {
                 const isPostUnlocked = isOwnerOrAdmin || post.hasAccess;
                 const rootComments = buildCommentTree(post.comments || []);
                 const totalComments = post._count?.comments || 0;
@@ -564,8 +604,8 @@ export default function CreatorProfile() {
                   <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
                     <div className="flex justify-between items-center relative z-10">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full nm-inset flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border border-white/5">
-                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border-2 border-teal-500/30">
+                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-teal-500 to-blue-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
                         </div>
                         <div>
                           <h3 className="text-white font-bold text-base">{creator.username}</h3>
@@ -577,7 +617,6 @@ export default function CreatorProfile() {
                     </div>
                     
                     <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 mt-4 overflow-hidden group nm-inset">
-                      {/* 🔥 MEJORA DE VISIBILIDAD Y SOPORTE PARA VIDEOS BORROSOS */}
                       {post.mediaUrl && (
                         post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
                           <video src={getImageUrl(post.mediaUrl)} onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
@@ -587,14 +626,14 @@ export default function CreatorProfile() {
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
                       
-                      <div className="relative z-10 flex flex-col items-center space-y-4 bg-black/30 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md">
-                        <Lock className="w-14 h-14 text-red-500" />
+                      <div className="relative z-10 flex flex-col items-center space-y-4 bg-black/40 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
+                        <Lock className="w-14 h-14 text-red-500 drop-shadow-md" />
                         {!isSubscribed && !post.isPPV ? (
-                          <button onClick={(e) => { e.stopPropagation(); handleSubscribe(); }} className="mt-2 nm-btn-primary py-3 px-8 text-sm flex items-center gap-2">
+                          <button onClick={(e) => { e.stopPropagation(); handleSubscribe(); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
                             <Crown className="w-4 h-4"/> Suscríbete para ver
                           </button>
                         ) : (
-                          <button onClick={(e) => { e.stopPropagation(); handleUnlockPPV(post); }} className="mt-2 nm-btn-primary py-3 px-8 text-sm flex items-center gap-2">
+                          <button onClick={(e) => { e.stopPropagation(); handleUnlockPPV(post); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
                             <Unlock className="w-4 h-4"/> Desbloquear por ${(post.price || 0).toFixed(2)}
                           </button>
                         )}
@@ -604,7 +643,6 @@ export default function CreatorProfile() {
                 ) : (
                   <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
                     
-                    {/* EL ADMIN TAMBIÉN PUEDE BORRAR POSTS */}
                     {isOwnerOrAdmin && (
                       <button 
                         onClick={() => handleDeletePost(post.id)}
@@ -617,8 +655,8 @@ export default function CreatorProfile() {
 
                     <div className="flex justify-between items-center pr-12">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full nm-inset flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border border-white/5">
-                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-blue-500 to-teal-400 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border-2 border-teal-500/30">
+                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-teal-500 to-blue-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
                         </div>
                         <div>
                           <h3 className="text-white font-bold text-base">{creator.username}</h3>
@@ -634,7 +672,6 @@ export default function CreatorProfile() {
                     </div>
                     {post.content && <p className="text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{post.content}</p>}
                     
-                    {/* 🔥 AGREGAMOS SOPORTE PARA REPRODUCIR VIDEOS Y AUDIOS DESBLOQUEADOS */}
                     {post.mediaUrl && (
                       <div className="mt-4 rounded-2xl overflow-hidden border border-white/5 nm-inset relative bg-black/50 flex justify-center">
                         {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
@@ -669,7 +706,7 @@ export default function CreatorProfile() {
                             })}
                           </div>
                           
-                          <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-4 py-2.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-blue-500 border-blue-500/30' : 'text-gray-400 hover:text-blue-400 hover:border-white/20'}`}>
+                          <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-4 py-2.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-teal-500 border-teal-500/30' : 'text-gray-400 hover:text-teal-400 hover:border-white/20'}`}>
                             <MessageCircle className="w-4 h-4" />
                             <span className="text-sm">{totalComments}</span>
                           </button>
@@ -686,7 +723,7 @@ export default function CreatorProfile() {
                       {commentingPostId === post.id && (
                         <div className="flex flex-col gap-2 animate-fade-in mt-2">
                           {replyingToCommentId && (
-                            <div className="flex justify-between items-center bg-blue-900/20 px-3 py-1 text-xs text-blue-400 rounded-lg">
+                            <div className="flex justify-between items-center bg-teal-900/20 px-3 py-1 text-xs text-teal-400 rounded-lg">
                               <span>Respondiendo al comentario...</span>
                               <button onClick={() => setReplyingToCommentId(null)}><X className="w-3 h-3"/></button>
                             </div>
@@ -697,13 +734,13 @@ export default function CreatorProfile() {
                               value={commentText} 
                               onChange={(e) => setCommentText(e.target.value)} 
                               placeholder="Escribe un comentario..." 
-                              className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-blue-500/50" 
+                              className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-teal-500/50" 
                               onKeyDown={(e) => e.key === 'Enter' && submitComment(post.id)}
                             />
                             <button 
                               onClick={() => submitComment(post.id)} 
                               disabled={isSubmittingComment || !commentText.trim()} 
-                              className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white hover:bg-blue-500 transition-colors shrink-0 disabled:opacity-50"
+                              className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white hover:bg-teal-500 transition-colors shrink-0 disabled:opacity-50"
                             >
                               <Send className="w-4 h-4" />
                             </button>
@@ -751,9 +788,8 @@ export default function CreatorProfile() {
             onContinue={async (amount, message) => { 
               setIsTipModalOpen(false); 
               try { 
-                // 1. Enviamos la orden al servidor
                 const res = await api.post('/payments/create-intent', { 
-                  amount: Number(amount), // Forzamos número
+                  amount: Number(amount),
                   type: 'TIP', 
                   creatorId: tipRecipient.id, 
                   description: `Propina de $${amount}: ${message}` 
@@ -762,16 +798,13 @@ export default function CreatorProfile() {
                 if (res.data.success) { 
                   alert('✅ ¡Propina enviada con Covra Pay!'); 
 
-                  // 1. Calculamos el nuevo saldo
                   const saldoActual = parseFloat(currentUser.walletBalance) || 0;
                   const nuevoSaldo = saldoActual - Number(amount);
                   
-                  // 2. Actualizamos el estado de esta página
                   const usuarioActualizado = { ...currentUser, walletBalance: nuevoSaldo };
                   setCurrentUser(usuarioActualizado);
                   localStorage.setItem('user', JSON.stringify(usuarioActualizado));
                   
-                  // 3. 🎯 LA VÍA PROFESIONAL: Emitimos un evento global silencioso
                   window.dispatchEvent(new CustomEvent('covraPayBalanceUpdate', { 
                     detail: nuevoSaldo 
                   }));
@@ -828,7 +861,7 @@ export default function CreatorProfile() {
           </div>
         )}
 
-        {/* 🔥 NUEVO MODAL DE REPORTES */}
+        {/* NUEVO MODAL DE REPORTES */}
         {isReportModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
             <div className="bg-[#111] p-6 sm:p-8 rounded-3xl border border-white/10 w-full max-w-md shadow-2xl relative">
