@@ -18,6 +18,7 @@ import {
   LogOut,
   TrendingUp, 
   Ticket,
+  Settings,
   Menu // <-- Icono extra por si en el futuro agregas un menú "Más"
 } from 'lucide-react';
 
@@ -124,20 +125,42 @@ export default function Sidebar() {
             );
           })}
 
-          {/* 👑 BOTÓN MODO DIOS (ADMIN) */}
+          {/* 👑 SECCIÓN MODO DIOS (ADMIN) */}
           {user.role === 'ADMIN' && (
-            <div className="mt-8 pt-6 border-t border-white/5">
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-4 px-4">Panel de Control</p>
+            <div className="mt-8 pt-6 border-t border-white/5 space-y-2">
+              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 px-4">Centro de Mando</p>
+              
+              {/* Botón Principal Admin (Usuarios/Stats) */}
               <Link 
                 href="/dashboard/admin"
-                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${
-                  pathname.includes('/dashboard/admin') 
-                    ? 'nm-inset text-red-500 border border-red-500/20' 
-                    : 'nm-btn text-red-500/80 hover:text-red-400'
+                className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${
+                  pathname === '/dashboard/admin' ? 'nm-inset text-red-500' : 'nm-btn text-red-500/80 hover:text-red-400'
                 }`}
               >
-                <Crown className="w-5 h-5" strokeWidth={2.5} />
-                <span className="text-sm tracking-wide">Modo Dios</span>
+                <Crown className="w-5 h-5" />
+                <span className="text-sm">Modo Dios</span>
+              </Link>
+
+              {/* 💸 Botón de Payouts (Pagos) */}
+              <Link 
+                href="/admin/payouts"
+                className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${
+                  pathname === '/admin/payouts' ? 'nm-inset text-orange-500' : 'nm-btn text-orange-500/80 hover:text-orange-400'
+                }`}
+              >
+                <Wallet className="w-5 h-5" />
+                <span className="text-sm">Pagos Pendientes</span>
+              </Link>
+
+              {/* ⚙️ NUEVO: Botón de Configuración (Mensajes de Bienvenida) */}
+              <Link 
+                href="/admin/settings"
+                className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${
+                  pathname === '/admin/settings' ? 'nm-inset text-purple-500' : 'nm-btn text-purple-500/80 hover:text-purple-400'
+                }`}
+              >
+                <Settings className="w-5 h-5" />
+                <span className="text-sm">Mensajes de Bienvenida</span>
               </Link>
             </div>
           )}
