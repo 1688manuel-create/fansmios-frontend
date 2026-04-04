@@ -290,7 +290,7 @@ export default function WalletDashboard() {
                 <CheckCircle2 className="w-4 h-4 text-green-400" /> Balance Disponible
               </h3>
               <p className="text-5xl font-black text-white z-10 drop-shadow-[0_0_10px_rgba(34,197,94,0.2)]">
-                ${availableBalance.toFixed(2)}
+                ${Number(availableBalance || 0).toFixed(2)}
               </p>
               <p className="text-[10px] text-green-400 mt-4 font-bold uppercase tracking-widest nm-inset bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-md inline-flex w-fit z-10">
                 Fondos listos para retirar
@@ -306,7 +306,7 @@ export default function WalletDashboard() {
                 <ShieldCheck className="w-4 h-4 text-yellow-500" /> En Cuarentena (Pending)
               </h3>
               <p className="text-5xl font-black text-white z-10">
-                ${pendingBalance.toFixed(2)}
+                ${Number(totalEarned || 0).toFixed(2)}
               </p>
               <p className="text-[10px] text-yellow-500 mt-4 font-bold uppercase tracking-widest z-10">
                 Liberación automática Anti-Fraude

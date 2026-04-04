@@ -223,7 +223,7 @@ export default function DashboardIndex() {
                 </h3>
                 <div className="flex items-baseline justify-center sm:justify-start gap-2">
                   <span className="text-5xl font-black text-white font-mono drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">
-                    ${user?.walletBalance || '0.00'}
+                    ${Number(user?.walletBalance || 0).toFixed(2)}
                   </span>
                   <span className="text-green-500 font-bold tracking-widest">USD</span>
                 </div>
