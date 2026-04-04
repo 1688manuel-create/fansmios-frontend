@@ -21,7 +21,7 @@ import { Track } from 'livekit-client';
 import '@livekit/components-styles';
 
 // 🔥 ICONOS PREMIUM
-import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart, Mic, Camera as CameraIcon, MoreVertical } from 'lucide-react';
+import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart } from 'lucide-react';
 
 const SOCKET_URL = 'https://api.fansmio.com';
 
@@ -122,7 +122,6 @@ export default function LiveRoom() {
     });
   };
 
-  // 🔥 ANIMACIÓN DE CORAZONES NIVEL TIKTOK
   const triggerHeart = () => {
     if (!heartsContainerRef.current) return;
     const el = document.createElement('div');
@@ -130,7 +129,6 @@ export default function LiveRoom() {
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
     el.innerHTML = randomEmoji;
     
-    // Variables aleatorias para la curva de vuelo
     const randomLeft = Math.floor(Math.random() * 40) - 20; 
     const randomDuration = (Math.random() * 1.5 + 2).toFixed(2);
     const randomSize = Math.floor(Math.random() * 10) + 20;
@@ -242,7 +240,6 @@ export default function LiveRoom() {
   return (
     <div className="fixed inset-0 bg-black text-white font-sans overflow-hidden h-[100dvh] w-full">
       
-      {/* 🔥 CSS LOCAL PARA ANIMACIÓN DE CORAZONES TIKTOK */}
       <style>{`
         @keyframes floatUpAndFade {
           0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0; }
@@ -258,21 +255,151 @@ export default function LiveRoom() {
         .custom-mask { -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 100%); }
       `}</style>
 
-      {/* 🎬 VIDEO LAYER EDGE-TO-EDGE */}
+      {/* 🎬 VIDEO LAYER Y UI INMERSIVA */}
       <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full" onContextMenu={(e) => e.preventDefault()}>
         {hasAccess && liveKitToken ? (
-          <LiveKitRoom video={isCreatorOrAdmin ? isLiveActive : false} audio={isCreatorOrAdmin ? isLiveActive : false} token={liveKitToken} serverUrl="wss://live.fansmio.com" className="w-full h-full">
+          <LiveKitRoom video={isCreatorOrAdmin ? isLiveActive : false} audio={isCreatorOrAdmin ? isLiveActive : false} token={liveKitToken} serverUrl="wss://live.fansmio.com" className="w-full h-full relative">
             <ParticipantsTracker onUpdate={setConnectedUsers} />
-            <StreamStage hasControl={isCreatorOrAdmin && isLiveActive} />
+            <StreamStage />
             <RoomAudioRenderer />
+
+            {/* 💎 UI INMERSIVA (DENTRO DEL ROOM) */}
+            <div className="absolute inset-0 z-10 flex flex-col justify-between pointer-events-none pb-safe">
+              
+              {/* DEGRADADOS (Fondo oscuro arriba y abajo para que se lean las letras) */}
+              <div className="absolute top-0 w-full h-32 bg-gradient-to-b from-black/80 to-transparent pointer-events-none -z-10"></div>
+              <div className="absolute bottom-0 w-full h-64 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none -z-10"></div>
+              
+              {/* 🔝 TOP HUD (Píldora) */}
+              <div className="pt-4 px-4 flex justify-between items-start pointer-events-auto">
+                <div className="flex items-center bg-black/40 backdrop-blur-md rounded-full p-1 pr-3 border border-white/10 shadow-lg cursor-pointer hover:bg-black/50 transition-colors">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center font-black text-white shadow-inner overflow-hidden border border-white/20 mr-2">
+                    {streamData.creator?.profileImage ? <img src={streamData.creator.profileImage} className="w-full h-full object-cover" /> : streamData.creator?.username?.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex flex-col mr-3">
+                    <span className="text-sm font-bold leading-tight text-white">{streamData.creator?.username || 'Creador'}</span>
+                    <span className="text-[10px] text-gray-300 font-medium">{actualViewers} espectando</span>
+                  </div>
+                  {!isCreatorOrAdmin && (
+                    <button className="bg-teal-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider hover:scale-105 transition-transform">Seguir</button>
+                  )}
+                </div>
+
+                <div className="flex flex-col items-end gap-2">
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setShowViewersModal(true)} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg">
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button onClick={isCreatorOrAdmin ? handleEndStream : () => router.push('/explore')} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded-full text-gray-300 backdrop-blur-sm border border-white/5">{uptime}</span>
+                </div>
+              </div>
+
+              {/* 🏆 TOP DONATORS (Derecha Medio) */}
+              <div className="absolute right-4 top-28 flex flex-col items-end gap-2 pointer-events-auto">
+                {topDonators.length > 0 && (
+                  <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-yellow-500/20 shadow-lg min-w-[100px]">
+                    <div className="flex items-center justify-center gap-1 mb-1 border-b border-white/10 pb-1">
+                      <Trophy className="w-3 h-3 text-yellow-400" /> <span className="text-[9px] text-yellow-400 font-black uppercase tracking-widest">Top</span>
+                    </div>
+                    {topDonators.map((u, i) => (
+                      <div key={i} className="text-[10px] flex items-center justify-between gap-3 mt-1">
+                        <span className="text-white font-bold truncate max-w-[50px]">{u.username}</span>
+                        <span className="text-teal-400 font-mono">${u.amount}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {streak > 1 && (
+                  <div className="bg-orange-500/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-orange-500/50 flex items-center gap-1.5 animate-pulse mt-2">
+                    <Zap className="w-3 h-3 text-orange-400 fill-orange-500" />
+                    <span className="text-orange-400 font-black text-xs">Combo x{streak}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* 🌌 EFECTO DE REGALO GIGANTE */}
+              {giftEffect && <GiftEffectOverlay giftEffect={giftEffect} />}
+
+              {/* 💬 ÁREA INFERIOR (Chat y Controles) */}
+              <div className="w-full px-4 pb-4 md:w-[500px] pointer-events-auto relative z-20">
+                
+                <div ref={heartsContainerRef} className="absolute bottom-16 right-4 w-16 h-64 pointer-events-none overflow-visible z-0" />
+
+                {/* Chat Flotante */}
+                <div className="max-h-[35vh] overflow-y-auto flex flex-col gap-2 custom-scrollbar pb-2 custom-mask pr-14 relative z-10">
+                  {messages.map((msg: any, i: number) => {
+                    if (msg.isSystem) return <div key={i} className="text-[11px] text-teal-400/90 font-bold px-3 py-1 bg-black/30 backdrop-blur-md rounded-xl w-fit border border-teal-500/20">{msg.content}</div>;
+                    
+                    const gift = msg.isDonation ? GIFTS.find(g => g.amount === msg.amount) : null;
+                    const canModerate = isCreatorOrAdmin && msg.user?.id !== user?.id;
+
+                    return (
+                      <div key={i} className={`text-[13px] px-3 py-1.5 rounded-2xl w-fit max-w-[100%] group/msg flex flex-col leading-tight animate-fade-in ${msg.isDonation ? 'bg-gradient-to-r from-teal-500/30 to-black/30 border border-teal-500/50 backdrop-blur-md shadow-lg' : 'bg-black/30 backdrop-blur-sm'}`}>
+                        <div className="flex items-center gap-1.5">
+                          {msg.isDonation && <Diamond className="w-3 h-3 text-teal-300 fill-teal-300" />}
+                          <span 
+                            onClick={() => canModerate && handleKickUser(msg.user?.id, msg.user?.username)}
+                            className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'} ${canModerate ? 'cursor-pointer hover:text-red-500' : ''}`}
+                          >
+                            {msg.user?.username}:
+                          </span>
+                          {canModerate && (
+                            <button onClick={() => handleKickUser(msg.user?.id, msg.user?.username)} className="opacity-0 group-hover/msg:opacity-100 transition-opacity text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-black uppercase ml-1">KICK</button>
+                          )}
+                        </div>
+                        <span className={`mt-0.5 ${gift ? gift.style : 'text-white font-medium'} drop-shadow-md`}>
+                          {msg.content}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  <div ref={chatEndRef} />
+                </div>
+
+                {/* 🔥 Input Bar Estilo TikTok y CONTROLES CREADOR */}
+                <div className="flex gap-2 items-center mt-2 relative z-30">
+                  <div className="flex-1 bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center px-4 py-2 shadow-lg focus-within:border-teal-500/50 transition-colors">
+                    <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Añadir comentario..." className="bg-transparent text-white text-sm w-full outline-none placeholder-gray-300 font-medium" />
+                    {chatInput.trim() && (
+                      <button onClick={handleSendMessage} className="text-teal-400 hover:text-teal-300 transition-colors p-1"><Send className="w-4 h-4" /></button>
+                    )}
+                  </div>
+                  
+                  {/* SI ES FAN: Ve Diamante y Corazón */}
+                  {!isCreatorOrAdmin && (
+                    <button onClick={() => setShowGiftMenu(true)} className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.5)] hover:scale-105 transition-transform shrink-0">
+                      <Diamond className="w-5 h-5 text-white fill-white" />
+                    </button>
+                  )}
+                  
+                  {!isCreatorOrAdmin && (
+                    <button onClick={handleSendHeart} className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center shadow-[0_0_15px_rgba(20,184,166,0.5)] hover:scale-105 transition-transform active:scale-95 shrink-0">
+                      <Heart className="w-5 h-5 text-white fill-white" />
+                    </button>
+                  )}
+
+                  {/* 🔥 SI ES CREADOR: Ve su Micrófono y Cámara alineados aquí */}
+                  {isCreatorOrAdmin && isLiveActive && (
+                    <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center shadow-lg px-1 py-0.5">
+                      <ControlBar 
+                        variation="minimal" 
+                        controls={{ microphone: true, camera: true, screenShare: false, leave: false, chat: false }} 
+                        className="flex gap-1 [&_.lk-button]:!bg-transparent [&_.lk-button]:!text-white [&_.lk-button:hover]:!bg-white/20 [&_.lk-button]:!rounded-full [&_.lk-button]:!p-2 [&_.lk-button]:!m-0 [&_.lk-button]:!w-10 [&_.lk-button]:!h-10 [&_.lk-button]:!flex [&_.lk-button]:!items-center [&_.lk-button]:!justify-center" 
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
           </LiveKitRoom>
         ) : (
           <div className="w-full h-full flex items-center justify-center opacity-30"><Tv className="w-16 h-16 animate-pulse" /></div>
         )}
-        
-        {/* DEGRADADOS PARA LEGIBILIDAD (Arriba y Abajo) */}
-        <div className="absolute top-0 w-full h-32 bg-gradient-to-b from-black/80 to-transparent pointer-events-none"></div>
-        <div className="absolute bottom-0 w-full h-64 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none"></div>
       </div>
 
       {/* 🛑 PAYWALL LAYER */}
@@ -281,133 +408,11 @@ export default function LiveRoom() {
       {/* 📺 PREPARATION LAYER (Solo Creador) */}
       {isCreatorOrAdmin && !isLiveActive && hasAccess && <PreparationLayer onStart={() => setIsLiveActive(true)} />}
 
-      {/* 💎 UI INMERSIVA TIKTOK */}
-      {hasAccess && (
-        <div className="absolute inset-0 z-10 flex flex-col justify-between pointer-events-none pb-safe">
-          
-          {/* 🔝 TOP HUD (Píldora) */}
-          <div className="pt-4 px-4 flex justify-between items-start pointer-events-auto">
-            {/* Píldora de Host */}
-            <div className="flex items-center bg-black/40 backdrop-blur-md rounded-full p-1 pr-3 border border-white/10 shadow-lg cursor-pointer hover:bg-black/50 transition-colors">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center font-black text-white shadow-inner overflow-hidden border border-white/20 mr-2">
-                {streamData.creator?.profileImage ? <img src={streamData.creator.profileImage} className="w-full h-full object-cover" /> : streamData.creator?.username?.charAt(0).toUpperCase()}
-              </div>
-              <div className="flex flex-col mr-3">
-                <span className="text-sm font-bold leading-tight text-white">{streamData.creator?.username || 'Creador'}</span>
-                <span className="text-[10px] text-gray-300 font-medium">{actualViewers} espectando</span>
-              </div>
-              {!isCreatorOrAdmin && (
-                <button className="bg-teal-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider hover:scale-105 transition-transform">Seguir</button>
-              )}
-            </div>
-
-            {/* Acciones Derecha */}
-            <div className="flex flex-col items-end gap-2">
-              <div className="flex items-center gap-2">
-                <button onClick={() => setShowViewersModal(true)} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg">
-                  <Eye className="w-4 h-4" />
-                </button>
-                <button onClick={isCreatorOrAdmin ? handleEndStream : () => router.push('/explore')} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-              <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded-full text-gray-300 backdrop-blur-sm border border-white/5">{uptime}</span>
-            </div>
-          </div>
-
-          {/* 🏆 TOP DONATORS (Derecha Medio) */}
-          <div className="absolute right-4 top-28 flex flex-col items-end gap-2 pointer-events-auto">
-            {topDonators.length > 0 && (
-              <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-yellow-500/20 shadow-lg min-w-[100px]">
-                <div className="flex items-center justify-center gap-1 mb-1 border-b border-white/10 pb-1">
-                  <Trophy className="w-3 h-3 text-yellow-400" /> <span className="text-[9px] text-yellow-400 font-black uppercase tracking-widest">Top</span>
-                </div>
-                {topDonators.map((u, i) => (
-                  <div key={i} className="text-[10px] flex items-center justify-between gap-3 mt-1">
-                    <span className="text-white font-bold truncate max-w-[50px]">{u.username}</span>
-                    <span className="text-teal-400 font-mono">${u.amount}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {streak > 1 && (
-              <div className="bg-orange-500/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-orange-500/50 flex items-center gap-1.5 animate-pulse mt-2">
-                <Zap className="w-3 h-3 text-orange-400 fill-orange-500" />
-                <span className="text-orange-400 font-black text-xs">Combo x{streak}</span>
-              </div>
-            )}
-          </div>
-
-          {/* 🌌 EFECTO DE REGALO GIGANTE */}
-          {giftEffect && <GiftEffectOverlay giftEffect={giftEffect} />}
-
-          {/* 💬 ÁREA INFERIOR (Chat y Controles) */}
-          <div className="w-full px-4 pb-4 md:w-[500px] pointer-events-auto relative z-20">
-            
-            {/* Contenedor invisible para la lluvia de corazones */}
-            <div ref={heartsContainerRef} className="absolute bottom-16 right-4 w-16 h-64 pointer-events-none overflow-visible z-0" />
-
-            {/* Chat Flotante */}
-            <div className="max-h-[35vh] overflow-y-auto flex flex-col gap-2 custom-scrollbar pb-2 custom-mask pr-14 relative z-10">
-              {messages.map((msg: any, i: number) => {
-                if (msg.isSystem) return <div key={i} className="text-[11px] text-teal-400/90 font-bold px-3 py-1 bg-black/30 backdrop-blur-md rounded-xl w-fit border border-teal-500/20">{msg.content}</div>;
-                
-                const gift = msg.isDonation ? GIFTS.find(g => g.amount === msg.amount) : null;
-                const canModerate = isCreatorOrAdmin && msg.user?.id !== user?.id;
-
-                return (
-                  <div key={i} className={`text-[13px] px-3 py-1.5 rounded-2xl w-fit max-w-[100%] group/msg flex flex-col leading-tight animate-fade-in ${msg.isDonation ? 'bg-gradient-to-r from-teal-500/30 to-black/30 border border-teal-500/50 backdrop-blur-md shadow-lg' : 'bg-black/30 backdrop-blur-sm'}`}>
-                    <div className="flex items-center gap-1.5">
-                      {msg.isDonation && <Diamond className="w-3 h-3 text-teal-300 fill-teal-300" />}
-                      <span 
-                        onClick={() => canModerate && handleKickUser(msg.user?.id, msg.user?.username)}
-                        className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'} ${canModerate ? 'cursor-pointer hover:text-red-500' : ''}`}
-                      >
-                        {msg.user?.username}:
-                      </span>
-                      {canModerate && (
-                        <button onClick={() => handleKickUser(msg.user?.id, msg.user?.username)} className="opacity-0 group-hover/msg:opacity-100 transition-opacity text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-black uppercase ml-1">KICK</button>
-                      )}
-                    </div>
-                    <span className={`mt-0.5 ${gift ? gift.style : 'text-white font-medium'} drop-shadow-md`}>
-                      {msg.content}
-                    </span>
-                  </div>
-                );
-              })}
-              <div ref={chatEndRef} />
-            </div>
-
-            {/* Input Bar Estilo TikTok */}
-            <div className="flex gap-2 items-center mt-2 relative z-30">
-              <div className="flex-1 bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center px-4 py-2 shadow-lg focus-within:border-teal-500/50 transition-colors">
-                <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Añadir comentario..." className="bg-transparent text-white text-sm w-full outline-none placeholder-gray-300 font-medium" />
-                {chatInput.trim() && (
-                  <button onClick={handleSendMessage} className="text-teal-400 hover:text-teal-300 transition-colors p-1"><Send className="w-4 h-4" /></button>
-                )}
-              </div>
-              
-              {!isCreatorOrAdmin && (
-                <button onClick={() => setShowGiftMenu(true)} className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.5)] hover:scale-105 transition-transform shrink-0">
-                  <Diamond className="w-5 h-5 text-white fill-white" />
-                </button>
-              )}
-              
-              {!isCreatorOrAdmin && (
-                <button onClick={handleSendHeart} className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center shadow-[0_0_15px_rgba(20,184,166,0.5)] hover:scale-105 transition-transform active:scale-95 shrink-0">
-                  <Heart className="w-5 h-5 text-white fill-white" />
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 🎁 DRAWER DE REGALOS (Desliza desde abajo) */}
       {showGiftMenu && (
         <>
-          <div className="absolute inset-0 bg-black/40 z-40" onClick={() => setShowGiftMenu(false)}></div>
-          <div className="absolute bottom-0 left-0 right-0 md:left-auto md:right-4 md:bottom-4 md:w-[400px] bg-[#111]/95 backdrop-blur-2xl border-t border-x md:border-y border-white/10 rounded-t-3xl md:rounded-3xl p-6 pb-8 animate-drawer shadow-2xl z-50">
+          <div className="absolute inset-0 bg-black/40 z-40 pointer-events-auto" onClick={() => setShowGiftMenu(false)}></div>
+          <div className="absolute bottom-0 left-0 right-0 md:left-auto md:right-4 md:bottom-4 md:w-[400px] bg-[#111]/95 backdrop-blur-2xl border-t border-x md:border-y border-white/10 rounded-t-3xl md:rounded-3xl p-6 pb-8 animate-drawer shadow-2xl z-50 pointer-events-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-white font-black text-lg flex items-center gap-2"><Diamond className="w-5 h-5 text-teal-400"/> Enviar Regalo</h3>
               <div className="text-xs bg-white/10 px-3 py-1.5 rounded-full font-mono text-teal-400">Saldo: ${(user?.walletBalance || 0).toFixed(2)}</div>
@@ -487,7 +492,7 @@ function PreparationLayer({ onStart }: { onStart: () => void }) {
 
 function PaywallLayer({ price, isProcessing, onBuy }: { price: number, isProcessing: boolean, onBuy: () => void }) {
   return (
-    <div className="absolute inset-0 z-50 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4">
+    <div className="absolute inset-0 z-50 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 pointer-events-auto">
       <div className="text-center p-8 bg-[#0a0a0a] rounded-[2rem] border border-white/5 shadow-[0_0_80px_rgba(0,0,0,1)] max-w-sm w-full relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 to-blue-500"></div>
         <Lock className="w-14 h-14 text-teal-500 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(20,184,166,0.4)]" />
@@ -549,7 +554,7 @@ function ViewersModal({ connectedUsers, onClose }: { connectedUsers: any[], onCl
   );
 }
 
-function StreamStage({ hasControl }: { hasControl: boolean }) {
+function StreamStage() {
   const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: false }]);
   const mainTrack = tracks.slice(0, 1);
   
@@ -560,15 +565,6 @@ function StreamStage({ hasControl }: { hasControl: boolean }) {
           <ParticipantTile />
         </GridLayout>
       </div>
-      
-      {/* 🎛️ CONTROLES OCULTOS DEL CREADOR */}
-      {hasControl && (
-        <div className="absolute top-20 right-4 z-50 flex flex-col gap-3">
-          <div className="bg-black/40 backdrop-blur-md border border-white/10 p-1.5 rounded-full opacity-30 hover:opacity-100 transition-opacity flex flex-col gap-2">
-            <ControlBar variation="minimal" controls={{ microphone: true, camera: true, screenShare: false, leave: false, chat: false }} className="[&_.lk-button]:!bg-transparent [&_.lk-button]:!text-white [&_.lk-button:hover]:!bg-white/20 [&_.lk-button]:!rounded-full [&_.lk-button]:!p-2" />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
