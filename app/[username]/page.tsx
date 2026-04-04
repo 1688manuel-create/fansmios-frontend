@@ -8,6 +8,8 @@ import PaymentModal from '../../components/PaymentModal';
 import TipModal from '../../components/TipModal';
 import AppLayout from '../../components/AppLayout';
 import { paymentService } from '../../lib/paymentService';
+import SeriesTab from '../../components/profile/SeriesTab';
+import { PlaySquare } from 'lucide-react';
 
 import { 
   ArrowLeft, CheckCircle2, MessageCircle, Star, Lock, 
@@ -81,7 +83,7 @@ export default function CreatorProfile() {
   const [posts, setPosts] = useState<any[]>([]);
   
   // 🔥 ESTADO PARA LOS TABS DEL PERFIL
-  const [activeTab, setActiveTab] = useState<'all' | 'photos' | 'videos' | 'locked'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'photos' | 'videos' | 'locked' | 'series'>('all');
 
   const [bundles, setBundles] = useState<any[]>([]);
 
@@ -114,6 +116,26 @@ export default function CreatorProfile() {
     
     fetchProfileAndPosts(false);
   }, [username]);
+
+  // Estado para guardar las series
+  const [series, setSeries] = useState<any[]>([]);
+
+  // Función para extraer los cursos del backend
+  const fetchSeries = async () => {
+    try {
+      // Reemplaza params.username por como sea que estés obteniendo el nombre de la URL
+      const res = await api.get(`/series/creator/${params.username}`);
+      setSeries(res.data.series || []);
+    } catch (error) {
+      console.error("Error cargando la academia:", error);
+    }
+  };
+
+  // Inyecta fetchSeries() adentro de tu useEffect principal para que cargue al entrar a la página
+  useEffect(() => {
+    // ... tus otras cargas (fetchProfile, etc.)
+    fetchSeries();
+  }, [params.username]);
 
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
@@ -572,9 +594,12 @@ export default function CreatorProfile() {
             </div>
           )}
 
-          {/* 🔥 5. TABS DE FILTRO */}
-          {posts.length > 0 && (
+          {/* 🔥 5. TABS DE FILTRO CON LA ACADEMIA INCLUIDA */}
+          {(posts.length > 0 || series?.length > 0) && (
             <div className="flex overflow-x-auto custom-scrollbar gap-2 mb-6 pb-2">
+              <button onClick={() => setActiveTab('series')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'series' ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.4)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
+                <PlaySquare className="w-4 h-4" /> Academia VIP
+              </button>
               <button onClick={() => setActiveTab('all')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'all' ? 'bg-white text-black shadow-md' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
                 <LayoutGrid className="w-4 h-4" /> Todos los posts
               </button>
@@ -590,194 +615,203 @@ export default function CreatorProfile() {
             </div>
           )}
 
+          {/* 🔥 6. VITRINA DE LA ACADEMIA VIP */}
+          {activeTab === 'series' && (
+            <div className="mb-10 animate-fade-in">
+              <SeriesTab series={series} onPurchaseSuccess={fetchSeries} />
+            </div>
+          )}
+
           {/* EL RESTO DE LOS POSTS EN EL MURO */}
-          <div className="space-y-6">
-            {filteredPosts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5 font-medium">No hay publicaciones en esta categoría.</div> : (
-              filteredPosts.map((post) => {
-                const isPostUnlocked = isOwnerOrAdmin || post.hasAccess;
-                const rootComments = buildCommentTree(post.comments || []);
-                const totalComments = post._count?.comments || 0;
-                const isExpanded = expandedComments[post.id] || false;
-                const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
+          {activeTab !== 'series' && (
+            <div className="space-y-6">
+              {filteredPosts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5 font-medium">No hay publicaciones en esta categoría.</div> : (
+                filteredPosts.map((post) => {
+                  const isPostUnlocked = isOwnerOrAdmin || post.hasAccess;
+                  const rootComments = buildCommentTree(post.comments || []);
+                  const totalComments = post._count?.comments || 0;
+                  const isExpanded = expandedComments[post.id] || false;
+                  const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
 
-                return !isPostUnlocked ? (
-                  <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
-                    <div className="flex justify-between items-center relative z-10">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border-2 border-teal-500/30">
-                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-teal-500 to-blue-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
-                        </div>
-                        <div>
-                          <h3 className="text-white font-bold text-base">{creator.username}</h3>
-                          <p className="text-[10px] text-red-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
-                            <Lock className="w-3 h-3"/> {post.isPPV ? 'PPV Exclusivo' : 'Solo VIPs'}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 mt-4 overflow-hidden group nm-inset">
-                      {post.mediaUrl && (
-                        post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                          <video src={getImageUrl(post.mediaUrl)} onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
-                        ) : (
-                          <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" draggable="false" onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
-                        )
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
-                      
-                      <div className="relative z-10 flex flex-col items-center space-y-4 bg-black/40 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
-                        <Lock className="w-14 h-14 text-red-500 drop-shadow-md" />
-                        {!isSubscribed && !post.isPPV ? (
-                          <button onClick={(e) => { e.stopPropagation(); handleSubscribe(); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
-                            <Crown className="w-4 h-4"/> Suscríbete para ver
-                          </button>
-                        ) : (
-                          <button onClick={(e) => { e.stopPropagation(); handleUnlockPPV(post); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
-                            <Unlock className="w-4 h-4"/> Desbloquear por ${(post.price || 0).toFixed(2)}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
-                    
-                    {isOwnerOrAdmin && (
-                      <button 
-                        onClick={() => handleDeletePost(post.id)}
-                        className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
-                        title="Eliminar publicación"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    )}
-
-                    <div className="flex justify-between items-center pr-12">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border-2 border-teal-500/30">
-                          {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-teal-500 to-blue-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
-                        </div>
-                        <div>
-                          <h3 className="text-white font-bold text-base">{creator.username}</h3>
-                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
-                            {post.isPPV ? (
-                              <><Unlock className="w-3 h-3 text-green-400"/> {isOwnerOrAdmin ? `PPV: $${(post.price || 0).toFixed(2)}` : 'Comprado'}</>
-                            ) : (
-                              <><Star className="w-3 h-3 text-yellow-500"/> VIP</>
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    {post.content && <p className="text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{post.content}</p>}
-                    
-                    {post.mediaUrl && (
-                      <div className="mt-4 rounded-2xl overflow-hidden border border-white/5 nm-inset relative bg-black/50 flex justify-center">
-                        {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                          <video controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(post.mediaUrl)} className="w-full h-auto object-cover max-h-[600px] shadow-md select-none" onContextMenu={(e) => e.preventDefault()} />
-                        ) : post.mediaUrl.match(/\.(mp3|wav|ogg)$/i) ? (
-                          <div className="w-full p-6 flex justify-center bg-white/5">
-                            <audio controls src={getImageUrl(post.mediaUrl)} className="w-full max-w-md outline-none" />
-                          </div>
-                        ) : (
-                          <img src={getImageUrl(post.mediaUrl)} alt="Exclusivo" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
-                        )}
-                      </div>
-                    )}
-
-                    <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-white/5">
-                      <div className="flex items-center justify-between relative">
+                  return !isPostUnlocked ? (
+                    <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
+                      <div className="flex justify-between items-center relative z-10">
                         <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
-                            {['❤️', '❤️‍🔥', '🫦', '🤤','😍','💔'].map((emoji) => {
-                              const isSelected = post.myReaction === emoji;
-                              const count = post.reactionCounts ? (post.reactionCounts[emoji] || 0) : 0;
-                              return (
-                                <button 
-                                  key={emoji}
-                                  onClick={() => handleReact(post.id, emoji)}
-                                  className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}
-                                >
-                                  <span className="text-xl">{emoji}</span>
-                                  {count > 0 && <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-400'}`}>{count}</span>}
-                                </button>
-                              );
-                            })}
+                          <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border-2 border-teal-500/30">
+                            {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-teal-500 to-blue-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
                           </div>
-                          
-                          <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-4 py-2.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-teal-500 border-teal-500/30' : 'text-gray-400 hover:text-teal-400 hover:border-white/20'}`}>
-                            <MessageCircle className="w-4 h-4" />
-                            <span className="text-sm">{totalComments}</span>
-                          </button>
+                          <div>
+                            <h3 className="text-white font-bold text-base">{creator.username}</h3>
+                            <p className="text-[10px] text-red-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
+                              <Lock className="w-3 h-3"/> {post.isPPV ? 'PPV Exclusivo' : 'Solo VIPs'}
+                            </p>
+                          </div>
                         </div>
-                        
-                        {(!isOwnerOrAdmin) && (
-                          <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
-                            <Coins className="w-5 h-5" />
-                            <span className="text-sm hidden sm:inline">Propina</span>
-                          </button>
-                        )}
                       </div>
-
-                      {commentingPostId === post.id && (
-                        <div className="flex flex-col gap-2 animate-fade-in mt-2">
-                          {replyingToCommentId && (
-                            <div className="flex justify-between items-center bg-teal-900/20 px-3 py-1 text-xs text-teal-400 rounded-lg">
-                              <span>Respondiendo al comentario...</span>
-                              <button onClick={() => setReplyingToCommentId(null)}><X className="w-3 h-3"/></button>
-                            </div>
+                      
+                      <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 mt-4 overflow-hidden group nm-inset">
+                        {post.mediaUrl && (
+                          post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                            <video src={getImageUrl(post.mediaUrl)} onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                          ) : (
+                            <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" draggable="false" onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                          )
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
+                        
+                        <div className="relative z-10 flex flex-col items-center space-y-4 bg-black/40 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
+                          <Lock className="w-14 h-14 text-red-500 drop-shadow-md" />
+                          {!isSubscribed && !post.isPPV ? (
+                            <button onClick={(e) => { e.stopPropagation(); handleSubscribe(); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
+                              <Crown className="w-4 h-4"/> Suscríbete para ver
+                            </button>
+                          ) : (
+                            <button onClick={(e) => { e.stopPropagation(); handleUnlockPPV(post); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
+                              <Unlock className="w-4 h-4"/> Desbloquear por ${(post.price || 0).toFixed(2)}
+                            </button>
                           )}
-                          <div className="flex gap-2">
-                            <input 
-                              type="text" 
-                              value={commentText} 
-                              onChange={(e) => setCommentText(e.target.value)} 
-                              placeholder="Escribe un comentario..." 
-                              className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-teal-500/50" 
-                              onKeyDown={(e) => e.key === 'Enter' && submitComment(post.id)}
-                            />
-                            <button 
-                              onClick={() => submitComment(post.id)} 
-                              disabled={isSubmittingComment || !commentText.trim()} 
-                              className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white hover:bg-teal-500 transition-colors shrink-0 disabled:opacity-50"
-                            >
-                              <Send className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
+                      
+                      {isOwnerOrAdmin && (
+                        <button 
+                          onClick={() => handleDeletePost(post.id)}
+                          className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
+                          title="Eliminar publicación"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      )}
+
+                      <div className="flex justify-between items-center pr-12">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border-2 border-teal-500/30">
+                            {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-teal-500 to-blue-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
+                          </div>
+                          <div>
+                            <h3 className="text-white font-bold text-base">{creator.username}</h3>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
+                              {post.isPPV ? (
+                                <><Unlock className="w-3 h-3 text-green-400"/> {isOwnerOrAdmin ? `PPV: $${(post.price || 0).toFixed(2)}` : 'Comprado'}</>
+                              ) : (
+                                <><Star className="w-3 h-3 text-yellow-500"/> VIP</>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      {post.content && <p className="text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{post.content}</p>}
+                      
+                      {post.mediaUrl && (
+                        <div className="mt-4 rounded-2xl overflow-hidden border border-white/5 nm-inset relative bg-black/50 flex justify-center">
+                          {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                            <video controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(post.mediaUrl)} className="w-full h-auto object-cover max-h-[600px] shadow-md select-none" onContextMenu={(e) => e.preventDefault()} />
+                          ) : post.mediaUrl.match(/\.(mp3|wav|ogg)$/i) ? (
+                            <div className="w-full p-6 flex justify-center bg-white/5">
+                              <audio controls src={getImageUrl(post.mediaUrl)} className="w-full max-w-md outline-none" />
+                            </div>
+                          ) : (
+                            <img src={getImageUrl(post.mediaUrl)} alt="Exclusivo" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
+                          )}
+                        </div>
+                      )}
+
+                      <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-white/5">
+                        <div className="flex items-center justify-between relative">
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
+                              {['❤️', '❤️‍🔥', '🫦', '🤤','😍','💔'].map((emoji) => {
+                                const isSelected = post.myReaction === emoji;
+                                const count = post.reactionCounts ? (post.reactionCounts[emoji] || 0) : 0;
+                                return (
+                                  <button 
+                                    key={emoji}
+                                    onClick={() => handleReact(post.id, emoji)}
+                                    className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}
+                                  >
+                                    <span className="text-xl">{emoji}</span>
+                                    {count > 0 && <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-400'}`}>{count}</span>}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                            
+                            <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-4 py-2.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-teal-500 border-teal-500/30' : 'text-gray-400 hover:text-teal-400 hover:border-white/20'}`}>
+                              <MessageCircle className="w-4 h-4" />
+                              <span className="text-sm">{totalComments}</span>
                             </button>
                           </div>
+                          
+                          {(!isOwnerOrAdmin) && (
+                            <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
+                              <Coins className="w-5 h-5" />
+                              <span className="text-sm hidden sm:inline">Propina</span>
+                            </button>
+                          )}
                         </div>
-                      )}
 
-                      {totalComments > 0 && (
-                         <div className="space-y-1 mt-4">
-                           {visibleComments.map((comment: any) => (
-                              <CommentNode 
-                                key={comment.id} 
-                                comment={comment} 
-                                postId={post.id} 
-                                currentUser={currentUser}
-                                onReply={handleReplyClick} 
-                                onDelete={handleDeleteComment}
-                                isExpanded={isExpanded}
+                        {commentingPostId === post.id && (
+                          <div className="flex flex-col gap-2 animate-fade-in mt-2">
+                            {replyingToCommentId && (
+                              <div className="flex justify-between items-center bg-teal-900/20 px-3 py-1 text-xs text-teal-400 rounded-lg">
+                                <span>Respondiendo al comentario...</span>
+                                <button onClick={() => setReplyingToCommentId(null)}><X className="w-3 h-3"/></button>
+                              </div>
+                            )}
+                            <div className="flex gap-2">
+                              <input 
+                                type="text" 
+                                value={commentText} 
+                                onChange={(e) => setCommentText(e.target.value)} 
+                                placeholder="Escribe un comentario..." 
+                                className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-teal-500/50" 
+                                onKeyDown={(e) => e.key === 'Enter' && submitComment(post.id)}
                               />
-                           ))}
+                              <button 
+                                onClick={() => submitComment(post.id)} 
+                                disabled={isSubmittingComment || !commentText.trim()} 
+                                className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white hover:bg-teal-500 transition-colors shrink-0 disabled:opacity-50"
+                              >
+                                <Send className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        )}
 
-                           {totalComments > 3 && (
-                             <button 
-                               onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
-                               className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left transition-colors"
-                             >
-                               {isExpanded ? 'Ocultar comentarios' : `Ver los ${totalComments} comentarios`}
-                             </button>
-                           )}
-                         </div>
-                      )}
+                        {totalComments > 0 && (
+                           <div className="space-y-1 mt-4">
+                             {visibleComments.map((comment: any) => (
+                                <CommentNode 
+                                  key={comment.id} 
+                                  comment={comment} 
+                                  postId={post.id} 
+                                  currentUser={currentUser}
+                                  onReply={handleReplyClick} 
+                                  onDelete={handleDeleteComment}
+                                  isExpanded={isExpanded}
+                                />
+                             ))}
+
+                             {totalComments > 3 && (
+                               <button 
+                                 onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
+                                 className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left transition-colors"
+                               >
+                                 {isExpanded ? 'Ocultar comentarios' : `Ver los ${totalComments} comentarios`}
+                               </button>
+                             )}
+                           </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
+                  );
+                })
+              )}
+            </div>
+          )}
         </main>
 
         {/* MODAL DE PROPINAS */}
