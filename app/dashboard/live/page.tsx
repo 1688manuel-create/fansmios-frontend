@@ -124,7 +124,7 @@ export default function LiveSetupLobby() {
             {userBalance !== null && (
                <div className="inline-flex items-center gap-2 mt-4 bg-white/5 px-4 py-1.5 rounded-full border border-white/5">
                   <Wallet className="w-3.5 h-3.5 text-green-500" />
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Balance Covra: <span className="text-white">${userBalance.toFixed(2)}</span></span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Balance Covra: <span className="text-white">${Number(userBalance || 0).toFixed(2)}</span></span>
                </div>
             )}
           </div>

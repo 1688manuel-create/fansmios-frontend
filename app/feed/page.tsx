@@ -590,8 +590,8 @@ export default function Feed() {
             <button onClick={() => router.push('/dashboard')} className="text-xs nm-btn text-gray-300 px-3 sm:px-4 py-2 rounded-full hover:text-white transition-all font-bold flex items-center gap-1.5">
               <LayoutDashboard className="w-4 h-4" /> <span className="hidden sm:inline">{user?.role === 'CREATOR' ? 'Panel' : 'Herramientas'}</span>
             </button>
-            <button onClick={handleLogout} className="text-xs nm-btn text-red-500 px-3 sm:px-4 py-2 rounded-full hover:text-white hover:bg-red-600 transition-all font-bold hidden sm:flex items-center gap-1.5">
-              <LogOut className="w-4 h-4" /> Salir
+            <button onClick={handleLogout} className="relative text-xs nm-btn text-red-500 px-3 sm:px-4 py-2 rounded-full hover:text-white hover:bg-red-600 transition-all font-bold flex items-center gap-1.5" title="Cerrar Sesión">
+              <LogOut className="w-4 h-4" /> <span className="hidden sm:inline">Salir</span>
             </button>
           </div>
         </nav>
