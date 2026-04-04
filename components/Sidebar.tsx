@@ -16,8 +16,9 @@ import {
   User, 
   Crown, 
   LogOut,
-  TrendingUp, // <-- Para Analytics/Estadísticas
-  Ticket      // <-- Para Cupones/Ofertas
+  TrendingUp, 
+  Ticket,
+  Menu // <-- Icono extra por si en el futuro agregas un menú "Más"
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -54,16 +55,16 @@ export default function Sidebar() {
 
   if (!user) return null;
 
-  // 🚀 AQUÍ ESTÁ LA MAGIA: LAS RUTAS CORREGIDAS
+  // 🚀 LISTA MAESTRA DE RUTAS (PARA PC)
   const allLinks = [
     { name: 'Feed', href: '/feed', icon: Home, roles: ['FAN', 'CREATOR', 'ADMIN'] },
     { name: 'Explorar', href: '/explore', icon: Compass, roles: ['FAN', 'CREATOR', 'ADMIN'] },
     { name: 'Mensajes', href: '/dashboard/messages', icon: MessageCircle, roles: ['FAN', 'CREATOR', 'ADMIN'] },
     { name: 'Transmitir', href: '/dashboard/live', icon: Radio, roles: ['CREATOR', 'ADMIN'] },
     
-    // 🔥 BOTONES FINANCIEROS CORREGIDOS
+    // 🔥 BOTONES FINANCIEROS 
     { name: 'Estadísticas', href: '/dashboard/analytics', icon: TrendingUp, roles: ['CREATOR', 'ADMIN'] },
-    { name: 'Cupones', href: '/dashboard/coupons', icon: Ticket, roles: ['CREATOR', 'ADMIN'] }, // <-- ¡La "s" salvadora agregada aquí!
+    { name: 'Cupones', href: '/dashboard/coupons', icon: Ticket, roles: ['CREATOR', 'ADMIN'] }, 
     
     { name: 'Mi Billetera', href: '/dashboard/wallet', icon: Wallet, roles: ['CREATOR', 'ADMIN'] },
     { name: 'Identidad KYC', href: '/dashboard/kyc', icon: ShieldCheck, roles: ['CREATOR', 'ADMIN'] },
@@ -73,9 +74,26 @@ export default function Sidebar() {
 
   const allowedLinks = allLinks.filter(link => link.roles.includes(user.role));
 
+  // 📱 LISTA ESPECÍFICA PARA EL MENÚ INFERIOR DE CELULAR (Instagram Style)
+  const mobileLinks = [
+    { name: 'Feed', href: '/feed', icon: Home },
+    { name: 'Explorar', href: '/explore', icon: Compass },
+    // El botón central cambia si eres creador (Transmitir) o Fan (Mensajes)
+    user.role === 'CREATOR' || user.role === 'ADMIN' 
+        ? { name: 'Transmitir', href: '/dashboard/live', icon: Radio, isCenter: true }
+        : { name: 'Mensajes', href: '/dashboard/messages', icon: MessageCircle, isCenter: true },
+    { name: 'Mensajes', href: '/dashboard/messages', icon: MessageCircle }, // (Ocultaremos este en CSS si el de arriba ya es mensajes)
+    { name: 'Perfil', href: `/${user.username || 'perfil'}`, icon: User }
+  ];
+
+  // Filtramos para asegurar que no haya duplicados (ej: 2 iconos de mensajes)
+  const finalMobileLinks = user.role === 'FAN' 
+    ? mobileLinks.filter((l, i) => i !== 3) // Fan ve: Feed, Explorar, Mensajes(Centro), Perfil
+    : mobileLinks.slice(0, 5);              // Creador ve: Feed, Explorar, Transmitir(Centro), Mensajes, Perfil
+
   return (
     <>
-      {/* 💻 SIDEBAR PARA COMPUTADORAS */}
+      {/* 💻 SIDEBAR PARA COMPUTADORAS (Se mantiene igual, estaba perfecto) */}
       <aside className="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-nm-base border-r border-white/5 z-50 shadow-[5px_0_15px_rgba(0,0,0,0.5)]">
         
         <div className="p-6 pb-2">
@@ -87,7 +105,6 @@ export default function Sidebar() {
 
         <nav className="flex-1 px-4 space-y-3 mt-6 overflow-y-auto custom-scrollbar pb-6">
           {allowedLinks.map((link) => {
-            // Validación robusta para rutas activas
             const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/feed' && link.href !== '/explore');
             const Icon = link.icon; 
 
@@ -137,28 +154,48 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* 📱 BOTTOM NAV PARA CELULARES */}
-      <nav className="md:hidden fixed bottom-0 w-full bg-nm-base border-t border-white/5 z-50 flex justify-around items-center pt-3 pb-[calc(env(safe-area-inset-bottom)+12px)] px-2 shadow-[0_-5px_20px_rgba(0,0,0,0.8)]">
-        {/* Mostramos solo los 5 enlaces principales en móvil para no saturar la pantalla */}
-        {allowedLinks.slice(0, 5).map((link) => {
-          const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/feed' && link.href !== '/explore');
-          const Icon = link.icon;
+      {/* 📱 BOTTOM NAV PARA CELULARES (REDISEÑO GLASSMORPHISM) */}
+      <nav className="md:hidden fixed bottom-0 w-full z-50 px-2 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 pointer-events-none">
+        
+        {/* El Bloque de Cristal */}
+        <div className="bg-[#050505]/80 backdrop-blur-xl border border-white/10 rounded-3xl flex justify-around items-center px-2 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] pointer-events-auto">
+          
+          {finalMobileLinks.map((link: any, index: number) => {
+            const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/feed' && link.href !== '/explore');
+            const Icon = link.icon;
 
-          return (
-            <Link 
-              key={link.name} 
-              href={link.href}
-              className={`flex flex-col items-center p-2.5 rounded-xl transition-all ${
-                isActive ? 'nm-inset text-teal-500 min-w-[64px] border border-teal-500/20' : 'text-gray-500 hover:text-white nm-btn'
-              }`}
-            >
-              <Icon className={`w-5 h-5 ${isActive ? 'drop-shadow-[0_0_8px_rgba(20,184,166,0.5)]' : ''} transition-all duration-300`} strokeWidth={2.5} />
-              {isActive && (
-                <span className="text-[9px] font-bold mt-1 tracking-wider">{link.name}</span>
-              )}
-            </Link>
-          );
-        })}
+            return (
+              <Link 
+                key={`${link.name}-${index}`} 
+                href={link.href}
+                className="relative flex flex-col items-center justify-center w-14 h-12 transition-all group"
+              >
+                {/* Si es el botón central, lo hacemos destacar (estilo TikTok/IG) */}
+                {link.isCenter ? (
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90 ${isActive ? 'bg-gradient-to-tr from-teal-500 to-blue-500 shadow-[0_0_15px_rgba(20,184,166,0.5)]' : 'bg-white/10 border border-white/20'}`}>
+                    <Icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-gray-300'}`} strokeWidth={isActive ? 3 : 2} />
+                  </div>
+                ) : (
+                  <>
+                    <Icon 
+                      className={`w-6 h-6 transition-all duration-300 ${
+                        isActive 
+                          ? 'text-teal-400 drop-shadow-[0_0_8px_rgba(20,184,166,0.6)] scale-110' 
+                          : 'text-gray-500 group-hover:text-gray-300'
+                      }`} 
+                      strokeWidth={isActive ? 3 : 2.5} 
+                    />
+                    {/* Solo mostramos el puntito si está activo (minimalismo puro) */}
+                    {isActive && (
+                      <span className="absolute -bottom-1.5 w-1 h-1 bg-teal-400 rounded-full shadow-[0_0_5px_rgba(20,184,166,0.8)]"></span>
+                    )}
+                  </>
+                )}
+              </Link>
+            );
+          })}
+
+        </div>
       </nav>
     </>
   );
