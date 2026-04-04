@@ -19,7 +19,8 @@ import {
   TrendingUp, 
   Ticket,
   Settings,
-  Menu // <-- Icono extra por si en el futuro agregas un menú "Más"
+  Menu, // <-- Icono extra por si en el futuro agregas un menú "Más"
+  PlaySquare // 🎬 NUEVO ÍCONO PARA LA ACADEMIA VIP
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -62,6 +63,9 @@ export default function Sidebar() {
     { name: 'Explorar', href: '/explore', icon: Compass, roles: ['FAN', 'CREATOR', 'ADMIN'] },
     { name: 'Mensajes', href: '/dashboard/messages', icon: MessageCircle, roles: ['FAN', 'CREATOR', 'ADMIN'] },
     { name: 'Transmitir', href: '/dashboard/live', icon: Radio, roles: ['CREATOR', 'ADMIN'] },
+    
+    // 🎓 NUEVA RUTA TÁCTICA: ACADEMIA VIP
+    { name: 'Academia VIP', href: '/dashboard/series', icon: PlaySquare, roles: ['CREATOR', 'ADMIN'] },
     
     // 🔥 BOTONES FINANCIEROS 
     { name: 'Estadísticas', href: '/dashboard/analytics', icon: TrendingUp, roles: ['CREATOR', 'ADMIN'] },
