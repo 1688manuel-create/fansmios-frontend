@@ -19,7 +19,7 @@ import BoostModal from '../../components/BoostModal';
 import { 
   Image as ImageIcon, Lock, Radio, Bell, MessageCircle, LogOut, 
   Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, X, User,
-  TrendingUp, Zap, Star, ChevronRight, Send, Flag
+  TrendingUp, Zap, Star, ChevronRight, Send, Flag, Wallet
 } from 'lucide-react';
 
 import { requestPushPermission } from '../../lib/firebase';
@@ -581,8 +581,10 @@ export default function Feed() {
               )}
             </button>
 
-            <button onClick={() => router.push('/dashboard/messages')} className="relative text-xs nm-btn text-gray-300 px-3 sm:px-4 py-2 rounded-full hover:text-white transition-all font-bold flex items-center gap-1.5">
-              <MessageCircle className="w-4 h-4" /> <span className="hidden sm:inline">Mensajes</span>
+            {/* 🔥 NUEVO BOTÓN BILLETERA COVRA PAY 🔥 */}
+            <button onClick={() => router.push('/dashboard/wallet')} className={`relative text-xs px-3 sm:px-4 py-2 rounded-full transition-all font-bold flex items-center gap-1.5 ${walletBalance > 0 ? 'nm-inset border border-green-500/30 text-green-400 shadow-[inset_0_0_10px_rgba(34,197,94,0.1)]' : 'nm-btn text-gray-300 hover:text-white'}`}>
+              <Wallet className={`w-4 h-4 ${walletBalance > 0 ? 'drop-shadow-[0_0_5px_rgba(34,197,94,0.8)]' : ''}`} /> 
+              <span className="hidden sm:inline">{walletBalance > 0 ? `$${walletBalance.toFixed(2)}` : 'Billetera'}</span>
             </button>
 
             <button onClick={() => router.push('/dashboard')} className="text-xs nm-btn text-gray-300 px-3 sm:px-4 py-2 rounded-full hover:text-white transition-all font-bold flex items-center gap-1.5">
@@ -838,7 +840,7 @@ export default function Feed() {
                                 <div className="flex items-center gap-3">
                                   
                                   <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
-                                    {['❤️', '❤️‍🔥', '🫦', '🤤','😋', '😘', '😍','💔'].map((emoji) => {
+                                    {['❤️', '❤️‍🔥', '🫦', '🤤','😍','💔'].map((emoji) => {
                                       const isSelected = post.myReaction === emoji;
                                       const count = post.reactionCounts ? (post.reactionCounts[emoji] || 0) : 0;
                                       
