@@ -19,12 +19,14 @@ import {
   TrendingUp, 
   Ticket,
   Settings,
-  Menu, // <-- Icono extra por si en el futuro agregas un menú "Más"
-  PlaySquare // 🎬 NUEVO ÍCONO PARA LA ACADEMIA VIP
+  Menu, // <-- Nuestro nuevo botón táctico móvil
+  PlaySquare, 
+  X // <-- Para cerrar el menú móvil
 } from 'lucide-react';
 
 export default function Sidebar() {
   const [user, setUser] = useState<any>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // 📱 ESTADO DEL CAJÓN MÓVIL
   const pathname = usePathname();
   const router = useRouter();
 
@@ -49,6 +51,11 @@ export default function Sidebar() {
     return () => window.removeEventListener('covraPayBalanceUpdate', handleBalanceUpdate);
   }, []);
 
+  // 🚪 Cierra el menú móvil si cambia la ruta
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
@@ -64,7 +71,7 @@ export default function Sidebar() {
     { name: 'Mensajes', href: '/dashboard/messages', icon: MessageCircle, roles: ['FAN', 'CREATOR', 'ADMIN'] },
     { name: 'Transmitir', href: '/dashboard/live', icon: Radio, roles: ['CREATOR', 'ADMIN'] },
     
-    // 🎓 NUEVA RUTA TÁCTICA: ACADEMIA VIP
+    // 🎓 RUTA TÁCTICA: ACADEMIA VIP
     { name: 'Academia VIP', href: '/dashboard/series', icon: PlaySquare, roles: ['CREATOR', 'ADMIN'] },
     
     // 🔥 BOTONES FINANCIEROS 
@@ -79,26 +86,24 @@ export default function Sidebar() {
 
   const allowedLinks = allLinks.filter(link => link.roles.includes(user.role));
 
-  // 📱 LISTA ESPECÍFICA PARA EL MENÚ INFERIOR DE CELULAR (Instagram Style)
+  // 📱 LISTA ESPECÍFICA PARA EL MENÚ INFERIOR DE CELULAR (5 items exactos para no romper UI)
   const mobileLinks = [
     { name: 'Feed', href: '/feed', icon: Home },
     { name: 'Explorar', href: '/explore', icon: Compass },
-    // El botón central cambia si eres creador (Transmitir) o Fan (Mensajes)
     user.role === 'CREATOR' || user.role === 'ADMIN' 
         ? { name: 'Transmitir', href: '/dashboard/live', icon: Radio, isCenter: true }
         : { name: 'Mensajes', href: '/dashboard/messages', icon: MessageCircle, isCenter: true },
-    { name: 'Mensajes', href: '/dashboard/messages', icon: MessageCircle }, // (Ocultaremos este en CSS si el de arriba ya es mensajes)
-    { name: 'Perfil', href: `/${user.username || 'perfil'}`, icon: User }
+    { name: 'Perfil', href: `/${user.username || 'perfil'}`, icon: User },
+    { name: 'Menú', href: '#', icon: Menu, isMenuToggle: true } // 👈 EL GATILLO DEL CAJÓN EXTRA
   ];
 
-  // Filtramos para asegurar que no haya duplicados (ej: 2 iconos de mensajes)
-  const finalMobileLinks = user.role === 'FAN' 
-    ? mobileLinks.filter((l, i) => i !== 3) // Fan ve: Feed, Explorar, Mensajes(Centro), Perfil
-    : mobileLinks.slice(0, 5);              // Creador ve: Feed, Explorar, Transmitir(Centro), Mensajes, Perfil
+  // Identificamos cuáles links NO están en la barra principal del celular para ponerlos en el cajón
+  const bottomNavHrefs = mobileLinks.map(l => l.href);
+  const extraMobileLinks = allowedLinks.filter(link => !bottomNavHrefs.includes(link.href) && link.href !== '#');
 
   return (
     <>
-      {/* 💻 SIDEBAR PARA COMPUTADORAS (Se mantiene igual, estaba perfecto) */}
+      {/* 💻 SIDEBAR PARA COMPUTADORAS */}
       <aside className="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-nm-base border-r border-white/5 z-50 shadow-[5px_0_15px_rgba(0,0,0,0.5)]">
         
         <div className="p-6 pb-2">
@@ -134,62 +139,94 @@ export default function Sidebar() {
             <div className="mt-8 pt-6 border-t border-white/5 space-y-2">
               <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 px-4">Centro de Mando</p>
               
-              {/* Botón Principal Admin (Usuarios/Stats) */}
-              <Link 
-                href="/dashboard/admin"
-                className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${
-                  pathname === '/dashboard/admin' ? 'nm-inset text-red-500' : 'nm-btn text-red-500/80 hover:text-red-400'
-                }`}
-              >
+              <Link href="/dashboard/admin" className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${pathname === '/dashboard/admin' ? 'nm-inset text-red-500' : 'nm-btn text-red-500/80 hover:text-red-400'}`}>
                 <Crown className="w-5 h-5" />
                 <span className="text-sm">Modo Dios</span>
               </Link>
 
-              {/* 💸 Botón de Payouts (Pagos) */}
-              <Link 
-                href="/admin/payouts"
-                className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${
-                  pathname === '/admin/payouts' ? 'nm-inset text-orange-500' : 'nm-btn text-orange-500/80 hover:text-orange-400'
-                }`}
-              >
+              <Link href="/admin/payouts" className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${pathname === '/admin/payouts' ? 'nm-inset text-orange-500' : 'nm-btn text-orange-500/80 hover:text-orange-400'}`}>
                 <Wallet className="w-5 h-5" />
                 <span className="text-sm">Pagos Pendientes</span>
               </Link>
 
-              {/* ⚙️ NUEVO: Botón de Configuración (Mensajes de Bienvenida) */}
-              <Link 
-                href="/admin/settings"
-                className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${
-                  pathname === '/admin/settings' ? 'nm-inset text-purple-500' : 'nm-btn text-purple-500/80 hover:text-purple-400'
-                }`}
-              >
+              <Link href="/admin/settings" className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${pathname === '/admin/settings' ? 'nm-inset text-purple-500' : 'nm-btn text-purple-500/80 hover:text-purple-400'}`}>
                 <Settings className="w-5 h-5" />
-                <span className="text-sm">Mensajes de Bienvenida</span>
+                <span className="text-sm">Configuración</span>
               </Link>
             </div>
           )}
         </nav>
 
         <div className="p-4 bg-nm-base/80 backdrop-blur-md border-t border-white/5 pb-6">
-          <button 
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3.5 nm-btn font-bold text-gray-500 hover:text-red-500 transition-all group"
-          >
+          <button onClick={handleLogout} className="w-full flex items-center justify-center gap-3 px-4 py-3.5 nm-btn font-bold text-gray-500 hover:text-red-500 transition-all group">
             <LogOut className="w-5 h-5 group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.8)] transition-all" strokeWidth={2.5} />
             <span className="text-sm">Cerrar Sesión</span>
           </button>
         </div>
       </aside>
 
+      {/* 📱 CAJÓN DESPLEGABLE DE CRISTAL (Extra Menú Móvil) */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z- bg-black/80 backdrop-blur-sm flex flex-col justify-end pb-[88px] animate-fade-in">
+          <div className="bg-[#0e0e0e] border-t border-white/10 rounded-t-[2rem] p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] animate-slide-up">
+            
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-white font-black text-lg">Más Opciones</h3>
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 nm-btn rounded-full text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
+              {extraMobileLinks.map(link => {
+                const Icon = link.icon;
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${
+                      isActive ? 'nm-inset text-teal-500 shadow-[inset_0_0_10px_rgba(20,184,166,0.1)] border border-teal-500/20' : 'bg-black/20 text-gray-400 border border-white/5 hover:border-white/10'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="text-sm">{link.name}</span>
+                  </Link>
+                );
+              })}
+
+              <button onClick={handleLogout} className="w-full mt-4 flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl font-bold bg-red-500/10 text-red-500 border border-red-500/20">
+                <LogOut className="w-5 h-5" />
+                <span className="text-sm">Cerrar Sesión</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 📱 BOTTOM NAV PARA CELULARES (REDISEÑO GLASSMORPHISM) */}
       <nav className="md:hidden fixed bottom-0 w-full z-50 px-2 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 pointer-events-none">
         
         {/* El Bloque de Cristal */}
-        <div className="bg-[#050505]/80 backdrop-blur-xl border border-white/10 rounded-3xl flex justify-around items-center px-2 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] pointer-events-auto">
+        <div className="bg-[#050505]/80 backdrop-blur-xl border border-white/10 rounded-3xl flex justify-around items-center px-2 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] pointer-events-auto relative z-50">
           
-          {finalMobileLinks.map((link: any, index: number) => {
-            const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/feed' && link.href !== '/explore');
+          {mobileLinks.map((link: any, index: number) => {
+            const isActive = pathname === link.href && !link.isMenuToggle;
             const Icon = link.icon;
+
+            // ⚡ Si es el botón de "Menú", le damos comportamiento de gatillo
+            if (link.isMenuToggle) {
+              return (
+                <button 
+                  key="mobile-menu-trigger"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="relative flex flex-col items-center justify-center w-14 h-12 transition-all group"
+                >
+                  <Icon className={`w-6 h-6 transition-all duration-300 ${isMobileMenuOpen ? 'text-teal-400 drop-shadow-[0_0_8px_rgba(20,184,166,0.6)] scale-110' : 'text-gray-500'}`} strokeWidth={isMobileMenuOpen ? 3 : 2.5} />
+                </button>
+              );
+            }
 
             return (
               <Link 
