@@ -84,7 +84,7 @@ export default function ProfileSettings() {
     setIsDeletingAccount(true);
     try {
       // ⚠️ Asegúrate de que esta ruta coincida con la que creaste en tu backend
-      await api.delete('/users/delete-account'); 
+      await api.delete('/profile/delete-account'); 
       
       localStorage.removeItem('token');
       localStorage.removeItem('user');
