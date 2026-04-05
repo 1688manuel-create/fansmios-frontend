@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-// 🔥 ICONOS PREMIUM DE LUCIDE
+// 🔥 ICONOS PREMIUM DE LUCIDE (Nuevos Iconos Agregados)
 import { 
   UserCircle, 
   Settings, 
@@ -24,7 +24,9 @@ import {
   ArrowDownLeft,   
   Lock,
   Users,
-  DollarSign             
+  DollarSign,
+  PlaySquare, // 👈 NUEVO: Icono de Academia VIP
+  ShieldCheck // 👈 NUEVO: Icono de KYC             
 } from 'lucide-react';
 import AppLayout from '../../components/AppLayout';
 import { paymentService } from '../../lib/paymentService';
@@ -136,8 +138,11 @@ export default function DashboardIndex() {
     { title: 'Paquetes (Bundles)', icon: PackageSearch, path: '/dashboard/bundles', color: 'text-purple-500' },
     { title: 'Cupones de Descuento', icon: TicketPercent, path: '/dashboard/coupons', color: 'text-red-500' }, 
     { title: 'Estadísticas de Venta', icon: TrendingUp, path: '/dashboard/stats', color: 'text-blue-400' },
-    // 🔥 NUEVO: Centro de Referidos
     { title: 'Programa de Referidos', icon: Users, path: '/dashboard/referrals', color: 'text-yellow-400' },
+    // 🔥 NUEVOS BOTONES TÁCTICOS INYECTADOS
+    { title: 'Academia VIP', icon: PlaySquare, path: '/dashboard/series', color: 'text-cyan-400' },
+    { title: 'Identidad KYC', icon: ShieldCheck, path: '/dashboard/kyc', color: 'text-blue-500' },
+    { title: 'Seguridad 2FA', icon: Lock, path: '/dashboard/security', color: 'text-emerald-400' }
   ];
 
   // ⭐ HERRAMIENTAS DEL FAN
@@ -146,6 +151,8 @@ export default function DashboardIndex() {
     { title: 'Mensajes PPV', icon: MessageCircle, path: '/dashboard/messages', color: 'text-teal-400' },
     { title: 'Explorar Creadores', icon: Compass, path: '/explore', color: 'text-indigo-400' },
     { title: 'Mis Guardados', icon: Bookmark, path: '/dashboard/bookmarks', color: 'text-yellow-500' },
+    // 🔥 NUEVO BOTÓN PARA FANS
+    { title: 'Seguridad 2FA', icon: Lock, path: '/dashboard/security', color: 'text-emerald-400' }
   ];
 
   const handleNavigation = (path: string) => {
