@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import AppLayout from '../../../components/AppLayout';
-import { Settings, ArrowLeft, Camera, Globe, DollarSign, ShieldAlert, AlertTriangle, Save, EyeOff, Image as ImageIcon, Instagram, Twitter } from 'lucide-react';
+import { Settings, ArrowLeft, Camera, Globe, DollarSign, ShieldAlert, AlertTriangle, Save, EyeOff, Image as ImageIcon, Instagram, Twitter, Trash2, Loader2 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -73,6 +73,28 @@ export default function ProfileSettings() {
       console.error("Error al cargar:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // ☢️ ESTADOS DE AUTODESTRUCCIÓN
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setIsDeletingAccount(true);
+    try {
+      // ⚠️ Asegúrate de que esta ruta coincida con la que creaste en tu backend
+      await api.delete('/users/delete-account'); 
+      
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      alert("💥 Tu cuenta ha sido eliminada. Adiós, Comandante.");
+      router.push('/auth');
+    } catch (error) {
+      console.error("Error al eliminar:", error);
+      alert("Hubo un error al eliminar la cuenta.");
+      setIsDeletingAccount(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -336,6 +358,53 @@ export default function ProfileSettings() {
                 </p>
               </div>
 
+            </div>
+          </div>
+
+          {/* 🔥 5. ZONA DE PELIGRO (AUTODESTRUCCIÓN) 🔥 */}
+          <div className="nm-inset rounded-[2rem] border border-red-500/20 bg-[#110505] overflow-hidden shadow-xl animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <div className="p-6 border-b border-red-500/20 bg-[#1a0505]">
+              <h2 className="text-sm font-bold text-red-500 uppercase tracking-widest flex items-center gap-2">
+                <Trash2 className="w-4 h-4"/> 5. Zona de Peligro
+              </h2>
+              <p className="text-xs text-red-400/70 mt-2 font-medium">Acciones irreversibles. Procede con extrema precaución.</p>
+            </div>
+            
+            <div className="p-6 md:p-8 bg-[#0a0a0a]">
+              <p className="text-sm text-gray-400 mb-6 font-medium leading-relaxed">
+                Una vez que elimines tu cuenta, no hay vuelta atrás. Se borrarán permanentemente todos tus posts, mensajes, saldo, configuración y tu billetera de Covra Pay.
+              </p>
+
+              {!showDeleteConfirm ? (
+                <button 
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="nm-btn border border-red-500/30 text-red-500 hover:bg-red-600 hover:text-white font-black px-6 py-3 rounded-xl transition-all flex items-center gap-2"
+                >
+                  <Trash2 className="w-5 h-5" /> Eliminar mi Cuenta Definitivamente
+                </button>
+              ) : (
+                <div className="p-5 border border-red-500 border-dashed rounded-2xl bg-red-500/5 animate-fade-in">
+                  <p className="text-white font-bold mb-5 flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-red-500 animate-pulse" /> ¿Estás absolutamente seguro de dar esta orden?
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    <button 
+                      onClick={handleDeleteAccount}
+                      disabled={isDeletingAccount}
+                      className="bg-red-600 hover:bg-red-500 text-white font-black px-6 py-3 rounded-xl transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(220,38,38,0.3)] disabled:opacity-50"
+                    >
+                      {isDeletingAccount ? <Loader2 className="w-5 h-5 animate-spin"/> : "SÍ, AUTODESTRUIR CUENTA"}
+                    </button>
+                    <button 
+                      onClick={() => setShowDeleteConfirm(false)}
+                      disabled={isDeletingAccount}
+                      className="nm-btn border border-white/5 text-gray-400 font-bold px-6 py-3 rounded-xl transition-all hover:text-white"
+                    >
+                      Abortar
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
