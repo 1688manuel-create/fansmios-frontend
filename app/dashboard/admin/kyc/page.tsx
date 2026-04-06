@@ -1,4 +1,3 @@
-// frontend/app/admin/kyc/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -8,15 +7,17 @@ import AppLayout from '../../../../components/AppLayout';
 
 // 🔥 IMPORTAMOS ICONOS DE LUCIDE REACT
 import { 
-  Scale, 
-  ArrowLeft, 
-  CheckCircle, 
-  XCircle, 
-  Search, 
-  Coffee, 
-  UserSquare2, 
-  FileCheck2, 
-  ScanFace 
+  ShieldAlert, 
+  ShieldCheck, 
+  ZoomIn, 
+  X, 
+  PlayCircle, 
+  BrainCircuit,
+  ArrowLeft,
+  Coffee,
+  UserSquare2,
+  FileCheck2,
+  ScanFace
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -31,21 +32,36 @@ export default function AdminKyc() {
   const router = useRouter();
   const [profiles, setProfiles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // 🔥 Pestañas del Modo Dios
+  const [activeTab, setActiveTab] = useState<'PENDING' | 'APPROVED' | 'REJECTED'>('PENDING');
+  
+  // Modales
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [rejectModal, setRejectModal] = useState<{ isOpen: boolean, profileId: string | null }>({ isOpen: false, profileId: null });
+  const [rejectReason, setRejectReason] = useState<string>('');
   const [processingId, setProcessingId] = useState<string | null>(null);
 
+  const rejectionOptions = [
+    "La foto de la credencial está borrosa o ilegible",
+    "El rostro no coincide con la credencial",
+    "El video de prueba de vida es estático o falso",
+    "El documento de identidad está expirado",
+    "Faltan partes del documento en la foto"
+  ];
+
   useEffect(() => {
-    // Seguridad básica
     const storedUser = localStorage.getItem('user');
     if (!storedUser || JSON.parse(storedUser).role !== 'ADMIN') {
       router.push('/dashboard');
       return;
     }
-    fetchPendingKyc();
+    fetchKycProfiles();
   }, []);
 
-  const fetchPendingKyc = async () => {
+  const fetchKycProfiles = async () => {
     try {
-      const res = await api.get('/admin/kyc/pending');
+      const res = await api.get('/admin/kyc/pending'); 
       setProfiles(res.data.profiles || []);
     } catch (error) {
       console.error("Error cargando KYC:", error);
@@ -55,94 +71,105 @@ export default function AdminKyc() {
   };
 
   const handleApprove = async (id: string, username: string) => {
-    if (!window.confirm(`⚠️ ¿Estás seguro de APROBAR legalmente a @${username}? Esto le permitirá retirar dinero.`)) return;
-
+    if (!window.confirm(`⚠️ ¿Aprobar identidad de @${username}?`)) return;
     setProcessingId(id);
     try {
       await api.post(`/admin/kyc/${id}/approve`);
-      alert("✅ Identidad Aprobada exitosamente.");
-      fetchPendingKyc();
+      alert("✅ Identidad Aprobada");
+      fetchKycProfiles();
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al aprobar.");
+      alert("Error al aprobar.");
     } finally {
       setProcessingId(null);
     }
   };
 
-  const handleReject = async (id: string, username: string) => {
-    const reason = prompt(`❌ Vas a RECHAZAR a @${username}.\nEscribe la razón (Ej: "Selfie borrosa", "ID falso", "No coincide el rostro"):`);
-    if (!reason) return;
-
-    setProcessingId(id);
+  const handleRejectSubmit = async () => {
+    if (!rejectReason || !rejectModal.profileId) return alert("Selecciona una razón.");
+    setProcessingId(rejectModal.profileId);
     try {
-      await api.post(`/admin/kyc/${id}/reject`, { reason });
-      alert("🛡️ Expediente Rechazado. El creador ha sido notificado.");
-      fetchPendingKyc();
+      await api.post(`/admin/kyc/${rejectModal.profileId}/reject`, { reason: rejectReason });
+      alert("❌ Identidad Rechazada.");
+      setRejectModal({ isOpen: false, profileId: null });
+      setRejectReason('');
+      fetchKycProfiles();
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al rechazar.");
+      alert("Error al rechazar.");
     } finally {
       setProcessingId(null);
     }
   };
+
+  const filteredProfiles = profiles.filter(p => p.kycStatus === activeTab);
 
   if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center text-white font-bold animate-pulse">Iniciando Cámara Gesell...</div>;
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-nm-base pb-20 relative">
+      <div className="min-h-screen bg-[#050505] pb-20 relative">
         
         {/* Iluminación de ambiente */}
-        <div className="absolute top-0 left-1/2 w-[800px] h-[300px] bg-purple-900/10 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
+        <div className="absolute top-0 left-1/2 w-[800px] h-[300px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
 
         {/* 👑 NAVBAR DEL ADMIN NEUMÓRFICA */}
-        <nav className="sticky top-0 z-50 bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center backdrop-blur-xl shadow-md">
+        <nav className="sticky top-0 z-40 bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center backdrop-blur-xl shadow-md">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 nm-inset bg-black rounded-2xl flex items-center justify-center text-blue-500 border border-white/5 shadow-inner">
-              <Scale className="w-6 h-6 drop-shadow-[0_0_15px_rgba(59,130,246,0.8)]" />
+            <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+              <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
               <h1 className="text-xl font-black text-white leading-tight">Control de Identidad</h1>
               <p className="text-[10px] text-blue-400 font-bold tracking-widest uppercase">Módulo Legal AML / KYC</p>
             </div>
           </div>
-          <button onClick={() => router.push('/dashboard/admin')} className="text-sm nm-btn text-gray-300 px-5 py-2.5 rounded-full hover:text-white transition-colors font-bold flex items-center gap-2">
+          <button onClick={() => router.push('/dashboard/admin')} className="text-sm border border-white/10 text-gray-300 px-5 py-2.5 rounded-full hover:bg-white/5 hover:text-white transition-colors font-bold flex items-center gap-2">
             <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Volver</span>
           </button>
         </nav>
 
-        <main className="max-w-7xl mx-auto mt-10 px-4 relative z-10">
+        <main className="max-w-7xl mx-auto mt-8 px-4 relative z-10">
           
-          <div className="nm-inset p-6 rounded-3xl border border-blue-500/20 bg-gradient-to-r from-blue-900/10 to-transparent mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="text-gray-400 text-sm font-bold uppercase tracking-wider flex items-center gap-2">
-                <Search className="w-4 h-4 text-blue-500" /> Expedientes Pendientes de Revisión
-              </h2>
-              <p className="text-5xl font-black text-white mt-2">{profiles.length}</p>
-            </div>
+          {/* 🔥 TABS (Pestañas Históricas) */}
+          <div className="flex flex-wrap gap-3 mb-8 bg-white/5 p-2 rounded-2xl w-fit border border-white/5">
+            {['PENDING', 'APPROVED', 'REJECTED'].map((tab) => (
+              <button 
+                key={tab}
+                onClick={() => setActiveTab(tab as any)}
+                className={`px-6 py-2.5 rounded-xl text-sm font-bold tracking-wider transition-all flex items-center gap-2 ${
+                  activeTab === tab 
+                  ? tab === 'PENDING' ? 'bg-blue-600 text-white' : tab === 'APPROVED' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                {tab === 'PENDING' ? 'EN REVISIÓN' : tab === 'APPROVED' ? 'APROBADOS' : 'RECHAZADOS'}
+                <span className="bg-black/40 px-2 py-0.5 rounded-full text-[10px]">
+                  {profiles.filter(p => p.kycStatus === tab).length}
+                </span>
+              </button>
+            ))}
           </div>
 
-          {profiles.length === 0 ? (
-            <div className="text-center py-20 nm-inset rounded-[2rem] border border-white/5">
+          {filteredProfiles.length === 0 ? (
+            <div className="text-center py-20 bg-white/5 rounded-[2rem] border border-white/5">
               <Coffee className="w-16 h-16 mx-auto text-gray-600 mb-4" strokeWidth={1.5} />
-              <h3 className="text-xl font-bold text-gray-300">No hay criminales a la vista, Jefe.</h3>
-              <p className="text-gray-500 mt-2 font-medium">Todos los creadores están verificados o no hay nuevas solicitudes en la cola.</p>
+              <h3 className="text-xl font-bold text-gray-300">No hay expedientes en esta categoría.</h3>
             </div>
           ) : (
             <div className="space-y-8">
-              {profiles.map((p) => {
-                // Dividimos el string del ID para sacar el Frente y el Reverso
+              {filteredProfiles.map((p) => {
                 const ids = p.idDocumentUrl ? p.idDocumentUrl.split(',') : [];
-                const idFront = ids[0] || null;
-                const idBack = ids[1] || null;
+                const idFront = ids || null;
+                const idBack = ids || null;
 
                 return (
-                  <div key={p.id} className="nm-btn p-6 rounded-[2rem] border border-white/5 flex flex-col gap-6 relative overflow-hidden cursor-default">
+                  <div key={p.id} className="bg-[#0a0a0a] p-6 rounded-[2rem] border border-white/10 flex flex-col gap-6 relative shadow-2xl">
                     
-                    {/* Encabezado del Usuario */}
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-white/5 pb-6 gap-4">
+                    {/* Encabezado y Score IA */}
+                    <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center border-b border-white/5 pb-6 gap-6">
+                      
                       <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-full nm-inset bg-[#0a0a0a] flex items-center justify-center text-white font-black text-2xl shadow-inner border border-white/10">
-                          {p.user.username[0].toUpperCase()}
+                        <div className="w-14 h-14 rounded-full bg-zinc-900 flex items-center justify-center text-white font-black text-2xl border border-white/10">
+                          {p.user.username.toUpperCase()}
                         </div>
                         <div>
                           <h3 className="text-white font-black text-xl tracking-wide">@{p.user.username}</h3>
@@ -153,62 +180,89 @@ export default function AdminKyc() {
                         </div>
                       </div>
                       
-                      {/* Botones de Poder (Extruidos y Contundentes) */}
-                      <div className="flex gap-3">
-                        <button 
-                          onClick={() => handleApprove(p.id, p.user.username)}
-                          disabled={processingId === p.id}
-                          className="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.4)] transition-all disabled:opacity-50 flex items-center gap-2"
-                        >
-                          {processingId === p.id ? '...' : <><CheckCircle className="w-5 h-5"/> APROBAR</>}
-                        </button>
-                        <button 
-                          onClick={() => handleReject(p.id, p.user.username)}
-                          disabled={processingId === p.id}
-                          className="nm-btn border border-red-500/30 text-red-500 hover:bg-red-600 hover:text-white font-bold py-3 px-6 rounded-xl transition-all disabled:opacity-50 flex items-center gap-2"
-                        >
-                          {processingId === p.id ? '...' : <><XCircle className="w-5 h-5"/> RECHAZAR</>}
-                        </button>
+                      <div className="flex flex-wrap items-center gap-4">
+                        {/* 🧠 EL CEREBRO DE LA IA EXPUESTO */}
+                        <div className="flex items-center gap-3 bg-purple-500/10 border border-purple-500/30 px-4 py-2 rounded-xl">
+                          <BrainCircuit className="w-6 h-6 text-purple-400" />
+                          <div>
+                            <p className="text-[10px] text-purple-300 uppercase font-bold tracking-widest">Score Riesgo IA</p>
+                            <p className="text-sm text-white font-black">
+                              {p.kycRiskScore ? `${(p.kycRiskScore * 100).toFixed(1)}%` : 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Botones de Poder (Solo visibles si está en PENDING) */}
+                        {p.kycStatus === 'PENDING' && (
+                          <div className="flex gap-2">
+                            <button 
+                              onClick={() => handleApprove(p.id, p.user.username)}
+                              disabled={processingId === p.id}
+                              className="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.4)] transition-all disabled:opacity-50 flex items-center gap-2"
+                            >
+                              {processingId === p.id ? '...' : <><ShieldCheck className="w-5 h-5"/> APROBAR</>}
+                            </button>
+                            <button 
+                              onClick={() => setRejectModal({ isOpen: true, profileId: p.id })}
+                              disabled={processingId === p.id}
+                              className="bg-transparent border border-red-500/50 text-red-500 hover:bg-red-600 hover:text-white font-bold py-3 px-6 rounded-xl transition-all disabled:opacity-50 flex items-center gap-2"
+                            >
+                              {processingId === p.id ? '...' : <><ShieldAlert className="w-5 h-5"/> RECHAZAR</>}
+                            </button>
+                          </div>
+                        )}
+                        
+                        {/* Mensaje de rechazo histórico */}
+                        {p.kycStatus === 'REJECTED' && p.kycRejectionReason && (
+                           <div className="bg-red-500/10 border border-red-500/30 px-4 py-2 rounded-xl">
+                             <p className="text-[10px] text-red-400 uppercase font-bold tracking-widest">Motivo de Rechazo</p>
+                             <p className="text-sm text-white font-medium">{p.kycRejectionReason}</p>
+                           </div>
+                        )}
                       </div>
                     </div>
 
-                    {/* Galería de Evidencia (Hundida) */}
+                    {/* Galería de Evidencia (Con Lupa y Video Real) */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       
-                      {/* FOTO 1: FRENTE ID */}
-                      <div className="nm-inset border border-white/5 rounded-2xl p-2 relative group h-64 flex flex-col items-center justify-center">
+                      {/* FOTO 1: FRENTE */}
+                      <div className="bg-black border border-white/5 rounded-2xl p-2 relative group h-64 flex flex-col items-center justify-center">
                         <div className="absolute top-3 left-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 z-10 border border-white/10 uppercase tracking-widest flex items-center gap-1.5">
                           <UserSquare2 className="w-3 h-3 text-blue-400"/> 1. Frente ID
                         </div>
                         {idFront ? (
-                          <a href={getImageUrl(idFront)} target="_blank" rel="noreferrer" className="w-full h-full flex items-center justify-center">
-                            <img src={getImageUrl(idFront)} className="max-w-full max-h-full object-contain rounded-xl opacity-90 group-hover:opacity-100 transition-opacity cursor-zoom-in" alt="ID Frente" />
-                          </a>
-                        ) : <div className="text-red-500 font-bold text-sm flex items-center gap-2"><XCircle className="w-4 h-4"/> Archivo Faltante</div>}
+                          <div className="w-full h-full relative cursor-zoom-in" onClick={() => setZoomedImage(getImageUrl(idFront))}>
+                            <img src={getImageUrl(idFront)} className="w-full h-full object-contain rounded-xl opacity-90 group-hover:opacity-100 transition-opacity" alt="Frente" />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity rounded-xl">
+                              <ZoomIn className="w-10 h-10 text-white" />
+                            </div>
+                          </div>
+                        ) : <div className="text-gray-500 text-sm">Sin Archivo</div>}
                       </div>
 
-                      {/* FOTO 2: REVERSO ID */}
-                      <div className="nm-inset border border-white/5 rounded-2xl p-2 relative group h-64 flex flex-col items-center justify-center">
+                      {/* FOTO 2: REVERSO */}
+                      <div className="bg-black border border-white/5 rounded-2xl p-2 relative group h-64 flex flex-col items-center justify-center">
                         <div className="absolute top-3 left-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 z-10 border border-white/10 uppercase tracking-widest flex items-center gap-1.5">
                           <FileCheck2 className="w-3 h-3 text-indigo-400"/> 2. Reverso ID
                         </div>
                         {idBack ? (
-                          <a href={getImageUrl(idBack)} target="_blank" rel="noreferrer" className="w-full h-full flex items-center justify-center">
-                            <img src={getImageUrl(idBack)} className="max-w-full max-h-full object-contain rounded-xl opacity-90 group-hover:opacity-100 transition-opacity cursor-zoom-in" alt="ID Reverso" />
-                          </a>
-                        ) : <div className="text-red-500 font-bold text-sm flex items-center gap-2"><XCircle className="w-4 h-4"/> Archivo Faltante</div>}
+                          <div className="w-full h-full relative cursor-zoom-in" onClick={() => setZoomedImage(getImageUrl(idBack))}>
+                            <img src={getImageUrl(idBack)} className="w-full h-full object-contain rounded-xl opacity-90 group-hover:opacity-100 transition-opacity" alt="Reverso" />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity rounded-xl">
+                              <ZoomIn className="w-10 h-10 text-white" />
+                            </div>
+                          </div>
+                        ) : <div className="text-gray-500 text-sm">Sin Archivo</div>}
                       </div>
 
-                      {/* FOTO 3: SELFIE (PRUEBA DE VIDA) */}
-                      <div className="nm-inset border border-purple-500/20 rounded-2xl p-2 relative group h-64 flex flex-col items-center justify-center shadow-[0_0_20px_rgba(168,85,247,0.1)]">
+                      {/* VIDEO 3: PRUEBA DE VIDA (REPARADO 🔥) */}
+                      <div className="bg-black border border-purple-500/20 rounded-2xl p-2 relative h-64 flex flex-col items-center justify-center shadow-[0_0_20px_rgba(168,85,247,0.1)]">
                         <div className="absolute top-3 left-3 bg-purple-600/20 border border-purple-500/30 px-3 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 z-10 uppercase tracking-widest flex items-center gap-1.5">
-                          <ScanFace className="w-3 h-3 text-purple-400"/> 3. Prueba de Vida
+                          <PlayCircle className="w-3 h-3 text-purple-400"/> 3. Prueba de Vida
                         </div>
                         {p.idSelfieUrl ? (
-                          <a href={getImageUrl(p.idSelfieUrl)} target="_blank" rel="noreferrer" className="w-full h-full flex items-center justify-center">
-                            <img src={getImageUrl(p.idSelfieUrl)} className="max-w-full max-h-full object-cover rounded-xl opacity-90 group-hover:opacity-100 transition-opacity cursor-zoom-in" alt="Selfie" />
-                          </a>
-                        ) : <div className="text-red-500 font-bold text-sm flex items-center gap-2"><XCircle className="w-4 h-4"/> Archivo Faltante</div>}
+                          <video src={getImageUrl(p.idSelfieUrl)} controls autoPlay muted loop className="w-full h-full object-contain rounded-xl" />
+                        ) : <div className="text-gray-500 text-sm">Sin Video</div>}
                       </div>
 
                     </div>
@@ -220,6 +274,43 @@ export default function AdminKyc() {
 
         </main>
       </div>
+
+      {/* 🔍 MODAL DE ZOOM DE IMÁGENES */}
+      {zoomedImage && (
+        <div className="fixed inset-0 z- bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onClick={() => setZoomedImage(null)}>
+          <img src={zoomedImage} className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl" alt="Zoom" />
+          <button className="absolute top-6 right-6 text-white hover:text-red-500 bg-black/50 p-2 rounded-full"><X className="w-8 h-8"/></button>
+        </div>
+      )}
+
+      {/* ❌ MODAL DE RECHAZO CON FEEDBACK */}
+      {rejectModal.isOpen && (
+        <div className="fixed inset-0 z- bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#111] border border-red-500/30 p-8 rounded-3xl w-full max-w-md relative shadow-2xl">
+            <button onClick={() => setRejectModal({ isOpen: false, profileId: null })} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X className="w-6 h-6"/></button>
+            <ShieldAlert className="w-12 h-12 text-red-500 mb-4" />
+            <h2 className="text-2xl font-black text-white mb-2">Rechazar Expediente</h2>
+            <p className="text-gray-400 text-sm mb-6">El creador recibirá un correo con la razón exacta del rechazo.</p>
+            
+            <div className="space-y-3 mb-6">
+              {rejectionOptions.map((opt, i) => (
+                <label key={i} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${rejectReason === opt ? 'bg-red-500/10 border-red-500 text-white' : 'border-white/10 text-gray-400 hover:border-white/30'}`}>
+                  <input type="radio" name="reason" value={opt} checked={rejectReason === opt} onChange={(e) => setRejectReason(e.target.value)} className="hidden" />
+                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${rejectReason === opt ? 'border-red-500' : 'border-gray-500'}`}>
+                    {rejectReason === opt && <div className="w-2 h-2 bg-red-500 rounded-full"></div>}
+                  </div>
+                  <span className="text-sm font-medium">{opt}</span>
+                </label>
+              ))}
+            </div>
+
+            <button onClick={handleRejectSubmit} disabled={!rejectReason || processingId !== null} className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition-colors tracking-widest">
+              {processingId ? 'PROCESANDO...' : 'CONFIRMAR RECHAZO'}
+            </button>
+          </div>
+        </div>
+      )}
+
     </AppLayout>
   );
 }
