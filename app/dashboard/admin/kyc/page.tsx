@@ -158,8 +158,14 @@ export default function AdminKyc() {
             <div className="space-y-8">
               {filteredProfiles.map((p) => {
                 const ids = p.idDocumentUrl ? p.idDocumentUrl.split(',') : [];
-                const idFront = ids || null;
-                const idBack = ids || null;
+                const idFront = ids[0] || null;
+                const idBack = ids[1] || null;
+
+                // 🔥 VARIABLES BLINDADAS CONTRA DATOS NULOS
+                const username = p.user?.username || 'Usuario';
+                const initial = username !== 'Usuario' ? username[0].toUpperCase() : 'U';
+                const email = p.user?.email || 'Sin correo registrado';
+                const date = p.user?.createdAt ? new Date(p.user.createdAt).toLocaleDateString() : 'N/A';
 
                 return (
                   <div key={p.id} className="bg-[#0a0a0a] p-6 rounded-[2rem] border border-white/10 flex flex-col gap-6 relative shadow-2xl">
@@ -169,13 +175,13 @@ export default function AdminKyc() {
                       
                       <div className="flex items-center gap-4">
                         <div className="w-14 h-14 rounded-full bg-zinc-900 flex items-center justify-center text-white font-black text-2xl border border-white/10">
-                          {p.user.username.toUpperCase()}
+                          {initial}
                         </div>
                         <div>
-                          <h3 className="text-white font-black text-xl tracking-wide">@{p.user.username}</h3>
-                          <p className="text-sm text-gray-400 font-medium">{p.user.email}</p>
+                          <h3 className="text-white font-black text-xl tracking-wide">@{username}</h3>
+                          <p className="text-sm text-gray-400 font-medium">{email}</p>
                           <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-widest font-bold">
-                            Registrado: {new Date(p.user.createdAt).toLocaleDateString()}
+                            Registrado: {date}
                           </p>
                         </div>
                       </div>
@@ -196,7 +202,7 @@ export default function AdminKyc() {
                         {p.kycStatus === 'PENDING' && (
                           <div className="flex gap-2">
                             <button 
-                              onClick={() => handleApprove(p.id, p.user.username)}
+                              onClick={() => handleApprove(p.id, username)}
                               disabled={processingId === p.id}
                               className="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.4)] transition-all disabled:opacity-50 flex items-center gap-2"
                             >
@@ -255,7 +261,7 @@ export default function AdminKyc() {
                         ) : <div className="text-gray-500 text-sm">Sin Archivo</div>}
                       </div>
 
-                      {/* VIDEO 3: PRUEBA DE VIDA (REPARADO 🔥) */}
+                      {/* VIDEO 3: PRUEBA DE VIDA */}
                       <div className="bg-black border border-purple-500/20 rounded-2xl p-2 relative h-64 flex flex-col items-center justify-center shadow-[0_0_20px_rgba(168,85,247,0.1)]">
                         <div className="absolute top-3 left-3 bg-purple-600/20 border border-purple-500/30 px-3 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 z-10 uppercase tracking-widest flex items-center gap-1.5">
                           <PlayCircle className="w-3 h-3 text-purple-400"/> 3. Prueba de Vida
@@ -277,7 +283,7 @@ export default function AdminKyc() {
 
       {/* 🔍 MODAL DE ZOOM DE IMÁGENES */}
       {zoomedImage && (
-        <div className="fixed inset-0 z- bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onClick={() => setZoomedImage(null)}>
+        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onClick={() => setZoomedImage(null)}>
           <img src={zoomedImage} className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl" alt="Zoom" />
           <button className="absolute top-6 right-6 text-white hover:text-red-500 bg-black/50 p-2 rounded-full"><X className="w-8 h-8"/></button>
         </div>
@@ -285,7 +291,7 @@ export default function AdminKyc() {
 
       {/* ❌ MODAL DE RECHAZO CON FEEDBACK */}
       {rejectModal.isOpen && (
-        <div className="fixed inset-0 z- bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#111] border border-red-500/30 p-8 rounded-3xl w-full max-w-md relative shadow-2xl">
             <button onClick={() => setRejectModal({ isOpen: false, profileId: null })} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X className="w-6 h-6"/></button>
             <ShieldAlert className="w-12 h-12 text-red-500 mb-4" />
