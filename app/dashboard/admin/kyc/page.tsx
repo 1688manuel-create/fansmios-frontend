@@ -5,19 +5,10 @@ import { useRouter } from 'next/navigation';
 import api from '../../../../lib/api';
 import AppLayout from '../../../../components/AppLayout';
 
-// 🔥 IMPORTAMOS ICONOS DE LUCIDE REACT
 import { 
-  ShieldAlert, 
-  ShieldCheck, 
-  ZoomIn, 
-  X, 
-  PlayCircle, 
-  BrainCircuit,
-  ArrowLeft,
-  Coffee,
-  UserSquare2,
-  FileCheck2,
-  ScanFace
+  ShieldAlert, ShieldCheck, ZoomIn, X, PlayCircle, BrainCircuit,
+  ArrowLeft, Coffee, UserSquare2, FileCheck2, ScanFace, Search,
+  ChevronLeft, ChevronRight // 👈 Nuevos Iconos de Paginación
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -33,8 +24,13 @@ export default function AdminKyc() {
   const [profiles, setProfiles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // 🔥 Pestañas del Modo Dios
+  // 🔥 Arquitectura Escalable: Paginación, Búsqueda y Pestañas
   const [activeTab, setActiveTab] = useState<'PENDING' | 'APPROVED' | 'REJECTED'>('PENDING');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [counts, setCounts] = useState({ PENDING: 0, APPROVED: 0, REJECTED: 0 });
   
   // Modales
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
@@ -54,20 +50,43 @@ export default function AdminKyc() {
     const storedUser = localStorage.getItem('user');
     if (!storedUser || JSON.parse(storedUser).role !== 'ADMIN') {
       router.push('/dashboard');
-      return;
     }
-    fetchKycProfiles();
   }, []);
 
+  // 🔥 Efecto de Debounce: Espera 500ms después de que el CEO deja de teclear para buscar
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setPage(1); // Si busca algo nuevo, regresamos a la página 1
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  // 🔥 Disparador principal de datos
+  useEffect(() => {
+    fetchKycProfiles();
+  }, [activeTab, debouncedSearch, page]);
+
   const fetchKycProfiles = async () => {
+    setIsLoading(true);
     try {
-      const res = await api.get('/admin/kyc/pending'); 
+      const res = await api.get('/admin/kyc/pending', {
+        params: { status: activeTab, search: debouncedSearch, page, limit: 10 }
+      }); 
       setProfiles(res.data.profiles || []);
+      setTotalPages(res.data.pagination?.totalPages || 1);
+      setCounts(res.data.counts || { PENDING: 0, APPROVED: 0, REJECTED: 0 });
     } catch (error) {
       console.error("Error cargando KYC:", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleTabChange = (tab: 'PENDING' | 'APPROVED' | 'REJECTED') => {
+    setActiveTab(tab);
+    setPage(1);
+    setSearchTerm('');
   };
 
   const handleApprove = async (id: string, username: string) => {
@@ -100,18 +119,11 @@ export default function AdminKyc() {
     }
   };
 
-  const filteredProfiles = profiles.filter(p => p.kycStatus === activeTab);
-
-  if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center text-white font-bold animate-pulse">Iniciando Cámara Gesell...</div>;
-
   return (
     <AppLayout>
       <div className="min-h-screen bg-[#050505] pb-20 relative">
-        
-        {/* Iluminación de ambiente */}
         <div className="absolute top-0 left-1/2 w-[800px] h-[300px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
 
-        {/* 👑 NAVBAR DEL ADMIN NEUMÓRFICA */}
         <nav className="sticky top-0 z-40 bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center backdrop-blur-xl shadow-md">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-[0_0_15px_rgba(59,130,246,0.4)]">
@@ -129,39 +141,61 @@ export default function AdminKyc() {
 
         <main className="max-w-7xl mx-auto mt-8 px-4 relative z-10">
           
-          {/* 🔥 TABS (Pestañas Históricas) */}
-          <div className="flex flex-wrap gap-3 mb-8 bg-white/5 p-2 rounded-2xl w-fit border border-white/5">
-            {['PENDING', 'APPROVED', 'REJECTED'].map((tab) => (
-              <button 
-                key={tab}
-                onClick={() => setActiveTab(tab as any)}
-                className={`px-6 py-2.5 rounded-xl text-sm font-bold tracking-wider transition-all flex items-center gap-2 ${
-                  activeTab === tab 
-                  ? tab === 'PENDING' ? 'bg-blue-600 text-white' : tab === 'APPROVED' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {tab === 'PENDING' ? 'EN REVISIÓN' : tab === 'APPROVED' ? 'APROBADOS' : 'RECHAZADOS'}
-                <span className="bg-black/40 px-2 py-0.5 rounded-full text-[10px]">
-                  {profiles.filter(p => p.kycStatus === tab).length}
-                </span>
-              </button>
-            ))}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div className="flex flex-wrap gap-3 bg-white/5 p-2 rounded-2xl w-fit border border-white/5">
+              {['PENDING', 'APPROVED', 'REJECTED'].map((tab) => (
+                <button 
+                  key={tab}
+                  onClick={() => handleTabChange(tab as any)}
+                  className={`px-6 py-2.5 rounded-xl text-sm font-bold tracking-wider transition-all flex items-center gap-2 ${
+                    activeTab === tab 
+                    ? tab === 'PENDING' ? 'bg-blue-600 text-white' : tab === 'APPROVED' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {tab === 'PENDING' ? 'EN REVISIÓN' : tab === 'APPROVED' ? 'APROBADOS' : 'RECHAZADOS'}
+                  <span className="bg-black/40 px-2 py-0.5 rounded-full text-[10px]">
+                    {counts[tab as keyof typeof counts]}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-full md:w-80">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-500" />
+              </div>
+              <input
+                type="text"
+                placeholder="Buscar @usuario o correo..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-[#0a0a0a] border border-white/10 text-white rounded-2xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-inner"
+              />
+              {searchTerm && (
+                <button onClick={() => setSearchTerm('')} className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-white">
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
           </div>
 
-          {filteredProfiles.length === 0 ? (
+          {isLoading ? (
+            <div className="text-center py-20 animate-pulse text-gray-400 font-bold tracking-widest">RASTREANDO DATOS...</div>
+          ) : profiles.length === 0 ? (
             <div className="text-center py-20 bg-white/5 rounded-[2rem] border border-white/5">
               <Coffee className="w-16 h-16 mx-auto text-gray-600 mb-4" strokeWidth={1.5} />
-              <h3 className="text-xl font-bold text-gray-300">No hay expedientes en esta categoría.</h3>
+              <h3 className="text-xl font-bold text-gray-300">
+                {searchTerm ? 'No se encontraron resultados.' : 'No hay expedientes en esta categoría.'}
+              </h3>
             </div>
           ) : (
             <div className="space-y-8">
-              {filteredProfiles.map((p) => {
+              {profiles.map((p) => {
                 const ids = p.idDocumentUrl ? p.idDocumentUrl.split(',') : [];
                 const idFront = ids[0] || null;
                 const idBack = ids[1] || null;
 
-                // 🔥 VARIABLES BLINDADAS CONTRA DATOS NULOS
                 const username = p.user?.username || 'Usuario';
                 const initial = username !== 'Usuario' ? username[0].toUpperCase() : 'U';
                 const email = p.user?.email || 'Sin correo registrado';
@@ -169,119 +203,104 @@ export default function AdminKyc() {
 
                 return (
                   <div key={p.id} className="bg-[#0a0a0a] p-6 rounded-[2rem] border border-white/10 flex flex-col gap-6 relative shadow-2xl">
-                    
-                    {/* Encabezado y Score IA */}
                     <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center border-b border-white/5 pb-6 gap-6">
-                      
                       <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-full bg-zinc-900 flex items-center justify-center text-white font-black text-2xl border border-white/10">
-                          {initial}
-                        </div>
+                        <div className="w-14 h-14 rounded-full bg-zinc-900 flex items-center justify-center text-white font-black text-2xl border border-white/10">{initial}</div>
                         <div>
                           <h3 className="text-white font-black text-xl tracking-wide">@{username}</h3>
                           <p className="text-sm text-gray-400 font-medium">{email}</p>
-                          <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-widest font-bold">
-                            Registrado: {date}
-                          </p>
+                          <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-widest font-bold">Registrado: {date}</p>
                         </div>
                       </div>
                       
                       <div className="flex flex-wrap items-center gap-4">
-                        {/* 🧠 EL CEREBRO DE LA IA EXPUESTO */}
                         <div className="flex items-center gap-3 bg-purple-500/10 border border-purple-500/30 px-4 py-2 rounded-xl">
                           <BrainCircuit className="w-6 h-6 text-purple-400" />
                           <div>
                             <p className="text-[10px] text-purple-300 uppercase font-bold tracking-widest">Score Riesgo IA</p>
-                            <p className="text-sm text-white font-black">
-                              {p.kycRiskScore ? `${(p.kycRiskScore * 100).toFixed(1)}%` : 'N/A'}
-                            </p>
+                            <p className="text-sm text-white font-black">{p.kycRiskScore ? `${(p.kycRiskScore * 100).toFixed(1)}%` : 'N/A'}</p>
                           </div>
                         </div>
 
-                        {/* Botones de Poder (Solo visibles si está en PENDING) */}
                         {p.kycStatus === 'PENDING' && (
                           <div className="flex gap-2">
-                            <button 
-                              onClick={() => handleApprove(p.id, username)}
-                              disabled={processingId === p.id}
-                              className="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.4)] transition-all disabled:opacity-50 flex items-center gap-2"
-                            >
+                            <button onClick={() => handleApprove(p.id, username)} disabled={processingId === p.id} className="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.4)] transition-all flex items-center gap-2">
                               {processingId === p.id ? '...' : <><ShieldCheck className="w-5 h-5"/> APROBAR</>}
                             </button>
-                            <button 
-                              onClick={() => setRejectModal({ isOpen: true, profileId: p.id })}
-                              disabled={processingId === p.id}
-                              className="bg-transparent border border-red-500/50 text-red-500 hover:bg-red-600 hover:text-white font-bold py-3 px-6 rounded-xl transition-all disabled:opacity-50 flex items-center gap-2"
-                            >
+                            <button onClick={() => setRejectModal({ isOpen: true, profileId: p.id })} disabled={processingId === p.id} className="bg-transparent border border-red-500/50 text-red-500 hover:bg-red-600 hover:text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
                               {processingId === p.id ? '...' : <><ShieldAlert className="w-5 h-5"/> RECHAZAR</>}
                             </button>
                           </div>
                         )}
                         
-                        {/* Mensaje de rechazo histórico */}
                         {p.kycStatus === 'REJECTED' && p.kycRejectionReason && (
-                           <div className="bg-red-500/10 border border-red-500/30 px-4 py-2 rounded-xl">
+                           <div className="bg-red-500/10 border border-red-500/30 px-4 py-2 rounded-xl max-w-xs">
                              <p className="text-[10px] text-red-400 uppercase font-bold tracking-widest">Motivo de Rechazo</p>
-                             <p className="text-sm text-white font-medium">{p.kycRejectionReason}</p>
+                             <p className="text-sm text-white font-medium truncate">{p.kycRejectionReason}</p>
                            </div>
                         )}
                       </div>
                     </div>
 
-                    {/* Galería de Evidencia (Con Lupa y Video Real) */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      
-                      {/* FOTO 1: FRENTE */}
                       <div className="bg-black border border-white/5 rounded-2xl p-2 relative group h-64 flex flex-col items-center justify-center">
-                        <div className="absolute top-3 left-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 z-10 border border-white/10 uppercase tracking-widest flex items-center gap-1.5">
-                          <UserSquare2 className="w-3 h-3 text-blue-400"/> 1. Frente ID
-                        </div>
+                        <div className="absolute top-3 left-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 z-10 border border-white/10 uppercase tracking-widest flex items-center gap-1.5"><UserSquare2 className="w-3 h-3 text-blue-400"/> 1. Frente ID</div>
                         {idFront ? (
                           <div className="w-full h-full relative cursor-zoom-in" onClick={() => setZoomedImage(getImageUrl(idFront))}>
                             <img src={getImageUrl(idFront)} className="w-full h-full object-contain rounded-xl opacity-90 group-hover:opacity-100 transition-opacity" alt="Frente" />
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity rounded-xl">
-                              <ZoomIn className="w-10 h-10 text-white" />
-                            </div>
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity rounded-xl"><ZoomIn className="w-10 h-10 text-white" /></div>
                           </div>
                         ) : <div className="text-gray-500 text-sm">Sin Archivo</div>}
                       </div>
 
-                      {/* FOTO 2: REVERSO */}
                       <div className="bg-black border border-white/5 rounded-2xl p-2 relative group h-64 flex flex-col items-center justify-center">
-                        <div className="absolute top-3 left-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 z-10 border border-white/10 uppercase tracking-widest flex items-center gap-1.5">
-                          <FileCheck2 className="w-3 h-3 text-indigo-400"/> 2. Reverso ID
-                        </div>
+                        <div className="absolute top-3 left-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 z-10 border border-white/10 uppercase tracking-widest flex items-center gap-1.5"><FileCheck2 className="w-3 h-3 text-indigo-400"/> 2. Reverso ID</div>
                         {idBack ? (
                           <div className="w-full h-full relative cursor-zoom-in" onClick={() => setZoomedImage(getImageUrl(idBack))}>
                             <img src={getImageUrl(idBack)} className="w-full h-full object-contain rounded-xl opacity-90 group-hover:opacity-100 transition-opacity" alt="Reverso" />
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity rounded-xl">
-                              <ZoomIn className="w-10 h-10 text-white" />
-                            </div>
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity rounded-xl"><ZoomIn className="w-10 h-10 text-white" /></div>
                           </div>
                         ) : <div className="text-gray-500 text-sm">Sin Archivo</div>}
                       </div>
 
-                      {/* VIDEO 3: PRUEBA DE VIDA */}
                       <div className="bg-black border border-purple-500/20 rounded-2xl p-2 relative h-64 flex flex-col items-center justify-center shadow-[0_0_20px_rgba(168,85,247,0.1)]">
-                        <div className="absolute top-3 left-3 bg-purple-600/20 border border-purple-500/30 px-3 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 z-10 uppercase tracking-widest flex items-center gap-1.5">
-                          <PlayCircle className="w-3 h-3 text-purple-400"/> 3. Prueba de Vida
-                        </div>
+                        <div className="absolute top-3 left-3 bg-purple-600/20 border border-purple-500/30 px-3 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 z-10 uppercase tracking-widest flex items-center gap-1.5"><PlayCircle className="w-3 h-3 text-purple-400"/> 3. Prueba de Vida</div>
                         {p.idSelfieUrl ? (
                           <video src={getImageUrl(p.idSelfieUrl)} controls autoPlay muted loop className="w-full h-full object-contain rounded-xl" />
                         ) : <div className="text-gray-500 text-sm">Sin Video</div>}
                       </div>
-
                     </div>
                   </div>
                 );
               })}
+
+              {/* 🔥 CONTROLES DE PAGINACIÓN */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-6 mt-10">
+                  <button 
+                    onClick={() => setPage(p => Math.max(1, p - 1))} 
+                    disabled={page === 1}
+                    className="p-2 rounded-full bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white transition-colors"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <span className="text-gray-400 font-bold text-sm tracking-widest">
+                    PÁGINA <span className="text-white">{page}</span> DE {totalPages}
+                  </span>
+                  <button 
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))} 
+                    disabled={page === totalPages}
+                    className="p-2 rounded-full bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white transition-colors"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </div>
+              )}
             </div>
           )}
-
         </main>
       </div>
 
-      {/* 🔍 MODAL DE ZOOM DE IMÁGENES */}
       {zoomedImage && (
         <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onClick={() => setZoomedImage(null)}>
           <img src={zoomedImage} className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl" alt="Zoom" />
@@ -289,7 +308,6 @@ export default function AdminKyc() {
         </div>
       )}
 
-      {/* ❌ MODAL DE RECHAZO CON FEEDBACK */}
       {rejectModal.isOpen && (
         <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#111] border border-red-500/30 p-8 rounded-3xl w-full max-w-md relative shadow-2xl">
