@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import api from '../../lib/api';
+import api from '@/lib/api';
 import { ShieldCheck, Lock, CheckCircle2, Loader2, Mail, Gift } from "lucide-react";
 
 export default function Home() {
