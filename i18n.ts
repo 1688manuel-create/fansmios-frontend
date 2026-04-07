@@ -1,14 +1,32 @@
-import {getRequestConfig} from 'next-intl/server';
-import {notFound} from 'next/navigation';
+import { getRequestConfig } from 'next-intl/server';
+import { notFound } from 'next/navigation';
 
-// 🔥 MISMOS IDIOMAS AQUÍ:
-const locales = ['es', 'en', 'pt', 'fr', 'de', 'ru', 'ja', 'hi', 'zh'];
+// 🔥 Lista de idiomas soportados
+const locales = ['es', 'en', 'pt', 'fr', 'de', 'ru', 'ja', 'hi', 'zh', 'ar', 'ko', 'it'] as const;
 
-export default getRequestConfig(async ({locale}) => {
-  if (!locales.includes(locale as any)) notFound();
+type Locale = (typeof locales)[number];
 
-  return {
-    locale: locale as string, // 👈 Le juramos a TypeScript que sí es texto
-    messages: (await import(`./messages/${locale}.json`)).default
-  };
+export default getRequestConfig(async ({ locale }) => {
+  // 🛡️ Validación segura
+  if (!locale || !locales.includes(locale as Locale)) {
+    return {
+      locale: 'es',
+      messages: (await import(`./messages/es.json`)).default
+    };
+  }
+
+  try {
+    const messages = (await import(`./messages/${locale}.json`)).default;
+
+    return {
+      locale,
+      messages
+    };
+  } catch (error) {
+    // 🛡️ Fallback si el archivo no existe
+    return {
+      locale: 'es',
+      messages: (await import(`./messages/es.json`)).default
+    };
+  }
 });
