@@ -1,4 +1,4 @@
-/* frontend/app/globals.css */
+/* frontend/app/[locale]/globals.css */
 @import "tailwindcss";
 
 :root {
