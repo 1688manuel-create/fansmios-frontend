@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-
+import "@/globals.css";
 // 🔥 1. IMPORTACIONES DEL MOTOR DE IDIOMAS
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
@@ -34,19 +33,18 @@ export default async function RootLayout({
   params
 }: Readonly<{
   children: React.ReactNode;
-  params: { locale: string }; // 👈 Detecta si es 'es', 'en' o 'pt'
+  params: { locale: string };
 }>) {
+  const { locale } = params;
+  const messages = await getMessages({ locale });
   
-  // 🔥 3. DESCARGAMOS EL DICCIONARIO CORRECTO
-  const messages = await getMessages();
-
   return (
-    // 👈 4. LE DECIMOS A GOOGLE EN QUÉ IDIOMA ESTÁ LA PÁGINA
-    <html lang={params.locale}>
+    // 👈 5. LE DECIMOS A GOOGLE EN QUÉ IDIOMA ESTÁ LA PÁGINA
+    <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* 🔥 5. ENVOLVEMOS LA APP EN EL CAMPO DE FUERZA DE TRADUCCIÓN */}
+        {/* 🔥 6. ENVOLVEMOS LA APP EN EL CAMPO DE FUERZA DE TRADUCCIÓN */}
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
