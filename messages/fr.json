@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "La plateforme exclusive pour les créateurs d'élite.",
+    "slogan": "Votre contenu. Vos règles. Vos fans.",
+    "tab_login": "Se connecter",
+    "tab_register": "Créer un compte",
+    "role_title": "Je veux être un...",
+    "role_fan": "Fan",
+    "role_creator": "Créateur",
+    "username_label": "Nom d'utilisateur",
+    "username_placeholder": "ex. createur_pro",
+    "email_label": "Adresse e-mail",
+    "email_placeholder": "vous@email.com",
+    "password_label": "Mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "vip_invitation": "Invitation VIP activée !",
+    "verifying_conn": "Vérification de la connexion sécurisée...",
+    "btn_login": "Accéder à l'Empire",
+    "btn_register": "Créer un compte sécurisé",
+    "badge_secure": "Plateforme Sécurisée",
+    "badge_privacy": "Confidentialité Absolue",
+    "badge_verified": "Créateurs Vérifiés",
+    "alert_created": "✨ Compte créé ! Nous avons envoyé un lien de sécurité à votre adresse e-mail pour l'activer."
+  }
+}

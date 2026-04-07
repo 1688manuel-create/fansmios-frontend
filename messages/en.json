@@ -1,8 +1,25 @@
 {
-  "Admin": {
-    "title": "Identity Control",
-    "subtitle": "LEGAL AML / KYC MODULE",
-    "btnApprove": "APPROVE",
-    "btnReject": "REJECT"
+  "Index": {
+    "subtitle": "The exclusive platform for elite creators.",
+    "slogan": "Your content. Your rules. Your fans.",
+    "tab_login": "Log In",
+    "tab_register": "Create New Account",
+    "role_title": "I want to be a...",
+    "role_fan": "Fan",
+    "role_creator": "Creator",
+    "username_label": "Username",
+    "username_placeholder": "e.g. pro_creator",
+    "email_label": "Email Address",
+    "email_placeholder": "you@email.com",
+    "password_label": "Password",
+    "forgot_password": "Forgot your password?",
+    "vip_invitation": "VIP Invitation Activated!",
+    "verifying_conn": "Verifying secure connection...",
+    "btn_login": "Enter the Empire",
+    "btn_register": "Create Secure Account",
+    "badge_secure": "Secure Platform",
+    "badge_privacy": "Absolute Privacy",
+    "badge_verified": "Verified Creators",
+    "alert_created": "✨ Account created! We have sent a secure link to your email to activate it."
   }
 }

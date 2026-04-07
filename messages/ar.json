@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "المنصة الحصرية لنخبة صناع المحتوى.",
+    "slogan": "محتواك. قواعدك. معجبينك.",
+    "tab_login": "تسجيل الدخول",
+    "tab_register": "إنشاء حساب جديد",
+    "role_title": "أريد أن أكون...",
+    "role_fan": "معجب",
+    "role_creator": "صانع محتوى",
+    "username_label": "اسم المستخدم",
+    "username_placeholder": "مثال: creator_pro",
+    "email_label": "البريد الإلكتروني",
+    "email_placeholder": "you@email.com",
+    "password_label": "كلمة المرور",
+    "forgot_password": "هل نسيت كلمة المرور؟",
+    "vip_invitation": "تم تفعيل دعوة VIP!",
+    "verifying_conn": "جاري التحقق من الاتصال الآمن...",
+    "btn_login": "دخول الإمبراطورية",
+    "btn_register": "إنشاء حساب آمن",
+    "badge_secure": "منصة آمنة",
+    "badge_privacy": "خصوصية مطلقة",
+    "badge_verified": "صناع محتوى موثقين",
+    "alert_created": "✨ تم إنشاء الحساب! أرسلنا رابط أمان إلى بريدك الإلكتروني لتفعيله."
+  }
+}

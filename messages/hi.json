@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "एलीट क्रिएटर्स के लिए विशेष प्लेटफॉर्म।",
+    "slogan": "आपका कंटेंट। आपके नियम। आपके फैंस।",
+    "tab_login": "लॉग इन करें",
+    "tab_register": "नया अकाउंट बनाएं",
+    "role_title": "मैं बनना चाहता हूँ...",
+    "role_fan": "फैन",
+    "role_creator": "क्रिएटर",
+    "username_label": "यूज़रनेम",
+    "username_placeholder": "उदा. creator_pro",
+    "email_label": "ईमेल पता",
+    "email_placeholder": "you@email.com",
+    "password_label": "पासवर्ड",
+    "forgot_password": "क्या आप अपना पासवर्ड भूल गए हैं?",
+    "vip_invitation": "VIP आमंत्रण सक्रिय!",
+    "verifying_conn": "सुरक्षित कनेक्शन की पुष्टि की जा रही है...",
+    "btn_login": "एम्पायर में प्रवेश करें",
+    "btn_register": "सुरक्षित अकाउंट बनाएं",
+    "badge_secure": "सुरक्षित प्लेटफॉर्म",
+    "badge_privacy": "संपूर्ण गोपनीयता",
+    "badge_verified": "सत्यापित क्रिएटर्स",
+    "alert_created": "✨ अकाउंट बन गया! हमने इसे सक्रिय करने के लिए आपके ईमेल पर एक सुरक्षित लिंक भेजा है।"
+  }
+}

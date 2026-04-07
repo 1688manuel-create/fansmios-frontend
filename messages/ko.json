@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "엘리트 크리에이터를 위한 독점 플랫폼.",
+    "slogan": "당신의 콘텐츠. 당신의 규칙. 당신의 팬.",
+    "tab_login": "로그인",
+    "tab_register": "새 계정 만들기",
+    "role_title": "나는 다음과 같이 활동하고 싶습니다...",
+    "role_fan": "팬",
+    "role_creator": "크리에이터",
+    "username_label": "사용자 이름",
+    "username_placeholder": "예: creator_pro",
+    "email_label": "이메일 주소",
+    "email_placeholder": "you@email.com",
+    "password_label": "비밀번호",
+    "forgot_password": "비밀번호를 잊으셨나요?",
+    "vip_invitation": "VIP 초대가 활성화되었습니다!",
+    "verifying_conn": "보안 연결 확인 중...",
+    "btn_login": "제국 입장하기",
+    "btn_register": "안전한 계정 생성",
+    "badge_secure": "안전한 플랫폼",
+    "badge_privacy": "완벽한 프라이버시",
+    "badge_verified": "인증된 크리에이터",
+    "alert_created": "✨ 계정이 생성되었습니다! 활성화를 위한 보안 링크를 이메일로 발송했습니다."
+  }
+}

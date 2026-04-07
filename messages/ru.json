@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "Эксклюзивная платформа для элитных авторов.",
+    "slogan": "Твой контент. Твои правила. Твои фанаты.",
+    "tab_login": "Войти",
+    "tab_register": "Создать аккаунт",
+    "role_title": "Я хочу быть...",
+    "role_fan": "Фанатом",
+    "role_creator": "Автором",
+    "username_label": "Имя пользователя",
+    "username_placeholder": "напр. creator_pro",
+    "email_label": "Электронная почта",
+    "email_placeholder": "you@email.com",
+    "password_label": "Пароль",
+    "forgot_password": "Забыли пароль?",
+    "vip_invitation": "VIP-приглашение активировано!",
+    "verifying_conn": "Проверка безопасного соединения...",
+    "btn_login": "Войти в Империю",
+    "btn_register": "Создать безопасный аккаунт",
+    "badge_secure": "Безопасная платформа",
+    "badge_privacy": "Абсолютная конфиденциальность",
+    "badge_verified": "Проверенные авторы",
+    "alert_created": "✨ Аккаунт создан! Мы отправили безопасную ссылку на вашу почту для активации."
+  }
+}

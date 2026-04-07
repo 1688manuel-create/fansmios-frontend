@@ -1,8 +1,25 @@
 {
-  "Admin": {
-    "title": "Control de Identidad",
-    "subtitle": "MÓDULO LEGAL AML / KYC",
-    "btnApprove": "APROBAR",
-    "btnReject": "RECHAZAR"
+  "Index": {
+    "subtitle": "La plataforma exclusiva para creadores de élite.",
+    "slogan": "Tu contenido. Tus reglas. Tus fans.",
+    "tab_login": "Iniciar Sesión",
+    "tab_register": "Crear Cuenta Nueva",
+    "role_title": "Quiero ser un...",
+    "role_fan": "Fan",
+    "role_creator": "Creador",
+    "username_label": "Nombre de Usuario",
+    "username_placeholder": "ej. creador_pro",
+    "email_label": "Correo Electrónico",
+    "email_placeholder": "tu@email.com",
+    "password_label": "Contraseña",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "vip_invitation": "¡Invitación VIP Activada!",
+    "verifying_conn": "Verificando conexión segura...",
+    "btn_login": "Acceder al Imperio",
+    "btn_register": "Crear Cuenta Segura",
+    "badge_secure": "Plataforma Segura",
+    "badge_privacy": "Privacidad Absoluta",
+    "badge_verified": "Creadores Verificados",
+    "alert_created": "✨ ¡Cuenta creada! Hemos enviado un enlace de seguridad a tu correo para activarla."
   }
 }

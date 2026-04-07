@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "エリートクリエイターのための専用プラットフォーム。",
+    "slogan": "あなたのコンテンツ。あなたのルール。あなたのファン。",
+    "tab_login": "ログイン",
+    "tab_register": "新規アカウント作成",
+    "role_title": "私は...",
+    "role_fan": "ファン",
+    "role_creator": "クリエイター",
+    "username_label": "ユーザー名",
+    "username_placeholder": "例：creator_pro",
+    "email_label": "メールアドレス",
+    "email_placeholder": "you@email.com",
+    "password_label": "パスワード",
+    "forgot_password": "パスワードをお忘れですか？",
+    "vip_invitation": "VIP招待が有効化されました！",
+    "verifying_conn": "安全な接続を確認しています...",
+    "btn_login": "帝国にアクセス",
+    "btn_register": "安全なアカウントを作成",
+    "badge_secure": "安全なプラットフォーム",
+    "badge_privacy": "絶対的なプライバシー",
+    "badge_verified": "認証済みクリエイター",
+    "alert_created": "✨ アカウントを作成しました！有効化するための安全なリンクをメールで送信しました。"
+  }
+}
