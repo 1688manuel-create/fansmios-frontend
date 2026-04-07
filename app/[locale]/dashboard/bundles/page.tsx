@@ -1,0 +1,256 @@
+// frontend/app/dashboard/bundles/page.tsx
+"use client";
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import api from '../../../../lib/api'; // 🔥 Añadido para poder eliminar
+import { bundleService } from '../../../../lib/bundleService';
+import AppLayout from '../../../../components/AppLayout';
+import { Package, Plus, Tag, DollarSign, Image as ImageIcon, CheckCircle2, Trash2 } from 'lucide-react';
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
+
+// 🚀 🔥 ESTA ES LA FUNCIÓN QUE FALTABA PARA LEER LAS IMÁGENES
+const getImageUrl = (path: string | null) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path; 
+  return `${BACKEND_URL}${path}`; 
+};
+
+export default function ContentBundlesPage() {
+  const router = useRouter();
+  
+  const [isCreating, setIsCreating] = useState(false);
+  const [bundles, setBundles] = useState<any[]>([]);
+  const [eligiblePosts, setEligiblePosts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Estados del Formulario
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [selectedPostIds, setSelectedPostIds] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [bundlesData, postsData] = await Promise.all([
+        bundleService.getMyBundles(),
+        bundleService.getEligiblePosts()
+      ]);
+      setBundles(bundlesData.bundles || []);
+      setEligiblePosts(postsData.posts || []);
+    } catch (error) {
+      console.error("Error al cargar bundles", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const togglePostSelection = (postId: string) => {
+    setSelectedPostIds(prev => 
+      prev.includes(postId) ? prev.filter(id => id !== postId) : [...prev, postId]
+    );
+  };
+
+  const handleCreateBundle = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title || !price || selectedPostIds.length === 0) {
+        alert("Necesitas un título, un precio y seleccionar al menos 1 post.");
+        return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await bundleService.createBundle({
+          title,
+          description,
+          price: parseFloat(price),
+          postIds: selectedPostIds
+      });
+      
+      alert('📦 ¡Paquete creado exitosamente!');
+      setTitle(''); setDescription(''); setPrice(''); setSelectedPostIds([]);
+      setIsCreating(false);
+      fetchData(); 
+    } catch (error: any) {
+      alert(error.response?.data?.error || 'Error al crear el paquete');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteBundle = async (id: string) => {
+    if (!confirm("¿Seguro que deseas eliminar este paquete? Quienes ya lo compraron seguirán teniendo acceso.")) return;
+    try {
+      await api.delete(`/bundles/${id}`); 
+      fetchData();
+    } catch (error) {
+      alert("Error al eliminar.");
+    }
+  };
+
+  if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-10 h-10 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div></div>;
+
+  return (
+    <AppLayout>
+      <div className="min-h-screen bg-nm-base text-white pb-20">
+        
+        {/* NAVBAR SUPERIOR NEUMÓRFICA */}
+        <nav className="sticky top-0 z-50 bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-5 backdrop-blur-xl shadow-md">
+          <h1 className="text-xl font-black flex items-center gap-2">
+            <Package className="w-6 h-6 text-blue-500" strokeWidth={2.5}/> Paquetes de Contenido
+          </h1>
+        </nav>
+
+        <main className="max-w-6xl mx-auto mt-8 px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
+          
+          {/* ================= COLUMNA 1: FORMULARIO DE CREACIÓN ================= */}
+          <div className="nm-inset rounded-[2rem] border border-white/5 p-6 sm:p-8 h-fit">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2"><Plus className="w-5 h-5 text-green-400"/> Crear Nuevo Paquete</h2>
+                <p className="text-sm text-gray-400 font-medium mt-1">Agrupa tus posts exclusivos y véndelos juntos.</p>
+              </div>
+              <button onClick={() => setIsCreating(!isCreating)} className={`font-bold py-2.5 px-6 rounded-full transition-transform text-sm whitespace-nowrap ${isCreating ? 'nm-btn text-gray-400 hover:text-white' : 'nm-btn-primary shadow-[0_0_15px_rgba(59,130,246,0.3)]'}`}>
+                {isCreating ? 'Cancelar' : '+ Armar Paquete'}
+              </button>
+            </div>
+            
+            {isCreating ? (
+              <form onSubmit={handleCreateBundle} className="space-y-6 animate-fade-in border-t border-white/5 pt-6">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">Título del Paquete</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"><Tag className="w-4 h-4"/></span>
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Ej: Colección Verano VIP" className="w-full nm-inset border border-white/5 rounded-xl pl-11 pr-4 py-3 text-white outline-none focus:border-blue-500/50 text-sm" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">Precio Total a cobrar (USD)</label>
+                  <div className="relative w-1/2">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-green-500 font-bold"><DollarSign className="w-4 h-4"/></span>
+                    <input type="number" min="1" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="19.99" className="w-full nm-inset border border-green-500/20 rounded-xl pl-10 pr-4 py-3 text-white outline-none focus:border-green-500/50 font-bold" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">Descripción (Convence a tus fans)</label>
+                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} required placeholder="¿Qué encontrarán aquí adentro?" rows={3} className="w-full nm-inset border border-white/5 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500/50 text-sm resize-none custom-scrollbar" />
+                </div>
+
+                {/* SELECCIÓN DE POSTS PPV */}
+                <div className="pt-2 border-t border-white/5">
+                  <label className="text-[10px] font-bold text-white uppercase tracking-widest bg-blue-500/20 px-3 py-1.5 rounded-lg mb-4 inline-block border border-blue-500/30">Paso 2: Selecciona los Posts PPV que incluirá</label>
+                  
+                  {eligiblePosts.length === 0 ? (
+                    <div className="nm-inset border border-white/5 rounded-2xl p-6 text-center">
+                      <ImageIcon className="w-8 h-8 text-gray-600 mx-auto mb-2" />
+                      <p className="text-gray-500 text-sm">No tienes posts con contenido multimedia disponibles.<br/>¡Sube contenido cobrando primero!</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-64 overflow-y-auto custom-scrollbar p-1">
+                      {eligiblePosts.map(post => {
+                        const isSelected = selectedPostIds.includes(post.id);
+                        return (
+                          <div 
+                            key={post.id} 
+                            onClick={() => togglePostSelection(post.id)}
+                            className={`relative rounded-xl overflow-hidden cursor-pointer border-2 transition-all h-28 group nm-inset ${isSelected ? 'border-blue-500 scale-105 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'border-transparent hover:border-white/20'}`}
+                          >
+                            {/* 🔥 AHORA SÍ FUNCIONARÁ ESTO */}
+                            <img src={getImageUrl(post.mediaUrl)} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" alt="Post" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-2 pointer-events-none">
+                                <span className="text-white text-[10px] font-bold truncate">{post.content || 'Sin texto'}</span>
+                                <span className="text-green-400 text-xs font-bold">${post.price}</span>
+                            </div>
+                            {isSelected && (
+                              <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-md">
+                                <CheckCircle2 className="w-3 h-3" />
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <button type="submit" disabled={isSubmitting || selectedPostIds.length === 0 || !title || !price} className="w-full nm-btn-primary py-4 rounded-xl font-bold mt-4 flex items-center justify-center gap-2">
+                  {isSubmitting ? 'Empaquetando...' : `Crear Paquete con ${selectedPostIds.length} posts`}
+                </button>
+              </form>
+            ) : (
+              <div className="text-center py-10 opacity-50">
+                <Package className="w-16 h-16 mx-auto mb-4 text-gray-500" />
+                <p className="text-sm font-medium">Haz clic en "Armar Paquete" para empezar a agrupar tu contenido.</p>
+              </div>
+            )}
+          </div>
+
+          {/* ================= COLUMNA 2: LISTA DE PAQUETES ACTIVOS ================= */}
+          <div className="space-y-6">
+            <h2 className="text-lg font-bold text-white mb-2 flex items-center gap-2 pl-2"><Package className="w-5 h-5 text-gray-400"/> Tus Paquetes a la Venta</h2>
+            
+            {bundles.length === 0 ? (
+              <div className="nm-inset border border-white/5 rounded-[2rem] p-10 text-center flex flex-col items-center">
+                <Package className="w-12 h-12 text-gray-600 mb-3" />
+                <p className="text-gray-400 font-medium text-sm">Aún no has creado ningún paquete.</p>
+              </div>
+            ) : (
+              bundles.map(bundle => (
+                <div key={bundle.id} className="nm-inset border border-white/5 rounded-[2rem] p-5 flex flex-col sm:flex-row gap-5 relative overflow-hidden group">
+                  
+                  {/* Destello sutil de fondo */}
+                  <div className="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/5 rounded-full blur-[30px] pointer-events-none"></div>
+
+                  <div className="flex-1 space-y-3 z-10">
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-xl font-black text-white">{bundle.title}</h3>
+                      <span className="nm-inset border border-green-500/20 text-green-400 px-3 py-1 rounded-md text-sm font-bold">${bundle.price}</span>
+                    </div>
+                    <p className="text-sm text-gray-400 line-clamp-2 font-medium">{bundle.description}</p>
+                    
+                    {/* Mini-galería neumórfica */}
+                    <div className="flex items-center gap-4 pt-2">
+                      <div className="flex -space-x-3">
+                          {bundle.posts?.slice(0, 3).map((p: any, i: number) => (
+                              <div key={i} className="w-10 h-10 rounded-lg nm-inset border border-white/10 overflow-hidden z-[3-i]">
+                                <img src={getImageUrl(p.mediaUrl)} className="w-full h-full object-cover" alt="Media" />
+                              </div>
+                          ))}
+                          {bundle.posts?.length > 3 && (
+                              <div className="w-10 h-10 rounded-lg nm-inset border border-white/10 bg-black/80 flex items-center justify-center text-[10px] font-bold text-white z-0">
+                                  +{bundle.posts.length - 3}
+                              </div>
+                          )}
+                      </div>
+                      <p className="text-xs text-blue-400 font-bold uppercase tracking-widest">{bundle.posts?.length || 0} Archivos</p>
+                    </div>
+                  </div>
+
+                  {/* Acciones */}
+                  <div className="flex flex-row sm:flex-col justify-end gap-2 border-t sm:border-t-0 sm:border-l border-white/5 pt-4 sm:pt-0 sm:pl-4 z-10 w-full sm:w-auto">
+                    <div className="flex-1 sm:flex-none text-center bg-white/5 rounded-xl p-2 border border-white/5">
+                      <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Ventas</p>
+                      <p className="text-lg font-black text-white">{bundle._count?.purchases || 0}</p>
+                    </div>
+                    <button onClick={() => handleDeleteBundle(bundle.id)} className="flex-1 sm:flex-none nm-btn border border-red-500/20 text-red-500 hover:bg-red-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2">
+                      <Trash2 className="w-4 h-4"/> Eliminar
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+        </main>
+      </div>
+    </AppLayout>
+  );
+}
