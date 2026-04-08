@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "Platform eksklusif untuk kreator elit.",
+    "slogan": "Kontenmu. Aturanmu. Penggemarmu.",
+    "tab_login": "Masuk",
+    "tab_register": "Buat Akun Baru",
+    "role_title": "Saya ingin menjadi...",
+    "role_fan": "Penggemar",
+    "role_creator": "Kreator",
+    "username_label": "Nama Pengguna",
+    "username_placeholder": "cth. creator_pro",
+    "email_label": "Alamat Email",
+    "email_placeholder": "kamu@email.com",
+    "password_label": "Kata Sandi",
+    "forgot_password": "Lupa kata sandi?",
+    "vip_invitation": "Undangan VIP Diaktifkan!",
+    "verifying_conn": "Memverifikasi koneksi aman...",
+    "btn_login": "Masuk ke Kekaisaran",
+    "btn_register": "Buat Akun Aman",
+    "badge_secure": "Platform Aman",
+    "badge_privacy": "Privasi Mutlak",
+    "badge_verified": "Kreator Terverifikasi",
+    "alert_created": "✨ Akun berhasil dibuat! Kami telah mengirimkan tautan aman ke email Anda untuk mengaktifkannya."
+  }
+}

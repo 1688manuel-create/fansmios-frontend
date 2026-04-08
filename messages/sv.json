@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "Den exklusiva plattformen för elitkreatörer.",
+    "slogan": "Ditt innehåll. Dina regler. Dina fans.",
+    "tab_login": "Logga in",
+    "tab_register": "Skapa nytt konto",
+    "role_title": "Jag vill bli en...",
+    "role_fan": "Fan",
+    "role_creator": "Kreatör",
+    "username_label": "Användarnamn",
+    "username_placeholder": "t.ex. creator_pro",
+    "email_label": "E-postadress",
+    "email_placeholder": "du@email.com",
+    "password_label": "Lösenord",
+    "forgot_password": "Glömt ditt lösenord?",
+    "vip_invitation": "VIP-inbjudan aktiverad!",
+    "verifying_conn": "Verifierar säker anslutning...",
+    "btn_login": "Träd in i imperiet",
+    "btn_register": "Skapa säkert konto",
+    "badge_secure": "Säker plattform",
+    "badge_privacy": "Absolut integritet",
+    "badge_verified": "Verifierade kreatörer",
+    "alert_created": "✨ Kontot är skapat! Vi har skickat en säker länk till din e-post för att aktivera det."
+  }
+}

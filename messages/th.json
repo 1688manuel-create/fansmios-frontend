@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "แพลตฟอร์มสุดพิเศษสำหรับครีเอเตอร์ระดับแนวหน้า",
+    "slogan": "คอนเทนต์ของคุณ กฎของคุณ แฟนคลับของคุณ",
+    "tab_login": "เข้าสู่ระบบ",
+    "tab_register": "สร้างบัญชีใหม่",
+    "role_title": "ฉันต้องการเป็น...",
+    "role_fan": "แฟนคลับ",
+    "role_creator": "ครีเอเตอร์",
+    "username_label": "ชื่อผู้ใช้",
+    "username_placeholder": "เช่น creator_pro",
+    "email_label": "อีเมล",
+    "email_placeholder": "you@email.com",
+    "password_label": "รหัสผ่าน",
+    "forgot_password": "ลืมรหัสผ่านใช่ไหม?",
+    "vip_invitation": "เปิดใช้งานคำเชิญ VIP แล้ว!",
+    "verifying_conn": "กำลังตรวจสอบการเชื่อมต่อที่ปลอดภัย...",
+    "btn_login": "เข้าสู่อาณาจักร",
+    "btn_register": "สร้างบัญชีที่ปลอดภัย",
+    "badge_secure": "แพลตฟอร์มที่ปลอดภัย",
+    "badge_privacy": "ความเป็นส่วนตัวสูงสุด",
+    "badge_verified": "ครีเอเตอร์ที่ยืนยันแล้ว",
+    "alert_created": "✨ สร้างบัญชีแล้ว! เราได้ส่งลิงก์ที่ปลอดภัยไปยังอีเมลของคุณเพื่อเปิดใช้งาน"
+  }
+}

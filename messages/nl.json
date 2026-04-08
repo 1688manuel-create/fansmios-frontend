@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "Hét exclusieve platform voor elite creators.",
+    "slogan": "Jouw content. Jouw regels. Jouw fans.",
+    "tab_login": "Inloggen",
+    "tab_register": "Nieuw account aanmaken",
+    "role_title": "Ik wil een... worden",
+    "role_fan": "Fan",
+    "role_creator": "Creator",
+    "username_label": "Gebruikersnaam",
+    "username_placeholder": "bijv. creator_pro",
+    "email_label": "E-mailadres",
+    "email_placeholder": "jij@email.com",
+    "password_label": "Wachtwoord",
+    "forgot_password": "Wachtwoord vergeten?",
+    "vip_invitation": "VIP-uitnodiging geactiveerd!",
+    "verifying_conn": "Beveiligde verbinding verifiëren...",
+    "btn_login": "Betreed het Imperium",
+    "btn_register": "Veilig account aanmaken",
+    "badge_secure": "Veilig Platform",
+    "badge_privacy": "Absolute Privacy",
+    "badge_verified": "Geverifieerde Creators",
+    "alert_created": "✨ Account aangemaakt! We hebben een veilige link naar je e-mail gestuurd om het te activeren."
+  }
+}

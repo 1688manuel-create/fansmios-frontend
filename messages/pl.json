@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "Ekskluzywna platforma dla elitarnych twórców.",
+    "slogan": "Twój kontent. Twoje zasady. Twoi fani.",
+    "tab_login": "Zaloguj się",
+    "tab_register": "Utwórz nowe konto",
+    "role_title": "Chcę być...",
+    "role_fan": "Fanem",
+    "role_creator": "Twórcą",
+    "username_label": "Nazwa użytkownika",
+    "username_placeholder": "np. creator_pro",
+    "email_label": "Adres e-mail",
+    "email_placeholder": "ty@email.com",
+    "password_label": "Hasło",
+    "forgot_password": "Zapomniałeś hasła?",
+    "vip_invitation": "Zaproszenie VIP aktywowane!",
+    "verifying_conn": "Weryfikacja bezpiecznego połączenia...",
+    "btn_login": "Wejdź do Imperium",
+    "btn_register": "Utwórz bezpieczne konto",
+    "badge_secure": "Bezpieczna platforma",
+    "badge_privacy": "Absolutna prywatność",
+    "badge_verified": "Zweryfikowani twórcy",
+    "alert_created": "✨ Konto utworzone! Wysłaliśmy bezpieczny link na Twój adres e-mail w celu jego aktywacji."
+  }
+}

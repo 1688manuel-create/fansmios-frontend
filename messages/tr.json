@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "Elit yaratıcılar için özel platform.",
+    "slogan": "Senin içeriğin. Senin kuralların. Senin hayranların.",
+    "tab_login": "Giriş Yap",
+    "tab_register": "Yeni Hesap Oluştur",
+    "role_title": "Şu olmak istiyorum...",
+    "role_fan": "Hayran",
+    "role_creator": "Yaratıcı",
+    "username_label": "Kullanıcı Adı",
+    "username_placeholder": "örn. creator_pro",
+    "email_label": "E-posta Adresi",
+    "email_placeholder": "sen@email.com",
+    "password_label": "Şifre",
+    "forgot_password": "Şifreni mi unuttun?",
+    "vip_invitation": "VIP Davetiyesi Aktifleştirildi!",
+    "verifying_conn": "Güvenli bağlantı doğrulanıyor...",
+    "btn_login": "İmparatorluğa Gir",
+    "btn_register": "Güvenli Hesap Oluştur",
+    "badge_secure": "Güvenli Platform",
+    "badge_privacy": "Mutlak Gizlilik",
+    "badge_verified": "Doğrulanmış Yaratıcılar",
+    "alert_created": "✨ Hesap oluşturuldu! Etkinleştirmek için e-postanıza güvenli bir bağlantı gönderdik."
+  }
+}

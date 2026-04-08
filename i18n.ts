@@ -2,7 +2,7 @@ import { getRequestConfig } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 // 🔥 Lista de idiomas soportados
-const locales = ['es', 'en', 'pt', 'fr', 'de', 'ru', 'ja', 'hi', 'zh', 'ar', 'ko', 'it'] as const;
+const locales = ['es', 'en', 'pt', 'fr', 'de', 'ru', 'ja', 'hi', 'zh', 'ar', 'ko', 'it', 'tr', 'id', 'th', 'vi', 'pl', 'nl', 'sv'] as const;
 
 type Locale = (typeof locales)[number];
 

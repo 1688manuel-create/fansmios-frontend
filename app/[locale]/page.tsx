@@ -1,4 +1,3 @@
-// frontend/app/[locale]/page.tsx
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -6,16 +5,18 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { ShieldCheck, Lock, CheckCircle2, Loader2, Mail, Gift } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export default function Home() {
   const router = useRouter();
+  const t = useTranslations('Index'); // 🔥 INVOCAMOS AL TRADUCTOR
 
   // UX States
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // 🔥 NUEVOS ESTADOS PARA REENVIAR CORREO
+  // NUEVOS ESTADOS PARA REENVIAR CORREO
   const [unverifiedEmail, setUnverifiedEmail] = useState('');
   const [isResending, setIsResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState('');
@@ -26,10 +27,10 @@ export default function Home() {
   const [username, setUsername] = useState('');
   const [role, setRole] = useState<'FAN' | 'CREATOR'>('FAN');
 
-  // 🔥 ESTADO DEL RADAR DE REFERIDOS
+  // ESTADO DEL RADAR DE REFERIDOS
   const [referralCode, setReferralCode] = useState('');
 
-  // 🔥 RADAR DE ENLACES: Atrapa el código de la URL al cargar
+  // RADAR DE ENLACES: Atrapa el código de la URL al cargar
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const ref = params.get('ref');
@@ -80,12 +81,12 @@ export default function Home() {
         });
         
         setIsLogin(true);
-        alert('✨ ¡Cuenta creada! Hemos enviado un enlace de seguridad a tu correo para activarla.');
+        alert(t('alert_created')); // 🔥 ALERTA MULTI-IDIOMA
         setPassword('');
       }
     } catch (err: any) {
       const errorData = err.response?.data;
-      setError(errorData?.error || 'Error de conexión. Intenta de nuevo.');
+      setError(errorData?.error || t('error_connection'));
       
       // SI EL BACKEND DICE QUE FALTA VERIFICAR CORREO, GUARDAMOS EL EMAIL
       if (errorData?.needsVerification && errorData?.email) {
@@ -128,8 +129,8 @@ export default function Home() {
             FANSMIO <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">VIP</span>
           </h1>
           <p className="text-gray-400 text-center text-sm sm:text-base mt-4 font-medium leading-relaxed max-w-sm">
-            La plataforma exclusiva para creadores de élite. <br/>
-            <strong className="text-white">Tu contenido. Tus reglas. Tus fans.</strong>
+            {t('subtitle')} <br/>
+            <strong className="text-white">{t('slogan')}</strong>
           </p>
         </div>
 
@@ -145,13 +146,13 @@ export default function Home() {
                 onClick={() => { setIsLogin(true); setError(''); setUnverifiedEmail(''); setResendSuccess(''); }}
                 className={`flex-1 py-2 rounded-full text-sm font-bold transition-all ${isLogin ? 'bg-gradient-to-r from-red-600 to-red-800 text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'text-gray-400 hover:text-white'}`}
               >
-                Iniciar Sesión
+                {t('tab_login')}
               </button>
               <button 
                 onClick={() => { setIsLogin(false); setError(''); setUnverifiedEmail(''); setResendSuccess(''); }}
                 className={`flex-1 py-2 rounded-full text-sm font-bold transition-all ${!isLogin ? 'bg-gradient-to-r from-red-600 to-red-800 text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'text-gray-400 hover:text-white'}`}
               >
-                Crear Cuenta Nueva
+                {t('tab_register')}
               </button>
             </div>
 
@@ -183,41 +184,41 @@ export default function Home() {
               {!isLogin && (
                 <div className="space-y-5 animate-fade-in">
                   
-                  {/* NOTIFICACIÓN VISUAL VIP: Solo si hay código de referido */}
+                  {/* NOTIFICACIÓN VISUAL VIP */}
                   {referralCode && (
                     <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3 flex items-center justify-center gap-2 animate-fade-in shadow-[0_0_15px_rgba(34,197,94,0.15)]">
                       <Gift className="w-5 h-5 text-green-400" />
                       <span className="text-sm text-green-400 font-bold tracking-wide">
-                        ¡Invitación VIP Activada!
+                        {t('vip_invitation')}
                       </span>
                     </div>
                   )}
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Quiero ser un...</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('role_title')}</label>
                     <div className="grid grid-cols-2 gap-3">
                       <div 
                         onClick={() => setRole('FAN')}
                         className={`cursor-pointer border p-3 rounded-xl text-center transition-all ${role === 'FAN' ? 'border-purple-500 bg-purple-500/10 text-white shadow-[0_0_15px_rgba(168,85,247,0.2)]' : 'border-white/10 text-gray-400 hover:border-white/30'}`}
                       >
-                        <span className="text-xl block mb-1">⭐</span> Fan
+                        <span className="text-xl block mb-1">⭐</span> {t('role_fan')}
                       </div>
                       <div 
                         onClick={() => setRole('CREATOR')}
                         className={`cursor-pointer border p-3 rounded-xl text-center transition-all ${role === 'CREATOR' ? 'border-blue-500 bg-blue-500/10 text-white shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'border-white/10 text-gray-400 hover:border-white/30'}`}
                       >
-                        <span className="text-xl block mb-1">📸</span> Creador
+                        <span className="text-xl block mb-1">📸</span> {t('role_creator')}
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre de Usuario</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('username_label')}</label>
                     <input 
                       type="text" 
                       value={username} 
                       onChange={(e) => setUsername(e.target.value)} 
-                      placeholder="ej. creador_pro"
+                      placeholder={t('username_placeholder')}
                       className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-red-500 focus:bg-white/5 transition-all"
                       required={!isLogin}
                     />
@@ -226,12 +227,12 @@ export default function Home() {
               )}
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Correo Electrónico</label>
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('email_label')}</label>
                 <input 
                   type="email" 
                   value={email} 
                   onChange={(e) => setEmail(e.target.value)} 
-                  placeholder="tu@email.com"
+                  placeholder={t('email_placeholder')}
                   className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-red-500 focus:bg-white/5 transition-all"
                   required
                 />
@@ -239,14 +240,14 @@ export default function Home() {
 
               <div className="space-y-1">
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Contraseña</label>
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('password_label')}</label>
                   {isLogin && (
                     <button 
                       type="button" 
                       onClick={() => router.push('/auth/forgot-password')}
                       className="text-xs text-red-400 hover:text-red-300 transition-colors"
                     >
-                      ¿Olvidaste tu contraseña?
+                      {t('forgot_password')}
                     </button>
                   )}
                 </div>
@@ -264,7 +265,7 @@ export default function Home() {
                 <div className="bg-black/40 border border-white/10 rounded-xl p-3 flex items-center justify-between animate-fade-in">
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-sm text-gray-300">Verificando conexión segura...</span>
+                    <span className="text-sm text-gray-300">{t('verifying_conn')}</span>
                   </div>
                   <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Protected</span>
                 </div>
@@ -278,7 +279,7 @@ export default function Home() {
                 {isLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin text-black" />
                 ) : (
-                  isLogin ? 'Acceder al Imperio' : 'Crear Cuenta Segura'
+                  isLogin ? t('btn_login') : t('btn_register')
                 )}
               </button>
             </form>
@@ -289,28 +290,24 @@ export default function Home() {
           <div className="mt-8 grid grid-cols-3 gap-2 w-full max-w-sm mx-auto">
             <div className="flex flex-col items-center text-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
               <ShieldCheck className="w-5 h-5 text-blue-500" />
-              <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Plataforma<br/>Segura</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t('badge_secure')}</span>
             </div>
             <div className="flex flex-col items-center text-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
               <Lock className="w-5 h-5 text-green-500" />
-              <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Privacidad<br/>Absoluta</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t('badge_privacy')}</span>
             </div>
             <div className="flex flex-col items-center text-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
               <CheckCircle2 className="w-5 h-5 text-purple-500" />
-              <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Creadores<br/>Verificados</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t('badge_verified')}</span>
             </div>
           </div>
         </div>
 
       </div>
 
-      {/* ==========================================
-          ⚖️ FOOTER LEGAL (VISIBLE Y PROFESIONAL)
-      ========================================== */}
+      {/* FOOTER LEGAL (SIN TRADUCIR PARA MANTENER LA LEGALIDAD BASE, LUEGO LO TRADUCIMOS SI QUIERES) */}
       <footer className="w-full border-t border-white/10 bg-[#050505] pt-8 pb-8 px-4 relative z-10 mt-auto">
         <div className="max-w-5xl mx-auto space-y-6">
-          
-          {/* BADGES LEGALES DESTACADOS */}
           <div className="flex flex-wrap justify-center gap-3 md:gap-4 text-[10px] uppercase font-black tracking-widest opacity-90">
             <div className="flex items-center gap-2 border border-white/10 px-3 py-2 rounded-lg bg-black text-gray-400 shadow-inner">
               <span className="text-red-500 text-sm">🔞</span> 18+ SOLO ADULTOS
@@ -326,7 +323,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* ENLACES A DOCUMENTOS FUNCIONALES */}
           <div className="flex flex-wrap justify-center gap-4 md:gap-8 text-xs text-blue-500 font-bold tracking-wide">
             <Link href="/legal/terms" className="hover:text-blue-400 transition-colors underline decoration-blue-500/30 underline-offset-4">Términos de Servicio</Link>
             <Link href="/legal/privacy" className="hover:text-blue-400 transition-colors underline decoration-blue-500/30 underline-offset-4">Política de Privacidad</Link>
@@ -336,7 +332,6 @@ export default function Home() {
             <Link href="/legal/2257" className="hover:text-blue-400 transition-colors underline decoration-blue-500/30 underline-offset-4">18 U.S.C. 2257</Link>
           </div>
 
-          {/* TEXTO LEGAL LARGO (Disclaimer) */}
           <div className="text-[11px] text-gray-500 space-y-3 leading-relaxed px-4 text-center max-w-4xl mx-auto font-medium">
             <p>
               Fansmio opera bajo estrictas políticas de moderación. Todo el contenido es generado por usuarios verificados mediante sistemas biométricos (KYC) y operamos bajo una política de tolerancia cero frente al contenido no consensuado. Todos los modelos han otorgado consentimiento expreso y documentado en estricto cumplimiento con 18 U.S.C. 2257.
@@ -348,7 +343,6 @@ export default function Home() {
               © {new Date().getFullYear()} FansMio VIP. TODOS LOS DERECHOS RESERVADOS.
             </p>
           </div>
-
         </div>
       </footer>
 

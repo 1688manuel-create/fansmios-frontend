@@ -1,0 +1,25 @@
+{
+  "Index": {
+    "subtitle": "Nền tảng độc quyền dành cho các nhà sáng tạo ưu tú.",
+    "slogan": "Nội dung của bạn. Quy tắc của bạn. Người hâm mộ của bạn.",
+    "tab_login": "Đăng nhập",
+    "tab_register": "Tạo tài khoản mới",
+    "role_title": "Tôi muốn trở thành...",
+    "role_fan": "Người hâm mộ",
+    "role_creator": "Nhà sáng tạo",
+    "username_label": "Tên người dùng",
+    "username_placeholder": "vd: creator_pro",
+    "email_label": "Địa chỉ Email",
+    "email_placeholder": "ban@email.com",
+    "password_label": "Mật khẩu",
+    "forgot_password": "Quên mật khẩu?",
+    "vip_invitation": "Lời mời VIP đã được kích hoạt!",
+    "verifying_conn": "Đang xác minh kết nối an toàn...",
+    "btn_login": "Tiến vào Đế chế",
+    "btn_register": "Tạo tài khoản bảo mật",
+    "badge_secure": "Nền tảng An toàn",
+    "badge_privacy": "Bảo mật Tuyệt đối",
+    "badge_verified": "Nhà sáng tạo đã Xác minh",
+    "alert_created": "✨ Tài khoản đã được tạo! Chúng tôi đã gửi một liên kết an toàn đến email của bạn để kích hoạt."
+  }
+}
