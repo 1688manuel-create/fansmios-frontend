@@ -21,5 +21,19 @@
     "badge_privacy": "संपूर्ण गोपनीयता",
     "badge_verified": "सत्यापित क्रिएटर्स",
     "alert_created": "✨ अकाउंट बन गया! हमने इसे सक्रिय करने के लिए आपके ईमेल पर एक सुरक्षित लिंक भेजा है।"
+  },
+
+  "Profile": {
+    "vip_active": "आप VIP हैं",
+    "subscribe": "सदस्य बनें",
+    "public_profile": "आपकी सार्वजनिक प्रोफ़ाइल",
+    "tab_academy": "VIP अकादमी",
+    "tab_all": "सभी पोस्ट",
+    "tab_photos": "तस्वीरें",
+    "tab_videos": "वीडियो",
+    "tab_locked": "विशिष्ट",
+    "empty_posts": "इस श्रेणी में कोई पोस्ट नहीं है।",
+    "unlock_for": "इसके लिए अनलॉक करें",
+    "subscribe_to_view": "देखने के लिए सदस्यता लें"
   }
 }

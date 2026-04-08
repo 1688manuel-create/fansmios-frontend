@@ -21,5 +21,19 @@
     "badge_privacy": "Privacy Assoluta",
     "badge_verified": "Creatori Verificati",
     "alert_created": "✨ Account creato! Abbiamo inviato un link di sicurezza alla tua email per attivarlo."
+  },
+
+  "Profile": {
+    "vip_active": "Sei VIP",
+    "subscribe": "Abbonati",
+    "public_profile": "Il tuo profilo pubblico",
+    "tab_academy": "Accademia VIP",
+    "tab_all": "Tutti i post",
+    "tab_photos": "Foto",
+    "tab_videos": "Video",
+    "tab_locked": "Esclusivo",
+    "empty_posts": "Nessun post in questa categoria.",
+    "unlock_for": "Sblocca per",
+    "subscribe_to_view": "Abbonati per vedere"
   }
 }

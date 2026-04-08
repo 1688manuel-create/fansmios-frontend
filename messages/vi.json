@@ -21,5 +21,19 @@
     "badge_privacy": "Bảo mật Tuyệt đối",
     "badge_verified": "Nhà sáng tạo đã Xác minh",
     "alert_created": "✨ Tài khoản đã được tạo! Chúng tôi đã gửi một liên kết an toàn đến email của bạn để kích hoạt."
+  },
+
+  "Profile": {
+    "vip_active": "Bạn là VIP",
+    "subscribe": "Đăng ký",
+    "public_profile": "Hồ sơ công khai của bạn",
+    "tab_academy": "Học viện VIP",
+    "tab_all": "Tất cả bài viết",
+    "tab_photos": "Ảnh",
+    "tab_videos": "Video",
+    "tab_locked": "Độc quyền",
+    "empty_posts": "Không có bài viết trong danh mục này.",
+    "unlock_for": "Mở khóa với",
+    "subscribe_to_view": "Đăng ký để xem"
   }
 }

@@ -21,5 +21,19 @@
     "badge_privacy": "خصوصية مطلقة",
     "badge_verified": "صناع محتوى موثقين",
     "alert_created": "✨ تم إنشاء الحساب! أرسلنا رابط أمان إلى بريدك الإلكتروني لتفعيله."
+  },
+
+  "Profile": {
+    "vip_active": "أنت VIP",
+    "subscribe": "اشتراك",
+    "public_profile": "ملفك الشخصي العام",
+    "tab_academy": "أكاديمية VIP",
+    "tab_all": "جميع المنشورات",
+    "tab_photos": "صور",
+    "tab_videos": "فيديو",
+    "tab_locked": "حصري",
+    "empty_posts": "لا توجد منشورات في هذه الفئة.",
+    "unlock_for": "فتح مقابل",
+    "subscribe_to_view": "اشترك للمشاهدة"
   }
 }

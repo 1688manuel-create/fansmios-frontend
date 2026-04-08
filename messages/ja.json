@@ -21,5 +21,19 @@
     "badge_privacy": "絶対的なプライバシー",
     "badge_verified": "認証済みクリエイター",
     "alert_created": "✨ アカウントを作成しました！有効化するための安全なリンクをメールで送信しました。"
+  },
+
+  "Profile": {
+    "vip_active": "あなたはVIPです",
+    "subscribe": "登録する",
+    "public_profile": "公開プロフィール",
+    "tab_academy": "VIPアカデミー",
+    "tab_all": "すべての投稿",
+    "tab_photos": "写真",
+    "tab_videos": "動画",
+    "tab_locked": "限定コンテンツ",
+    "empty_posts": "このカテゴリには投稿がありません。",
+    "unlock_for": "ロック解除",
+    "subscribe_to_view": "登録して見る"
   }
 }

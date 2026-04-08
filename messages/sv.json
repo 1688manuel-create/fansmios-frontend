@@ -21,5 +21,19 @@
     "badge_privacy": "Absolut integritet",
     "badge_verified": "Verifierade kreatörer",
     "alert_created": "✨ Kontot är skapat! Vi har skickat en säker länk till din e-post för att aktivera det."
+  },
+
+  "Profile": {
+    "vip_active": "Du är VIP",
+    "subscribe": "Prenumerera",
+    "public_profile": "Din offentliga profil",
+    "tab_academy": "VIP-akademi",
+    "tab_all": "Alla inlägg",
+    "tab_photos": "Foton",
+    "tab_videos": "Videor",
+    "tab_locked": "Exklusivt",
+    "empty_posts": "Inga inlägg i denna kategori.",
+    "unlock_for": "Lås upp för",
+    "subscribe_to_view": "Prenumerera för att se"
   }
 }

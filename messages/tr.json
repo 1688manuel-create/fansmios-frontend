@@ -21,5 +21,19 @@
     "badge_privacy": "Mutlak Gizlilik",
     "badge_verified": "Doğrulanmış Yaratıcılar",
     "alert_created": "✨ Hesap oluşturuldu! Etkinleştirmek için e-postanıza güvenli bir bağlantı gönderdik."
+  },
+
+  "Profile": {
+    "vip_active": "VIP'siniz",
+    "subscribe": "Abone Ol",
+    "public_profile": "Açık Profilin",
+    "tab_academy": "VIP Akademi",
+    "tab_all": "Tüm gönderiler",
+    "tab_photos": "Fotoğraflar",
+    "tab_videos": "Videolar",
+    "tab_locked": "Özel",
+    "empty_posts": "Bu kategoride gönderi yok.",
+    "unlock_for": "Kilidini aç",
+    "subscribe_to_view": "Görmek için abone ol"
   }
 }

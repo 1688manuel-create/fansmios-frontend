@@ -10,6 +10,7 @@ import AppLayout from '../../../components/AppLayout';
 import { paymentService } from '../../../lib/paymentService';
 import SeriesTab from '../../../components/profile/SeriesTab';
 import { PlaySquare } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 import { 
   ArrowLeft, CheckCircle2, MessageCircle, Star, Lock, 
@@ -67,6 +68,8 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
 export default function CreatorProfile() {
   const params = useParams(); 
   const router = useRouter();
+
+  const t = useTranslations('Profile'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   
   const rawUsername = params?.username;
   const username = Array.isArray(rawUsername) ? rawUsername : rawUsername;
@@ -425,16 +428,16 @@ export default function CreatorProfile() {
               {(!isOwnerOrAdmin) ? (
                 isSubscribed ? (
                   <button disabled className="nm-inset text-yellow-500 border border-yellow-500/30 font-bold py-3.5 px-8 rounded-2xl cursor-default w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-widest text-sm shadow-inner">
-                    <Star className="w-5 h-5 fill-yellow-500/20"/> Eres VIP
+                    <Star className="w-5 h-5 fill-yellow-500/20"/> {t('vip_active')}
                   </button>
                 ) : (
                   <button onClick={handleSubscribe} className="bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-black py-3.5 px-10 rounded-2xl w-full sm:w-auto flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(20,184,166,0.3)] hover:scale-105 transition-all">
-                    <Crown className="w-5 h-5"/> Suscribirse • ${(profile.monthlyPrice || 0).toFixed(2)}/mes
+                    <Crown className="w-5 h-5"/> {t('subscribe')} • ${(profile.monthlyPrice || 0).toFixed(2)}/mes
                   </button>
                 )
               ) : (
                 <div className="nm-inset px-6 py-3.5 rounded-2xl border border-white/5 flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-teal-500" /> <span className="text-sm font-bold text-gray-300">Tu Perfil Público</span>
+                  <Eye className="w-5 h-5 text-teal-500" /> <span className="text-sm font-bold text-gray-300">{t('public_profile')}</span>
                 </div>
               )}
 
@@ -598,19 +601,19 @@ export default function CreatorProfile() {
           {(posts.length > 0 || series?.length > 0) && (
             <div className="flex overflow-x-auto custom-scrollbar gap-2 mb-6 pb-2">
               <button onClick={() => setActiveTab('series')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'series' ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.4)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
-                <PlaySquare className="w-4 h-4" /> Academia VIP
+                <PlaySquare className="w-4 h-4" /> {t('tab_academy')}
               </button>
               <button onClick={() => setActiveTab('all')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'all' ? 'bg-white text-black shadow-md' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
-                <LayoutGrid className="w-4 h-4" /> Todos los posts
+                <LayoutGrid className="w-4 h-4" /> {t('tab_all')}
               </button>
               <button onClick={() => setActiveTab('photos')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'photos' ? 'bg-teal-500 text-white shadow-[0_0_15px_rgba(20,184,166,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
-                <ImageIcon className="w-4 h-4" /> Fotos
+                <ImageIcon className="w-4 h-4" /> {t('tab_photos')}
               </button>
               <button onClick={() => setActiveTab('videos')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'videos' ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
-                <Video className="w-4 h-4" /> Videos
+                <Video className="w-4 h-4" /> {t('tab_videos')}
               </button>
               <button onClick={() => setActiveTab('locked')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'locked' ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
-                <Lock className="w-4 h-4" /> Exclusivos
+                <Lock className="w-4 h-4" /> {t('tab_locked')}
               </button>
             </div>
           )}
@@ -663,11 +666,11 @@ export default function CreatorProfile() {
                           <Lock className="w-14 h-14 text-red-500 drop-shadow-md" />
                           {!isSubscribed && !post.isPPV ? (
                             <button onClick={(e) => { e.stopPropagation(); handleSubscribe(); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
-                              <Crown className="w-4 h-4"/> Suscríbete para ver
+                              <Crown className="w-4 h-4"/> {t('subscribe_to_view')}
                             </button>
                           ) : (
                             <button onClick={(e) => { e.stopPropagation(); handleUnlockPPV(post); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
-                              <Unlock className="w-4 h-4"/> Desbloquear por ${(post.price || 0).toFixed(2)}
+                              <Unlock className="w-4 h-4"/> {t('unlock_for')} ${(post.price || 0).toFixed(2)}
                             </button>
                           )}
                         </div>

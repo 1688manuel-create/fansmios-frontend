@@ -21,5 +21,19 @@
     "badge_privacy": "Absolute Privacy",
     "badge_verified": "Verified Creators",
     "alert_created": "✨ Account created! We have sent a secure link to your email to activate it."
+  },
+
+  "Profile": {
+    "vip_active": "You are VIP",
+    "subscribe": "Subscribe",
+    "public_profile": "Your Public Profile",
+    "tab_academy": "VIP Academy",
+    "tab_all": "All posts",
+    "tab_photos": "Photos",
+    "tab_videos": "Videos",
+    "tab_locked": "Exclusive",
+    "empty_posts": "No posts in this category.",
+    "unlock_for": "Unlock for",
+    "subscribe_to_view": "Subscribe to view"
   }
 }

@@ -21,5 +21,19 @@
     "badge_privacy": "Absolutna prywatność",
     "badge_verified": "Zweryfikowani twórcy",
     "alert_created": "✨ Konto utworzone! Wysłaliśmy bezpieczny link na Twój adres e-mail w celu jego aktywacji."
+  },
+
+  "Profile": {
+    "vip_active": "Jesteś VIP",
+    "subscribe": "Subskrybuj",
+    "public_profile": "Twój profil publiczny",
+    "tab_academy": "Akademia VIP",
+    "tab_all": "Wszystkie posty",
+    "tab_photos": "Zdjęcia",
+    "tab_videos": "Wideo",
+    "tab_locked": "Ekskluzywne",
+    "empty_posts": "Brak postów w tej kategorii.",
+    "unlock_for": "Odblokuj za",
+    "subscribe_to_view": "Subskrybuj, aby zobaczyć"
   }
 }

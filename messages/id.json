@@ -21,5 +21,19 @@
     "badge_privacy": "Privasi Mutlak",
     "badge_verified": "Kreator Terverifikasi",
     "alert_created": "✨ Akun berhasil dibuat! Kami telah mengirimkan tautan aman ke email Anda untuk mengaktifkannya."
+  },
+
+  "Profile": {
+    "vip_active": "Anda VIP",
+    "subscribe": "Berlangganan",
+    "public_profile": "Profil Publik Anda",
+    "tab_academy": "Akademi VIP",
+    "tab_all": "Semua postingan",
+    "tab_photos": "Foto",
+    "tab_videos": "Video",
+    "tab_locked": "Eksklusif",
+    "empty_posts": "Tidak ada postingan di kategori ini.",
+    "unlock_for": "Buka seharga",
+    "subscribe_to_view": "Berlangganan untuk melihat"
   }
 }

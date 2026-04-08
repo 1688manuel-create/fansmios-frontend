@@ -21,5 +21,19 @@
     "badge_privacy": "Absolute Privacy",
     "badge_verified": "Geverifieerde Creators",
     "alert_created": "✨ Account aangemaakt! We hebben een veilige link naar je e-mail gestuurd om het te activeren."
+  },
+
+  "Profile": {
+    "vip_active": "Je bent VIP",
+    "subscribe": "Abonneren",
+    "public_profile": "Jouw openbare profiel",
+    "tab_academy": "VIP Academie",
+    "tab_all": "Alle berichten",
+    "tab_photos": "Foto's",
+    "tab_videos": "Video's",
+    "tab_locked": "Exclusief",
+    "empty_posts": "Geen berichten in deze categorie.",
+    "unlock_for": "Ontgrendel voor",
+    "subscribe_to_view": "Abonneer om te bekijken"
   }
 }

@@ -21,5 +21,19 @@
     "badge_privacy": "완벽한 프라이버시",
     "badge_verified": "인증된 크리에이터",
     "alert_created": "✨ 계정이 생성되었습니다! 활성화를 위한 보안 링크를 이메일로 발송했습니다."
+  },
+
+  "Profile": {
+    "vip_active": "당신은 VIP입니다",
+    "subscribe": "구독하기",
+    "public_profile": "공개 프로필",
+    "tab_academy": "VIP 아카데미",
+    "tab_all": "모든 게시물",
+    "tab_photos": "사진",
+    "tab_videos": "비디오",
+    "tab_locked": "독점",
+    "empty_posts": "이 카테고리에는 게시물이 없습니다.",
+    "unlock_for": "잠금 해제",
+    "subscribe_to_view": "구독하여 보기"
   }
 }
