@@ -94,5 +94,20 @@
     "success_desc_1": "Nous avons envoyé les instructions à ",
     "success_desc_2": ". Si vous ne le voyez pas, vérifiez votre dossier Spam.",
     "btn_back_login": "← Retour à la connexion"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "Les mots de passe ne correspondent pas.",
+    "error_length": "Le mot de passe doit comporter au moins 6 caractères.",
+    "error_invalid_link": "Le lien est invalide ou a expiré.",
+    "invalid_token": "Lien invalide. Le jeton de sécurité est manquant.",
+    "success_title": "Mot de passe mis à jour !",
+    "success_desc": "Redirection vers votre compte...",
+    "new_password_label": "Nouveau mot de passe",
+    "confirm_password_label": "Confirmer le mot de passe",
+    "btn_save": "Enregistrer et entrer",
+    "title": "Créer une nouvelle clé",
+    "subtitle": "Choisissez un mot de passe sécurisé et ne le partagez avec personne.",
+    "loading_credentials": "Chargement des identifiants sécurisés..."
   }
 }

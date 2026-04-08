@@ -94,5 +94,20 @@
     "success_desc_1": "Chúng tôi đã gửi hướng dẫn đến ",
     "success_desc_2": ". Nếu bạn không thấy, hãy kiểm tra thư mục Spam.",
     "btn_back_login": "← Quay lại Đăng nhập"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "Mật khẩu không khớp.",
+    "error_length": "Mật khẩu phải dài ít nhất 6 ký tự.",
+    "error_invalid_link": "Liên kết không hợp lệ hoặc đã hết hạn.",
+    "invalid_token": "Liên kết không hợp lệ. Thiếu mã thông báo bảo mật.",
+    "success_title": "Đã cập nhật mật khẩu!",
+    "success_desc": "Đang chuyển hướng đến tài khoản của bạn...",
+    "new_password_label": "Mật khẩu mới",
+    "confirm_password_label": "Xác nhận mật khẩu",
+    "btn_save": "Lưu và Đăng nhập",
+    "title": "Tạo chìa khóa mới",
+    "subtitle": "Chọn một mật khẩu an toàn và không chia sẻ nó với bất kỳ ai.",
+    "loading_credentials": "Đang tải thông tin đăng nhập an toàn..."
   }
 }

@@ -94,5 +94,20 @@
     "success_desc_1": "Vi har skickat instruktionerna till ",
     "success_desc_2": ". Om du inte ser det, kontrollera din skräppostmapp.",
     "btn_back_login": "← Tillbaka till inloggning"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "Lösenorden matchar inte.",
+    "error_length": "Lösenordet måste vara minst 6 tecken långt.",
+    "error_invalid_link": "Länken är ogiltig eller har gått ut.",
+    "invalid_token": "Ogiltig länk. Säkerhetstoken saknas.",
+    "success_title": "Lösenordet har uppdaterats!",
+    "success_desc": "Omdirigerar till ditt konto...",
+    "new_password_label": "Nytt lösenord",
+    "confirm_password_label": "Bekräfta lösenord",
+    "btn_save": "Spara och gå in",
+    "title": "Skapa en ny nyckel",
+    "subtitle": "Välj ett säkert lösenord och dela det inte med någon.",
+    "loading_credentials": "Laddar säkra inloggningsuppgifter..."
   }
 }

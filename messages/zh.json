@@ -94,5 +94,20 @@
     "success_desc_1": "我们已将说明发送到 ",
     "success_desc_2": "。如果您没有看到，请检查您的垃圾邮件文件夹。",
     "btn_back_login": "← 返回登录"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "密码不匹配。",
+    "error_length": "密码长度必须至少为 6 个字符。",
+    "error_invalid_link": "链接无效或已过期。",
+    "invalid_token": "链接无效。缺少安全令牌。",
+    "success_title": "密码已更新！",
+    "success_desc": "正在重定向到您的帐户...",
+    "new_password_label": "新密码",
+    "confirm_password_label": "确认密码",
+    "btn_save": "保存并进入",
+    "title": "创建一个新钥匙",
+    "subtitle": "选择一个安全的密码，不要与任何人分享。",
+    "loading_credentials": "正在加载安全凭据..."
   }
 }

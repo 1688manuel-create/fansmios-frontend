@@ -94,5 +94,20 @@
     "success_desc_1": "Wir haben die Anweisungen an ",
     "success_desc_2": " gesendet. Wenn Sie es nicht sehen, überprüfen Sie Ihren Spam-Ordner.",
     "btn_back_login": "← Zurück zum Login"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "Passwörter stimmen nicht überein.",
+    "error_length": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+    "error_invalid_link": "Der Link ist ungültig oder abgelaufen.",
+    "invalid_token": "Ungültiger Link. Sicherheitstoken fehlt.",
+    "success_title": "Passwort aktualisiert!",
+    "success_desc": "Weiterleitung zu Ihrem Konto...",
+    "new_password_label": "Neues Passwort",
+    "confirm_password_label": "Passwort bestätigen",
+    "btn_save": "Speichern und eintreten",
+    "title": "Erstellen Sie einen neuen Schlüssel",
+    "subtitle": "Wählen Sie ein sicheres Passwort und teilen Sie es mit niemandem.",
+    "loading_credentials": "Sichere Anmeldeinformationen werden geladen..."
   }
 }

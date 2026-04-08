@@ -94,5 +94,20 @@
     "success_desc_1": "Kami telah mengirimkan instruksi ke ",
     "success_desc_2": ". Jika Anda tidak melihatnya, periksa folder Spam Anda.",
     "btn_back_login": "← Kembali ke Login"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "Kata sandi tidak cocok.",
+    "error_length": "Kata sandi harus terdiri dari minimal 6 karakter.",
+    "error_invalid_link": "Tautan tidak valid atau telah kedaluwarsa.",
+    "invalid_token": "Tautan tidak valid. Token keamanan hilang.",
+    "success_title": "Kata sandi diperbarui!",
+    "success_desc": "Mengarahkan ke akun Anda...",
+    "new_password_label": "Kata Sandi Baru",
+    "confirm_password_label": "Konfirmasi Kata Sandi",
+    "btn_save": "Simpan dan Masuk",
+    "title": "Buat kunci baru",
+    "subtitle": "Pilih kata sandi yang aman dan jangan bagikan dengan siapa pun.",
+    "loading_credentials": "Memuat kredensial aman..."
   }
 }

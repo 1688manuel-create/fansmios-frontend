@@ -94,5 +94,20 @@
     "success_desc_1": "指示を ",
     "success_desc_2": " に送信しました。見当たらない場合は、迷惑メールフォルダを確認してください。",
     "btn_back_login": "← ログインに戻る"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "パスワードが一致しません。",
+    "error_length": "パスワードは6文字以上である必要があります。",
+    "error_invalid_link": "リンクが無効か、期限切れです。",
+    "invalid_token": "無効なリンクです。セキュリティトークンがありません。",
+    "success_title": "パスワードが更新されました！",
+    "success_desc": "アカウントにリダイレクトしています...",
+    "new_password_label": "新しいパスワード",
+    "confirm_password_label": "パスワードの確認",
+    "btn_save": "保存して入室",
+    "title": "新しいキーを作成",
+    "subtitle": "安全なパスワードを選択し、誰とも共有しないでください。",
+    "loading_credentials": "安全な資格情報を読み込んでいます..."
   }
 }

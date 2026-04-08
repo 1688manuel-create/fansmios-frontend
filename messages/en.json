@@ -94,5 +94,20 @@
     "success_desc_1": "We have sent the instructions to ",
     "success_desc_2": ". If you don't see it, check your Spam folder.",
     "btn_back_login": "← Back to Login"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "Passwords do not match.",
+    "error_length": "Password must be at least 6 characters long.",
+    "error_invalid_link": "The link is invalid or has expired.",
+    "invalid_token": "Invalid link. Security token is missing.",
+    "success_title": "Password updated!",
+    "success_desc": "Redirecting to your account...",
+    "new_password_label": "New Password",
+    "confirm_password_label": "Confirm Password",
+    "btn_save": "Save and Enter",
+    "title": "Create a new key",
+    "subtitle": "Choose a secure password and don't share it with anyone.",
+    "loading_credentials": "Loading secure credentials..."
   }
 }

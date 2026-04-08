@@ -94,5 +94,20 @@
     "success_desc_1": "Hemos enviado las instrucciones a ",
     "success_desc_2": ". Si no lo ves, revisa la carpeta de Spam.",
     "btn_back_login": "← Volver al Login"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "Las contraseñas no coinciden.",
+    "error_length": "La contraseña debe tener al menos 6 caracteres.",
+    "error_invalid_link": "El enlace es inválido o ha expirado.",
+    "invalid_token": "Enlace inválido. Falta el token de seguridad.",
+    "success_title": "¡Contraseña actualizada!",
+    "success_desc": "Redirigiendo a tu cuenta...",
+    "new_password_label": "Nueva Contraseña",
+    "confirm_password_label": "Confirmar Contraseña",
+    "btn_save": "Guardar y Entrar",
+    "title": "Crea una nueva llave",
+    "subtitle": "Elige una contraseña segura y no la compartas con nadie.",
+    "loading_credentials": "Cargando credenciales seguras..."
   }
 }

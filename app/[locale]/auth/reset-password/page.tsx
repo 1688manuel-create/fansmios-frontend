@@ -4,11 +4,13 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../../../lib/api';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token'); // Atrapamos el token de la URL
+  const t = useTranslations('ResetPassword'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -21,10 +23,10 @@ function ResetPasswordForm() {
     setError('');
 
     if (newPassword !== confirmPassword) {
-      return setError('Las contraseñas no coinciden.');
+      return setError(t('error_mismatch'));
     }
     if (newPassword.length < 6) {
-      return setError('La contraseña debe tener al menos 6 caracteres.');
+      return setError(t('error_length'));
     }
 
     setIsLoading(true);
@@ -34,7 +36,7 @@ function ResetPasswordForm() {
       // Redirigimos al login después de 3 segundos
       setTimeout(() => router.push('/auth'), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'El enlace es inválido o ha expirado.');
+      setError(err.response?.data?.error || t('error_invalid_link'));
     } finally {
       setIsLoading(false);
     }
@@ -43,7 +45,7 @@ function ResetPasswordForm() {
   if (!token) {
     return (
       <div className="text-center text-red-400 p-6 bg-red-500/10 rounded-2xl border border-red-500/20">
-        ❌ Enlace inválido. Falta el token de seguridad.
+        ❌ {t('invalid_token')}
       </div>
     );
   }
@@ -54,8 +56,8 @@ function ResetPasswordForm() {
         <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto border border-green-500/50">
           <span className="text-4xl">✨</span>
         </div>
-        <h3 className="text-white font-bold text-xl">¡Contraseña actualizada!</h3>
-        <p className="text-gray-400">Redirigiendo a tu cuenta...</p>
+        <h3 className="text-white font-bold text-xl">{t('success_title')}</h3>
+        <p className="text-gray-400">{t('success_desc')}</p>
       </div>
     );
   }
@@ -63,7 +65,7 @@ function ResetPasswordForm() {
   return (
     <form onSubmit={handleReset} className="space-y-5 animate-fade-in">
       <div className="space-y-1">
-        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Nueva Contraseña</label>
+        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('new_password_label')}</label>
         <input 
           type="password" 
           value={newPassword} 
@@ -74,7 +76,7 @@ function ResetPasswordForm() {
         />
       </div>
       <div className="space-y-1">
-        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Confirmar Contraseña</label>
+        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('confirm_password_label')}</label>
         <input 
           type="password" 
           value={confirmPassword} 
@@ -92,13 +94,14 @@ function ResetPasswordForm() {
         disabled={isLoading}
         className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3.5 rounded-xl hover:scale-[1.02] transition-all disabled:opacity-50 flex justify-center shadow-lg shadow-green-500/20"
       >
-        {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : 'Guardar y Entrar'}
+        {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : t('btn_save')}
       </button>
     </form>
   );
 }
 
 export default function ResetPassword() {
+  const t = useTranslations('ResetPassword'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-green-600/20 rounded-full blur-[120px] pointer-events-none"></div>
@@ -106,12 +109,12 @@ export default function ResetPassword() {
       <div className="w-full max-w-md z-10">
         <div className="glass-panel p-8 rounded-[2rem] border border-white/10 shadow-2xl bg-black/40 backdrop-blur-2xl">
           <div className="mb-8 text-center">
-            <h2 className="text-2xl font-bold text-white mb-2">Crea una nueva llave</h2>
-            <p className="text-gray-400 text-sm">Elige una contraseña segura y no la compartas con nadie.</p>
+            <h2 className="text-2xl font-bold text-white mb-2">{t('title')}</h2>
+            <p className="text-gray-400 text-sm">{t('subtitle')}</p>
           </div>
           
           {/* El Suspense es requerido por Next.js al usar useSearchParams */}
-          <Suspense fallback={<div className="text-center text-gray-400 animate-pulse">Cargando credenciales seguras...</div>}>
+          <Suspense fallback={<div className="text-center text-gray-400 animate-pulse">{t('loading_credentials')}</div>}>
             <ResetPasswordForm />
           </Suspense>
           

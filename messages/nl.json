@@ -94,5 +94,20 @@
     "success_desc_1": "We hebben de instructies verzonden naar ",
     "success_desc_2": ". Als je het niet ziet, controleer dan je Spam-map.",
     "btn_back_login": "← Terug naar Inloggen"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "Wachtwoorden komen niet overeen.",
+    "error_length": "Het wachtwoord moet minimaal 6 tekens lang zijn.",
+    "error_invalid_link": "De link is ongeldig of verlopen.",
+    "invalid_token": "Ongeldige link. Beveiligingstoken ontbreekt.",
+    "success_title": "Wachtwoord bijgewerkt!",
+    "success_desc": "Omleiden naar uw account...",
+    "new_password_label": "Nieuw wachtwoord",
+    "confirm_password_label": "Bevestig wachtwoord",
+    "btn_save": "Opslaan en Inloggen",
+    "title": "Maak een nieuwe sleutel",
+    "subtitle": "Kies een veilig wachtwoord en deel het met niemand.",
+    "loading_credentials": "Veilige inloggegevens laden..."
   }
 }

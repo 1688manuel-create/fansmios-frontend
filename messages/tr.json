@@ -94,5 +94,20 @@
     "success_desc_1": "Talimatları şu adrese gönderdik: ",
     "success_desc_2": ". Görmüyorsanız Spam klasörünüzü kontrol edin.",
     "btn_back_login": "← Girişe Dön"
+  },
+
+  "ResetPassword": {
+    "error_mismatch": "Şifreler eşleşmiyor.",
+    "error_length": "Şifre en az 6 karakter uzunluğunda olmalıdır.",
+    "error_invalid_link": "Bağlantı geçersiz veya süresi dolmuş.",
+    "invalid_token": "Geçersiz bağlantı. Güvenlik belirteci eksik.",
+    "success_title": "Şifre güncellendi!",
+    "success_desc": "Hesabınıza yönlendiriliyorsunuz...",
+    "new_password_label": "Yeni Şifre",
+    "confirm_password_label": "Şifreyi Onayla",
+    "btn_save": "Kaydet ve Gir",
+    "title": "Yeni bir anahtar oluştur",
+    "subtitle": "Güvenli bir şifre seçin ve kimseyle paylaşmayın.",
+    "loading_credentials": "Güvenli kimlik bilgileri yükleniyor..."
   }
 }
