@@ -35,5 +35,33 @@
     "empty_posts": "No posts in this category.",
     "unlock_for": "Unlock for",
     "subscribe_to_view": "Subscribe to view"
+  },
+  
+  "AdminPayouts": {
+    "alert_error_conn": "Connection error while loading requests.",
+    "alert_approve_confirm_1": "⚠️ Are you sure you want to send",
+    "alert_approve_confirm_2": "USDT to the wallet:",
+    "prompt_tx_hash": "Paste the Transaction Hash (TXID) if sent manually, or leave empty to simulate:",
+    "alert_payout_success": "✅ Payout Registered and Creator Notified!",
+    "alert_error_approve": "Error approving the payout.",
+    "prompt_reject_reason_1": "❌ You are about to REJECT the payout of",
+    "prompt_reject_reason_2": "Write the reason (e.g., 'Invalid wallet' or 'Suspected Fraud'):",
+    "alert_reject_success": "🛡️ Payout rejected. Funds returned to the creator's balance.",
+    "alert_error_reject": "Error rejecting the payout.",
+    "loading": "LOADING VAULT...",
+    "nav_title": "Payout Control",
+    "nav_subtitle": "Anti-Fraud Command Center",
+    "btn_exit": "Exit to Dashboard",
+    "stats_pending": "Pending Payouts",
+    "stats_total": "Total to Pay",
+    "empty_title": "Everything is up to date, CEO.",
+    "empty_desc": "No creators are requesting payouts at this time.",
+    "lbl_wallet": "Wallet:",
+    "lbl_held": "Held:",
+    "lbl_requested": "Requested Amount",
+    "lbl_dest_wallet": "Destination Wallet",
+    "lbl_not_provided": "Not provided",
+    "btn_approve": "Approve",
+    "btn_reject": "Reject"
   }
 }

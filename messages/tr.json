@@ -35,5 +35,33 @@
     "empty_posts": "Bu kategoride gönderi yok.",
     "unlock_for": "Kilidini aç",
     "subscribe_to_view": "Görmek için abone ol"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "İstekler yüklenirken bağlantı hatası.",
+    "alert_approve_confirm_1": "⚠️ Göndermek istediğinizden emin misiniz:",
+    "alert_approve_confirm_2": "USDT cüzdana:",
+    "prompt_tx_hash": "Manuel olarak gönderildiyse İşlem Özetini (TXID) yapıştırın veya simüle etmek için boş bırakın:",
+    "alert_payout_success": "✅ Ödeme Kaydedildi ve Yaratıcıya Bildirildi!",
+    "alert_error_approve": "Çekim onaylanırken hata oluştu.",
+    "prompt_reject_reason_1": "❌ Şu çekimi REDDETMEK üzeresiniz:",
+    "prompt_reject_reason_2": "Nedeni yazın (Örn: 'Geçersiz cüzdan' veya 'Dolandırıcılık Şüphesi'):",
+    "alert_reject_success": "🛡️ Çekim reddedildi. Fonlar yaratıcının bakiyesine iade edildi.",
+    "alert_error_reject": "Çekim reddedilirken hata oluştu.",
+    "loading": "KASA YÜKLENİYOR...",
+    "nav_title": "Ödeme Kontrolü",
+    "nav_subtitle": "Dolandırıcılık Önleme Komuta Merkezi",
+    "btn_exit": "Kontrol Paneline Çık",
+    "stats_pending": "Bekleyen Çekimler",
+    "stats_total": "Ödenecek Toplam",
+    "empty_title": "Her şey güncel, CEO.",
+    "empty_desc": "Şu anda çekim talebinde bulunan yaratıcı yok.",
+    "lbl_wallet": "Cüzdan:",
+    "lbl_held": "Tutulan:",
+    "lbl_requested": "Talep Edilen Tutar",
+    "lbl_dest_wallet": "Hedef Cüzdan",
+    "lbl_not_provided": "Sağlanmadı",
+    "btn_approve": "Onayla",
+    "btn_reject": "Reddet"
   }
 }

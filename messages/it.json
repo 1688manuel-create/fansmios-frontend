@@ -35,5 +35,33 @@
     "empty_posts": "Nessun post in questa categoria.",
     "unlock_for": "Sblocca per",
     "subscribe_to_view": "Abbonati per vedere"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "Errore di connessione durante il caricamento delle richieste.",
+    "alert_approve_confirm_1": "⚠️ Sei sicuro di voler inviare",
+    "alert_approve_confirm_2": "USDT al portafoglio:",
+    "prompt_tx_hash": "Incolla l'Hash della Transazione (TXID) se inviato manualmente, o lascia vuoto per simulare:",
+    "alert_payout_success": "✅ Pagamento registrato e creatore notificato!",
+    "alert_error_approve": "Errore durante l'approvazione del prelievo.",
+    "prompt_reject_reason_1": "❌ Stai per RIFIUTARE il prelievo di",
+    "prompt_reject_reason_2": "Scrivi il motivo (Es: 'Portafoglio non valido' o 'Sospetta Frode'):",
+    "alert_reject_success": "🛡️ Prelievo rifiutato. I fondi sono tornati al saldo del creatore.",
+    "alert_error_reject": "Errore durante il rifiuto del prelievo.",
+    "loading": "CARICAMENTO CAVEAU...",
+    "nav_title": "Controllo Payouts",
+    "nav_subtitle": "Centro di Comando Antifrode",
+    "btn_exit": "Esci alla Dashboard",
+    "stats_pending": "Prelievi in Sospeso",
+    "stats_total": "Totale da Pagare",
+    "empty_title": "Tutto è aggiornato, CEO.",
+    "empty_desc": "Nessun creatore sta richiedendo prelievi al momento.",
+    "lbl_wallet": "Portafoglio:",
+    "lbl_held": "Trattenuto:",
+    "lbl_requested": "Importo Richiesto",
+    "lbl_dest_wallet": "Portafoglio di Destinazione",
+    "lbl_not_provided": "Non fornito",
+    "btn_approve": "Approva",
+    "btn_reject": "Rifiuta"
   }
 }

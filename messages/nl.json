@@ -35,5 +35,33 @@
     "empty_posts": "Geen berichten in deze categorie.",
     "unlock_for": "Ontgrendel voor",
     "subscribe_to_view": "Abonneer om te bekijken"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "Verbindingsfout bij het laden van verzoeken.",
+    "alert_approve_confirm_1": "⚠️ Weet je zeker dat je wilt verzenden:",
+    "alert_approve_confirm_2": "USDT naar portemonnee:",
+    "prompt_tx_hash": "Plak de Transactie Hash (TXID) indien handmatig verzonden, of laat leeg om te simuleren:",
+    "alert_payout_success": "✅ Uitbetaling geregistreerd en maker op de hoogte gesteld!",
+    "alert_error_approve": "Fout bij het goedkeuren van de opname.",
+    "prompt_reject_reason_1": "❌ Je staat op het punt de opname te WEIGEREN van",
+    "prompt_reject_reason_2": "Schrijf de reden (bijv. 'Ongeldige portemonnee' of 'Vermoedelijke fraude'):",
+    "alert_reject_success": "🛡️ Opname geweigerd. Het geld is teruggestort op het saldo van de maker.",
+    "alert_error_reject": "Fout bij het weigeren van de opname.",
+    "loading": "KLUIS LADEN...",
+    "nav_title": "Uitbetalingsbeheer",
+    "nav_subtitle": "Anti-Fraude Commando Centrum",
+    "btn_exit": "Afsluiten naar Dashboard",
+    "stats_pending": "In afwachting van opnames",
+    "stats_total": "Totaal te betalen",
+    "empty_title": "Alles is up-to-date, CEO.",
+    "empty_desc": "Geen makers vragen momenteel om opnames.",
+    "lbl_wallet": "Portemonnee:",
+    "lbl_held": "Vastgehouden:",
+    "lbl_requested": "Aangevraagd bedrag",
+    "lbl_dest_wallet": "Bestemmingsportemonnee",
+    "lbl_not_provided": "Niet verstrekt",
+    "btn_approve": "Goedkeuren",
+    "btn_reject": "Weigeren"
   }
 }

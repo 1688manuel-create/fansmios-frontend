@@ -35,5 +35,33 @@
     "empty_posts": "Inga inlägg i denna kategori.",
     "unlock_for": "Lås upp för",
     "subscribe_to_view": "Prenumerera för att se"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "Anslutningsfel vid inläsning av förfrågningar.",
+    "alert_approve_confirm_1": "⚠️ Är du säker på att du vill skicka",
+    "alert_approve_confirm_2": "USDT till plånboken:",
+    "prompt_tx_hash": "Klistra in transaktionshashen (TXID) om skickad manuellt, eller lämna tom för att simulera:",
+    "alert_payout_success": "✅ Utbetalning registrerad och skapare meddelad!",
+    "alert_error_approve": "Fel vid godkännande av uttag.",
+    "prompt_reject_reason_1": "❌ Du är på väg att AVVISA uttaget på",
+    "prompt_reject_reason_2": "Skriv anledningen (T.ex: 'Ogiltig plånbok' eller 'Misstänkt bedrägeri'):",
+    "alert_reject_success": "🛡️ Uttag avvisat. Pengarna har returnerats till skaparens saldo.",
+    "alert_error_reject": "Fel vid avvisande av uttag.",
+    "loading": "LADDAR KASSAVALV...",
+    "nav_title": "Utbetalningskontroll",
+    "nav_subtitle": "Antobedrägerikommando",
+    "btn_exit": "Avsluta till översikt",
+    "stats_pending": "Väntande uttag",
+    "stats_total": "Totalt att betala",
+    "empty_title": "Allt är uppdaterat, VD.",
+    "empty_desc": "Inga skapare begär uttag för tillfället.",
+    "lbl_wallet": "Plånbok:",
+    "lbl_held": "Reserverat:",
+    "lbl_requested": "Begärt belopp",
+    "lbl_dest_wallet": "Målplånbok",
+    "lbl_not_provided": "Ej angivet",
+    "btn_approve": "Godkänn",
+    "btn_reject": "Avvisa"
   }
 }

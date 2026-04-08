@@ -35,5 +35,33 @@
     "empty_posts": "이 카테고리에는 게시물이 없습니다.",
     "unlock_for": "잠금 해제",
     "subscribe_to_view": "구독하여 보기"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "요청을 로드하는 중 연결 오류가 발생했습니다.",
+    "alert_approve_confirm_1": "⚠️ 다음을 지갑으로 전송하시겠습니까:",
+    "alert_approve_confirm_2": "USDT:",
+    "prompt_tx_hash": "수동으로 전송한 경우 트랜잭션 해시(TXID)를 붙여넣고, 시뮬레이션하려면 비워 두세요:",
+    "alert_payout_success": "✅ 지급이 등록되고 크리에이터에게 알림이 전송되었습니다!",
+    "alert_error_approve": "출금 승인 중 오류가 발생했습니다.",
+    "prompt_reject_reason_1": "❌ 다음 출금을 거부하려고 합니다:",
+    "prompt_reject_reason_2": "이유를 작성하세요 (예: '잘못된 지갑' 또는 '사기 의심'):",
+    "alert_reject_success": "🛡️ 출금이 거부되었습니다. 자금이 크리에이터의 잔액으로 반환되었습니다.",
+    "alert_error_reject": "출금 거부 중 오류가 발생했습니다.",
+    "loading": "금고 로드 중...",
+    "nav_title": "지급 관리",
+    "nav_subtitle": "사기 방지 지휘 센터",
+    "btn_exit": "대시보드로 나가기",
+    "stats_pending": "대기 중인 출금",
+    "stats_total": "지급 총액",
+    "empty_title": "모든 것이 최신 상태입니다, CEO.",
+    "empty_desc": "현재 출금을 요청하는 크리에이터가 없습니다.",
+    "lbl_wallet": "지갑:",
+    "lbl_held": "보류 중:",
+    "lbl_requested": "요청 금액",
+    "lbl_dest_wallet": "대상 지갑",
+    "lbl_not_provided": "제공되지 않음",
+    "btn_approve": "승인",
+    "btn_reject": "거절"
   }
 }

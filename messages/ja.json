@@ -35,5 +35,33 @@
     "empty_posts": "このカテゴリには投稿がありません。",
     "unlock_for": "ロック解除",
     "subscribe_to_view": "登録して見る"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "リクエストの読み込み中に接続エラーが発生しました。",
+    "alert_approve_confirm_1": "⚠️ 送金してもよろしいですか：",
+    "alert_approve_confirm_2": "USDT、宛先ウォレット：",
+    "prompt_tx_hash": "手動で送信した場合はトランザクションハッシュ（TXID）を貼り付けてください。シミュレーションの場合は空白にしてください：",
+    "alert_payout_success": "✅ 支払いが登録され、クリエイターに通知されました！",
+    "alert_error_approve": "支払いの承認中にエラーが発生しました。",
+    "prompt_reject_reason_1": "❌ 以下の支払いを拒否しようとしています：",
+    "prompt_reject_reason_2": "理由を記入してください（例：「無効なウォレット」または「不正の疑い」）：",
+    "alert_reject_success": "🛡️ 支払いが拒否されました。資金はクリエイターの残高に戻りました。",
+    "alert_error_reject": "支払いの拒否中にエラーが発生しました。",
+    "loading": "金庫を読み込み中...",
+    "nav_title": "支払い管理",
+    "nav_subtitle": "不正防止コマンドセンター",
+    "btn_exit": "ダッシュボードに戻る",
+    "stats_pending": "保留中の支払い",
+    "stats_total": "支払い合計",
+    "empty_title": "すべて最新です、CEO。",
+    "empty_desc": "現在、支払いをリクエストしているクリエイターはいません。",
+    "lbl_wallet": "ウォレット:",
+    "lbl_held": "保留中:",
+    "lbl_requested": "リクエスト額",
+    "lbl_dest_wallet": "宛先ウォレット",
+    "lbl_not_provided": "未提供",
+    "btn_approve": "承認する",
+    "btn_reject": "拒否する"
   }
 }

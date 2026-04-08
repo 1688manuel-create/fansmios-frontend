@@ -35,5 +35,33 @@
     "empty_posts": "لا توجد منشورات في هذه الفئة.",
     "unlock_for": "فتح مقابل",
     "subscribe_to_view": "اشترك للمشاهدة"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "خطأ في الاتصال أثناء تحميل الطلبات.",
+    "alert_approve_confirm_1": "⚠️ هل أنت متأكد أنك تريد إرسال",
+    "alert_approve_confirm_2": "USDT إلى المحفظة:",
+    "prompt_tx_hash": "الصق تجزئة المعاملة (TXID) إذا تم إرسالها يدويًا، أو اتركها فارغة للمحاكاة:",
+    "alert_payout_success": "✅ تم تسجيل الدفع وإخطار منشئ المحتوى!",
+    "alert_error_approve": "خطأ في الموافقة على السحب.",
+    "prompt_reject_reason_1": "❌ أنت على وشك رفض سحب",
+    "prompt_reject_reason_2": "اكتب السبب (مثل: 'محفظة غير صالحة' أو 'اشتباه في الاحتيال'):",
+    "alert_reject_success": "🛡️ تم رفض السحب. عادت الأموال إلى رصيد منشئ المحتوى.",
+    "alert_error_reject": "خطأ في رفض السحب.",
+    "loading": "جاري تحميل الخزنة...",
+    "nav_title": "التحكم في المدفوعات",
+    "nav_subtitle": "مركز قيادة مكافحة الاحتيال",
+    "btn_exit": "الخروج إلى لوحة القيادة",
+    "stats_pending": "السحوبات المعلقة",
+    "stats_total": "الإجمالي للدفع",
+    "empty_title": "كل شيء محدث أيها المدير التنفيذي.",
+    "empty_desc": "لا يوجد منشئو محتوى يطلبون سحوبات في الوقت الحالي.",
+    "lbl_wallet": "المحفظة:",
+    "lbl_held": "محتجز:",
+    "lbl_requested": "المبلغ المطلوب",
+    "lbl_dest_wallet": "محفظة الوجهة",
+    "lbl_not_provided": "غير متوفر",
+    "btn_approve": "موافقة",
+    "btn_reject": "رفض"
   }
 }

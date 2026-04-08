@@ -4,9 +4,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../../lib/api';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function AdminPayouts() {
   const router = useRouter();
+  const t = useTranslations('AdminPayouts'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -27,19 +29,17 @@ export default function AdminPayouts() {
       setWithdrawals(res.data.withdrawals || []);
     } catch (error) {
       console.error("Error cargando retiros:", error);
-      alert("Error de conexión al cargar las solicitudes.");
+      alert(t('alert_error_conn'));
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleApprove = async (id: string, amount: number, address: string) => {
-    const confirm = window.confirm(`⚠️ ¿Estás seguro de enviar $${amount} USDT a la billetera:\n${address}?`);
+    const confirm = window.confirm(`${t('alert_approve_confirm_1')} $${amount} ${t('alert_approve_confirm_2')}\n${address}?`);
     if (!confirm) return;
 
-    // En un futuro, aquí no pediremos el Hash, sino que el Backend lo hará solo.
-    // Por ahora, simulamos el Hash si lo haces manual en Binance.
-    const txHash = prompt("Pega el Hash de Transacción (TXID) si ya lo enviaste manual, o déjalo vacío para simularlo:");
+    const txHash = prompt(t('prompt_tx_hash'));
 
     setProcessingId(id);
     try {
@@ -47,32 +47,32 @@ export default function AdminPayouts() {
         txHash: txHash || `SIMULATED_TX_${Date.now()}`,
         adminNotes: 'Pago Cripto Procesado'
       });
-      alert("✅ ¡Pago Registrado y Creador Notificado!");
+      alert(t('alert_payout_success'));
       fetchPendingPayouts();
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al aprobar el retiro.");
+      alert(error.response?.data?.error || t('alert_error_approve'));
     } finally {
       setProcessingId(null);
     }
   };
 
   const handleReject = async (id: string, amount: number) => {
-    const reason = prompt(`❌ Vas a RECHAZAR el retiro de $${amount} USD.\nEscribe la razón (Ej: "Billetera inválida" o "Sospecha de Fraude"):`);
+    const reason = prompt(`${t('prompt_reject_reason_1')} $${amount} USD.\n${t('prompt_reject_reason_2')}`);
     if (!reason) return;
 
     setProcessingId(id);
     try {
       await api.post(`/admin/payouts/${id}/reject`, { adminNotes: reason });
-      alert("🛡️ Retiro rechazado. El dinero volvió al balance del creador.");
+      alert(t('alert_reject_success'));
       fetchPendingPayouts();
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al rechazar el retiro.");
+      alert(error.response?.data?.error || t('alert_error_reject'));
     } finally {
       setProcessingId(null);
     }
   };
 
-  if (isLoading) return <div className="min-h-screen bg-black flex items-center justify-center text-white font-bold tracking-widest animate-pulse">CARGANDO BÓVEDA...</div>;
+  if (isLoading) return <div className="min-h-screen bg-black flex items-center justify-center text-white font-bold tracking-widest animate-pulse">{t('loading')}</div>;
 
   return (
     <div className="min-h-screen bg-[#050505] pb-20">
@@ -84,12 +84,12 @@ export default function AdminPayouts() {
             👑
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-white leading-tight">Control de Payouts</h1>
-            <p className="text-[10px] text-red-400 font-bold tracking-widest uppercase">Centro de Comando Antifraude</p>
+            <h1 className="text-xl font-extrabold text-white leading-tight">{t('nav_title')}</h1>
+            <p className="text-[10px] text-red-400 font-bold tracking-widest uppercase">{t('nav_subtitle')}</p>
           </div>
         </div>
         <button onClick={() => router.push('/dashboard')} className="text-sm bg-white/5 border border-white/10 text-white px-5 py-2 rounded-full hover:bg-white/10 transition-all font-bold">
-          Salir al Dashboard
+          {t('btn_exit')}
         </button>
       </nav>
 
@@ -98,11 +98,11 @@ export default function AdminPayouts() {
         {/* ESTADÍSTICA RÁPIDA */}
         <div className="glass-panel p-6 rounded-3xl border-l-4 border-l-orange-500 bg-gradient-to-r from-orange-500/10 to-transparent mb-8 flex justify-between items-center">
           <div>
-            <h2 className="text-gray-400 text-sm font-bold uppercase tracking-wider">Retiros Pendientes</h2>
+            <h2 className="text-gray-400 text-sm font-bold uppercase tracking-wider">{t('stats_pending')}</h2>
             <p className="text-4xl font-extrabold text-white mt-1">{withdrawals.length}</p>
           </div>
           <div className="text-right">
-            <h2 className="text-gray-400 text-sm font-bold uppercase tracking-wider">Total a Pagar</h2>
+            <h2 className="text-gray-400 text-sm font-bold uppercase tracking-wider">{t('stats_total')}</h2>
             <p className="text-4xl font-extrabold text-orange-400 mt-1">
               ${withdrawals.reduce((acc, w) => acc + w.amount, 0).toFixed(2)}
             </p>
@@ -113,8 +113,8 @@ export default function AdminPayouts() {
         {withdrawals.length === 0 ? (
           <div className="text-center py-20 bg-white/5 border border-white/5 rounded-3xl">
             <div className="text-6xl mb-4 opacity-50">☕</div>
-            <h3 className="text-xl font-bold text-white">Todo está al día, CEO.</h3>
-            <p className="text-gray-500 mt-2">No hay creadores solicitando retiros en este momento.</p>
+            <h3 className="text-xl font-bold text-white">{t('empty_title')}</h3>
+            <p className="text-gray-500 mt-2">{t('empty_desc')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -130,20 +130,20 @@ export default function AdminPayouts() {
                     <h3 className="text-white font-bold text-lg">@{w.creator?.username}</h3>
                     <p className="text-xs text-gray-400">{w.creator?.email}</p>
                     <div className="mt-2 flex gap-3 text-[10px] font-bold uppercase tracking-wider">
-                      <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded">Billetera: ${w.creator?.wallet?.balance?.toFixed(2)}</span>
-                      <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">Retenido: ${w.creator?.wallet?.pendingBalance?.toFixed(2)}</span>
+                      <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded">{t('lbl_wallet')} ${w.creator?.wallet?.balance?.toFixed(2)}</span>
+                      <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">{t('lbl_held')} ${w.creator?.wallet?.pendingBalance?.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* 2. Datos del Retiro */}
                 <div className="flex-1 bg-zinc-900/50 p-4 rounded-2xl border border-white/5 w-full lg:w-auto">
-                  <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Monto Solicitado</p>
+                  <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">{t('lbl_requested')}</p>
                   <p className="text-3xl font-extrabold text-white mb-3 text-green-400">${w.amount?.toFixed(2)}</p>
                   
-                  <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Billetera Destino ({w.cryptoNetwork})</p>
+                  <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">{t('lbl_dest_wallet')} ({w.cryptoNetwork})</p>
                   <code className="text-[11px] text-blue-300 break-all select-all font-mono mt-1 block bg-blue-500/10 p-2 rounded">
-                    {w.cryptoAddress || 'No proporcionada'}
+                    {w.cryptoAddress || t('lbl_not_provided')}
                   </code>
                 </div>
 
@@ -154,14 +154,14 @@ export default function AdminPayouts() {
                     disabled={processingId === w.id}
                     className="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded-xl shadow-[0_0_15px_rgba(34,197,94,0.3)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {processingId === w.id ? '...' : '✅ Aprobar'}
+                    {processingId === w.id ? '...' : `✅ ${t('btn_approve')}`}
                   </button>
                   <button 
                     onClick={() => handleReject(w.id, w.amount)}
                     disabled={processingId === w.id}
                     className="flex-1 bg-zinc-800 hover:bg-red-600 border border-zinc-700 hover:border-red-500 text-white font-bold py-3 px-4 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {processingId === w.id ? '...' : '❌ Rechazar'}
+                    {processingId === w.id ? '...' : `❌ ${t('btn_reject')}`}
                   </button>
                 </div>
 

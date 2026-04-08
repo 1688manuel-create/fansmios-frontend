@@ -35,5 +35,33 @@
     "empty_posts": "Keine Beiträge in dieser Kategorie.",
     "unlock_for": "Freischalten für",
     "subscribe_to_view": "Abonnieren zum Ansehen"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "Verbindungsfehler beim Laden der Anfragen.",
+    "alert_approve_confirm_1": "⚠️ Sind Sie sicher, dass Sie",
+    "alert_approve_confirm_2": "USDT an die Wallet senden möchten:",
+    "prompt_tx_hash": "Fügen Sie den Transaktions-Hash (TXID) ein, falls manuell gesendet, oder lassen Sie es leer zur Simulation:",
+    "alert_payout_success": "✅ Auszahlung registriert und Creator benachrichtigt!",
+    "alert_error_approve": "Fehler bei der Genehmigung der Auszahlung.",
+    "prompt_reject_reason_1": "❌ Sie werden die Auszahlung von",
+    "prompt_reject_reason_2": "ablehnen. Geben Sie den Grund an (z.B. 'Ungültige Wallet' oder 'Betrugsverdacht'):",
+    "alert_reject_success": "🛡️ Auszahlung abgelehnt. Geld wurde dem Konto des Creators gutgeschrieben.",
+    "alert_error_reject": "Fehler beim Ablehnen der Auszahlung.",
+    "loading": "TRESOR LÄDT...",
+    "nav_title": "Auszahlungskontrolle",
+    "nav_subtitle": "Anti-Betrugs-Kommandozentrale",
+    "btn_exit": "Zum Dashboard beenden",
+    "stats_pending": "Ausstehende Auszahlungen",
+    "stats_total": "Gesamt zu zahlen",
+    "empty_title": "Alles auf dem neuesten Stand, CEO.",
+    "empty_desc": "Derzeit fordern keine Creator Auszahlungen an.",
+    "lbl_wallet": "Wallet:",
+    "lbl_held": "Zurückgehalten:",
+    "lbl_requested": "Angefragter Betrag",
+    "lbl_dest_wallet": "Ziel-Wallet",
+    "lbl_not_provided": "Nicht angegeben",
+    "btn_approve": "Genehmigen",
+    "btn_reject": "Ablehnen"
   }
 }

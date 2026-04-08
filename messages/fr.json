@@ -35,5 +35,33 @@
     "empty_posts": "Aucune publication dans cette catégorie.",
     "unlock_for": "Débloquer pour",
     "subscribe_to_view": "Abonnez-vous pour voir"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "Erreur de connexion lors du chargement des requêtes.",
+    "alert_approve_confirm_1": "⚠️ Êtes-vous sûr de vouloir envoyer",
+    "alert_approve_confirm_2": "USDT au portefeuille :",
+    "prompt_tx_hash": "Collez le hachage de transaction (TXID) si envoyé manuellement, ou laissez vide pour simuler :",
+    "alert_payout_success": "✅ Paiement enregistré et créateur notifié !",
+    "alert_error_approve": "Erreur lors de l'approbation du retrait.",
+    "prompt_reject_reason_1": "❌ Vous allez REJETER le retrait de",
+    "prompt_reject_reason_2": "Écrivez la raison (Ex: 'Portefeuille invalide' ou 'Suspicion de fraude') :",
+    "alert_reject_success": "🛡️ Retrait rejeté. L'argent est retourné sur le solde du créateur.",
+    "alert_error_reject": "Erreur lors du rejet du retrait.",
+    "loading": "CHARGEMENT DU COFFRE...",
+    "nav_title": "Contrôle des paiements",
+    "nav_subtitle": "Centre de commandement anti-fraude",
+    "btn_exit": "Quitter vers le tableau de bord",
+    "stats_pending": "Retraits en attente",
+    "stats_total": "Total à payer",
+    "empty_title": "Tout est à jour, PDG.",
+    "empty_desc": "Aucun créateur ne demande de retrait pour le moment.",
+    "lbl_wallet": "Portefeuille :",
+    "lbl_held": "Retenu :",
+    "lbl_requested": "Montant demandé",
+    "lbl_dest_wallet": "Portefeuille de destination",
+    "lbl_not_provided": "Non fourni",
+    "btn_approve": "Approuver",
+    "btn_reject": "Rejeter"
   }
 }

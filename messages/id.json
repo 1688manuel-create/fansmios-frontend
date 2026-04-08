@@ -35,5 +35,33 @@
     "empty_posts": "Tidak ada postingan di kategori ini.",
     "unlock_for": "Buka seharga",
     "subscribe_to_view": "Berlangganan untuk melihat"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "Kesalahan koneksi saat memuat permintaan.",
+    "alert_approve_confirm_1": "⚠️ Apakah Anda yakin ingin mengirim",
+    "alert_approve_confirm_2": "USDT ke dompet:",
+    "prompt_tx_hash": "Tempelkan Hash Transaksi (TXID) jika dikirim secara manual, atau biarkan kosong untuk mensimulasikan:",
+    "alert_payout_success": "✅ Pembayaran Tercatat dan Kreator Diberitahu!",
+    "alert_error_approve": "Kesalahan saat menyetujui penarikan.",
+    "prompt_reject_reason_1": "❌ Anda akan MENOLAK penarikan sebesar",
+    "prompt_reject_reason_2": "Tulis alasannya (Mis: 'Dompet tidak valid' atau 'Dugaan Penipuan'):",
+    "alert_reject_success": "🛡️ Penarikan ditolak. Dana kembali ke saldo kreator.",
+    "alert_error_reject": "Kesalahan saat menolak penarikan.",
+    "loading": "MEMUAT BRANKAS...",
+    "nav_title": "Kontrol Payouts",
+    "nav_subtitle": "Pusat Komando Anti-Penipuan",
+    "btn_exit": "Keluar ke Dashboard",
+    "stats_pending": "Penarikan Tertunda",
+    "stats_total": "Total untuk Dibayar",
+    "empty_title": "Semuanya mutakhir, CEO.",
+    "empty_desc": "Tidak ada kreator yang meminta penarikan saat ini.",
+    "lbl_wallet": "Dompet:",
+    "lbl_held": "Ditahan:",
+    "lbl_requested": "Jumlah yang Diminta",
+    "lbl_dest_wallet": "Dompet Tujuan",
+    "lbl_not_provided": "Tidak disediakan",
+    "btn_approve": "Setujui",
+    "btn_reject": "Tolak"
   }
 }

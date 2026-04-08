@@ -35,5 +35,33 @@
     "empty_posts": "Nenhuma postagem nesta categoria.",
     "unlock_for": "Desbloquear por",
     "subscribe_to_view": "Inscreva-se para ver"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "Erro de conexão ao carregar solicitações.",
+    "alert_approve_confirm_1": "⚠️ Tem certeza que deseja enviar",
+    "alert_approve_confirm_2": "USDT para a carteira:",
+    "prompt_tx_hash": "Cole o Hash da Transação (TXID) se enviado manualmente, ou deixe vazio para simular:",
+    "alert_payout_success": "✅ Pagamento Registrado e Criador Notificado!",
+    "alert_error_approve": "Erro ao aprovar a retirada.",
+    "prompt_reject_reason_1": "❌ Você vai REJEITAR a retirada de",
+    "prompt_reject_reason_2": "Escreva o motivo (Ex: 'Carteira inválida' ou 'Suspeita de Fraude'):",
+    "alert_reject_success": "🛡️ Retirada rejeitada. O dinheiro voltou ao saldo do criador.",
+    "alert_error_reject": "Erro ao rejeitar a retirada.",
+    "loading": "CARREGANDO COFRE...",
+    "nav_title": "Controle de Payouts",
+    "nav_subtitle": "Centro de Comando Antifraude",
+    "btn_exit": "Sair para o Dashboard",
+    "stats_pending": "Retiradas Pendentes",
+    "stats_total": "Total a Pagar",
+    "empty_title": "Tudo em dia, CEO.",
+    "empty_desc": "Nenhum criador está solicitando retiradas no momento.",
+    "lbl_wallet": "Carteira:",
+    "lbl_held": "Retido:",
+    "lbl_requested": "Valor Solicitado",
+    "lbl_dest_wallet": "Carteira de Destino",
+    "lbl_not_provided": "Não fornecida",
+    "btn_approve": "Aprovar",
+    "btn_reject": "Rejeitar"
   }
 }

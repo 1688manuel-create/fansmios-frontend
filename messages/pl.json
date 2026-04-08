@@ -35,5 +35,33 @@
     "empty_posts": "Brak postów w tej kategorii.",
     "unlock_for": "Odblokuj za",
     "subscribe_to_view": "Subskrybuj, aby zobaczyć"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "Błąd połączenia podczas ładowania żądań.",
+    "alert_approve_confirm_1": "⚠️ Czy na pewno chcesz wysłać",
+    "alert_approve_confirm_2": "USDT do portfela:",
+    "prompt_tx_hash": "Wklej hash transakcji (TXID), jeśli wysłano ręcznie, lub zostaw puste, aby zasymulować:",
+    "alert_payout_success": "✅ Wypłata zarejestrowana i twórca powiadomiony!",
+    "alert_error_approve": "Błąd podczas zatwierdzania wypłaty.",
+    "prompt_reject_reason_1": "❌ Zamierzasz ODRZUCIĆ wypłatę",
+    "prompt_reject_reason_2": "Napisz powód (np. 'Nieprawidłowy portfel' lub 'Podejrzenie oszustwa'):",
+    "alert_reject_success": "🛡️ Wypłata odrzucona. Środki wróciły na saldo twórcy.",
+    "alert_error_reject": "Błąd podczas odrzucania wypłaty.",
+    "loading": "ŁADOWANIE SKARBCA...",
+    "nav_title": "Kontrola wypłat",
+    "nav_subtitle": "Centrum dowodzenia antyfraudowego",
+    "btn_exit": "Wyjdź do panelu",
+    "stats_pending": "Oczekujące wypłaty",
+    "stats_total": "Razem do zapłaty",
+    "empty_title": "Wszystko jest aktualne, CEO.",
+    "empty_desc": "Obecnie żaden twórca nie prosi o wypłatę.",
+    "lbl_wallet": "Portfel:",
+    "lbl_held": "Wstrzymane:",
+    "lbl_requested": "Żądana kwota",
+    "lbl_dest_wallet": "Portfel docelowy",
+    "lbl_not_provided": "Nie podano",
+    "btn_approve": "Zatwierdź",
+    "btn_reject": "Odrzuć"
   }
 }

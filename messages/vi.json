@@ -35,5 +35,33 @@
     "empty_posts": "Không có bài viết trong danh mục này.",
     "unlock_for": "Mở khóa với",
     "subscribe_to_view": "Đăng ký để xem"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "Lỗi kết nối khi tải yêu cầu.",
+    "alert_approve_confirm_1": "⚠️ Bạn có chắc chắn muốn gửi",
+    "alert_approve_confirm_2": "USDT đến ví:",
+    "prompt_tx_hash": "Dán Mã băm giao dịch (TXID) nếu gửi theo cách thủ công hoặc để trống để mô phỏng:",
+    "alert_payout_success": "✅ Đã đăng ký thanh toán và thông báo cho người sáng tạo!",
+    "alert_error_approve": "Lỗi khi phê duyệt yêu cầu rút tiền.",
+    "prompt_reject_reason_1": "❌ Bạn sắp TỪ CHỐI khoản rút tiền là",
+    "prompt_reject_reason_2": "Viết lý do (VD: 'Ví không hợp lệ' hoặc 'Nghi ngờ gian lận'):",
+    "alert_reject_success": "🛡️ Rút tiền bị từ chối. Tiền đã trở lại số dư của người sáng tạo.",
+    "alert_error_reject": "Lỗi khi từ chối rút tiền.",
+    "loading": "ĐANG TẢI KHO TIỀN...",
+    "nav_title": "Kiểm soát thanh toán",
+    "nav_subtitle": "Trung tâm chỉ huy chống gian lận",
+    "btn_exit": "Thoát đến Bảng điều khiển",
+    "stats_pending": "Rút tiền đang chờ xử lý",
+    "stats_total": "Tổng số tiền phải trả",
+    "empty_title": "Mọi thứ đều cập nhật, CEO.",
+    "empty_desc": "Hiện không có người sáng tạo nào yêu cầu rút tiền.",
+    "lbl_wallet": "Ví:",
+    "lbl_held": "Đang giữ:",
+    "lbl_requested": "Số tiền yêu cầu",
+    "lbl_dest_wallet": "Ví đích",
+    "lbl_not_provided": "Không được cung cấp",
+    "btn_approve": "Phê duyệt",
+    "btn_reject": "Từ chối"
   }
 }

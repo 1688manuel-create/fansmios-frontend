@@ -35,5 +35,33 @@
     "empty_posts": "此类别中没有帖子。",
     "unlock_for": "解锁需",
     "subscribe_to_view": "订阅以查看"
+  },
+
+  "AdminPayouts": {
+    "alert_error_conn": "加载请求时连接错误。",
+    "alert_approve_confirm_1": "⚠️ 您确定要发送",
+    "alert_approve_confirm_2": "USDT 到钱包：",
+    "prompt_tx_hash": "如果手动发送，请粘贴交易哈希 (TXID)，或者留空以进行模拟：",
+    "alert_payout_success": "✅ 付款已登记并已通知创作者！",
+    "alert_error_approve": "批准提款时出错。",
+    "prompt_reject_reason_1": "❌ 您即将拒绝以下提款：",
+    "prompt_reject_reason_2": "请写下原因（例如：“无效钱包”或“涉嫌欺诈”）：",
+    "alert_reject_success": "🛡️ 提款已拒绝。资金已退回创作者余额。",
+    "alert_error_reject": "拒绝提款时出错。",
+    "loading": "金库加载中...",
+    "nav_title": "付款控制",
+    "nav_subtitle": "反欺诈指挥中心",
+    "btn_exit": "退出到仪表板",
+    "stats_pending": "待处理提款",
+    "stats_total": "应付总额",
+    "empty_title": "一切都是最新的，CEO。",
+    "empty_desc": "目前没有创作者请求提款。",
+    "lbl_wallet": "钱包：",
+    "lbl_held": "保留：",
+    "lbl_requested": "请求金额",
+    "lbl_dest_wallet": "目标钱包",
+    "lbl_not_provided": "未提供",
+    "btn_approve": "批准",
+    "btn_reject": "拒绝"
   }
 }
