@@ -80,5 +80,19 @@
     "lbl_msg_fans": "Welcome Message for Fans / Viewers",
     "btn_saving": "Saving to DB...",
     "btn_save": "Deploy Update"
+  },
+
+  "ForgotPassword": {
+    "error_processing": "Error processing request.",
+    "title": "Recover Access",
+    "subtitle_sent": "Check your inbox.",
+    "subtitle_unsent": "Enter your email and we'll send you a magic link to get back in.",
+    "email_label": "Email Address",
+    "email_placeholder": "you@email.com",
+    "btn_submit": "Send magic link",
+    "success_title": "Link sent!",
+    "success_desc_1": "We have sent the instructions to ",
+    "success_desc_2": ". If you don't see it, check your Spam folder.",
+    "btn_back_login": "← Back to Login"
   }
 }

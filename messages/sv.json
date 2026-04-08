@@ -80,5 +80,19 @@
     "lbl_msg_fans": "Välkomstmeddelande för fans/tittare",
     "btn_saving": "Sparar i DB...",
     "btn_save": "Driftsätt uppdatering"
+  },
+
+  "ForgotPassword": {
+    "error_processing": "Fel vid behandling av begäran.",
+    "title": "Återställ åtkomst",
+    "subtitle_sent": "Kontrollera din inkorg.",
+    "subtitle_unsent": "Ange din e-postadress så skickar vi en magisk länk för att komma in igen.",
+    "email_label": "E-postadress",
+    "email_placeholder": "du@email.com",
+    "btn_submit": "Skicka magisk länk",
+    "success_title": "Länk skickad!",
+    "success_desc_1": "Vi har skickat instruktionerna till ",
+    "success_desc_2": ". Om du inte ser det, kontrollera din skräppostmapp.",
+    "btn_back_login": "← Tillbaka till inloggning"
   }
 }

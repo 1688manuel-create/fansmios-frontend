@@ -80,5 +80,19 @@
     "lbl_msg_fans": "Tin nhắn chào mừng cho Người hâm mộ / Khán giả",
     "btn_saving": "Đang lưu vào DB...",
     "btn_save": "Triển khai Bản cập nhật"
+  },
+
+  "ForgotPassword": {
+    "error_processing": "Lỗi khi xử lý yêu cầu.",
+    "title": "Khôi phục quyền truy cập",
+    "subtitle_sent": "Kiểm tra hộp thư đến của bạn.",
+    "subtitle_unsent": "Nhập email của bạn và chúng tôi sẽ gửi cho bạn một liên kết ma thuật để quay lại.",
+    "email_label": "Địa chỉ Email",
+    "email_placeholder": "ban@email.com",
+    "btn_submit": "Gửi liên kết ma thuật",
+    "success_title": "Đã gửi liên kết!",
+    "success_desc_1": "Chúng tôi đã gửi hướng dẫn đến ",
+    "success_desc_2": ". Nếu bạn không thấy, hãy kiểm tra thư mục Spam.",
+    "btn_back_login": "← Quay lại Đăng nhập"
   }
 }

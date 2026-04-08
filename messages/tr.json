@@ -80,5 +80,19 @@
     "lbl_msg_fans": "Hayranlar / İzleyiciler için Karşılama Mesajı",
     "btn_saving": "Veritabanına kaydediliyor...",
     "btn_save": "Güncellemeyi Dağıt"
+  },
+
+  "ForgotPassword": {
+    "error_processing": "İstek işlenirken hata oluştu.",
+    "title": "Erişimi Kurtar",
+    "subtitle_sent": "Gelen kutunuzu kontrol edin.",
+    "subtitle_unsent": "E-postanızı girin, size tekrar girmeniz için sihirli bir bağlantı gönderelim.",
+    "email_label": "E-posta Adresi",
+    "email_placeholder": "sen@email.com",
+    "btn_submit": "Sihirli bağlantı gönder",
+    "success_title": "Bağlantı gönderildi!",
+    "success_desc_1": "Talimatları şu adrese gönderdik: ",
+    "success_desc_2": ". Görmüyorsanız Spam klasörünüzü kontrol edin.",
+    "btn_back_login": "← Girişe Dön"
   }
 }

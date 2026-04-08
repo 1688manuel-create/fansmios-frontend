@@ -80,5 +80,19 @@
     "lbl_msg_fans": "Pesan Selamat Datang untuk Penggemar / Penonton",
     "btn_saving": "Menyimpan ke DB...",
     "btn_save": "Terapkan Pembaruan"
+  },
+
+  "ForgotPassword": {
+    "error_processing": "Kesalahan saat memproses permintaan.",
+    "title": "Pulihkan Akses",
+    "subtitle_sent": "Periksa kotak masuk Anda.",
+    "subtitle_unsent": "Masukkan email Anda dan kami akan mengirimkan tautan ajaib untuk masuk kembali.",
+    "email_label": "Alamat Email",
+    "email_placeholder": "kamu@email.com",
+    "btn_submit": "Kirim tautan ajaib",
+    "success_title": "Tautan terkirim!",
+    "success_desc_1": "Kami telah mengirimkan instruksi ke ",
+    "success_desc_2": ". Jika Anda tidak melihatnya, periksa folder Spam Anda.",
+    "btn_back_login": "← Kembali ke Login"
   }
 }

@@ -80,5 +80,19 @@
     "lbl_msg_fans": "Welkomstbericht voor Fans / Kijkers",
     "btn_saving": "Opslaan in DB...",
     "btn_save": "Update Implementeren"
+  },
+
+  "ForgotPassword": {
+    "error_processing": "Fout bij het verwerken van verzoek.",
+    "title": "Toegang herstellen",
+    "subtitle_sent": "Controleer je inbox.",
+    "subtitle_unsent": "Voer je e-mailadres in en we sturen je een magische link om weer in te loggen.",
+    "email_label": "E-mailadres",
+    "email_placeholder": "jij@email.com",
+    "btn_submit": "Stuur magische link",
+    "success_title": "Link verzonden!",
+    "success_desc_1": "We hebben de instructies verzonden naar ",
+    "success_desc_2": ". Als je het niet ziet, controleer dan je Spam-map.",
+    "btn_back_login": "← Terug naar Inloggen"
   }
 }

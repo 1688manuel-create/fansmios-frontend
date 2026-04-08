@@ -80,5 +80,19 @@
     "lbl_msg_fans": "Wiadomość Powitalna dla Fanów / Widzów",
     "btn_saving": "Zapisywanie w bazie...",
     "btn_save": "Wdróż Aktualizację"
+  },
+
+  "ForgotPassword": {
+    "error_processing": "Błąd podczas przetwarzania żądania.",
+    "title": "Odzyskaj Dostęp",
+    "subtitle_sent": "Sprawdź swoją skrzynkę odbiorczą.",
+    "subtitle_unsent": "Wprowadź swój e-mail, a my wyślemy Ci magiczny link, abyś mógł wrócić.",
+    "email_label": "Adres e-mail",
+    "email_placeholder": "ty@email.com",
+    "btn_submit": "Wyślij magiczny link",
+    "success_title": "Link wysłany!",
+    "success_desc_1": "Wysłaliśmy instrukcje na adres ",
+    "success_desc_2": ". Jeśli go nie widzisz, sprawdź folder Spam.",
+    "btn_back_login": "← Wróć do logowania"
   }
 }

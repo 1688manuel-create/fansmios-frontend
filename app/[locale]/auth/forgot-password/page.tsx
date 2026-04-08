@@ -4,9 +4,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../../lib/api';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function ForgotPassword() {
   const router = useRouter();
+  const t = useTranslations('ForgotPassword'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
@@ -22,7 +24,7 @@ export default function ForgotPassword() {
       await api.post('/auth/forgot-password', { email });
       setIsSent(true);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al procesar la solicitud.');
+      setError(err.response?.data?.error || t('error_processing'));
     } finally {
       setIsLoading(false);
     }
@@ -40,11 +42,11 @@ export default function ForgotPassword() {
             <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
               <span className="text-2xl">🔐</span>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Recuperar Acceso</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">{t('title')}</h2>
             <p className="text-gray-400 text-sm">
               {isSent 
-                ? 'Revisa tu bandeja de entrada.' 
-                : 'Ingresa tu correo y te enviaremos un enlace mágico para volver a entrar.'}
+                ? t('subtitle_sent') 
+                : t('subtitle_unsent')}
             </p>
           </div>
 
@@ -57,12 +59,12 @@ export default function ForgotPassword() {
           {!isSent ? (
             <form onSubmit={handleResetRequest} className="space-y-6">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Correo Electrónico</label>
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('email_label')}</label>
                 <input 
                   type="email" 
                   value={email} 
                   onChange={(e) => setEmail(e.target.value)} 
-                  placeholder="tu@email.com"
+                  placeholder={t('email_placeholder')}
                   className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500 transition-all"
                   required
                 />
@@ -73,20 +75,20 @@ export default function ForgotPassword() {
                 disabled={isLoading || !email.includes('@')}
                 className="w-full bg-white text-black font-extrabold py-3.5 rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center"
               >
-                {isLoading ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : 'Enviar enlace mágico'}
+                {isLoading ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : t('btn_submit')}
               </button>
             </form>
           ) : (
             <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-6 text-center space-y-4 animate-fade-in">
               <span className="text-4xl">📧</span>
-              <h3 className="text-green-400 font-bold text-lg">¡Enlace enviado!</h3>
-              <p className="text-gray-400 text-sm">Hemos enviado las instrucciones a <strong>{email}</strong>. Si no lo ves, revisa la carpeta de Spam.</p>
+              <h3 className="text-green-400 font-bold text-lg">{t('success_title')}</h3>
+              <p className="text-gray-400 text-sm">{t('success_desc_1')} <strong>{email}</strong>{t('success_desc_2')}</p>
             </div>
           )}
 
           <div className="mt-8 text-center">
             <button onClick={() => router.push('/auth')} className="text-sm text-gray-500 hover:text-white transition-colors">
-              ← Volver al Login
+              {t('btn_back_login')}
             </button>
           </div>
         </div>

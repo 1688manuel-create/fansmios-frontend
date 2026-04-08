@@ -80,5 +80,19 @@
     "lbl_msg_fans": "ファン/視聴者へのウェルカムメッセージ",
     "btn_saving": "DBに保存中...",
     "btn_save": "アップデートを展開"
+  },
+
+  "ForgotPassword": {
+    "error_processing": "リクエストの処理中にエラーが発生しました。",
+    "title": "アクセスを回復",
+    "subtitle_sent": "受信トレイを確認してください。",
+    "subtitle_unsent": "メールアドレスを入力すると、再度ログインするためのマジックリンクが送信されます。",
+    "email_label": "メールアドレス",
+    "email_placeholder": "you@email.com",
+    "btn_submit": "マジックリンクを送信",
+    "success_title": "リンクが送信されました！",
+    "success_desc_1": "指示を ",
+    "success_desc_2": " に送信しました。見当たらない場合は、迷惑メールフォルダを確認してください。",
+    "btn_back_login": "← ログインに戻る"
   }
 }

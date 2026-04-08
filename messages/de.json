@@ -80,5 +80,19 @@
     "lbl_msg_fans": "Willkommensnachricht für Fans / Zuschauer",
     "btn_saving": "Speichere in DB...",
     "btn_save": "Update bereitstellen"
+  },
+
+  "ForgotPassword": {
+    "error_processing": "Fehler bei der Bearbeitung der Anfrage.",
+    "title": "Zugang wiederherstellen",
+    "subtitle_sent": "Überprüfen Sie Ihren Posteingang.",
+    "subtitle_unsent": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen magischen Link, um zurückzukehren.",
+    "email_label": "E-Mail-Adresse",
+    "email_placeholder": "du@email.com",
+    "btn_submit": "Magischen Link senden",
+    "success_title": "Link gesendet!",
+    "success_desc_1": "Wir haben die Anweisungen an ",
+    "success_desc_2": " gesendet. Wenn Sie es nicht sehen, überprüfen Sie Ihren Spam-Ordner.",
+    "btn_back_login": "← Zurück zum Login"
   }
 }

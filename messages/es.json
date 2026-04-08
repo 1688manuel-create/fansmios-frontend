@@ -80,5 +80,19 @@
     "lbl_msg_fans": "Mensaje de Bienvenida para Fans / Espectadores",
     "btn_saving": "Guardando en BD...",
     "btn_save": "Desplegar Actualización"
+  },
+
+  "ForgotPassword": {
+    "error_processing": "Error al procesar la solicitud.",
+    "title": "Recuperar Acceso",
+    "subtitle_sent": "Revisa tu bandeja de entrada.",
+    "subtitle_unsent": "Ingresa tu correo y te enviaremos un enlace mágico para volver a entrar.",
+    "email_label": "Correo Electrónico",
+    "email_placeholder": "tu@email.com",
+    "btn_submit": "Enviar enlace mágico",
+    "success_title": "¡Enlace enviado!",
+    "success_desc_1": "Hemos enviado las instrucciones a ",
+    "success_desc_2": ". Si no lo ves, revisa la carpeta de Spam.",
+    "btn_back_login": "← Volver al Login"
   }
 }
