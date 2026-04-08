@@ -63,5 +63,22 @@
     "lbl_not_provided": "제공되지 않음",
     "btn_approve": "승인",
     "btn_reject": "거절"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ 환영 메시지가 성공적으로 업데이트되었습니다!",
+    "alert_error": "🚨 데이터베이스에 구성을 저장하는 중 오류가 발생했습니다.",
+    "loading": "핵심 데이터 추출 중...",
+    "nav_title": "시스템 구성",
+    "nav_subtitle": "자동 메시지",
+    "btn_exit": "대시보드로 나가기",
+    "banner_title": "리텐션 자동 조종",
+    "banner_desc": "새로운 사용자가 FansMio에 등록하는 순간 관리자 계정에서 자동으로 전송되는 정확한 메시지입니다.",
+    "badge_creators": "크리에이터",
+    "lbl_msg_creators": "VIP 크리에이터를 위한 환영 메시지",
+    "badge_fans": "팬",
+    "lbl_msg_fans": "팬 / 시청자를 위한 환영 메시지",
+    "btn_saving": "DB에 저장 중...",
+    "btn_save": "업데이트 배포"
   }
 }

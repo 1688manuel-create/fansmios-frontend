@@ -63,5 +63,22 @@
     "lbl_not_provided": "Non fourni",
     "btn_approve": "Approuver",
     "btn_reject": "Rejeter"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ Messages de bienvenue mis à jour avec succès en production !",
+    "alert_error": "🚨 Erreur lors de l'enregistrement de la configuration dans la base de données.",
+    "loading": "EXTRACTION DES DONNÉES DU NOYAU...",
+    "nav_title": "Configuration du système",
+    "nav_subtitle": "Messages automatiques",
+    "btn_exit": "Quitter vers le tableau de bord",
+    "banner_title": "Pilote automatique de rétention",
+    "banner_desc": "Ce sont les messages exacts qui seront envoyés automatiquement depuis votre compte Administrateur à la milliseconde même où un nouvel utilisateur s'inscrit sur FansMio.",
+    "badge_creators": "Créateurs",
+    "lbl_msg_creators": "Message de bienvenue pour les créateurs VIP",
+    "badge_fans": "Fans",
+    "lbl_msg_fans": "Message de bienvenue pour les fans / spectateurs",
+    "btn_saving": "Enregistrement dans la BD...",
+    "btn_save": "Déployer la mise à jour"
   }
 }

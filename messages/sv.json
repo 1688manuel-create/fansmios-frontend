@@ -63,5 +63,22 @@
     "lbl_not_provided": "Ej angivet",
     "btn_approve": "Godkänn",
     "btn_reject": "Avvisa"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ Välkomstmeddelanden har uppdaterats i produktion!",
+    "alert_error": "🚨 Fel vid sparande av konfiguration till databasen.",
+    "loading": "EXTRAHERAR KÄRNDATA...",
+    "nav_title": "Systemkonfiguration",
+    "nav_subtitle": "Automatiska meddelanden",
+    "btn_exit": "Avsluta till översikt",
+    "banner_title": "Kvarhållnings-autopilot",
+    "banner_desc": "Dessa är de exakta meddelandena som kommer att skickas automatiskt från ditt administratörskonto på samma millisekund som en ny användare registrerar sig på FansMio.",
+    "badge_creators": "Skapare",
+    "lbl_msg_creators": "Välkomstmeddelande för VIP-skapare",
+    "badge_fans": "Fans",
+    "lbl_msg_fans": "Välkomstmeddelande för fans/tittare",
+    "btn_saving": "Sparar i DB...",
+    "btn_save": "Driftsätt uppdatering"
   }
 }

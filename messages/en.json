@@ -63,5 +63,22 @@
     "lbl_not_provided": "Not provided",
     "btn_approve": "Approve",
     "btn_reject": "Reject"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ Welcome messages updated successfully in production!",
+    "alert_error": "🚨 Error saving configuration to the database.",
+    "loading": "EXTRACTING CORE DATA...",
+    "nav_title": "System Configuration",
+    "nav_subtitle": "Automated Messages",
+    "btn_exit": "Exit to Dashboard",
+    "banner_title": "Retention Autopilot",
+    "banner_desc": "These are the exact messages that will be sent automatically from your Admin account the exact millisecond a new user registers on FansMio.",
+    "badge_creators": "Creators",
+    "lbl_msg_creators": "Welcome Message for VIP Creators",
+    "badge_fans": "Fans",
+    "lbl_msg_fans": "Welcome Message for Fans / Viewers",
+    "btn_saving": "Saving to DB...",
+    "btn_save": "Deploy Update"
   }
 }

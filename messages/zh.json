@@ -63,5 +63,22 @@
     "lbl_not_provided": "未提供",
     "btn_approve": "批准",
     "btn_reject": "拒绝"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ 欢迎消息已在生产环境中成功更新！",
+    "alert_error": "🚨 将配置保存到数据库时出错。",
+    "loading": "提取核心数据...",
+    "nav_title": "系统配置",
+    "nav_subtitle": "自动消息",
+    "btn_exit": "退出到仪表板",
+    "banner_title": "留存自动驾驶",
+    "banner_desc": "这些是当新用户在 FansMio 注册的那一毫秒，将从您的管理员帐户自动发送的准确消息。",
+    "badge_creators": "创作者",
+    "lbl_msg_creators": "VIP 创作者欢迎消息",
+    "badge_fans": "粉丝",
+    "lbl_msg_fans": "粉丝/观众欢迎消息",
+    "btn_saving": "保存到数据库...",
+    "btn_save": "部署更新"
   }
 }

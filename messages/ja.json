@@ -63,5 +63,22 @@
     "lbl_not_provided": "未提供",
     "btn_approve": "承認する",
     "btn_reject": "拒否する"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ ウェルカムメッセージが本番環境で正常に更新されました！",
+    "alert_error": "🚨 データベースへの設定の保存中にエラーが発生しました。",
+    "loading": "コアデータを抽出中...",
+    "nav_title": "システム設定",
+    "nav_subtitle": "自動メッセージ",
+    "btn_exit": "ダッシュボードに戻る",
+    "banner_title": "リテンションオートパイロット",
+    "banner_desc": "これらは、新しいユーザーがFansMioに登録したまさにその瞬間に、管理者アカウントから自動的に送信される正確なメッセージです。",
+    "badge_creators": "クリエイター",
+    "lbl_msg_creators": "VIPクリエイターへのウェルカムメッセージ",
+    "badge_fans": "ファン",
+    "lbl_msg_fans": "ファン/視聴者へのウェルカムメッセージ",
+    "btn_saving": "DBに保存中...",
+    "btn_save": "アップデートを展開"
   }
 }

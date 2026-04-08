@@ -63,5 +63,22 @@
     "lbl_not_provided": "Không được cung cấp",
     "btn_approve": "Phê duyệt",
     "btn_reject": "Từ chối"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ Tin nhắn chào mừng đã được cập nhật thành công trên máy chủ!",
+    "alert_error": "🚨 Lỗi khi lưu cấu hình vào cơ sở dữ liệu.",
+    "loading": "ĐANG TRÍCH XUẤT DỮ LIỆU CỐT LÕI...",
+    "nav_title": "Cấu hình Hệ thống",
+    "nav_subtitle": "Tin nhắn tự động",
+    "btn_exit": "Thoát đến Bảng điều khiển",
+    "banner_title": "Chế độ tự động giữ chân",
+    "banner_desc": "Đây là những tin nhắn chính xác sẽ được tự động gửi từ tài khoản Quản trị viên của bạn vào đúng thời điểm một người dùng mới đăng ký trên FansMio.",
+    "badge_creators": "Nhà sáng tạo",
+    "lbl_msg_creators": "Tin nhắn chào mừng cho Nhà sáng tạo VIP",
+    "badge_fans": "Người hâm mộ",
+    "lbl_msg_fans": "Tin nhắn chào mừng cho Người hâm mộ / Khán giả",
+    "btn_saving": "Đang lưu vào DB...",
+    "btn_save": "Triển khai Bản cập nhật"
   }
 }

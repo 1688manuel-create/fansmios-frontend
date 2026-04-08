@@ -63,5 +63,22 @@
     "lbl_not_provided": "Tidak disediakan",
     "btn_approve": "Setujui",
     "btn_reject": "Tolak"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ Pesan selamat datang berhasil diperbarui di produksi!",
+    "alert_error": "🚨 Kesalahan saat menyimpan konfigurasi ke database.",
+    "loading": "MENGEKSTRAK DATA INTI...",
+    "nav_title": "Konfigurasi Sistem",
+    "nav_subtitle": "Pesan Otomatis",
+    "btn_exit": "Keluar ke Dashboard",
+    "banner_title": "Autopilot Retensi",
+    "banner_desc": "Ini adalah pesan persis yang akan dikirim secara otomatis dari akun Admin Anda pada milidetik yang sama saat pengguna baru mendaftar di FansMio.",
+    "badge_creators": "Kreator",
+    "lbl_msg_creators": "Pesan Selamat Datang untuk Kreator VIP",
+    "badge_fans": "Penggemar",
+    "lbl_msg_fans": "Pesan Selamat Datang untuk Penggemar / Penonton",
+    "btn_saving": "Menyimpan ke DB...",
+    "btn_save": "Terapkan Pembaruan"
   }
 }

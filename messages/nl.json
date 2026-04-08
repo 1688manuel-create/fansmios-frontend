@@ -63,5 +63,22 @@
     "lbl_not_provided": "Niet verstrekt",
     "btn_approve": "Goedkeuren",
     "btn_reject": "Weigeren"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ Welkomstberichten succesvol bijgewerkt in productie!",
+    "alert_error": "🚨 Fout bij het opslaan van de configuratie in de database.",
+    "loading": "KERNDATA EXTRAHEREN...",
+    "nav_title": "Systeemconfiguratie",
+    "nav_subtitle": "Automatische Berichten",
+    "btn_exit": "Afsluiten naar Dashboard",
+    "banner_title": "Retentie Autopilot",
+    "banner_desc": "Dit zijn de exacte berichten die automatisch vanuit je Admin-account worden verzonden op de exacte milliseconde dat een nieuwe gebruiker zich registreert op FansMio.",
+    "badge_creators": "Makers",
+    "lbl_msg_creators": "Welkomstbericht voor VIP Makers",
+    "badge_fans": "Fans",
+    "lbl_msg_fans": "Welkomstbericht voor Fans / Kijkers",
+    "btn_saving": "Opslaan in DB...",
+    "btn_save": "Update Implementeren"
   }
 }

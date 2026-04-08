@@ -63,5 +63,22 @@
     "lbl_not_provided": "Nie podano",
     "btn_approve": "Zatwierdź",
     "btn_reject": "Odrzuć"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ Wiadomości powitalne zostały pomyślnie zaktualizowane na produkcji!",
+    "alert_error": "🚨 Błąd podczas zapisywania konfiguracji w bazie danych.",
+    "loading": "WYDOBYWANIE DANYCH RDZENIA...",
+    "nav_title": "Konfiguracja Systemu",
+    "nav_subtitle": "Wiadomości Automatyczne",
+    "btn_exit": "Wyjdź do panelu",
+    "banner_title": "Autopilot Retencji",
+    "banner_desc": "Są to dokładne wiadomości, które zostaną wysłane automatycznie z Twojego konta Administratora w tej samej milisekundzie, w której nowy użytkownik zarejestruje się w FansMio.",
+    "badge_creators": "Twórcy",
+    "lbl_msg_creators": "Wiadomość Powitalna dla Twórców VIP",
+    "badge_fans": "Fani",
+    "lbl_msg_fans": "Wiadomość Powitalna dla Fanów / Widzów",
+    "btn_saving": "Zapisywanie w bazie...",
+    "btn_save": "Wdróż Aktualizację"
   }
 }

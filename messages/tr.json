@@ -63,5 +63,22 @@
     "lbl_not_provided": "Sağlanmadı",
     "btn_approve": "Onayla",
     "btn_reject": "Reddet"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ Karşılama mesajları canlı ortamda başarıyla güncellendi!",
+    "alert_error": "🚨 Yapılandırmayı veritabanına kaydederken hata oluştu.",
+    "loading": "ÇEKİRDEK VERİLER ÇIKARTILIYOR...",
+    "nav_title": "Sistem Yapılandırması",
+    "nav_subtitle": "Otomatik Mesajlar",
+    "btn_exit": "Kontrol Paneline Çık",
+    "banner_title": "Elde Tutma Otopilotu",
+    "banner_desc": "Bunlar, yeni bir kullanıcı FansMio'ya kaydolduğu an Yönetici hesabınızdan otomatik olarak gönderilecek kesin mesajlardır.",
+    "badge_creators": "Yaratıcılar",
+    "lbl_msg_creators": "VIP Yaratıcılar için Karşılama Mesajı",
+    "badge_fans": "Hayranlar",
+    "lbl_msg_fans": "Hayranlar / İzleyiciler için Karşılama Mesajı",
+    "btn_saving": "Veritabanına kaydediliyor...",
+    "btn_save": "Güncellemeyi Dağıt"
   }
 }

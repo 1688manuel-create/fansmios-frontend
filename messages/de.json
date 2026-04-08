@@ -63,5 +63,22 @@
     "lbl_not_provided": "Nicht angegeben",
     "btn_approve": "Genehmigen",
     "btn_reject": "Ablehnen"
+  },
+
+  "AdminSettings": {
+    "alert_success": "✅ Willkommensnachrichten erfolgreich in Produktion aktualisiert!",
+    "alert_error": "🚨 Fehler beim Speichern der Konfiguration in der Datenbank.",
+    "loading": "EXTRAHIERE KERNDATEN...",
+    "nav_title": "Systemkonfiguration",
+    "nav_subtitle": "Automatische Nachrichten",
+    "btn_exit": "Zum Dashboard beenden",
+    "banner_title": "Kundenbindungs-Autopilot",
+    "banner_desc": "Dies sind die genauen Nachrichten, die automatisch von Ihrem Admin-Konto in genau der Millisekunde gesendet werden, in der sich ein neuer Benutzer bei FansMio registriert.",
+    "badge_creators": "Creator",
+    "lbl_msg_creators": "Willkommensnachricht für VIP-Creator",
+    "badge_fans": "Fans",
+    "lbl_msg_fans": "Willkommensnachricht für Fans / Zuschauer",
+    "btn_saving": "Speichere in DB...",
+    "btn_save": "Update bereitstellen"
   }
 }
