@@ -122,5 +122,19 @@
     "error_title": "出现问题",
     "btn_back": "返回首页",
     "suspense_loading": "正在加载验证系统..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "未找到安全验证令牌。",
+    "success_msg": "帐户验证成功！",
+    "error_invalid_link": "链接无效或已过期。",
+    "subtitle": "安全海关",
+    "loading_title": "正在检查密钥...",
+    "loading_desc": "正在验证您的安全保险库...",
+    "success_title": "授予访问权限！",
+    "btn_login": "立即登录",
+    "error_title": "拒绝访问",
+    "btn_back": "返回门户",
+    "footer_sec": "加密验证"
   }
 }

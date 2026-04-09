@@ -122,5 +122,19 @@
     "error_title": "Si è verificato un problema",
     "btn_back": "Torna alla Home",
     "suspense_loading": "Caricamento sistema di verifica..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "Nessun token di verifica sicuro trovato.",
+    "success_msg": "Account verificato con successo!",
+    "error_invalid_link": "Il link non è valido o è scaduto.",
+    "subtitle": "Dogana di Sicurezza",
+    "loading_title": "Controllo Chiave...",
+    "loading_desc": "Verifica del tuo caveau di sicurezza...",
+    "success_title": "Accesso Consentito!",
+    "btn_login": "Accedi Ora",
+    "error_title": "Accesso Negato",
+    "btn_back": "Torna al Portale",
+    "footer_sec": "Verifica Crittografica"
   }
 }

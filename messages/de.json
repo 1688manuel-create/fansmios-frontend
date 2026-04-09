@@ -122,5 +122,19 @@
     "error_title": "Es gab ein Problem",
     "btn_back": "Zurück zur Startseite",
     "suspense_loading": "Verifizierungssystem wird geladen..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "Kein sicheres Bestätigungstoken gefunden.",
+    "success_msg": "Konto erfolgreich verifiziert!",
+    "error_invalid_link": "Der Link ist ungültig oder abgelaufen.",
+    "subtitle": "Sicherheitszoll",
+    "loading_title": "Schlüssel wird geprüft...",
+    "loading_desc": "Ihr Sicherheitstresor wird verifiziert...",
+    "success_title": "Zugriff gewährt!",
+    "btn_login": "Jetzt einloggen",
+    "error_title": "Zugriff verweigert",
+    "btn_back": "Zurück zum Portal",
+    "footer_sec": "Kryptografische Überprüfung"
   }
 }

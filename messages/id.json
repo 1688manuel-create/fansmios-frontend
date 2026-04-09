@@ -122,5 +122,19 @@
     "error_title": "Ada masalah",
     "btn_back": "Kembali ke Beranda",
     "suspense_loading": "Memuat sistem verifikasi..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "Tidak ditemukan token verifikasi yang aman.",
+    "success_msg": "Akun berhasil diverifikasi!",
+    "error_invalid_link": "Tautan tidak valid atau telah kedaluwarsa.",
+    "subtitle": "Bea Cukai Keamanan",
+    "loading_title": "Memeriksa Kunci...",
+    "loading_desc": "Memverifikasi brankas keamanan Anda...",
+    "success_title": "Akses Diberikan!",
+    "btn_login": "Masuk Sekarang",
+    "error_title": "Akses Ditolak",
+    "btn_back": "Kembali ke Portal",
+    "footer_sec": "Verifikasi Kriptografis"
   }
 }

@@ -122,5 +122,19 @@
     "error_title": "문제가 발생했습니다",
     "btn_back": "홈으로 돌아가기",
     "suspense_loading": "확인 시스템 로드 중..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "안전한 확인 토큰을 찾을 수 없습니다.",
+    "success_msg": "계정이 성공적으로 확인되었습니다!",
+    "error_invalid_link": "링크가 유효하지 않거나 만료되었습니다.",
+    "subtitle": "보안 세관",
+    "loading_title": "키 확인 중...",
+    "loading_desc": "보안 금고를 확인하는 중...",
+    "success_title": "접근 허용!",
+    "btn_login": "지금 로그인",
+    "error_title": "접근 거부",
+    "btn_back": "포털로 돌아가기",
+    "footer_sec": "암호화 확인"
   }
 }

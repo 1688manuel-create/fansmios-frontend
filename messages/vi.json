@@ -122,5 +122,19 @@
     "error_title": "Đã xảy ra sự cố",
     "btn_back": "Trở về trang chủ",
     "suspense_loading": "Đang tải hệ thống xác minh..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "Không tìm thấy mã thông báo xác minh an toàn.",
+    "success_msg": "Tài khoản đã được xác minh thành công!",
+    "error_invalid_link": "Liên kết không hợp lệ hoặc đã hết hạn.",
+    "subtitle": "Hải quan An ninh",
+    "loading_title": "Đang kiểm tra chìa khóa...",
+    "loading_desc": "Đang xác minh kho lưu trữ an toàn của bạn...",
+    "success_title": "Đã cấp quyền truy cập!",
+    "btn_login": "Đăng nhập ngay",
+    "error_title": "Từ chối truy cập",
+    "btn_back": "Trở lại cổng thông tin",
+    "footer_sec": "Xác minh mật mã"
   }
 }

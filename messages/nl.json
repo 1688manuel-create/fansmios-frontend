@@ -122,5 +122,19 @@
     "error_title": "Er is een probleem opgetreden",
     "btn_back": "Terug naar Start",
     "suspense_loading": "Verificatiesysteem laden..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "Geen beveiligde verificatietoken gevonden.",
+    "success_msg": "Account succesvol geverifieerd!",
+    "error_invalid_link": "De link is ongeldig of verlopen.",
+    "subtitle": "Beveiligingsdouane",
+    "loading_title": "Sleutel controleren...",
+    "loading_desc": "Je beveiligde kluis verifiëren...",
+    "success_title": "Toegang Verleend!",
+    "btn_login": "Nu Inloggen",
+    "error_title": "Toegang Geweigerd",
+    "btn_back": "Terug naar Portaal",
+    "footer_sec": "Cryptografische Verificatie"
   }
 }

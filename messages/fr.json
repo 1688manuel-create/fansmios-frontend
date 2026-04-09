@@ -122,5 +122,19 @@
     "error_title": "Il y a eu un problème",
     "btn_back": "Retour à l'accueil",
     "suspense_loading": "Chargement du système de vérification..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "Aucun jeton de vérification sécurisé trouvé.",
+    "success_msg": "Compte vérifié avec succès !",
+    "error_invalid_link": "Le lien est invalide ou a expiré.",
+    "subtitle": "Douanes de sécurité",
+    "loading_title": "Vérification de la clé...",
+    "loading_desc": "Vérification de votre coffre-fort de sécurité...",
+    "success_title": "Accès autorisé !",
+    "btn_login": "Connectez-vous maintenant",
+    "error_title": "Accès refusé",
+    "btn_back": "Retour au portail",
+    "footer_sec": "Vérification cryptographique"
   }
 }

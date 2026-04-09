@@ -122,5 +122,19 @@
     "error_title": "Bir sorun oluştu",
     "btn_back": "Ana Sayfaya Dön",
     "suspense_loading": "Doğrulama sistemi yükleniyor..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "Güvenli doğrulama belirteci bulunamadı.",
+    "success_msg": "Hesap başarıyla doğrulandı!",
+    "error_invalid_link": "Bağlantı geçersiz veya süresi dolmuş.",
+    "subtitle": "Güvenlik Gümrüğü",
+    "loading_title": "Anahtar Kontrol Ediliyor...",
+    "loading_desc": "Güvenlik kasanız doğrulanıyor...",
+    "success_title": "Erişim İzni Verildi!",
+    "btn_login": "Şimdi Giriş Yap",
+    "error_title": "Erişim Reddedildi",
+    "btn_back": "Portala Dön",
+    "footer_sec": "Kriptografik Doğrulama"
   }
 }

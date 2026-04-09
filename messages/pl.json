@@ -122,5 +122,19 @@
     "error_title": "Wystąpił problem",
     "btn_back": "Wróć do Strony Głównej",
     "suspense_loading": "Ładowanie systemu weryfikacji..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "Nie znaleziono bezpiecznego tokena weryfikacyjnego.",
+    "success_msg": "Konto pomyślnie zweryfikowane!",
+    "error_invalid_link": "Link jest nieprawidłowy lub wygasł.",
+    "subtitle": "Służby Celne Bezpieczeństwa",
+    "loading_title": "Sprawdzanie Klucza...",
+    "loading_desc": "Weryfikacja Twojego skarbca bezpieczeństwa...",
+    "success_title": "Dostęp Przyznany!",
+    "btn_login": "Zaloguj Się Teraz",
+    "error_title": "Odmowa Dostępu",
+    "btn_back": "Wróć do Portalu",
+    "footer_sec": "Weryfikacja Kryptograficzna"
   }
 }

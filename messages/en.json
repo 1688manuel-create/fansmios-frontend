@@ -122,5 +122,19 @@
     "error_title": "There was a problem",
     "btn_back": "Back to Home",
     "suspense_loading": "Loading verification system..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "No secure verification token found.",
+    "success_msg": "Account successfully verified!",
+    "error_invalid_link": "The link is invalid or has expired.",
+    "subtitle": "Security Customs",
+    "loading_title": "Checking Key...",
+    "loading_desc": "Verifying your security vault...",
+    "success_title": "Access Granted!",
+    "btn_login": "Log In Now",
+    "error_title": "Access Denied",
+    "btn_back": "Return to Portal",
+    "footer_sec": "Cryptographic Verification"
   }
 }

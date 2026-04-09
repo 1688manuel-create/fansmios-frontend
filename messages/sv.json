@@ -122,5 +122,19 @@
     "error_title": "Det uppstod ett problem",
     "btn_back": "Tillbaka till Start",
     "suspense_loading": "Laddar verifieringssystem..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "Ingen säker verifieringstoken hittades.",
+    "success_msg": "Kontot har verifierats!",
+    "error_invalid_link": "Länken är ogiltig eller har gått ut.",
+    "subtitle": "Säkerhetstullen",
+    "loading_title": "Kontrollerar nyckel...",
+    "loading_desc": "Verifierar ditt säkerhetsvalv...",
+    "success_title": "Åtkomst beviljad!",
+    "btn_login": "Logga in nu",
+    "error_title": "Åtkomst nekad",
+    "btn_back": "Tillbaka till portalen",
+    "footer_sec": "Kryptografisk verifiering"
   }
 }

@@ -122,5 +122,19 @@
     "error_title": "Houve um problema",
     "btn_back": "Voltar ao Início",
     "suspense_loading": "Carregando sistema de verificação..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "Nenhum token de verificação seguro encontrado.",
+    "success_msg": "Conta verificada com sucesso!",
+    "error_invalid_link": "O link é inválido ou expirou.",
+    "subtitle": "Alfândega de Segurança",
+    "loading_title": "Verificando Chave...",
+    "loading_desc": "Verificando seu cofre de segurança...",
+    "success_title": "Acesso Concedido!",
+    "btn_login": "Fazer Login Agora",
+    "error_title": "Acesso Negado",
+    "btn_back": "Voltar ao Portal",
+    "footer_sec": "Verificação Criptográfica"
   }
 }

@@ -122,5 +122,19 @@
     "error_title": "問題が発生しました",
     "btn_back": "ホームに戻る",
     "suspense_loading": "確認システムを読み込んでいます..."
+  },
+
+  "VerifyAduana": {
+    "error_no_token": "安全な確認トークンが見つかりません。",
+    "success_msg": "アカウントが正常に確認されました！",
+    "error_invalid_link": "リンクが無効か、期限切れです。",
+    "subtitle": "セキュリティ税関",
+    "loading_title": "キーを確認中...",
+    "loading_desc": "セキュリティ保管庫を確認しています...",
+    "success_title": "アクセス許可！",
+    "btn_login": "今すぐログイン",
+    "error_title": "アクセス拒否",
+    "btn_back": "ポータルに戻る",
+    "footer_sec": "暗号化検証"
   }
 }
