@@ -136,5 +136,35 @@
     "error_title": "Toegang Geweigerd",
     "btn_back": "Terug naar Portaal",
     "footer_sec": "Cryptografische Verificatie"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ Account aangemaakt! We hebben een veilige link naar je e-mail gestuurd om deze te activeren.",
+    "error_connection": "Verbindingsfout. Probeer het opnieuw.",
+    "msg_resend_success": "E-mail succesvol opnieuw verzonden. Controleer je inbox of SPAM.",
+    "error_resend": "Fout bij het opnieuw verzenden van de e-mail.",
+    "subtitle_login": "Welkom terug in je VIP-ruimte.",
+    "subtitle_register": "Sluit je aan bij het premium platform voor makers.",
+    "tab_login": "Inloggen",
+    "tab_register": "Registreren",
+    "btn_resend": "Activeringsmail opnieuw verzenden",
+    "vip_invitation": "VIP-uitnodiging geactiveerd!",
+    "lbl_role": "Ik wil een ... zijn",
+    "role_fan": "Fan",
+    "role_creator": "Maker",
+    "lbl_username": "Gebruikersnaam",
+    "ph_username": "bijv. pro_creator",
+    "lbl_email": "E-mailadres",
+    "ph_email": "jij@email.com",
+    "lbl_password": "Wachtwoord",
+    "btn_forgot_pwd": "Wachtwoord vergeten?",
+    "verifying_secure": "Beveiligde verbinding verifiëren...",
+    "btn_access": "Betreed het Imperium",
+    "btn_create_acc": "Account Aanmaken",
+    "terms_1": "Door door te gaan, ga je akkoord met onze",
+    "terms_2": "Servicevoorwaarden",
+    "terms_3": "en het",
+    "terms_4": "Privacybeleid",
+    "terms_5": "Beschermd door beveiliging op militair niveau."
   }
 }

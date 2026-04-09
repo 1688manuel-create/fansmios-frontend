@@ -136,5 +136,35 @@
     "error_title": "접근 거부",
     "btn_back": "포털로 돌아가기",
     "footer_sec": "암호화 확인"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ 계정이 생성되었습니다! 활성화를 위한 안전한 링크를 이메일로 보냈습니다.",
+    "error_connection": "연결 오류. 다시 시도해 주세요.",
+    "msg_resend_success": "이메일이 성공적으로 재전송되었습니다. 받은편지함이나 스팸함을 확인하세요.",
+    "error_resend": "이메일 재전송 오류.",
+    "subtitle_login": "VIP 공간에 다시 오신 것을 환영합니다.",
+    "subtitle_register": "프리미엄 크리에이터 플랫폼에 가입하세요.",
+    "tab_login": "로그인",
+    "tab_register": "등록",
+    "btn_resend": "활성화 이메일 재전송",
+    "vip_invitation": "VIP 초대가 활성화되었습니다!",
+    "lbl_role": "나는 ...가 되고 싶다",
+    "role_fan": "팬",
+    "role_creator": "크리에이터",
+    "lbl_username": "사용자 이름",
+    "ph_username": "예: pro_creator",
+    "lbl_email": "이메일 주소",
+    "ph_email": "you@email.com",
+    "lbl_password": "비밀번호",
+    "btn_forgot_pwd": "비밀번호를 잊으셨나요?",
+    "verifying_secure": "보안 연결 확인 중...",
+    "btn_access": "제국 입장",
+    "btn_create_acc": "계정 만들기",
+    "terms_1": "계속 진행하면 당사의",
+    "terms_2": "서비스 약관",
+    "terms_3": "및",
+    "terms_4": "개인정보 보호정책",
+    "terms_5": "군사 등급의 보안으로 보호됩니다."
   }
 }

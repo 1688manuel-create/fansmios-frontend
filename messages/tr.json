@@ -136,5 +136,35 @@
     "error_title": "Erişim Reddedildi",
     "btn_back": "Portala Dön",
     "footer_sec": "Kriptografik Doğrulama"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ Hesap oluşturuldu! Etkinleştirmek için e-postanıza güvenli bir bağlantı gönderdik.",
+    "error_connection": "Bağlantı hatası. Lütfen tekrar deneyin.",
+    "msg_resend_success": "E-posta başarıyla yeniden gönderildi. Gelen kutunuzu veya SPAM klasörünüzü kontrol edin.",
+    "error_resend": "E-posta yeniden gönderilirken hata oluştu.",
+    "subtitle_login": "VIP alanınıza tekrar hoş geldiniz.",
+    "subtitle_register": "Premium yaratıcılar platformuna katılın.",
+    "tab_login": "Giriş Yap",
+    "tab_register": "Kayıt Ol",
+    "btn_resend": "Aktivasyon e-postasını yeniden gönder",
+    "vip_invitation": "VIP Davetiye Aktifleştirildi!",
+    "lbl_role": "Şu olmak istiyorum...",
+    "role_fan": "Hayran",
+    "role_creator": "Yaratıcı",
+    "lbl_username": "Kullanıcı Adı",
+    "ph_username": "örn. pro_creator",
+    "lbl_email": "E-posta Adresi",
+    "ph_email": "sen@email.com",
+    "lbl_password": "Şifre",
+    "btn_forgot_pwd": "Şifrenizi mi unuttunuz?",
+    "verifying_secure": "Güvenli bağlantı doğrulanıyor...",
+    "btn_access": "İmparatorluğa Gir",
+    "btn_create_acc": "Hesap Oluştur",
+    "terms_1": "Devam ederek şunları kabul etmiş olursunuz:",
+    "terms_2": "Hizmet Şartları",
+    "terms_3": "ve",
+    "terms_4": "Gizlilik Politikası",
+    "terms_5": "Askeri düzeyde güvenlikle korunmaktadır."
   }
 }

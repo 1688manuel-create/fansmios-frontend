@@ -136,5 +136,35 @@
     "error_title": "アクセス拒否",
     "btn_back": "ポータルに戻る",
     "footer_sec": "暗号化検証"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ アカウントが作成されました！有効化するための安全なリンクをメールに送信しました。",
+    "error_connection": "接続エラーです。もう一度お試しください。",
+    "msg_resend_success": "メールの再送信に成功しました。受信トレイまたは迷惑メールを確認してください。",
+    "error_resend": "メールの再送信中にエラーが発生しました。",
+    "subtitle_login": "VIPスペースへお帰りなさい。",
+    "subtitle_register": "プレミアムクリエイタープラットフォームに参加しましょう。",
+    "tab_login": "ログイン",
+    "tab_register": "登録",
+    "btn_resend": "アクティベーションメールを再送信",
+    "vip_invitation": "VIP招待が有効化されました！",
+    "lbl_role": "私は...",
+    "role_fan": "ファン",
+    "role_creator": "クリエイター",
+    "lbl_username": "ユーザー名",
+    "ph_username": "例: pro_creator",
+    "lbl_email": "メールアドレス",
+    "ph_email": "you@email.com",
+    "lbl_password": "パスワード",
+    "btn_forgot_pwd": "パスワードをお忘れですか？",
+    "verifying_secure": "安全な接続を確認しています...",
+    "btn_access": "帝国にアクセス",
+    "btn_create_acc": "アカウントを作成",
+    "terms_1": "続行することで、当社の",
+    "terms_2": "利用規約",
+    "terms_3": "および",
+    "terms_4": "プライバシーポリシー",
+    "terms_5": "軍用レベルのセキュリティで保護されています。"
   }
 }

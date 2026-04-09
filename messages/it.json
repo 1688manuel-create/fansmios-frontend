@@ -136,5 +136,35 @@
     "error_title": "Accesso Negato",
     "btn_back": "Torna al Portale",
     "footer_sec": "Verifica Crittografica"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ Account creato! Abbiamo inviato un link sicuro alla tua email per attivarlo.",
+    "error_connection": "Errore di connessione. Riprova.",
+    "msg_resend_success": "Email reinviata con successo. Controlla la tua casella di posta o SPAM.",
+    "error_resend": "Errore nel reinvio dell'email.",
+    "subtitle_login": "Bentornato nel tuo spazio VIP.",
+    "subtitle_register": "Unisciti alla piattaforma premium per creatori.",
+    "tab_login": "Accedi",
+    "tab_register": "Registrati",
+    "btn_resend": "Invia di nuovo l'email di attivazione",
+    "vip_invitation": "Invito VIP Attivato!",
+    "lbl_role": "Voglio essere un...",
+    "role_fan": "Fan",
+    "role_creator": "Creatore",
+    "lbl_username": "Nome Utente",
+    "ph_username": "es. pro_creator",
+    "lbl_email": "Indirizzo Email",
+    "ph_email": "tu@email.com",
+    "lbl_password": "Password",
+    "btn_forgot_pwd": "Hai dimenticato la password?",
+    "verifying_secure": "Verifica connessione sicura...",
+    "btn_access": "Entra nell'Impero",
+    "btn_create_acc": "Crea Account",
+    "terms_1": "Continuando, accetti i nostri",
+    "terms_2": "Termini di Servizio",
+    "terms_3": "e la",
+    "terms_4": "Informativa sulla Privacy",
+    "terms_5": "Protetto da sicurezza di livello militare."
   }
 }

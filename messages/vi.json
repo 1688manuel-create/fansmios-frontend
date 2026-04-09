@@ -136,5 +136,35 @@
     "error_title": "Từ chối truy cập",
     "btn_back": "Trở lại cổng thông tin",
     "footer_sec": "Xác minh mật mã"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ Tài khoản đã được tạo! Chúng tôi đã gửi một liên kết an toàn đến email của bạn để kích hoạt.",
+    "error_connection": "Lỗi kết nối. Vui lòng thử lại.",
+    "msg_resend_success": "Đã gửi lại email thành công. Kiểm tra hộp thư đến hoặc SPAM của bạn.",
+    "error_resend": "Lỗi khi gửi lại email.",
+    "subtitle_login": "Chào mừng bạn trở lại không gian VIP của mình.",
+    "subtitle_register": "Tham gia nền tảng nhà sáng tạo cao cấp.",
+    "tab_login": "Đăng nhập",
+    "tab_register": "Đăng ký",
+    "btn_resend": "Gửi lại email kích hoạt",
+    "vip_invitation": "Lời mời VIP đã được kích hoạt!",
+    "lbl_role": "Tôi muốn trở thành...",
+    "role_fan": "Người hâm mộ",
+    "role_creator": "Nhà sáng tạo",
+    "lbl_username": "Tên người dùng",
+    "ph_username": "vd: pro_creator",
+    "lbl_email": "Địa chỉ Email",
+    "ph_email": "ban@email.com",
+    "lbl_password": "Mật khẩu",
+    "btn_forgot_pwd": "Quên mật khẩu?",
+    "verifying_secure": "Đang xác minh kết nối an toàn...",
+    "btn_access": "Tiến vào Đế chế",
+    "btn_create_acc": "Tạo tài khoản",
+    "terms_1": "Bằng cách tiếp tục, bạn đồng ý với",
+    "terms_2": "Điều khoản Dịch vụ",
+    "terms_3": "và",
+    "terms_4": "Chính sách Bảo mật",
+    "terms_5": "Được bảo vệ bởi an ninh cấp quân sự."
   }
 }

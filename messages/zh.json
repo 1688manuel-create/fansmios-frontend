@@ -136,5 +136,35 @@
     "error_title": "拒绝访问",
     "btn_back": "返回门户",
     "footer_sec": "加密验证"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ 帐户已创建！我们已向您的电子邮件发送了安全链接以激活它。",
+    "error_connection": "连接错误。请重试。",
+    "msg_resend_success": "电子邮件重新发送成功。请检查您的收件箱或垃圾邮件。",
+    "error_resend": "重新发送电子邮件时出错。",
+    "subtitle_login": "欢迎回到您的 VIP 空间。",
+    "subtitle_register": "加入高级创作者平台。",
+    "tab_login": "登录",
+    "tab_register": "注册",
+    "btn_resend": "重新发送激活电子邮件",
+    "vip_invitation": "VIP 邀请已激活！",
+    "lbl_role": "我想成为...",
+    "role_fan": "粉丝",
+    "role_creator": "创作者",
+    "lbl_username": "用户名",
+    "ph_username": "例如：pro_creator",
+    "lbl_email": "电子邮件地址",
+    "ph_email": "you@email.com",
+    "lbl_password": "密码",
+    "btn_forgot_pwd": "忘记密码？",
+    "verifying_secure": "正在验证安全连接...",
+    "btn_access": "进入帝国",
+    "btn_create_acc": "创建帐户",
+    "terms_1": "继续即表示您同意我们的",
+    "terms_2": "服务条款",
+    "terms_3": "和",
+    "terms_4": "隐私政策",
+    "terms_5": "受军用级安全保护。"
   }
 }

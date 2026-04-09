@@ -136,5 +136,35 @@
     "error_title": "Accès refusé",
     "btn_back": "Retour au portail",
     "footer_sec": "Vérification cryptographique"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ Compte créé ! Nous avons envoyé un lien sécurisé à votre adresse e-mail pour l'activer.",
+    "error_connection": "Erreur de connexion. Veuillez réessayer.",
+    "msg_resend_success": "E-mail renvoyé avec succès. Vérifiez votre boîte de réception ou les SPAM.",
+    "error_resend": "Erreur lors du renvoi de l'e-mail.",
+    "subtitle_login": "Bienvenue dans votre espace VIP.",
+    "subtitle_register": "Rejoignez la plateforme premium des créateurs.",
+    "tab_login": "Se connecter",
+    "tab_register": "S'inscrire",
+    "btn_resend": "Renvoyer l'e-mail d'activation",
+    "vip_invitation": "Invitation VIP activée !",
+    "lbl_role": "Je veux être un...",
+    "role_fan": "Fan",
+    "role_creator": "Créateur",
+    "lbl_username": "Nom d'utilisateur",
+    "ph_username": "ex. createur_pro",
+    "lbl_email": "Adresse E-mail",
+    "ph_email": "vous@email.com",
+    "lbl_password": "Mot de passe",
+    "btn_forgot_pwd": "Mot de passe oublié ?",
+    "verifying_secure": "Vérification de la connexion sécurisée...",
+    "btn_access": "Entrer dans l'Empire",
+    "btn_create_acc": "Créer un compte",
+    "terms_1": "En continuant, vous acceptez nos",
+    "terms_2": "Conditions d'utilisation",
+    "terms_3": "et la",
+    "terms_4": "Politique de confidentialité",
+    "terms_5": "Protégé par une sécurité de niveau militaire."
   }
 }

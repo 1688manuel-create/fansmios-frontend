@@ -136,5 +136,35 @@
     "error_title": "Odmowa Dostępu",
     "btn_back": "Wróć do Portalu",
     "footer_sec": "Weryfikacja Kryptograficzna"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ Konto utworzone! Wysłaliśmy bezpieczny link na Twój adres e-mail, aby go aktywować.",
+    "error_connection": "Błąd połączenia. Spróbuj ponownie.",
+    "msg_resend_success": "E-mail został pomyślnie wysłany ponownie. Sprawdź swoją skrzynkę odbiorczą lub SPAM.",
+    "error_resend": "Błąd podczas ponownego wysyłania e-maila.",
+    "subtitle_login": "Witaj z powrotem w swojej przestrzeni VIP.",
+    "subtitle_register": "Dołącz do platformy premium dla twórców.",
+    "tab_login": "Zaloguj się",
+    "tab_register": "Zarejestruj się",
+    "btn_resend": "Wyślij ponownie e-mail aktywacyjny",
+    "vip_invitation": "Zaproszenie VIP aktywowane!",
+    "lbl_role": "Chcę być...",
+    "role_fan": "Fanem",
+    "role_creator": "Twórcą",
+    "lbl_username": "Nazwa użytkownika",
+    "ph_username": "np. pro_creator",
+    "lbl_email": "Adres e-mail",
+    "ph_email": "ty@email.com",
+    "lbl_password": "Hasło",
+    "btn_forgot_pwd": "Zapomniałeś hasła?",
+    "verifying_secure": "Weryfikacja bezpiecznego połączenia...",
+    "btn_access": "Wejdź do Imperium",
+    "btn_create_acc": "Utwórz Konto",
+    "terms_1": "Kontynuując, akceptujesz nasze",
+    "terms_2": "Warunki Świadczenia Usług",
+    "terms_3": "oraz",
+    "terms_4": "Politykę Prywatności",
+    "terms_5": "Chronione przez zabezpieczenia klasy wojskowej."
   }
 }

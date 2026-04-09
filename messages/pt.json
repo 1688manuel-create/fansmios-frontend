@@ -136,5 +136,35 @@
     "error_title": "Acesso Negado",
     "btn_back": "Voltar ao Portal",
     "footer_sec": "Verificação Criptográfica"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ Conta criada! Enviamos um link seguro para o seu e-mail para ativá-la.",
+    "error_connection": "Erro de conexão. Tente novamente.",
+    "msg_resend_success": "E-mail reenviado com sucesso. Verifique sua caixa de entrada ou SPAM.",
+    "error_resend": "Erro ao reenviar e-mail.",
+    "subtitle_login": "Bem-vindo de volta ao seu espaço VIP.",
+    "subtitle_register": "Junte-se à plataforma premium de criadores.",
+    "tab_login": "Entrar",
+    "tab_register": "Registrar-se",
+    "btn_resend": "Reenviar e-mail de ativação",
+    "vip_invitation": "Convite VIP Ativado!",
+    "lbl_role": "Eu quero ser um...",
+    "role_fan": "Fã",
+    "role_creator": "Criador",
+    "lbl_username": "Nome de Usuário",
+    "ph_username": "ex. criador_pro",
+    "lbl_email": "Correio Eletrônico",
+    "ph_email": "seu@email.com",
+    "lbl_password": "Senha",
+    "btn_forgot_pwd": "Esqueceu sua senha?",
+    "verifying_secure": "Verificando conexão segura...",
+    "btn_access": "Acessar o Império",
+    "btn_create_acc": "Criar Conta",
+    "terms_1": "Ao continuar, você concorda com nossos",
+    "terms_2": "Termos de Serviço",
+    "terms_3": "e a",
+    "terms_4": "Política de Privacidade",
+    "terms_5": "Protegido por segurança de nível militar."
   }
 }

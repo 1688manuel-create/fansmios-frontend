@@ -136,5 +136,35 @@
     "error_title": "Akses Ditolak",
     "btn_back": "Kembali ke Portal",
     "footer_sec": "Verifikasi Kriptografis"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ Akun berhasil dibuat! Kami telah mengirimkan tautan aman ke email Anda untuk mengaktifkannya.",
+    "error_connection": "Kesalahan koneksi. Silakan coba lagi.",
+    "msg_resend_success": "Email berhasil dikirim ulang. Periksa kotak masuk atau SPAM Anda.",
+    "error_resend": "Kesalahan saat mengirim ulang email.",
+    "subtitle_login": "Selamat datang kembali di ruang VIP Anda.",
+    "subtitle_register": "Bergabunglah dengan platform kreator premium.",
+    "tab_login": "Masuk",
+    "tab_register": "Daftar",
+    "btn_resend": "Kirim ulang email aktivasi",
+    "vip_invitation": "Undangan VIP Diaktifkan!",
+    "lbl_role": "Saya ingin menjadi...",
+    "role_fan": "Penggemar",
+    "role_creator": "Kreator",
+    "lbl_username": "Nama Pengguna",
+    "ph_username": "cth. pro_creator",
+    "lbl_email": "Alamat Email",
+    "ph_email": "kamu@email.com",
+    "lbl_password": "Kata Sandi",
+    "btn_forgot_pwd": "Lupa kata sandi Anda?",
+    "verifying_secure": "Memverifikasi koneksi aman...",
+    "btn_access": "Masuk ke Kekaisaran",
+    "btn_create_acc": "Buat Akun",
+    "terms_1": "Dengan melanjutkan, Anda menyetujui",
+    "terms_2": "Ketentuan Layanan",
+    "terms_3": "kami dan",
+    "terms_4": "Kebijakan Privasi",
+    "terms_5": "Dilindungi oleh keamanan tingkat militer."
   }
 }

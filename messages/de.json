@@ -136,5 +136,35 @@
     "error_title": "Zugriff verweigert",
     "btn_back": "Zurück zum Portal",
     "footer_sec": "Kryptografische Überprüfung"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ Konto erstellt! Wir haben einen sicheren Link zur Aktivierung an Ihre E-Mail gesendet.",
+    "error_connection": "Verbindungsfehler. Bitte versuchen Sie es erneut.",
+    "msg_resend_success": "E-Mail erfolgreich erneut gesendet. Überprüfen Sie Ihren Posteingang oder SPAM.",
+    "error_resend": "Fehler beim erneuten Senden der E-Mail.",
+    "subtitle_login": "Willkommen zurück in Ihrem VIP-Bereich.",
+    "subtitle_register": "Treten Sie der Premium-Creator-Plattform bei.",
+    "tab_login": "Anmelden",
+    "tab_register": "Registrieren",
+    "btn_resend": "Aktivierungs-E-Mail erneut senden",
+    "vip_invitation": "VIP-Einladung aktiviert!",
+    "lbl_role": "Ich möchte ein ... sein",
+    "role_fan": "Fan",
+    "role_creator": "Creator",
+    "lbl_username": "Benutzername",
+    "ph_username": "z.B. pro_creator",
+    "lbl_email": "E-Mail-Adresse",
+    "ph_email": "du@email.com",
+    "lbl_password": "Passwort",
+    "btn_forgot_pwd": "Passwort vergessen?",
+    "verifying_secure": "Sichere Verbindung wird überprüft...",
+    "btn_access": "Das Imperium betreten",
+    "btn_create_acc": "Konto erstellen",
+    "terms_1": "Indem Sie fortfahren, akzeptieren Sie unsere",
+    "terms_2": "Nutzungsbedingungen",
+    "terms_3": "und die",
+    "terms_4": "Datenschutzrichtlinie",
+    "terms_5": "Geschützt durch Sicherheit auf Militärniveau."
   }
 }

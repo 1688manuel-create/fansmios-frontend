@@ -136,5 +136,35 @@
     "error_title": "Åtkomst nekad",
     "btn_back": "Tillbaka till portalen",
     "footer_sec": "Kryptografisk verifiering"
+  },
+
+  "AuthPortal": {
+    "alert_account_created": "✨ Kontot är skapat! Vi har skickat en säker länk till din e-post för att aktivera det.",
+    "error_connection": "Anslutningsfel. Vänligen försök igen.",
+    "msg_resend_success": "E-postmeddelandet har skickats igen. Kontrollera din inkorg eller SPAM.",
+    "error_resend": "Fel vid återsändning av e-post.",
+    "subtitle_login": "Välkommen tillbaka till ditt VIP-utrymme.",
+    "subtitle_register": "Gå med i premiumplattformen för skapare.",
+    "tab_login": "Logga in",
+    "tab_register": "Registrera",
+    "btn_resend": "Skicka aktiveringsmejl igen",
+    "vip_invitation": "VIP-inbjudan aktiverad!",
+    "lbl_role": "Jag vill bli en...",
+    "role_fan": "Fan",
+    "role_creator": "Skapare",
+    "lbl_username": "Användarnamn",
+    "ph_username": "t.ex. pro_creator",
+    "lbl_email": "E-postadress",
+    "ph_email": "du@email.com",
+    "lbl_password": "Lösenord",
+    "btn_forgot_pwd": "Glömt ditt lösenord?",
+    "verifying_secure": "Verifierar säker anslutning...",
+    "btn_access": "Träd in i imperiet",
+    "btn_create_acc": "Skapa Konto",
+    "terms_1": "Genom att fortsätta godkänner du våra",
+    "terms_2": "Användarvillkor",
+    "terms_3": "och",
+    "terms_4": "Integritetspolicy",
+    "terms_5": "Skyddad av säkerhet av militär klass."
   }
 }

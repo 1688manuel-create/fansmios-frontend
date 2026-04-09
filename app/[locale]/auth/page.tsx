@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { Loader2, Mail, Gift, CheckCircle2 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function AuthPortal() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function AuthPortal() {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const t = useTranslations('AuthPortal'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   
   // 🔥 NUEVOS ESTADOS PARA REENVIAR CORREO
   const [unverifiedEmail, setUnverifiedEmail] = useState('');
@@ -69,12 +71,12 @@ export default function AuthPortal() {
         });
         
         setIsLogin(true);
-        alert('✨ ¡Cuenta creada! Hemos enviado un enlace de seguridad a tu correo para activarla.');
+        alert(t('alert_account_created')); // 👈 Reemplazo aquí
         setPassword('');
       }
     } catch (err: any) {
       const errorData = err.response?.data;
-      setError(errorData?.error || 'Error de conexión. Intenta de nuevo.');
+      setError(errorData?.error || t('error_connection')); // 👈 Reemplazo aquí
       
       // 🔥 SI EL BACKEND DICE QUE FALTA VERIFICAR CORREO, GUARDAMOS EL EMAIL
       if (errorData?.needsVerification && errorData?.email) {
@@ -91,9 +93,9 @@ export default function AuthPortal() {
     setError('');
     try {
       const res = await api.post('/auth/resend-verification', { email: unverifiedEmail });
-      setResendSuccess(res.data.message || 'Correo reenviado con éxito. Revisa tu bandeja de entrada o SPAM.');
+      setResendSuccess(res.data.message || t('msg_resend_success')); // 👈 Reemplazo aquí
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al reenviar el correo.');
+      setError(err.response?.data?.error || t('error_resend')); // 👈 Reemplazo aquí
     } finally {
       setIsResending(false);
     }
@@ -111,7 +113,7 @@ export default function AuthPortal() {
             Fansmio
           </h1>
           <p className="text-gray-400 mt-2 text-sm">
-            {isLogin ? 'Bienvenido de vuelta a tu espacio VIP.' : 'Únete a la plataforma premium de creadores.'}
+            {isLogin ? t('subtitle_login') : t('subtitle_register')}
           </p>
         </div>
 
@@ -122,13 +124,13 @@ export default function AuthPortal() {
               onClick={() => { setIsLogin(true); setError(''); setUnverifiedEmail(''); setResendSuccess(''); }}
               className={`flex-1 py-2 rounded-full text-sm font-bold transition-all ${isLogin ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
             >
-              Iniciar Sesión
+              {t('tab_login')}
             </button>
             <button 
               onClick={() => { setIsLogin(false); setError(''); setUnverifiedEmail(''); setResendSuccess(''); }}
               className={`flex-1 py-2 rounded-full text-sm font-bold transition-all ${!isLogin ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
             >
-              Registrarse
+              {t('tab_register')}
             </button>
           </div>
 
@@ -145,7 +147,7 @@ export default function AuthPortal() {
                   className="mt-3 w-full flex items-center justify-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-white py-2.5 rounded-lg transition-colors border border-red-500/30"
                 >
                   {isResending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
-                  Reenviar correo de activación
+                  {t('btn_resend')}
                 </button>
               )}
             </div>
@@ -162,41 +164,40 @@ export default function AuthPortal() {
             {!isLogin && (
               <div className="space-y-5 animate-fade-in">
                 
-                {/* 🔥 NOTIFICACIÓN VISUAL VIP: Solo si hay código de referido */}
                 {referralCode && (
                   <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3 flex items-center justify-center gap-2 animate-fade-in shadow-[0_0_15px_rgba(34,197,94,0.15)]">
                     <Gift className="w-5 h-5 text-green-400" />
                     <span className="text-sm text-green-400 font-bold tracking-wide">
-                      ¡Invitación VIP Activada!
+                      {t('vip_invitation')}
                     </span>
                   </div>
                 )}
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Quiero ser un...</label>
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('lbl_role')}</label>
                   <div className="grid grid-cols-2 gap-3">
                     <div 
                       onClick={() => setRole('FAN')}
                       className={`cursor-pointer border p-3 rounded-xl text-center transition-all ${role === 'FAN' ? 'border-purple-500 bg-purple-500/10 text-white shadow-[0_0_15px_rgba(168,85,247,0.2)]' : 'border-white/10 text-gray-400 hover:border-white/30'}`}
                     >
-                      <span className="text-xl block mb-1">⭐</span> Fan
+                      <span className="text-xl block mb-1">⭐</span> {t('role_fan')}
                     </div>
                     <div 
                       onClick={() => setRole('CREATOR')}
                       className={`cursor-pointer border p-3 rounded-xl text-center transition-all ${role === 'CREATOR' ? 'border-blue-500 bg-blue-500/10 text-white shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'border-white/10 text-gray-400 hover:border-white/30'}`}
                     >
-                      <span className="text-xl block mb-1">📸</span> Creador
+                      <span className="text-xl block mb-1">📸</span> {t('role_creator')}
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre de Usuario</label>
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('lbl_username')}</label>
                   <input 
                     type="text" 
                     value={username} 
                     onChange={(e) => setUsername(e.target.value)} 
-                    placeholder="ej. creador_pro"
+                    placeholder={t('ph_username')}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500 focus:bg-white/5 transition-all"
                     required={!isLogin}
                   />
@@ -205,12 +206,12 @@ export default function AuthPortal() {
             )}
 
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Correo Electrónico</label>
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('lbl_email')}</label>
               <input 
                 type="email" 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)} 
-                placeholder="tu@email.com"
+                placeholder={t('ph_email')}
                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500 focus:bg-white/5 transition-all"
                 required
               />
@@ -218,14 +219,14 @@ export default function AuthPortal() {
 
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Contraseña</label>
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t('lbl_password')}</label>
                 {isLogin && (
                   <button 
                     type="button" 
                     onClick={() => router.push('/auth/forgot-password')}
                     className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
                   >
-                    ¿Olvidaste tu contraseña?
+                    {t('btn_forgot_pwd')}
                   </button>
                 )}
               </div>
@@ -243,7 +244,7 @@ export default function AuthPortal() {
               <div className="bg-black/40 border border-white/10 rounded-xl p-3 flex items-center justify-between animate-fade-in">
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-sm text-gray-300">Verificando conexión segura...</span>
+                  <span className="text-sm text-gray-300">{t('verifying_secure')}</span>
                 </div>
                 <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Protected</span>
               </div>
@@ -257,7 +258,7 @@ export default function AuthPortal() {
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin text-black" />
               ) : (
-                isLogin ? 'Acceder al Imperio' : 'Crear Cuenta'
+                isLogin ? t('btn_access') : t('btn_create_acc')
               )}
             </button>
           </form>
@@ -265,8 +266,8 @@ export default function AuthPortal() {
         </div>
         
         <p className="text-center text-xs text-gray-600 mt-6 px-4">
-          Al continuar, aceptas nuestros <span className="underline cursor-pointer hover:text-gray-400">Términos de Servicio</span> y la <span className="underline cursor-pointer hover:text-gray-400">Política de Privacidad</span>.<br/>
-          Protegido por seguridad de grado militar.
+          {t('terms_1')} <span className="underline cursor-pointer hover:text-gray-400">{t('terms_2')}</span> {t('terms_3')} <span className="underline cursor-pointer hover:text-gray-400">{t('terms_4')}</span>.<br/>
+          {t('terms_5')}
         </p>
       </div>
     </div>
