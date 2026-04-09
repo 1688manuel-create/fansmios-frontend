@@ -109,5 +109,18 @@
     "title": "새 키 생성",
     "subtitle": "안전한 비밀번호를 선택하고 누구와도 공유하지 마세요.",
     "loading_credentials": "안전한 자격 증명 로드 중..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "유효하지 않거나 누락된 확인 링크입니다.",
+    "msg_success": "계정이 성공적으로 확인되었습니다!",
+    "msg_error": "링크가 만료되었거나 이미 사용되었습니다.",
+    "loading_title": "이메일 주소를 확인하는 중...",
+    "loading_desc": "잠시 기다려주세요...",
+    "success_title": "확인 완료!",
+    "success_redirect": "계정으로 리디렉션하는 중...",
+    "error_title": "문제가 발생했습니다",
+    "btn_back": "홈으로 돌아가기",
+    "suspense_loading": "확인 시스템 로드 중..."
   }
 }

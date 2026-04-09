@@ -109,5 +109,18 @@
     "title": "Crea una nueva llave",
     "subtitle": "Elige una contraseña segura y no la compartas con nadie.",
     "loading_credentials": "Cargando credenciales seguras..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Enlace de verificación inválido o ausente.",
+    "msg_success": "¡Tu cuenta ha sido verificada con éxito!",
+    "msg_error": "El enlace ha expirado o ya fue utilizado.",
+    "loading_title": "Validando tu correo electrónico...",
+    "loading_desc": "Por favor espera un momento...",
+    "success_title": "¡Verificado!",
+    "success_redirect": "Redirigiendo a tu cuenta...",
+    "error_title": "Hubo un problema",
+    "btn_back": "Volver al inicio",
+    "suspense_loading": "Cargando sistema de verificación..."
   }
 }

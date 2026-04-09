@@ -4,11 +4,13 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../../../lib/api';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
+  const t = useTranslations('VerifyEmail'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
 
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Validando tu correo electrónico...');
@@ -16,37 +18,35 @@ function VerifyEmailContent() {
   useEffect(() => {
     if (!token) {
       setStatus('error');
-      setMessage('Enlace de verificación inválido o ausente.');
+      setMessage(t('msg_invalid_token'));
       return;
     }
 
     const verifyToken = async () => {
       try {
-        // Llamamos al backend para que marque el email como verificado
         await api.post('/auth/verify-email', { token });
         setStatus('success');
-        setMessage('¡Tu cuenta ha sido verificada con éxito!');
+        setMessage(t('msg_success'));
         
-        // Redirigimos al portal de login después de 3 segundos
         setTimeout(() => {
           router.push('/auth');
         }, 3000);
       } catch (error: any) {
         setStatus('error');
-        setMessage(error.response?.data?.error || 'El enlace ha expirado o ya fue utilizado.');
+        setMessage(error.response?.data?.error || t('msg_error'));
       }
     };
 
     verifyToken();
-  }, [token, router]);
+  }, [token, router, t]);
 
   return (
     <div className="text-center space-y-6 animate-fade-in">
       {status === 'loading' && (
         <>
           <div className="w-20 h-20 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <h2 className="text-2xl font-bold text-white">{message}</h2>
-          <p className="text-gray-400">Por favor espera un momento...</p>
+          <h2 className="text-2xl font-bold text-white">{t('loading_title')}</h2>
+          <p className="text-gray-400">{t('loading_desc')}</p>
         </>
       )}
 
@@ -55,9 +55,9 @@ function VerifyEmailContent() {
           <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto border border-green-500/50 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
             <span className="text-5xl">✅</span>
           </div>
-          <h2 className="text-3xl font-bold text-green-400">¡Verificado!</h2>
+          <h2 className="text-3xl font-bold text-green-400">{t('success_title')}</h2>
           <p className="text-gray-300">{message}</p>
-          <p className="text-sm text-gray-500 mt-4">Redirigiendo a tu cuenta...</p>
+          <p className="text-sm text-gray-500 mt-4">{t('success_redirect')}</p>
         </>
       )}
 
@@ -66,13 +66,13 @@ function VerifyEmailContent() {
           <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto border border-red-500/50">
             <span className="text-5xl">❌</span>
           </div>
-          <h2 className="text-2xl font-bold text-red-400">Hubo un problema</h2>
+          <h2 className="text-2xl font-bold text-red-400">{t('error_title')}</h2>
           <p className="text-gray-300">{message}</p>
           <button 
             onClick={() => router.push('/auth')}
             className="mt-6 bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-8 rounded-full transition-all"
           >
-            Volver al inicio
+            {t('btn_back')}
           </button>
         </>
       )}
@@ -81,6 +81,7 @@ function VerifyEmailContent() {
 }
 
 export default function VerifyEmail() {
+  const t = useTranslations('VerifyEmail'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] pointer-events-none"></div>
@@ -88,7 +89,7 @@ export default function VerifyEmail() {
 
       <div className="w-full max-w-md z-10">
         <div className="glass-panel p-10 rounded-[2rem] border border-white/10 shadow-2xl bg-black/60 backdrop-blur-2xl">
-          <Suspense fallback={<div className="text-center text-gray-400">Cargando sistema de verificación...</div>}>
+          <Suspense fallback={<div className="text-center text-gray-400">{t('suspense_loading')}</div>}>
             <VerifyEmailContent />
           </Suspense>
         </div>

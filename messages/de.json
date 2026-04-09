@@ -109,5 +109,18 @@
     "title": "Erstellen Sie einen neuen Schlüssel",
     "subtitle": "Wählen Sie ein sicheres Passwort und teilen Sie es mit niemandem.",
     "loading_credentials": "Sichere Anmeldeinformationen werden geladen..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Ungültiger oder fehlender Bestätigungslink.",
+    "msg_success": "Ihr Konto wurde erfolgreich verifiziert!",
+    "msg_error": "Der Link ist abgelaufen oder wurde bereits verwendet.",
+    "loading_title": "Validierung Ihrer E-Mail-Adresse...",
+    "loading_desc": "Bitte warten Sie einen Moment...",
+    "success_title": "Verifiziert!",
+    "success_redirect": "Weiterleitung zu Ihrem Konto...",
+    "error_title": "Es gab ein Problem",
+    "btn_back": "Zurück zur Startseite",
+    "suspense_loading": "Verifizierungssystem wird geladen..."
   }
 }

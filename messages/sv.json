@@ -109,5 +109,18 @@
     "title": "Skapa en ny nyckel",
     "subtitle": "Välj ett säkert lösenord och dela det inte med någon.",
     "loading_credentials": "Laddar säkra inloggningsuppgifter..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Ogiltig eller saknad verifieringslänk.",
+    "msg_success": "Ditt konto har verifierats!",
+    "msg_error": "Länken har gått ut eller har redan använts.",
+    "loading_title": "Validerar din e-postadress...",
+    "loading_desc": "Vänta ett ögonblick...",
+    "success_title": "Verifierad!",
+    "success_redirect": "Omdirigerar till ditt konto...",
+    "error_title": "Det uppstod ett problem",
+    "btn_back": "Tillbaka till Start",
+    "suspense_loading": "Laddar verifieringssystem..."
   }
 }

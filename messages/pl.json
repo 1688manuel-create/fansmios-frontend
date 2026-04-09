@@ -109,5 +109,18 @@
     "title": "Utwórz nowy klucz",
     "subtitle": "Wybierz bezpieczne hasło i nie udostępniaj go nikomu.",
     "loading_credentials": "Ładowanie bezpiecznych poświadczeń..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Nieprawidłowy lub brakujący link weryfikacyjny.",
+    "msg_success": "Twoje konto zostało pomyślnie zweryfikowane!",
+    "msg_error": "Link wygasł lub został już użyty.",
+    "loading_title": "Sprawdzanie Twojego adresu e-mail...",
+    "loading_desc": "Proszę chwilę poczekać...",
+    "success_title": "Zweryfikowano!",
+    "success_redirect": "Przekierowywanie na Twoje konto...",
+    "error_title": "Wystąpił problem",
+    "btn_back": "Wróć do Strony Głównej",
+    "suspense_loading": "Ładowanie systemu weryfikacji..."
   }
 }

@@ -109,5 +109,18 @@
     "title": "Maak een nieuwe sleutel",
     "subtitle": "Kies een veilig wachtwoord en deel het met niemand.",
     "loading_credentials": "Veilige inloggegevens laden..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Ongeldige of ontbrekende verificatielink.",
+    "msg_success": "Je account is succesvol geverifieerd!",
+    "msg_error": "De link is verlopen of al gebruikt.",
+    "loading_title": "Je e-mailadres valideren...",
+    "loading_desc": "Een ogenblik geduld alstublieft...",
+    "success_title": "Geverifieerd!",
+    "success_redirect": "Omleiden naar je account...",
+    "error_title": "Er is een probleem opgetreden",
+    "btn_back": "Terug naar Start",
+    "suspense_loading": "Verificatiesysteem laden..."
   }
 }

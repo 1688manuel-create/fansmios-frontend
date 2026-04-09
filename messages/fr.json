@@ -109,5 +109,18 @@
     "title": "Créer une nouvelle clé",
     "subtitle": "Choisissez un mot de passe sécurisé et ne le partagez avec personne.",
     "loading_credentials": "Chargement des identifiants sécurisés..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Lien de vérification invalide ou manquant.",
+    "msg_success": "Votre compte a été vérifié avec succès !",
+    "msg_error": "Le lien a expiré ou a déjà été utilisé.",
+    "loading_title": "Validation de votre adresse e-mail...",
+    "loading_desc": "Veuillez patienter un instant...",
+    "success_title": "Vérifié !",
+    "success_redirect": "Redirection vers votre compte...",
+    "error_title": "Il y a eu un problème",
+    "btn_back": "Retour à l'accueil",
+    "suspense_loading": "Chargement du système de vérification..."
   }
 }

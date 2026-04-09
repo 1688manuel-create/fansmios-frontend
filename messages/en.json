@@ -109,5 +109,18 @@
     "title": "Create a new key",
     "subtitle": "Choose a secure password and don't share it with anyone.",
     "loading_credentials": "Loading secure credentials..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Invalid or missing verification link.",
+    "msg_success": "Your account has been successfully verified!",
+    "msg_error": "The link has expired or was already used.",
+    "loading_title": "Validating your email address...",
+    "loading_desc": "Please wait a moment...",
+    "success_title": "Verified!",
+    "success_redirect": "Redirecting to your account...",
+    "error_title": "There was a problem",
+    "btn_back": "Back to Home",
+    "suspense_loading": "Loading verification system..."
   }
 }

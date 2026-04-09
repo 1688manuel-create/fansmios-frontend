@@ -109,5 +109,18 @@
     "title": "创建一个新钥匙",
     "subtitle": "选择一个安全的密码，不要与任何人分享。",
     "loading_credentials": "正在加载安全凭据..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "验证链接无效或丢失。",
+    "msg_success": "您的帐户已成功验证！",
+    "msg_error": "该链接已过期或已被使用。",
+    "loading_title": "正在验证您的电子邮件地址...",
+    "loading_desc": "请稍候...",
+    "success_title": "已验证！",
+    "success_redirect": "正在重定向到您的帐户...",
+    "error_title": "出现问题",
+    "btn_back": "返回首页",
+    "suspense_loading": "正在加载验证系统..."
   }
 }

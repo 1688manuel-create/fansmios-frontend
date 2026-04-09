@@ -109,5 +109,18 @@
     "title": "Tạo chìa khóa mới",
     "subtitle": "Chọn một mật khẩu an toàn và không chia sẻ nó với bất kỳ ai.",
     "loading_credentials": "Đang tải thông tin đăng nhập an toàn..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Liên kết xác minh không hợp lệ hoặc bị thiếu.",
+    "msg_success": "Tài khoản của bạn đã được xác minh thành công!",
+    "msg_error": "Liên kết đã hết hạn hoặc đã được sử dụng.",
+    "loading_title": "Đang xác thực địa chỉ email của bạn...",
+    "loading_desc": "Vui lòng đợi trong giây lát...",
+    "success_title": "Đã xác minh!",
+    "success_redirect": "Đang chuyển hướng đến tài khoản của bạn...",
+    "error_title": "Đã xảy ra sự cố",
+    "btn_back": "Trở về trang chủ",
+    "suspense_loading": "Đang tải hệ thống xác minh..."
   }
 }

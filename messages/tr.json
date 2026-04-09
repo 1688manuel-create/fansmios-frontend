@@ -109,5 +109,18 @@
     "title": "Yeni bir anahtar oluştur",
     "subtitle": "Güvenli bir şifre seçin ve kimseyle paylaşmayın.",
     "loading_credentials": "Güvenli kimlik bilgileri yükleniyor..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Geçersiz veya eksik doğrulama bağlantısı.",
+    "msg_success": "Hesabınız başarıyla doğrulandı!",
+    "msg_error": "Bağlantının süresi dolmuş veya zaten kullanılmış.",
+    "loading_title": "E-posta adresiniz doğrulanıyor...",
+    "loading_desc": "Lütfen bir an bekleyin...",
+    "success_title": "Doğrulandı!",
+    "success_redirect": "Hesabınıza yönlendiriliyorsunuz...",
+    "error_title": "Bir sorun oluştu",
+    "btn_back": "Ana Sayfaya Dön",
+    "suspense_loading": "Doğrulama sistemi yükleniyor..."
   }
 }

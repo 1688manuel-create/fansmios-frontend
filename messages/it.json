@@ -109,5 +109,18 @@
     "title": "Crea una nuova chiave",
     "subtitle": "Scegli una password sicura e non condividerla con nessuno.",
     "loading_credentials": "Caricamento credenziali sicure..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Link di verifica non valido o mancante.",
+    "msg_success": "Il tuo account è stato verificato con successo!",
+    "msg_error": "Il link è scaduto o è già stato utilizzato.",
+    "loading_title": "Convalida del tuo indirizzo email...",
+    "loading_desc": "Attendi un momento...",
+    "success_title": "Verificato!",
+    "success_redirect": "Reindirizzamento al tuo account...",
+    "error_title": "Si è verificato un problema",
+    "btn_back": "Torna alla Home",
+    "suspense_loading": "Caricamento sistema di verifica..."
   }
 }

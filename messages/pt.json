@@ -109,5 +109,18 @@
     "title": "Crie uma nova chave",
     "subtitle": "Escolha uma senha segura e não a compartilhe com ninguém.",
     "loading_credentials": "Carregando credenciais seguras..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Link de verificação inválido ou ausente.",
+    "msg_success": "Sua conta foi verificada com sucesso!",
+    "msg_error": "O link expirou ou já foi usado.",
+    "loading_title": "Validando seu endereço de e-mail...",
+    "loading_desc": "Por favor, aguarde um momento...",
+    "success_title": "Verificado!",
+    "success_redirect": "Redirecionando para a sua conta...",
+    "error_title": "Houve um problema",
+    "btn_back": "Voltar ao Início",
+    "suspense_loading": "Carregando sistema de verificação..."
   }
 }

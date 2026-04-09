@@ -109,5 +109,18 @@
     "title": "Buat kunci baru",
     "subtitle": "Pilih kata sandi yang aman dan jangan bagikan dengan siapa pun.",
     "loading_credentials": "Memuat kredensial aman..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "Tautan verifikasi tidak valid atau hilang.",
+    "msg_success": "Akun Anda telah berhasil diverifikasi!",
+    "msg_error": "Tautan telah kedaluwarsa atau sudah digunakan.",
+    "loading_title": "Memvalidasi alamat email Anda...",
+    "loading_desc": "Harap tunggu sebentar...",
+    "success_title": "Diverifikasi!",
+    "success_redirect": "Mengarahkan ke akun Anda...",
+    "error_title": "Ada masalah",
+    "btn_back": "Kembali ke Beranda",
+    "suspense_loading": "Memuat sistem verifikasi..."
   }
 }

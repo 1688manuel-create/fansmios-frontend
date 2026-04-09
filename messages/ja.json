@@ -109,5 +109,18 @@
     "title": "新しいキーを作成",
     "subtitle": "安全なパスワードを選択し、誰とも共有しないでください。",
     "loading_credentials": "安全な資格情報を読み込んでいます..."
+  },
+
+  "VerifyEmail": {
+    "msg_invalid_token": "確認リンクが無効または見つかりません。",
+    "msg_success": "アカウントが正常に確認されました！",
+    "msg_error": "リンクの期限が切れているか、すでに使用されています。",
+    "loading_title": "メールアドレスを検証しています...",
+    "loading_desc": "しばらくお待ちください...",
+    "success_title": "確認済み！",
+    "success_redirect": "アカウントにリダイレクトしています...",
+    "error_title": "問題が発生しました",
+    "btn_back": "ホームに戻る",
+    "suspense_loading": "確認システムを読み込んでいます..."
   }
 }
