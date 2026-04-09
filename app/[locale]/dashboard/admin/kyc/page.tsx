@@ -10,6 +10,7 @@ import {
   ArrowLeft, Coffee, UserSquare2, FileCheck2, ScanFace, Search,
   ChevronLeft, ChevronRight // 👈 Nuevos Iconos de Paginación
 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -21,6 +22,7 @@ const getImageUrl = (path: string | null) => {
 
 export default function AdminKyc() {
   const router = useRouter();
+  const t = useTranslations('AdminKyc'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [profiles, setProfiles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -38,12 +40,13 @@ export default function AdminKyc() {
   const [rejectReason, setRejectReason] = useState<string>('');
   const [processingId, setProcessingId] = useState<string | null>(null);
 
+  // 🔥 Las opciones ahora usan el traductor
   const rejectionOptions = [
-    "La foto de la credencial está borrosa o ilegible",
-    "El rostro no coincide con la credencial",
-    "El video de prueba de vida es estático o falso",
-    "El documento de identidad está expirado",
-    "Faltan partes del documento en la foto"
+    t('reject_opt_1'),
+    t('reject_opt_2'),
+    t('reject_opt_3'),
+    t('reject_opt_4'),
+    t('reject_opt_5')
   ];
 
   useEffect(() => {
@@ -53,16 +56,14 @@ export default function AdminKyc() {
     }
   }, []);
 
-  // 🔥 Efecto de Debounce: Espera 500ms después de que el CEO deja de teclear para buscar
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(searchTerm);
-      setPage(1); // Si busca algo nuevo, regresamos a la página 1
+      setPage(1); 
     }, 500);
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  // 🔥 Disparador principal de datos
   useEffect(() => {
     fetchKycProfiles();
   }, [activeTab, debouncedSearch, page]);
@@ -90,30 +91,30 @@ export default function AdminKyc() {
   };
 
   const handleApprove = async (id: string, username: string) => {
-    if (!window.confirm(`⚠️ ¿Aprobar identidad de @${username}?`)) return;
+    if (!window.confirm(`${t('alert_approve_confirm')} ${username}?`)) return;
     setProcessingId(id);
     try {
       await api.post(`/admin/kyc/${id}/approve`);
-      alert("✅ Identidad Aprobada");
+      alert(t('alert_approved'));
       fetchKycProfiles();
     } catch (error: any) {
-      alert("Error al aprobar.");
+      alert(t('alert_error_approve'));
     } finally {
       setProcessingId(null);
     }
   };
 
   const handleRejectSubmit = async () => {
-    if (!rejectReason || !rejectModal.profileId) return alert("Selecciona una razón.");
+    if (!rejectReason || !rejectModal.profileId) return alert(t('alert_select_reason'));
     setProcessingId(rejectModal.profileId);
     try {
       await api.post(`/admin/kyc/${rejectModal.profileId}/reject`, { reason: rejectReason });
-      alert("❌ Identidad Rechazada.");
+      alert(t('alert_rejected'));
       setRejectModal({ isOpen: false, profileId: null });
       setRejectReason('');
       fetchKycProfiles();
     } catch (error: any) {
-      alert("Error al rechazar.");
+      alert(t('alert_error_reject'));
     } finally {
       setProcessingId(null);
     }
@@ -130,12 +131,12 @@ export default function AdminKyc() {
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-xl font-black text-white leading-tight">Control de Identidad</h1>
-              <p className="text-[10px] text-blue-400 font-bold tracking-widest uppercase">Módulo Legal AML / KYC</p>
+              <h1 className="text-xl font-black text-white leading-tight">{t('nav_title')}</h1>
+              <p className="text-[10px] text-blue-400 font-bold tracking-widest uppercase">{t('nav_subtitle')}</p>
             </div>
           </div>
           <button onClick={() => router.push('/dashboard/admin')} className="text-sm border border-white/10 text-gray-300 px-5 py-2.5 rounded-full hover:bg-white/5 hover:text-white transition-colors font-bold flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Volver</span>
+            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">{t('btn_back')}</span>
           </button>
         </nav>
 
@@ -153,7 +154,7 @@ export default function AdminKyc() {
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  {tab === 'PENDING' ? 'EN REVISIÓN' : tab === 'APPROVED' ? 'APROBADOS' : 'RECHAZADOS'}
+                  {tab === 'PENDING' ? t('tab_pending') : tab === 'APPROVED' ? t('tab_approved') : t('tab_rejected')}
                   <span className="bg-black/40 px-2 py-0.5 rounded-full text-[10px]">
                     {counts[tab as keyof typeof counts]}
                   </span>
@@ -167,7 +168,7 @@ export default function AdminKyc() {
               </div>
               <input
                 type="text"
-                placeholder="Buscar @usuario o correo..."
+                placeholder={t('search_placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-[#0a0a0a] border border-white/10 text-white rounded-2xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-inner"
@@ -181,12 +182,12 @@ export default function AdminKyc() {
           </div>
 
           {isLoading ? (
-            <div className="text-center py-20 animate-pulse text-gray-400 font-bold tracking-widest">RASTREANDO DATOS...</div>
+            <div className="text-center py-20 animate-pulse text-gray-400 font-bold tracking-widest">{t('loading')}</div>
           ) : profiles.length === 0 ? (
             <div className="text-center py-20 bg-white/5 rounded-[2rem] border border-white/5">
               <Coffee className="w-16 h-16 mx-auto text-gray-600 mb-4" strokeWidth={1.5} />
               <h3 className="text-xl font-bold text-gray-300">
-                {searchTerm ? 'No se encontraron resultados.' : 'No hay expedientes en esta categoría.'}
+                {searchTerm ? t('empty_search') : t('empty_category')}
               </h3>
             </div>
           ) : (
@@ -197,7 +198,7 @@ export default function AdminKyc() {
                 const idBack = ids[1] || null;
 
                 const username = p.user?.username || 'Usuario';
-                const initial = username !== 'Usuario' ? username[0].toUpperCase() : 'U';
+                const initial = username !== 'Usuario' ? username.toUpperCase() : 'U';
                 const email = p.user?.email || 'Sin correo registrado';
                 const date = p.user?.createdAt ? new Date(p.user.createdAt).toLocaleDateString() : 'N/A';
 
@@ -209,7 +210,7 @@ export default function AdminKyc() {
                         <div>
                           <h3 className="text-white font-black text-xl tracking-wide">@{username}</h3>
                           <p className="text-sm text-gray-400 font-medium">{email}</p>
-                          <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-widest font-bold">Registrado: {date}</p>
+                          <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-widest font-bold">{t('lbl_registered')}: {date}</p>
                         </div>
                       </div>
                       
@@ -217,7 +218,7 @@ export default function AdminKyc() {
                         <div className="flex items-center gap-3 bg-purple-500/10 border border-purple-500/30 px-4 py-2 rounded-xl">
                           <BrainCircuit className="w-6 h-6 text-purple-400" />
                           <div>
-                            <p className="text-[10px] text-purple-300 uppercase font-bold tracking-widest">Score Riesgo IA</p>
+                            <p className="text-[10px] text-purple-300 uppercase font-bold tracking-widest">{t('lbl_ai_score')}</p>
                             <p className="text-sm text-white font-black">{p.kycRiskScore ? `${(p.kycRiskScore * 100).toFixed(1)}%` : 'N/A'}</p>
                           </div>
                         </div>
@@ -225,17 +226,17 @@ export default function AdminKyc() {
                         {p.kycStatus === 'PENDING' && (
                           <div className="flex gap-2">
                             <button onClick={() => handleApprove(p.id, username)} disabled={processingId === p.id} className="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.4)] transition-all flex items-center gap-2">
-                              {processingId === p.id ? '...' : <><ShieldCheck className="w-5 h-5"/> APROBAR</>}
+                              {processingId === p.id ? '...' : <><ShieldCheck className="w-5 h-5"/> {t('btn_approve')}</>}
                             </button>
                             <button onClick={() => setRejectModal({ isOpen: true, profileId: p.id })} disabled={processingId === p.id} className="bg-transparent border border-red-500/50 text-red-500 hover:bg-red-600 hover:text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
-                              {processingId === p.id ? '...' : <><ShieldAlert className="w-5 h-5"/> RECHAZAR</>}
+                              {processingId === p.id ? '...' : <><ShieldAlert className="w-5 h-5"/> {t('btn_reject')}</>}
                             </button>
                           </div>
                         )}
                         
                         {p.kycStatus === 'REJECTED' && p.kycRejectionReason && (
                            <div className="bg-red-500/10 border border-red-500/30 px-4 py-2 rounded-xl max-w-xs">
-                             <p className="text-[10px] text-red-400 uppercase font-bold tracking-widest">Motivo de Rechazo</p>
+                             <p className="text-[10px] text-red-400 uppercase font-bold tracking-widest">{t('lbl_reject_reason')}</p>
                              <p className="text-sm text-white font-medium truncate">{p.kycRejectionReason}</p>
                            </div>
                         )}
@@ -244,37 +245,36 @@ export default function AdminKyc() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="bg-black border border-white/5 rounded-2xl p-2 relative group h-64 flex flex-col items-center justify-center">
-                        <div className="absolute top-3 left-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 z-10 border border-white/10 uppercase tracking-widest flex items-center gap-1.5"><UserSquare2 className="w-3 h-3 text-blue-400"/> 1. Frente ID</div>
+                        <div className="absolute top-3 left-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 z-10 border border-white/10 uppercase tracking-widest flex items-center gap-1.5"><UserSquare2 className="w-3 h-3 text-blue-400"/> 1. {t('doc_front')}</div>
                         {idFront ? (
                           <div className="w-full h-full relative cursor-zoom-in" onClick={() => setZoomedImage(getImageUrl(idFront))}>
                             <img src={getImageUrl(idFront)} className="w-full h-full object-contain rounded-xl opacity-90 group-hover:opacity-100 transition-opacity" alt="Frente" />
                             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity rounded-xl"><ZoomIn className="w-10 h-10 text-white" /></div>
                           </div>
-                        ) : <div className="text-gray-500 text-sm">Sin Archivo</div>}
+                        ) : <div className="text-gray-500 text-sm">{t('no_file')}</div>}
                       </div>
 
                       <div className="bg-black border border-white/5 rounded-2xl p-2 relative group h-64 flex flex-col items-center justify-center">
-                        <div className="absolute top-3 left-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 z-10 border border-white/10 uppercase tracking-widest flex items-center gap-1.5"><FileCheck2 className="w-3 h-3 text-indigo-400"/> 2. Reverso ID</div>
+                        <div className="absolute top-3 left-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 z-10 border border-white/10 uppercase tracking-widest flex items-center gap-1.5"><FileCheck2 className="w-3 h-3 text-indigo-400"/> 2. {t('doc_back')}</div>
                         {idBack ? (
                           <div className="w-full h-full relative cursor-zoom-in" onClick={() => setZoomedImage(getImageUrl(idBack))}>
                             <img src={getImageUrl(idBack)} className="w-full h-full object-contain rounded-xl opacity-90 group-hover:opacity-100 transition-opacity" alt="Reverso" />
                             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity rounded-xl"><ZoomIn className="w-10 h-10 text-white" /></div>
                           </div>
-                        ) : <div className="text-gray-500 text-sm">Sin Archivo</div>}
+                        ) : <div className="text-gray-500 text-sm">{t('no_file')}</div>}
                       </div>
 
                       <div className="bg-black border border-purple-500/20 rounded-2xl p-2 relative h-64 flex flex-col items-center justify-center shadow-[0_0_20px_rgba(168,85,247,0.1)]">
-                        <div className="absolute top-3 left-3 bg-purple-600/20 border border-purple-500/30 px-3 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 z-10 uppercase tracking-widest flex items-center gap-1.5"><PlayCircle className="w-3 h-3 text-purple-400"/> 3. Prueba de Vida</div>
+                        <div className="absolute top-3 left-3 bg-purple-600/20 border border-purple-500/30 px-3 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 z-10 uppercase tracking-widest flex items-center gap-1.5"><PlayCircle className="w-3 h-3 text-purple-400"/> 3. {t('doc_selfie')}</div>
                         {p.idSelfieUrl ? (
                           <video src={getImageUrl(p.idSelfieUrl)} controls autoPlay muted loop className="w-full h-full object-contain rounded-xl" />
-                        ) : <div className="text-gray-500 text-sm">Sin Video</div>}
+                        ) : <div className="text-gray-500 text-sm">{t('no_video')}</div>}
                       </div>
                     </div>
                   </div>
                 );
               })}
 
-              {/* 🔥 CONTROLES DE PAGINACIÓN */}
               {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-6 mt-10">
                   <button 
@@ -285,7 +285,7 @@ export default function AdminKyc() {
                     <ChevronLeft className="w-6 h-6" />
                   </button>
                   <span className="text-gray-400 font-bold text-sm tracking-widest">
-                    PÁGINA <span className="text-white">{page}</span> DE {totalPages}
+                    {t('pagination_page')} <span className="text-white">{page}</span> {t('pagination_of')} {totalPages}
                   </span>
                   <button 
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))} 
@@ -313,8 +313,8 @@ export default function AdminKyc() {
           <div className="bg-[#111] border border-red-500/30 p-8 rounded-3xl w-full max-w-md relative shadow-2xl">
             <button onClick={() => setRejectModal({ isOpen: false, profileId: null })} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X className="w-6 h-6"/></button>
             <ShieldAlert className="w-12 h-12 text-red-500 mb-4" />
-            <h2 className="text-2xl font-black text-white mb-2">Rechazar Expediente</h2>
-            <p className="text-gray-400 text-sm mb-6">El creador recibirá un correo con la razón exacta del rechazo.</p>
+            <h2 className="text-2xl font-black text-white mb-2">{t('modal_reject_title')}</h2>
+            <p className="text-gray-400 text-sm mb-6">{t('modal_reject_desc')}</p>
             
             <div className="space-y-3 mb-6">
               {rejectionOptions.map((opt, i) => (
@@ -329,7 +329,7 @@ export default function AdminKyc() {
             </div>
 
             <button onClick={handleRejectSubmit} disabled={!rejectReason || processingId !== null} className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition-colors tracking-widest">
-              {processingId ? 'PROCESANDO...' : 'CONFIRMAR RECHAZO'}
+              {processingId ? t('btn_processing') : t('btn_confirm_reject')}
             </button>
           </div>
         </div>
