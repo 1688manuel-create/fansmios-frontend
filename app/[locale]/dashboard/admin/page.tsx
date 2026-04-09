@@ -12,9 +12,11 @@ import {
   TrendingUp, PiggyBank, Wallet, Sparkles, Image as ImageIcon,
   CheckCircle, XCircle, Eye, UserX, Ghost, ShieldBan, Percent
 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function AdminDashboard() {
   const router = useRouter();
+  const t = useTranslations('AdminDashboard'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [activeTab, setActiveTab] = useState<'STATS' | 'USERS' | 'WITHDRAWALS' | 'REPORTS' | 'SETTINGS'>('STATS');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -94,10 +96,10 @@ export default function AdminDashboard() {
     setIsUpdatingFees(true);
     try {
       await api.put('/admin/platform-settings', fees)
-      alert("✅ Comisiones globales actualizadas con éxito. Aplicarán a los siguientes pagos de FansMio.");
+      alert(t('alert_fees_updated'));
       fetchData();
     } catch (error) { 
-      alert("Error al actualizar las comisiones. Revisa tu consola."); 
+      alert(t('alert_error_fees')); 
     } finally {
       setIsUpdatingFees(false);
     }
@@ -108,21 +110,21 @@ export default function AdminDashboard() {
   };
 
   const handleUserStatus = async (userId: string, status: string) => {
-    const reason = prompt(`Escribe la razón para cambiar el estado a ${status}:`);
+    const reason = prompt(`${t('prompt_status_reason')} ${status}:`);
     if (reason === null) return; 
     try {
       await adminService.changeUserStatus(userId, status, reason);
-      alert(`✅ Estado cambiado a ${status}`);
+      alert(`✅ ${t('alert_status_changed')} ${status}`);
       fetchData();
-    } catch (error) { alert("Error al cambiar el estado"); }
+    } catch (error) { alert(t('alert_error_status')); }
   };
 
   // 🔥 NUEVA LÓGICA DE PAGOS (INTEGRADA AL MODO DIOS)
   const handleApprovePayout = async (id: string, amount: number, address: string) => {
-    const confirm = window.confirm(`⚠️ ¿Estás seguro de enviar $${amount} USDT a la billetera:\n${address}?`);
+    const confirm = window.confirm(`⚠️ ${t('alert_payout_confirm_1')} $${amount} ${t('alert_payout_confirm_2')}\n${address}?`);
     if (!confirm) return;
 
-    const txHash = prompt("Pega el Hash de Transacción (TXID) de Binance, o déjalo vacío para simularlo:");
+    const txHash = prompt(t('prompt_tx_hash'));
 
     setProcessingId(id);
     try {
@@ -130,39 +132,39 @@ export default function AdminDashboard() {
         txHash: txHash || `SIMULATED_TX_${Date.now()}`,
         adminNotes: 'Pago Cripto Procesado Oficialmente'
       });
-      alert("✅ ¡Pago Registrado y Creador Notificado!");
+      alert(t('alert_payout_success'));
       fetchData();
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al aprobar el retiro.");
+      alert(error.response?.data?.error || t('alert_error_approve'));
     } finally {
       setProcessingId(null);
     }
   };
 
   const handleRejectPayout = async (id: string, amount: number) => {
-    const reason = prompt(`❌ Vas a RECHAZAR el retiro de $${amount} USD.\nEscribe la razón (Ej: "Billetera inválida" o "Fraude"):`);
+    const reason = prompt(`❌ ${t('prompt_reject_payout_1')} $${amount} USD.\n${t('prompt_reject_payout_2')}`);
     if (!reason) return;
 
     setProcessingId(id);
     try {
       await api.post(`/admin/payouts/${id}/reject`, { adminNotes: reason });
-      alert("🛡️ Retiro rechazado. El dinero volvió a la billetera (saldo disponible) del creador.");
+      alert(t('alert_payout_rejected'));
       fetchData();
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al rechazar el retiro.");
+      alert(error.response?.data?.error || t('alert_error_reject'));
     } finally {
       setProcessingId(null);
     }
   };
 
   const handleResolveReport = async (reportId: string, status: 'RESOLVED' | 'DISMISSED') => {
-    const adminMessage = prompt(`Mensaje para el usuario:`);
+    const adminMessage = prompt(t('prompt_report_msg'));
     if (adminMessage === null) return;
     try {
       await api.put('/admin/reports/resolve', { reportId, newStatus: status, adminMessage });
-      alert(`✅ Reporte cerrado.`);
+      alert(t('alert_report_closed'));
       fetchData(); 
-    } catch (error) { alert("Error al cerrar reporte."); }
+    } catch (error) { alert(t('alert_error_report')); }
   };
 
   if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-16 h-16 border-4 border-red-500 rounded-full animate-spin"></div></div>;
@@ -175,10 +177,10 @@ export default function AdminDashboard() {
         <nav className="bg-[#0a0a0a] border-b border-white/5 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
           <div className="flex items-center gap-4">
             <Crown className="text-red-500 w-8 h-8" />
-            <h1 className="text-xl font-black text-red-500">MODO DIOS</h1>
+            <h1 className="text-xl font-black text-red-500">{t('nav_title')}</h1>
           </div>
           <button onClick={() => router.push('/dashboard/admin/kyc')} className="nm-btn border border-purple-500/30 text-purple-400 px-4 py-2 rounded-full text-xs font-bold hover:bg-purple-900/20 transition-colors">
-            KYC PENDIENTES ({analytics?.metrics?.security?.pendingKyc || 0})
+            {t('nav_kyc_btn')} ({analytics?.metrics?.security?.pendingKyc || 0})
           </button>
         </nav>
 
@@ -187,11 +189,11 @@ export default function AdminDashboard() {
           {/* TABS NAVEGACIÓN */}
           <div className="flex p-1.5 nm-inset rounded-2xl border border-white/5 w-fit mb-10 overflow-x-auto max-w-full">
             {[
-              { id: 'STATS', label: 'Dashboard Financiero', icon: BarChart3 },
-              { id: 'USERS', label: 'Usuarios', icon: Users },
-              { id: 'WITHDRAWALS', label: 'Retiros', icon: Banknote },
-              { id: 'REPORTS', label: 'Moderación', icon: Flag },
-              { id: 'SETTINGS', label: 'Plataforma', icon: Settings },
+              { id: 'STATS', label: t('tab_financial'), icon: BarChart3 },
+              { id: 'USERS', label: t('tab_users'), icon: Users },
+              { id: 'WITHDRAWALS', label: t('tab_withdrawals'), icon: Banknote },
+              { id: 'REPORTS', label: t('tab_moderation'), icon: Flag },
+              { id: 'SETTINGS', label: t('tab_platform'), icon: Settings },
             ].map(tab => (
               <button 
                 key={tab.id} 
@@ -209,7 +211,7 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="nm-btn border border-white/5 p-8 rounded-[2rem]">
                   <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-blue-500"/> Volumen Total
+                    <TrendingUp className="w-4 h-4 text-blue-500"/> {t('stat_volume')}
                   </h3>
                   <p className="text-4xl font-black text-white">
                     ${(analytics?.metrics?.finance?.totalVolumeProcessed || 0).toFixed(2)}
@@ -217,7 +219,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="nm-btn border border-green-500/30 p-8 rounded-[2rem]">
                   <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <PiggyBank className="w-4 h-4 text-green-500"/> Ganancia FansMio
+                    <PiggyBank className="w-4 h-4 text-green-500"/> {t('stat_profit')}
                   </h3>
                   <p className="text-4xl font-black text-green-400">
                     ${(analytics?.metrics?.finance?.platformNetRevenue || 0).toFixed(2)}
@@ -225,7 +227,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="nm-btn border border-white/5 p-8 rounded-[2rem]">
                   <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <Wallet className="w-4 h-4 text-orange-500"/> Retiros en Cola
+                    <Wallet className="w-4 h-4 text-orange-500"/> {t('stat_pending_withdrawals')}
                   </h3>
                   <p className="text-4xl font-black text-orange-400">
                     ${(analytics?.metrics?.finance?.pendingLiability || 0).toFixed(2)}
@@ -236,26 +238,26 @@ export default function AdminDashboard() {
               {/* ÚLTIMOS MOVIMIENTOS PAYRAM */}
               <div className="nm-btn border border-white/5 rounded-[2rem] overflow-hidden">
                 <div className="p-6 bg-[#0e0e0e] border-b border-white/5">
-                  <h3 className="font-black text-white text-lg">Historial Covra Pay (Tiempo Real)</h3>
+                  <h3 className="font-black text-white text-lg">{t('history_title')}</h3>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead className="text-[10px] text-gray-500 uppercase tracking-widest bg-[#111] border-b border-white/5">
                       <tr>
-                        <th className="px-6 py-4">Tipo</th>
-                        <th className="px-6 py-4">De Fan</th>
-                        <th className="px-6 py-4">Para Creador</th>
-                        <th className="px-6 py-4">Monto</th>
-                        <th className="px-6 py-4">Comisión App</th>
-                        <th className="px-6 py-4">Fecha</th>
+                        <th className="px-6 py-4">{t('th_type')}</th>
+                        <th className="px-6 py-4">{t('th_from')}</th>
+                        <th className="px-6 py-4">{t('th_to')}</th>
+                        <th className="px-6 py-4">{t('th_amount')}</th>
+                        <th className="px-6 py-4">{t('th_fee')}</th>
+                        <th className="px-6 py-4">{t('th_date')}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {(analytics?.recentActivity || []).map((tx: any) => (
                         <tr key={tx.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                           <td className="px-6 py-5 font-bold text-blue-400 text-xs">{tx.type}</td>
-                          <td className="px-6 py-5">@{tx.sender?.username || 'Anónimo'}</td>
-                          <td className="px-6 py-5 text-purple-400">@{tx.receiver?.username || 'Anónimo'}</td>
+                          <td className="px-6 py-5">@{tx.sender?.username || t('anonymous')}</td>
+                          <td className="px-6 py-5 text-purple-400">@{tx.receiver?.username || t('anonymous')}</td>
                           <td className="px-6 py-5 font-black text-white">${(tx.amount || 0).toFixed(2)}</td>
                           <td className="px-6 py-5 font-black text-green-400">+${(tx.platformFee || 0).toFixed(2)}</td>
                           <td className="px-6 py-5 text-[10px] text-gray-500">{new Date(tx.createdAt).toLocaleString()}</td>
@@ -271,10 +273,10 @@ export default function AdminDashboard() {
           {/* 💸 TAB 2: RETIROS (WITHDRAWALS - AHORA CON PAYRAM) */}
           {activeTab === 'WITHDRAWALS' && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Banknote className="text-orange-500"/> Solicitudes de Retiro</h2>
+              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Banknote className="text-orange-500"/> {t('tab_withdrawals')}</h2>
               {withdrawals.length === 0 ? (
                 <div className="nm-btn border border-white/5 p-10 rounded-[2rem] text-center text-gray-500">
-                  No hay solicitudes de retiro pendientes. Todo está al día, CEO.
+                  {t('withdrawals_empty')}
                 </div>
               ) : (
                 <div className="grid gap-4">
@@ -283,16 +285,16 @@ export default function AdminDashboard() {
                       <div className="flex-1">
                         <p className="text-xs text-gray-500 mb-1">ID: {w.id}</p>
                         <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                          @{w.creator?.username || 'Usuario Desconocido'} 
+                          @{w.creator?.username || t('unknown_user')} 
                           <span className="text-[10px] px-2 py-1 rounded-full font-black bg-orange-500/20 text-orange-400">
                             {w.status}
                           </span>
                         </h4>
                         <div className="mt-1 flex gap-3 text-[10px] font-bold uppercase tracking-wider mb-2">
-                          <span className="text-green-400">Billetera Activa: ${w.creator?.wallet?.balance?.toFixed(2) || 0}</span>
-                          <span className="text-yellow-400">Retenido: ${w.creator?.wallet?.pendingBalance?.toFixed(2) || 0}</span>
+                          <span className="text-green-400">{t('lbl_active_wallet')}: ${w.creator?.wallet?.balance?.toFixed(2) || 0}</span>
+                          <span className="text-yellow-400">{t('lbl_held_wallet')}: ${w.creator?.wallet?.pendingBalance?.toFixed(2) || 0}</span>
                         </div>
-                        <p className="text-sm mt-2"><span className="text-gray-400">Red:</span> {w.cryptoNetwork || 'TRC20'} <span className="text-gray-400 ml-3">Billetera:</span> <span className="text-blue-400 select-all font-mono bg-blue-500/10 px-2 py-1 rounded">{w.cryptoAddress || 'No proporcionada'}</span></p>
+                        <p className="text-sm mt-2"><span className="text-gray-400">{t('lbl_network')}:</span> {w.cryptoNetwork || 'TRC20'} <span className="text-gray-400 ml-3">{t('lbl_address')}:</span> <span className="text-blue-400 select-all font-mono bg-blue-500/10 px-2 py-1 rounded">{w.cryptoAddress || t('not_provided')}</span></p>
                         {w.adminNotes && <p className="text-xs text-orange-300 mt-2 bg-orange-500/10 p-2 rounded-lg">{w.adminNotes}</p>}
                       </div>
                       <div className="text-right shrink-0">
@@ -303,14 +305,14 @@ export default function AdminDashboard() {
                             disabled={processingId === w.id}
                             className="w-full px-6 py-3 rounded-xl bg-green-600 text-white font-bold text-sm hover:bg-green-500 transition-colors disabled:opacity-50"
                           >
-                            {processingId === w.id ? 'Procesando...' : '✅ Aprobar (Cripto)'}
+                            {processingId === w.id ? t('btn_processing') : `✅ ${t('btn_approve_crypto')}`}
                           </button>
                           <button 
                             onClick={() => handleRejectPayout(w.id, w.amount)} 
                             disabled={processingId === w.id}
                             className="w-full px-6 py-2 rounded-xl border border-red-500/50 text-red-400 font-bold text-xs hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50"
                           >
-                            {processingId === w.id ? 'Procesando...' : '❌ Rechazar'}
+                            {processingId === w.id ? t('btn_processing') : `❌ ${t('btn_reject')}`}
                           </button>
                         </div>
                       </div>
@@ -324,16 +326,16 @@ export default function AdminDashboard() {
           {/* 👥 TAB 3: USUARIOS */}
           {activeTab === 'USERS' && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Users className="text-blue-500"/> Gestión de Usuarios</h2>
+              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Users className="text-blue-500"/> {t('tab_users')}</h2>
               <div className="nm-btn border border-white/5 rounded-[2rem] overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead className="text-[10px] text-gray-500 uppercase tracking-widest bg-[#111] border-b border-white/5">
                       <tr>
-                        <th className="px-6 py-4">Usuario / Email</th>
-                        <th className="px-6 py-4">Rol</th>
-                        <th className="px-6 py-4">Estado</th>
-                        <th className="px-6 py-4">Acciones</th>
+                        <th className="px-6 py-4">{t('th_user_email')}</th>
+                        <th className="px-6 py-4">{t('th_role')}</th>
+                        <th className="px-6 py-4">{t('th_status')}</th>
+                        <th className="px-6 py-4">{t('th_actions')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -353,9 +355,9 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-6 py-5">
                             {u.status === 'ACTIVE' ? (
-                              <button onClick={() => handleUserStatus(u.id, 'BANNED')} className="text-red-500 hover:text-red-400 flex items-center gap-1 text-xs font-bold"><ShieldBan className="w-4 h-4"/> Banear</button>
+                              <button onClick={() => handleUserStatus(u.id, 'BANNED')} className="text-red-500 hover:text-red-400 flex items-center gap-1 text-xs font-bold"><ShieldBan className="w-4 h-4"/> {t('btn_ban')}</button>
                             ) : (
-                              <button onClick={() => handleUserStatus(u.id, 'ACTIVE')} className="text-green-500 hover:text-green-400 flex items-center gap-1 text-xs font-bold"><CheckCircle className="w-4 h-4"/> Activar</button>
+                              <button onClick={() => handleUserStatus(u.id, 'ACTIVE')} className="text-green-500 hover:text-green-400 flex items-center gap-1 text-xs font-bold"><CheckCircle className="w-4 h-4"/> {t('btn_activate')}</button>
                             )}
                           </td>
                         </tr>
@@ -370,49 +372,46 @@ export default function AdminDashboard() {
           {/* 🚩 TAB 4: MODERACIÓN (REPORTS) */}
           {activeTab === 'REPORTS' && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Flag className="text-red-500"/> Centro de Reportes</h2>
+              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Flag className="text-red-500"/> {t('tab_moderation')}</h2>
               {reports.length === 0 ? (
                 <div className="nm-btn border border-white/5 p-10 rounded-[2rem] text-center text-gray-500">
-                  La comunidad está en paz. No hay reportes pendientes.
+                  {t('reports_empty')}
                 </div>
               ) : (
                 <div className="grid gap-4">
                   {reports.map((r: any) => {
-                    // 🔥 LÓGICA DE DETECCIÓN INTELIGENTE
                     const targetUsername = r.reportedUser?.username;
-                    const reportType = r.type || 'POST'; // 'USER', 'POST' o 'MESSAGE'
-                    const referenceId = r.postId || r.messageId || r.reportedUserId || 'N/A'; // Saca el ID real de la BD
+                    const reportType = r.type || 'POST'; 
+                    const referenceId = r.postId || r.messageId || r.reportedUserId || 'N/A';
 
                     return (
                       <div key={r.id} className="nm-btn border border-red-500/20 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div className="w-full">
-                          <h4 className="text-lg font-bold text-white mb-2">Motivo: {r.reason}</h4>
+                          <h4 className="text-lg font-bold text-white mb-2">{t('lbl_reason')}: {r.reason}</h4>
                           
                           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-sm text-gray-400 mb-3 bg-black/30 p-3 rounded-xl border border-white/5">
                             <p>
-                              🚩 Denunciante: <span className="text-white font-bold">@{r.reporter?.username || 'Anónimo'}</span>
+                              🚩 {t('lbl_reporter')}: <span className="text-white font-bold">@{r.reporter?.username || t('anonymous')}</span>
                             </p>
                             <span className="hidden sm:inline">|</span>
                             <p>
-                              🎯 Acusado: <span className="text-red-400 font-bold">@{targetUsername || 'Desconocido'}</span>
+                              🎯 {t('lbl_accused')}: <span className="text-red-400 font-bold">@{targetUsername || t('unknown_user')}</span>
                             </p>
                           </div>
 
                           <div className="flex flex-wrap gap-2 mb-4">
                             <span className="bg-white/10 text-gray-300 text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest border border-white/10">
-                              TIPO: {reportType}
+                              {t('lbl_type')}: {reportType}
                             </span>
                             <span className="bg-red-500/10 text-red-400 text-[10px] px-2 py-1 rounded font-bold border border-red-500/20 truncate max-w-xs font-mono">
                               ID: {referenceId}
                             </span>
                           </div>
 
-                          <p className="text-sm bg-black/50 p-4 rounded-xl border border-white/5 text-gray-300 italic">"{r.description || 'Sin descripción adicional.'}"</p>
+                          <p className="text-sm bg-black/50 p-4 rounded-xl border border-white/5 text-gray-300 italic">"{r.description || t('no_description')}"</p>
                         </div>
 
                         <div className="flex flex-col gap-2 shrink-0 w-full md:w-48 mt-4 md:mt-0">
-                          
-                          {/* 🔥 EL TELETRANSPORTADOR DEFINITIVO */}
                           <button 
                             onClick={() => {
                               if (reportType === 'POST' && targetUsername && r.postId) {
@@ -422,21 +421,20 @@ export default function AdminDashboard() {
                               } else if (reportType === 'MESSAGE') {
                                 router.push(`/dashboard/messages`);
                               } else {
-                                // Fallback por si acaso: Al muro general
                                 router.push(`/${targetUsername || ''}`);
                               }
                             }} 
                             className="w-full px-4 py-2 rounded-xl bg-blue-600/20 border border-blue-500/50 text-blue-400 font-bold text-xs hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-2"
                           >
-                            <Eye className="w-4 h-4"/> Ver Evidencia
+                            <Eye className="w-4 h-4"/> {t('btn_view_evidence')}
                           </button>
 
                           <button onClick={() => handleResolveReport(r.id, 'RESOLVED')} className="w-full px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-500 transition-colors shadow-lg flex items-center justify-center gap-2">
-                            <ShieldBan className="w-4 h-4"/> Tomar Acción
+                            <ShieldBan className="w-4 h-4"/> {t('btn_take_action')}
                           </button>
                           
                           <button onClick={() => handleResolveReport(r.id, 'DISMISSED')} className="w-full px-4 py-2 rounded-xl border border-gray-600/50 text-gray-400 font-bold text-xs hover:text-white hover:bg-white/5 transition-colors flex items-center justify-center gap-2">
-                            <CheckCircle className="w-4 h-4"/> Descartar
+                            <CheckCircle className="w-4 h-4"/> {t('btn_dismiss')}
                           </button>
 
                         </div>
@@ -451,29 +449,29 @@ export default function AdminDashboard() {
           {/* ⚙️ TAB 5: PLATAFORMA (SETTINGS) - 🔥 MODO DIOS ACTUALIZADO */}
           {activeTab === 'SETTINGS' && (
             <div className="space-y-6 animate-fade-in max-w-4xl">
-              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Settings className="text-gray-400"/> Configuración Global de Comisiones</h2>
+              <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Settings className="text-gray-400"/> {t('settings_title')}</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 
                 {/* BLOQUE: VENTAS */}
                 <div className="nm-btn border border-white/5 p-6 rounded-[2rem]">
-                  <h3 className="text-red-500 font-bold mb-6 flex items-center gap-2"><Percent className="w-5 h-5"/> Comisiones por Ventas (%)</h3>
+                  <h3 className="text-red-500 font-bold mb-6 flex items-center gap-2"><Percent className="w-5 h-5"/> {t('settings_sales_title')}</h3>
                   
                   <div className="space-y-5">
                     <div>
-                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Suscripciones Mensuales</label>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">{t('lbl_fee_subs')}</label>
                       <input type="number" name="feeSubscription" value={fees.feeSubscription} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-red-500 outline-none transition-colors" />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Posts PPV y Mensajes</label>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">{t('lbl_fee_ppv')}</label>
                       <input type="number" name="feePPV" value={fees.feePPV} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-red-500 outline-none transition-colors" />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Propinas (Tips)</label>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">{t('lbl_fee_tips')}</label>
                       <input type="number" name="feeTips" value={fees.feeTips} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-red-500 outline-none transition-colors" />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Transmisiones en Vivo (Live)</label>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">{t('lbl_fee_live')}</label>
                       <input type="number" name="feeLive" value={fees.feeLive} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-red-500 outline-none transition-colors" />
                     </div>
                   </div>
@@ -481,29 +479,29 @@ export default function AdminDashboard() {
 
                 {/* BLOQUE: RETIROS */}
                 <div className="nm-btn border border-white/5 p-6 rounded-[2rem]">
-                  <h3 className="text-blue-500 font-bold mb-6 flex items-center gap-2"><Banknote className="w-5 h-5"/> Comisiones por Retiros (%)</h3>
+                  <h3 className="text-blue-500 font-bold mb-6 flex items-center gap-2"><Banknote className="w-5 h-5"/> {t('settings_withdrawals_title')}</h3>
                   
                   <div className="space-y-5">
                     <div>
-                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Retiro Estándar (🐢 7 Días)</label>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">{t('lbl_fee_std')}</label>
                       <input type="number" name="feeWithdrawalStd" value={fees.feeWithdrawalStd} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-blue-500 outline-none transition-colors" />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Retiro Exprés (⚡ Instantáneo)</label>
+                      <label className="block text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">{t('lbl_fee_exp')}</label>
                       <input type="number" name="feeWithdrawalExp" value={fees.feeWithdrawalExp} onChange={handleFeeChange} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-blue-500 outline-none transition-colors" />
                     </div>
                   </div>
 
                   <div className="mt-8 pt-8 border-t border-white/5">
                     <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 leading-relaxed">
-                      ⚠️ Estas comisiones se aplicarán automáticamente a nivel base de datos (Prisma). El motor de pagos de FansMio leerá estos números en tiempo real antes de procesar cada transacción.
+                      {t('settings_warning')}
                     </p>
                     <button 
                       onClick={handleUpdateFees}
                       disabled={isUpdatingFees}
                       className="w-full bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest py-4 px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(220,38,38,0.3)] disabled:opacity-50 flex justify-center items-center"
                     >
-                      {isUpdatingFees ? 'Sincronizando Core...' : 'Guardar y Aplicar a FansMio'}
+                      {isUpdatingFees ? t('btn_syncing') : t('btn_save_apply')}
                     </button>
                   </div>
                 </div>
