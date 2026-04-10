@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ Te prowizje zostaną automatycznie zastosowane na poziomie bazy danych (Prisma). Silnik płatności FansMio odczyta te liczby w czasie rzeczywistym przed przetworzeniem każdej transakcji.",
     "btn_syncing": "Synchronizacja Core...",
     "btn_save_apply": "Zapisz i zastosuj w FansMio"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Globalny Radar (CEO)",
+    "subtitle": "Absolutna wizja wszystkich liczb platformy.",
+    "gross_volume": "Całkowity Wolumen Brutto",
+    "platform_profit": "Twój Zysk (Prowizja)",
+    "creator_debt": "Dług wobec Twórców",
+    "total_users": "Całkowita liczba użytkowników",
+    "fans": "Fani",
+    "creators": "Twórcy",
+    "live_monitoring": "Monitorowanie finansowe w czasie rzeczywistym aktywne"
   }
 }

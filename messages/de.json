@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ Diese Gebühren werden automatisch auf Datenbankebene (Prisma) angewendet. Die Zahlungsmaschine von FansMio liest diese Zahlen in Echtzeit, bevor sie jede Transaktion verarbeitet.",
     "btn_syncing": "Core wird synchronisiert...",
     "btn_save_apply": "Speichern und auf FansMio anwenden"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Globales Radar (CEO)",
+    "subtitle": "Absolute Übersicht über alle Plattformzahlen.",
+    "gross_volume": "Bruttovolumen bewegt",
+    "platform_profit": "Ihr Gewinn (Provision)",
+    "creator_debt": "Schulden bei Creators",
+    "total_users": "Gesamtbenutzer",
+    "fans": "Fans",
+    "creators": "Creators",
+    "live_monitoring": "Echtzeit-Finanzüberwachung aktiv"
   }
 }

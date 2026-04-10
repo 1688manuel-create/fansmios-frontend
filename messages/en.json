@@ -280,5 +280,17 @@
     "settings_warning": "⚠️ These fees will be automatically applied at the database level (Prisma). The FansMio payment engine will read these numbers in real-time before processing each transaction.",
     "btn_syncing": "Syncing Core...",
     "btn_save_apply": "Save and Apply to FansMio"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Global Radar (CEO)",
+    "subtitle": "Absolute vision of all platform numbers.",
+    "gross_volume": "Gross Volume Moved",
+    "platform_profit": "Your Profit (Commission)",
+    "creator_debt": "Debt to Creators",
+    "total_users": "Total Users",
+    "fans": "Fans",
+    "creators": "Creators",
+    "live_monitoring": "Real-Time Financial Monitoring Active"
   }
 }

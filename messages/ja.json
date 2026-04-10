@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ これらの手数料は、データベースレベル (Prisma) で自動的に適用されます。FansMioの決済エンジンは、各トランザクションを処理する前にリアルタイムでこれらの数値を読み取ります。",
     "btn_syncing": "Coreを同期中...",
     "btn_save_apply": "保存してFansMioに適用"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "グローバルレーダー (CEO)",
+    "subtitle": "プラットフォーム全体の数字の絶対的なビジョン。",
+    "gross_volume": "総移動量",
+    "platform_profit": "あなたの利益 (手数料)",
+    "creator_debt": "クリエイターへの負債",
+    "total_users": "総ユーザー数",
+    "fans": "ファン",
+    "creators": "クリエイター",
+    "live_monitoring": "リアルタイムの財務監視がアクティブです"
   }
 }

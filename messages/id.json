@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ Biaya ini akan diterapkan secara otomatis di tingkat basis data (Prisma). Mesin pembayaran FansMio akan membaca angka-angka ini secara real-time sebelum memproses setiap transaksi.",
     "btn_syncing": "Menyinkronkan Core...",
     "btn_save_apply": "Simpan dan Terapkan ke FansMio"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Radar Global (CEO)",
+    "subtitle": "Visi absolut dari semua angka platform.",
+    "gross_volume": "Volume Kotor Tergerak",
+    "platform_profit": "Keuntungan Anda (Komisi)",
+    "creator_debt": "Hutang ke Kreator",
+    "total_users": "Total Pengguna",
+    "fans": "Penggemar",
+    "creators": "Kreator",
+    "live_monitoring": "Pemantauan Keuangan Real-Time Aktif"
   }
 }

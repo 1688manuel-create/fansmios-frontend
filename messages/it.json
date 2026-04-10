@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ Queste commissioni verranno applicate automaticamente a livello di database (Prisma). Il motore di pagamento FansMio leggerà questi numeri in tempo reale prima di elaborare ogni transazione.",
     "btn_syncing": "Sincronizzazione Core...",
     "btn_save_apply": "Salva e Applica a FansMio"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Radar Globale (CEO)",
+    "subtitle": "Visione assoluta di tutti i numeri della piattaforma.",
+    "gross_volume": "Volume Lordo Movimentato",
+    "platform_profit": "Il Tuo Profitto (Commissione)",
+    "creator_debt": "Debito verso i Creatori",
+    "total_users": "Utenti Totali",
+    "fans": "Fan",
+    "creators": "Creatori",
+    "live_monitoring": "Monitoraggio Finanziario in Tempo Reale Attivo"
   }
 }

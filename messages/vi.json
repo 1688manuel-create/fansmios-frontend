@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ Những khoản phí này sẽ tự động được áp dụng ở cấp cơ sở dữ liệu (Prisma). Công cụ thanh toán FansMio sẽ đọc những con số này theo thời gian thực trước khi xử lý từng giao dịch.",
     "btn_syncing": "Đang đồng bộ hóa Core...",
     "btn_save_apply": "Lưu và áp dụng cho FansMio"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Radar Toàn cầu (CEO)",
+    "subtitle": "Tầm nhìn tuyệt đối về tất cả các số liệu của nền tảng.",
+    "gross_volume": "Tổng khối lượng đã giao dịch",
+    "platform_profit": "Lợi nhuận của bạn (Hoa hồng)",
+    "creator_debt": "Nợ người sáng tạo",
+    "total_users": "Tổng số người dùng",
+    "fans": "Người hâm mộ",
+    "creators": "Nhà sáng tạo",
+    "live_monitoring": "Giám sát tài chính theo thời gian thực đang hoạt động"
   }
 }

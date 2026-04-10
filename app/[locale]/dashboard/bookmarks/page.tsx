@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../../lib/api';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -15,6 +16,7 @@ const getImageUrl = (path: string | null) => {
 
 export default function BookmarksPage() {
   const router = useRouter();
+  const t = useTranslations('BookmarksPage'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [bookmarks, setBookmarks] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -39,7 +41,7 @@ export default function BookmarksPage() {
       // Quitamos el post de la pantalla inmediatamente para que se sienta rápido
       setBookmarks(prev => prev.filter(b => b.postId !== postId));
     } catch (error) {
-      alert("Error al quitar de favoritos.");
+      alert(t('alert_error_remove'));
     }
   };
 
@@ -48,17 +50,17 @@ export default function BookmarksPage() {
   return (
     <div className="min-h-screen bg-[#050505] text-white pb-20">
       <nav className="border-b border-white/10 px-6 py-4 flex justify-between items-center bg-[#0a0a0a] sticky top-0 z-50 backdrop-blur-md">
-        <h1 className="text-xl font-bold flex items-center gap-2">🔖 Mis Guardados</h1>
-        <button onClick={() => router.push('/dashboard')} className="text-sm bg-white/10 text-white px-5 py-2 rounded-full hover:bg-white/20 transition-colors font-bold">Volver</button>
+        <h1 className="text-xl font-bold flex items-center gap-2">🔖 {t('nav_title')}</h1>
+        <button onClick={() => router.push('/dashboard')} className="text-sm bg-white/10 text-white px-5 py-2 rounded-full hover:bg-white/20 transition-colors font-bold">{t('btn_back')}</button>
       </nav>
 
       <main className="max-w-4xl mx-auto mt-8 px-4 space-y-6">
         {bookmarks.length === 0 ? (
           <div className="text-center py-20 bg-[#0a0a0a] rounded-3xl border border-white/5 shadow-lg">
             <span className="text-6xl mb-4 block">🗂️</span>
-            <h3 className="text-xl font-bold text-gray-300">Tu bóveda está vacía</h3>
-            <p className="text-gray-500 mt-2">Explora creadores y guarda tus posts favoritos para verlos aquí.</p>
-            <button onClick={() => router.push('/explore')} className="mt-6 bg-blue-600 hover:bg-blue-500 px-6 py-2.5 rounded-full font-bold transition-all">Explorar Creadores</button>
+            <h3 className="text-xl font-bold text-gray-300">{t('empty_vault_title')}</h3>
+            <p className="text-gray-500 mt-2">{t('empty_vault_desc')}</p>
+            <button onClick={() => router.push('/explore')} className="mt-6 bg-blue-600 hover:bg-blue-500 px-6 py-2.5 rounded-full font-bold transition-all">{t('btn_explore')}</button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -80,7 +82,7 @@ export default function BookmarksPage() {
                       </div>
                       <span className="font-bold text-sm hover:text-blue-400 transition-colors">@{post.user?.username}</span>
                     </div>
-                    <button onClick={() => handleRemoveBookmark(post.id)} className="text-xs text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500 px-3 py-1.5 rounded-full transition-all">Quitar ✕</button>
+                    <button onClick={() => handleRemoveBookmark(post.id)} className="text-xs text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500 px-3 py-1.5 rounded-full transition-all">{t('btn_remove')}</button>
                   </div>
 
                   {/* 🔥 CONTENIDO DEL POST (CON ESCUDO DE SEGURIDAD) */}
@@ -96,9 +98,9 @@ export default function BookmarksPage() {
                         )}
                         <div className="relative z-10 flex flex-col items-center space-y-2 bg-black/80 px-6 py-4 rounded-3xl border border-white/10 backdrop-blur-md">
                           <span className="text-3xl drop-shadow-[0_0_15px_rgba(37,99,235,0.3)]">🔒</span>
-                          <span className="text-blue-400 font-bold text-xs uppercase tracking-wider">Bloqueado</span>
+                          <span className="text-blue-400 font-bold text-xs uppercase tracking-wider">{t('locked_status')}</span>
                         </div>
-                        <p className="absolute bottom-3 text-[10px] text-gray-500 z-10 font-bold">Haz clic para ir a desbloquearlo</p>
+                        <p className="absolute bottom-3 text-[10px] text-gray-500 z-10 font-bold">{t('click_to_unlock')}</p>
                       </div>
                     ) : (
                       /* 🔓 VISTA DESBLOQUEADA (Si ya pagó o es gratis) */

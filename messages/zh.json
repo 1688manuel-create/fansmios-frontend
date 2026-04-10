@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ 这些费用将在数据库级别 (Prisma) 自动应用。FansMio 支付引擎将在处理每笔交易之前实时读取这些数字。",
     "btn_syncing": "正在同步 Core...",
     "btn_save_apply": "保存并应用于 FansMio"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "全球雷达 (CEO)",
+    "subtitle": "平台所有数字的绝对视角。",
+    "gross_volume": "总交易量",
+    "platform_profit": "您的利润（佣金）",
+    "creator_debt": "欠创作者的债务",
+    "total_users": "总用户数",
+    "fans": "粉丝",
+    "creators": "创作者",
+    "live_monitoring": "实时财务监控处于活动状态"
   }
 }

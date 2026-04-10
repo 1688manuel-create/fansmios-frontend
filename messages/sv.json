@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ Dessa avgifter kommer att tillämpas automatiskt på databasnivå (Prisma). FansMio-betalningsmotorn kommer att läsa av dessa siffror i realtid innan varje transaktion bearbetas.",
     "btn_syncing": "Synkroniserar Core...",
     "btn_save_apply": "Spara och tillämpa på FansMio"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Global Radar (VD)",
+    "subtitle": "Absolut överblick över alla plattformssiffror.",
+    "gross_volume": "Bruttovolym flyttad",
+    "platform_profit": "Din vinst (Provision)",
+    "creator_debt": "Skuld till skapare",
+    "total_users": "Totalt antal användare",
+    "fans": "Fans",
+    "creators": "Skapare",
+    "live_monitoring": "Finansiell realtidsövervakning aktiv"
   }
 }

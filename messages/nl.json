@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ Deze kosten worden automatisch toegepast op databaseniveau (Prisma). De FansMio-betaalengine leest deze cijfers in realtime voordat elke transactie wordt verwerkt.",
     "btn_syncing": "Core Synchroniseren...",
     "btn_save_apply": "Opslaan en toepassen op FansMio"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Wereldwijde Radar (CEO)",
+    "subtitle": "Absolute visie van alle platformcijfers.",
+    "gross_volume": "Bruto Verplaatst Volume",
+    "platform_profit": "Jouw Winst (Commissie)",
+    "creator_debt": "Schuld aan Makers",
+    "total_users": "Totaal Aantal Gebruikers",
+    "fans": "Fans",
+    "creators": "Makers",
+    "live_monitoring": "Realtime financiële monitoring actief"
   }
 }

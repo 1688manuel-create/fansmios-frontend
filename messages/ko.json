@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ 이 수수료는 데이터베이스 수준(Prisma)에서 자동으로 적용됩니다. FansMio 결제 엔진은 각 거래를 처리하기 전에 실시간으로 이 숫자를 읽습니다.",
     "btn_syncing": "Core 동기화 중...",
     "btn_save_apply": "저장 및 FansMio에 적용"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "글로벌 레이더 (CEO)",
+    "subtitle": "전체 플랫폼 수치에 대한 절대적인 비전.",
+    "gross_volume": "총 거래량",
+    "platform_profit": "귀하의 수익 (수수료)",
+    "creator_debt": "크리에이터에 대한 부채",
+    "total_users": "총 사용자",
+    "fans": "팬",
+    "creators": "크리에이터",
+    "live_monitoring": "실시간 재무 모니터링 활성화됨"
   }
 }

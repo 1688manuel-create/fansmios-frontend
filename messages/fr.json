@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ Ces frais seront appliqués automatiquement au niveau de la base de données. Le moteur de paiement FansMio lira ces chiffres en temps réel avant de traiter chaque transaction.",
     "btn_syncing": "Synchronisation Core...",
     "btn_save_apply": "Enregistrer et appliquer à FansMio"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Radar Global (PDG)",
+    "subtitle": "Vision absolue des chiffres de toute la plateforme.",
+    "gross_volume": "Volume brut déplacé",
+    "platform_profit": "Vos bénéfices (Commission)",
+    "creator_debt": "Dette envers les créateurs",
+    "total_users": "Utilisateurs totaux",
+    "fans": "Fans",
+    "creators": "Créateurs",
+    "live_monitoring": "Surveillance financière en temps réel active"
   }
 }

@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ Estas taxas serão aplicadas automaticamente no banco de dados (Prisma). O motor de pagamentos do FansMio lerá esses números em tempo real antes de processar cada transação.",
     "btn_syncing": "Sincronizando Core...",
     "btn_save_apply": "Salvar e Aplicar ao FansMio"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Radar Global (CEO)",
+    "subtitle": "Visão absoluta dos números de toda a plataforma.",
+    "gross_volume": "Volume Bruto Movido",
+    "platform_profit": "Seus Lucros (Comissão)",
+    "creator_debt": "Dívida com Criadores",
+    "total_users": "Usuários Totais",
+    "fans": "Fãs",
+    "creators": "Criadores",
+    "live_monitoring": "Monitoramento Financeiro em Tempo Real Ativo"
   }
 }

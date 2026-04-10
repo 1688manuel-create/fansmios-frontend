@@ -281,5 +281,17 @@
     "settings_warning": "⚠️ Bu ücretler veritabanı seviyesinde (Prisma) otomatik olarak uygulanacaktır. FansMio ödeme motoru, her işlemi gerçekleştirmeden önce bu sayıları gerçek zamanlı olarak okuyacaktır.",
     "btn_syncing": "Core Senkronize Ediliyor...",
     "btn_save_apply": "Kaydet ve FansMio'ya Uygula"
+  },
+
+  "AnalyticsDashboard": {
+    "title": "Küresel Radar (CEO)",
+    "subtitle": "Tüm platform rakamlarının mutlak vizyonu.",
+    "gross_volume": "Taşınan Brüt Hacim",
+    "platform_profit": "Kârınız (Komisyon)",
+    "creator_debt": "Yaratıcılara Borç",
+    "total_users": "Toplam Kullanıcı",
+    "fans": "Hayranlar",
+    "creators": "Yaratıcılar",
+    "live_monitoring": "Gerçek Zamanlı Finansal İzleme Aktif"
   }
 }
