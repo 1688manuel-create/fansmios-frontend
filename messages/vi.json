@@ -439,5 +439,24 @@
     "modal_scan_title": "Quét Sinh trắc học",
     "modal_scan_desc_1": "Video sẽ tự động dừng.",
     "modal_scan_desc_2": "Đảm bảo nói to và rõ ràng."
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ Hãy đặt một tiêu đề hấp dẫn cho buổi phát sóng của bạn.",
+    "alert_price_min": "⚠️ Mức giá tối thiểu cho một sự kiện PPV là $1.00 USD.",
+    "error_room_id": "Không thể lấy ID phòng.",
+    "error_server_conn": "Lỗi kết nối với máy chủ phát trực tuyến.",
+    "alert_lobby_prefix": "⚠️ Sảnh FansMio",
+    "btn_back": "Bảng điều khiển",
+    "title": "Bắt đầu phát sóng",
+    "lbl_covra_balance": "Số dư Covra: ",
+    "lbl_room_title": "Tiêu đề phòng",
+    "ph_room_title": "VD: Trò chuyện VIP + Quà tặng 🔥",
+    "lbl_private_access": "Quyền truy cập riêng tư (PPV)",
+    "desc_private_access": "Tính phí vào cửa bằng Covra Pay",
+    "lbl_ticket_price": "Giá vé (USD)",
+    "desc_revenue_share": "Bạn nhận được 70% mỗi vé được bán",
+    "btn_create_room": "TẠO PHÒNG VÀ PHÁT TRỰC TIẾP",
+    "footer_protected": "Phát sóng được bảo vệ bởi Covra Pay"
   }
 }

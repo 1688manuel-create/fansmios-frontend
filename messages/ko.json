@@ -439,5 +439,24 @@
     "modal_scan_title": "생체 스캔",
     "modal_scan_desc_1": "비디오가 자동으로 중지됩니다.",
     "modal_scan_desc_2": "크고 명확하게 말하십시오."
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ 스트림에 매력적인 제목을 지정하세요.",
+    "alert_price_min": "⚠️ PPV 이벤트의 최소 가격은 1.00 USD입니다.",
+    "error_room_id": "방 ID를 검색할 수 없습니다.",
+    "error_server_conn": "스트리밍 서버 연결 오류입니다.",
+    "alert_lobby_prefix": "⚠️ FansMio 로비",
+    "btn_back": "대시보드",
+    "title": "방송 시작",
+    "lbl_covra_balance": "Covra 잔액: ",
+    "lbl_room_title": "방 제목",
+    "ph_room_title": "예: VIP 채팅 + 경품 행사 🔥",
+    "lbl_private_access": "비공개 액세스(PPV)",
+    "desc_private_access": "Covra Pay로 입장료 청구",
+    "lbl_ticket_price": "티켓 가격(USD)",
+    "desc_revenue_share": "판매된 각 티켓의 70%를 받습니다",
+    "btn_create_room": "방 만들기 및 라이브 시작",
+    "footer_protected": "Covra Pay로 보호되는 방송"
   }
 }

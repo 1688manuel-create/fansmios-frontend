@@ -439,5 +439,24 @@
     "modal_scan_title": "Pemindaian Biometrik",
     "modal_scan_desc_1": "Video akan berhenti secara otomatis.",
     "modal_scan_desc_2": "Pastikan Anda berbicara dengan keras dan jelas."
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ Berikan judul yang menarik untuk siaran Anda.",
+    "alert_price_min": "⚠️ Harga minimum untuk acara PPV adalah $1.00 USD.",
+    "error_room_id": "Tidak dapat mengambil ID ruang.",
+    "error_server_conn": "Kesalahan menghubungkan ke server streaming.",
+    "alert_lobby_prefix": "⚠️ Lobi FansMio",
+    "btn_back": "Dasbor",
+    "title": "Mulai Siaran",
+    "lbl_covra_balance": "Saldo Covra: ",
+    "lbl_room_title": "Judul Ruangan",
+    "ph_room_title": "Mis: Obrolan VIP + Giveaway 🔥",
+    "lbl_private_access": "Akses Pribadi (PPV)",
+    "desc_private_access": "Kenakan biaya masuk dengan Covra Pay",
+    "lbl_ticket_price": "Harga Tiket (USD)",
+    "desc_revenue_share": "Anda menerima 70% dari setiap tiket yang terjual",
+    "btn_create_room": "BUAT RUANG & MULAI SIARAN",
+    "footer_protected": "Siaran Dilindungi oleh Covra Pay"
   }
 }

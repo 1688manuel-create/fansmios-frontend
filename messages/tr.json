@@ -439,5 +439,24 @@
     "modal_scan_title": "Biyometrik Tarama",
     "modal_scan_desc_1": "Video otomatik olarak duracaktır.",
     "modal_scan_desc_2": "Yüksek sesle ve net konuştuğunuzdan emin olun."
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ Yayınınız için ilgi çekici bir başlık girin.",
+    "alert_price_min": "⚠️ Bir PPV etkinliği için minimum fiyat 1.00 USD'dir.",
+    "error_room_id": "Oda kimliği alınamadı.",
+    "error_server_conn": "Yayın sunucusuna bağlanırken hata oluştu.",
+    "alert_lobby_prefix": "⚠️ FansMio Lobisi",
+    "btn_back": "Kontrol Paneli",
+    "title": "Yayını Başlat",
+    "lbl_covra_balance": "Covra Bakiyesi: ",
+    "lbl_room_title": "Oda Başlığı",
+    "ph_room_title": "Örn: VIP Sohbet + Çekiliş 🔥",
+    "lbl_private_access": "Özel Erişim (PPV)",
+    "desc_private_access": "Covra Pay ile giriş ücreti al",
+    "lbl_ticket_price": "Bilet Fiyatı (USD)",
+    "desc_revenue_share": "Satılan her biletin %70'ini alırsınız",
+    "btn_create_room": "ODA OLUŞTUR VE CANLI YAYINA GEÇ",
+    "footer_protected": "Covra Pay ile Korunan Yayın"
   }
 }

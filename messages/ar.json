@@ -439,5 +439,24 @@
     "modal_scan_title": "المسح البيومتري",
     "modal_scan_desc_1": "سيتوقف الفيديو تلقائيًا.",
     "modal_scan_desc_2": "تأكد من التحدث بصوت عالٍ وواضح."
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ أعطِ البث الخاص بك عنوانًا جذابًا.",
+    "alert_price_min": "⚠️ الحد الأدنى للسعر لحدث PPV هو 1.00 دولار أمريكي.",
+    "error_room_id": "تعذر استرداد معرف الغرفة.",
+    "error_server_conn": "خطأ في الاتصال بخادم البث.",
+    "alert_lobby_prefix": "⚠️ لوبي FansMio",
+    "btn_back": "لوحة القيادة",
+    "title": "بدء البث",
+    "lbl_covra_balance": "رصيد Covra: ",
+    "lbl_room_title": "عنوان الغرفة",
+    "ph_room_title": "مثال: دردشة VIP + هدايا 🔥",
+    "lbl_private_access": "وصول خاص (PPV)",
+    "desc_private_access": "فرض رسوم الدخول باستخدام Covra Pay",
+    "lbl_ticket_price": "سعر التذكرة (USD)",
+    "desc_revenue_share": "تتلقى 70% من كل تذكرة مباعة",
+    "btn_create_room": "إنشاء غرفة والبث المباشر",
+    "footer_protected": "بث محمي بواسطة Covra Pay"
   }
 }

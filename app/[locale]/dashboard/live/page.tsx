@@ -14,9 +14,11 @@ import {
   Lock,
   Wallet
 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function LiveSetupLobby() {
   const router = useRouter();
+  const t = useTranslations('LiveSetupLobby'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [title, setTitle] = useState('');
   const [isPPV, setIsPPV] = useState(false);
   const [price, setPrice] = useState<number | ''>('');
@@ -31,72 +33,72 @@ export default function LiveSetupLobby() {
   }, []);
 
   const handleStartLive = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const cleanTitle = title.trim();
+    const cleanTitle = title.trim();
 
-  // 🛡️ VALIDACIÓN DE TÍTULO
-  if (!cleanTitle) {
-    alert("⚠️ Ponle un título atractivo a tu transmisión.");
-    return;
-  }
-
-  const finalPrice = isPPV ? Number(price) : 0;
-
-  // 💰 VALIDACIÓN DE PRECIO PPV
-  if (isPPV && (!Number.isFinite(finalPrice) || finalPrice < 1)) {
-    alert("⚠️ El precio mínimo para un evento PPV es de $1.00 USD.");
-    return;
-  }
-
-  setIsStarting(true);
-
-  try {
-    // 🚀 CREACIÓN DEL EVENTO EN EL SERVIDOR
-    const res = await liveService.createStream(cleanTitle, isPPV, finalPrice);
-    const streamId = res?.streamId || res?.liveStream?.id;
-
-    if (!streamId) {
-      throw new Error("No se pudo obtener el ID de la sala.");
+    // 🛡️ VALIDACIÓN DE TÍTULO
+    if (!cleanTitle) {
+      alert(t('alert_title_required'));
+      return;
     }
 
-    // ⚡ TELETRANSPORTACIÓN A LA SALA
-    await router.push(`/live/${streamId}`);
-    
-  } catch (error: unknown) {
-    console.error("🚨 Error crítico al iniciar Live:", error);
+    const finalPrice = isPPV ? Number(price) : 0;
 
-    let errorMessage = "Error al conectar con el servidor de streaming.";
-
-    // 🕵️ ESTRATEGIA DE DETECCIÓN DE ERRORES
-    if (error instanceof Error) {
-      errorMessage = error.message;
+    // 💰 VALIDACIÓN DE PRECIO PPV
+    if (isPPV && (!Number.isFinite(finalPrice) || finalPrice < 1)) {
+      alert(t('alert_price_min'));
+      return;
     }
 
-    if (typeof error === "object" && error !== null && "response" in error) {
-      const err = error as {
-        response?: {
-          data?: {
-            error?: string;
-            message?: string;
+    setIsStarting(true);
+
+    try {
+      // 🚀 CREACIÓN DEL EVENTO EN EL SERVIDOR
+      const res = await liveService.createStream(cleanTitle, isPPV, finalPrice);
+      const streamId = res?.streamId || res?.liveStream?.id;
+
+      if (!streamId) {
+        throw new Error(t('error_room_id'));
+      }
+
+      // ⚡ TELETRANSPORTACIÓN A LA SALA
+      await router.push(`/live/${streamId}`);
+      
+    } catch (error: unknown) {
+      console.error("🚨 Error crítico al iniciar Live:", error);
+
+      let errorMessage = t('error_server_conn');
+
+      // 🕵️ ESTRATEGIA DE DETECCIÓN DE ERRORES
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as {
+          response?: {
+            data?: {
+              error?: string;
+              message?: string;
+            };
           };
         };
-      };
 
-      errorMessage =
-        err.response?.data?.error ||
-        err.response?.data?.message ||
-        errorMessage;
+        errorMessage =
+          err.response?.data?.error ||
+          err.response?.data?.message ||
+          errorMessage;
+      }
+
+      alert(`${t('alert_lobby_prefix')}: ${errorMessage}`);
+    } finally {
+      // ✅ SIEMPRE LIBERAMOS EL BOTÓN, PASE LO QUE PASE
+      setIsStarting(false);
     }
+  };
 
-    alert(`⚠️ FansMio Lobby: ${errorMessage}`);
-  } finally {
-    // ✅ SIEMPRE LIBERAMOS EL BOTÓN, PASE LO QUE PASE
-    setIsStarting(false);
-  }
-};
-
-  return (
+ return (
     <div className="min-h-screen bg-nm-base flex items-center justify-center p-4 relative overflow-hidden">
       
       {/* Luces de ambiente sutiles */}
@@ -107,7 +109,7 @@ export default function LiveSetupLobby() {
         onClick={() => router.push('/dashboard')} 
         className="absolute top-8 left-8 nm-btn p-3 rounded-full text-gray-400 hover:text-white transition-all flex items-center gap-2 font-bold text-xs uppercase tracking-widest"
       >
-        <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Panel de Control</span>
+        <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">{t('btn_back')}</span>
       </button>
 
       <div className="max-w-lg w-full animate-fade-in">
@@ -118,13 +120,13 @@ export default function LiveSetupLobby() {
             <div className="w-20 h-20 bg-black nm-inset rounded-3xl flex items-center justify-center mx-auto mb-6 border border-white/5 shadow-inner">
               <Tv className="w-10 h-10 text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight">Iniciar Transmisión</h1>
+            <h1 className="text-3xl font-black text-white tracking-tight">{t('title')}</h1>
             
             {/* Widget de Balance Táctico */}
             {userBalance !== null && (
                <div className="inline-flex items-center gap-2 mt-4 bg-white/5 px-4 py-1.5 rounded-full border border-white/5">
                   <Wallet className="w-3.5 h-3.5 text-green-500" />
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Balance Covra: <span className="text-white">${Number(userBalance || 0).toFixed(2)}</span></span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('lbl_covra_balance')} <span className="text-white">${Number(userBalance || 0).toFixed(2)}</span></span>
                </div>
             )}
           </div>
@@ -134,13 +136,13 @@ export default function LiveSetupLobby() {
             {/* TÍTULO DEL LIVE */}
             <div className="space-y-3">
               <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                <Sparkles className="w-3 h-3 text-red-500" /> Título de la Sala
+                <Sparkles className="w-3 h-3 text-red-500" /> {t('lbl_room_title')}
               </label>
               <input 
                 type="text" 
                 value={title} 
                 onChange={(e) => setTitle(e.target.value)} 
-                placeholder="Ej: Charla VIP + Sorteo 🔥" 
+                placeholder={t('ph_room_title')} 
                 className="w-full nm-inset bg-black border border-white/5 rounded-2xl px-6 py-4 text-white outline-none focus:border-red-500/50 transition-all font-bold placeholder:text-gray-700"
                 maxLength={60}
                 required
@@ -155,8 +157,8 @@ export default function LiveSetupLobby() {
                     <Lock className={`w-5 h-5 ${isPPV ? 'text-red-500' : 'text-gray-600'}`} />
                   </div>
                   <div>
-                    <p className="text-white font-black text-sm uppercase tracking-wide">Acceso Privado (PPV)</p>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Cobrar entrada con Covra Pay</p>
+                    <p className="text-white font-black text-sm uppercase tracking-wide">{t('lbl_private_access')}</p>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">{t('desc_private_access')}</p>
                   </div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -173,7 +175,7 @@ export default function LiveSetupLobby() {
               {isPPV && (
                 <div className="pt-6 border-t border-white/5 animate-slide-up">
                   <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2 block mb-3">
-                    Precio del Ticket (USD)
+                    {t('lbl_ticket_price')}
                   </label>
                   <div className="relative">
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 w-8 h-8 bg-black nm-inset rounded-lg flex items-center justify-center border border-white/5">
@@ -190,7 +192,7 @@ export default function LiveSetupLobby() {
                     />
                   </div>
                   <p className="text-[9px] text-gray-600 font-bold uppercase tracking-[0.15em] mt-3 text-center">
-                    Tú recibes el 70% de cada ticket vendido
+                    {t('desc_revenue_share')}
                   </p>
                 </div>
               )}
@@ -207,13 +209,13 @@ export default function LiveSetupLobby() {
               ) : (
                 <>
                   <Zap className="w-5 h-5 fill-white" />
-                  CREAR SALA Y SALIR AL AIRE
+                  {t('btn_create_room')}
                 </>
               )}
             </button>
             
             <p className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em] text-center flex items-center justify-center gap-2">
-              <ShieldCheck className="w-3 h-3" /> Transmisión Protegida por Covra Pay
+              <ShieldCheck className="w-3 h-3" /> {t('footer_protected')}
             </p>
           </form>
         </div>

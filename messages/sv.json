@@ -439,5 +439,24 @@
     "modal_scan_title": "Biometrisk skanning",
     "modal_scan_desc_1": "Videon stannar automatiskt.",
     "modal_scan_desc_2": "Se till att prata högt och tydligt."
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ Ge din ström en attraktiv titel.",
+    "alert_price_min": "⚠️ Minimipriset för ett PPV-evenemang är 1.00 USD.",
+    "error_room_id": "Kunde inte hämta rums-ID.",
+    "error_server_conn": "Fel vid anslutning till strömningsservern.",
+    "alert_lobby_prefix": "⚠️ FansMio Lobby",
+    "btn_back": "Instrumentpanel",
+    "title": "Starta Sändning",
+    "lbl_covra_balance": "Covra Saldo: ",
+    "lbl_room_title": "Rumstitel",
+    "ph_room_title": "T.ex.: VIP Chatt + Giveaway 🔥",
+    "lbl_private_access": "Privat Åtkomst (PPV)",
+    "desc_private_access": "Ta inträde med Covra Pay",
+    "lbl_ticket_price": "Biljettpris (USD)",
+    "desc_revenue_share": "Du får 70% av varje såld biljett",
+    "btn_create_room": "SKAPA RUM OCH SÄND LIVE",
+    "footer_protected": "Sändning skyddad av Covra Pay"
   }
 }

@@ -439,5 +439,24 @@
     "modal_scan_title": "Scan Biométrique",
     "modal_scan_desc_1": "La vidéo s'arrêtera automatiquement.",
     "modal_scan_desc_2": "Assurez-vous de parler fort et clairement."
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ Donnez un titre attrayant à votre diffusion.",
+    "alert_price_min": "⚠️ Le prix minimum pour un événement PPV est de 1,00 $ USD.",
+    "error_room_id": "Impossible d'obtenir l'ID de la salle.",
+    "error_server_conn": "Erreur de connexion au serveur de streaming.",
+    "alert_lobby_prefix": "⚠️ Lobby FansMio",
+    "btn_back": "Tableau de bord",
+    "title": "Démarrer la diffusion",
+    "lbl_covra_balance": "Solde Covra : ",
+    "lbl_room_title": "Titre de la salle",
+    "ph_room_title": "Ex : Discussion VIP + Cadeau 🔥",
+    "lbl_private_access": "Accès privé (PPV)",
+    "desc_private_access": "Faire payer l'entrée avec Covra Pay",
+    "lbl_ticket_price": "Prix du billet (USD)",
+    "desc_revenue_share": "Vous recevez 70 % de chaque billet vendu",
+    "btn_create_room": "CRÉER LA SALLE ET PASSER EN DIRECT",
+    "footer_protected": "Diffusion protégée par Covra Pay"
   }
 }

@@ -439,5 +439,24 @@
     "modal_scan_title": "Biometrische Scan",
     "modal_scan_desc_1": "De video stopt automatisch.",
     "modal_scan_desc_2": "Zorg ervoor dat je luid en duidelijk spreekt."
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ Geef je stream een aantrekkelijke titel.",
+    "alert_price_min": "⚠️ De minimumprijs voor een PPV-evenement is $1.00 USD.",
+    "error_room_id": "Kan de kamer-ID niet ophalen.",
+    "error_server_conn": "Fout bij verbinding met de streamingserver.",
+    "alert_lobby_prefix": "⚠️ FansMio Lobby",
+    "btn_back": "Dashboard",
+    "title": "Uitzending Starten",
+    "lbl_covra_balance": "Covra Saldo: ",
+    "lbl_room_title": "Kamertitel",
+    "ph_room_title": "Bijv: VIP Chat + Giveaway 🔥",
+    "lbl_private_access": "Privétoegang (PPV)",
+    "desc_private_access": "Toegangsprijs vragen met Covra Pay",
+    "lbl_ticket_price": "Ticketprijs (USD)",
+    "desc_revenue_share": "Je ontvangt 70% van elk verkocht ticket",
+    "btn_create_room": "KAMER MAKEN & LIVE GAAN",
+    "footer_protected": "Uitzending beschermd door Covra Pay"
   }
 }

@@ -439,5 +439,24 @@
     "modal_scan_title": "生物识别扫描",
     "modal_scan_desc_1": "视频将自动停止。",
     "modal_scan_desc_2": "确保大声清晰地说话。"
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ 请为您的直播起一个吸引人的标题。",
+    "alert_price_min": "⚠️ PPV 活动的最低价格为 1.00 美元。",
+    "error_room_id": "无法获取房间 ID。",
+    "error_server_conn": "连接到流媒体服务器时出错。",
+    "alert_lobby_prefix": "⚠️ FansMio 大厅",
+    "btn_back": "控制面板",
+    "title": "开始直播",
+    "lbl_covra_balance": "Covra 余额： ",
+    "lbl_room_title": "房间标题",
+    "ph_room_title": "例如：VIP 聊天 + 抽奖 🔥",
+    "lbl_private_access": "私人访问 (PPV)",
+    "desc_private_access": "使用 Covra Pay 收取入场费",
+    "lbl_ticket_price": "门票价格 (USD)",
+    "desc_revenue_share": "您将获得每张售出零票的 70%",
+    "btn_create_room": "创建房间并开播",
+    "footer_protected": "受 Covra Pay 保护的直播"
   }
 }

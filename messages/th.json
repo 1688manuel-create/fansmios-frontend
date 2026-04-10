@@ -439,5 +439,24 @@
     "modal_scan_title": "การสแกนไบโอเมตริก",
     "modal_scan_desc_1": "วิดีโอจะหยุดโดยอัตโนมัติ",
     "modal_scan_desc_2": "ตรวจสอบให้แน่ใจว่าคุณพูดเสียงดังและชัดเจน"
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ ตั้งชื่อสตรีมของคุณให้น่าสนใจ",
+    "alert_price_min": "⚠️ ราคาขั้นต่ำสำหรับกิจกรรม PPV คือ $1.00 USD",
+    "error_room_id": "ไม่สามารถดึงข้อมูล ID ห้องได้",
+    "error_server_conn": "เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์สตรีมมิ่ง",
+    "alert_lobby_prefix": "⚠️ ล็อบบี้ FansMio",
+    "btn_back": "แดชบอร์ด",
+    "title": "เริ่มการออกอากาศ",
+    "lbl_covra_balance": "ยอดคงเหลือ Covra: ",
+    "lbl_room_title": "ชื่อห้อง",
+    "ph_room_title": "เช่น แชท VIP + แจกของรางวัล 🔥",
+    "lbl_private_access": "การเข้าถึงส่วนตัว (PPV)",
+    "desc_private_access": "เรียกเก็บค่าเข้าชมด้วย Covra Pay",
+    "lbl_ticket_price": "ราคาตั๋ว (USD)",
+    "desc_revenue_share": "คุณได้รับ 70% ของตั๋วแต่ละใบที่ขายได้",
+    "btn_create_room": "สร้างห้องและถ่ายทอดสด",
+    "footer_protected": "การออกอากาศได้รับการคุ้มครองโดย Covra Pay"
   }
 }

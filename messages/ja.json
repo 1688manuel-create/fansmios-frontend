@@ -439,5 +439,24 @@
     "modal_scan_title": "生体認証スキャン",
     "modal_scan_desc_1": "ビデオは自動的に停止します。",
     "modal_scan_desc_2": "大きくてはっきりした声で話すようにしてください。"
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ 配信に魅力的なタイトルを付けてください。",
+    "alert_price_min": "⚠️ PPVイベントの最低価格は1.00 USDです。",
+    "error_room_id": "ルームIDを取得できませんでした。",
+    "error_server_conn": "ストリーミングサーバーへの接続エラー。",
+    "alert_lobby_prefix": "⚠️ FansMioロビー",
+    "btn_back": "ダッシュボード",
+    "title": "配信を開始",
+    "lbl_covra_balance": "Covra残高： ",
+    "lbl_room_title": "ルームタイトル",
+    "ph_room_title": "例：VIPチャット＋プレゼント 🔥",
+    "lbl_private_access": "プライベートアクセス（PPV）",
+    "desc_private_access": "Covra Payで入場料を請求する",
+    "lbl_ticket_price": "チケット価格（USD）",
+    "desc_revenue_share": "販売された各チケットの70％を受け取ります",
+    "btn_create_room": "ルームを作成してライブを開始",
+    "footer_protected": "Covra Payによって保護された配信"
   }
 }

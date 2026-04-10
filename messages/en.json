@@ -438,5 +438,24 @@
     "modal_scan_title": "Biometric Scan",
     "modal_scan_desc_1": "The video will stop automatically.",
     "modal_scan_desc_2": "Make sure to speak loudly and clearly."
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ Give your stream an attractive title.",
+    "alert_price_min": "⚠️ The minimum price for a PPV event is $1.00 USD.",
+    "error_room_id": "Could not retrieve the room ID.",
+    "error_server_conn": "Error connecting to the streaming server.",
+    "alert_lobby_prefix": "⚠️ FansMio Lobby",
+    "btn_back": "Dashboard",
+    "title": "Start Broadcast",
+    "lbl_covra_balance": "Covra Balance: ",
+    "lbl_room_title": "Room Title",
+    "ph_room_title": "e.g., VIP Chat + Giveaway 🔥",
+    "lbl_private_access": "Private Access (PPV)",
+    "desc_private_access": "Charge entry with Covra Pay",
+    "lbl_ticket_price": "Ticket Price (USD)",
+    "desc_revenue_share": "You receive 70% of each ticket sold",
+    "btn_create_room": "CREATE ROOM & GO LIVE",
+    "footer_protected": "Broadcast Protected by Covra Pay"
   }
 }

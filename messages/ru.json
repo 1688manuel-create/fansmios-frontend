@@ -439,5 +439,24 @@
     "modal_scan_title": "Биометрическое сканирование",
     "modal_scan_desc_1": "Видео остановится автоматически.",
     "modal_scan_desc_2": "Обязательно говорите громко и четко."
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ Дайте своей трансляции привлекательное название.",
+    "alert_price_min": "⚠️ Минимальная цена для PPV-события составляет 1.00 USD.",
+    "error_room_id": "Не удалось получить ID комнаты.",
+    "error_server_conn": "Ошибка подключения к серверу стриминга.",
+    "alert_lobby_prefix": "⚠️ Лобби FansMio",
+    "btn_back": "Панель управления",
+    "title": "Начать трансляцию",
+    "lbl_covra_balance": "Баланс Covra: ",
+    "lbl_room_title": "Название комнаты",
+    "ph_room_title": "Напр: VIP-чат + Розыгрыш 🔥",
+    "lbl_private_access": "Закрытый доступ (PPV)",
+    "desc_private_access": "Взимать плату за вход с Covra Pay",
+    "lbl_ticket_price": "Цена билета (USD)",
+    "desc_revenue_share": "Вы получаете 70% от каждого проданного билета",
+    "btn_create_room": "СОЗДАТЬ КОМНАТУ И ВЫЙТИ В ЭФИР",
+    "footer_protected": "Трансляция защищена Covra Pay"
   }
 }

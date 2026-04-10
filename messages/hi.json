@@ -439,5 +439,24 @@
     "modal_scan_title": "बायोमेट्रिक स्कैन",
     "modal_scan_desc_1": "वीडियो स्वतः बंद हो जाएगा।",
     "modal_scan_desc_2": "जोर से और स्पष्ट बोलना सुनिश्चित करें।"
+  },
+
+  "LiveSetupLobby": {
+    "alert_title_required": "⚠️ अपने स्ट्रीम को एक आकर्षक शीर्षक दें।",
+    "alert_price_min": "⚠️ PPV ईवेंट के लिए न्यूनतम मूल्य $1.00 USD है।",
+    "error_room_id": "रूम आईडी प्राप्त नहीं की जा सकी।",
+    "error_server_conn": "स्ट्रीमिंग सर्वर से कनेक्ट करने में त्रुटि।",
+    "alert_lobby_prefix": "⚠️ FansMio लॉबी",
+    "btn_back": "डैशबोर्ड",
+    "title": "प्रसारण शुरू करें",
+    "lbl_covra_balance": "Covra बैलेंस: ",
+    "lbl_room_title": "कक्ष का शीर्षक",
+    "ph_room_title": "उदा: VIP चैट + सस्ता 🔥",
+    "lbl_private_access": "निजी पहुँच (PPV)",
+    "desc_private_access": "Covra Pay के साथ प्रवेश शुल्क लें",
+    "lbl_ticket_price": "टिकट की कीमत (USD)",
+    "desc_revenue_share": "बेचे गए प्रत्येक टिकट का 70% आपको मिलता है",
+    "btn_create_room": "रूम बनाएं और लाइव जाएं",
+    "footer_protected": "Covra Pay द्वारा संरक्षित प्रसारण"
   }
 }
