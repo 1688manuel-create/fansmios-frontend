@@ -305,5 +305,29 @@
     "btn_remove": "Verwijderen ✕",
     "locked_status": "Vergrendeld",
     "click_to_unlock": "Klik om te ontgrendelen"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "Alleen makers kunnen de Broadcast-tool gebruiken.",
+    "alert_missing_content": "Je moet een bericht of een bestand toevoegen.",
+    "alert_invalid_price": "Definieer een geldige prijs voor je PPV-bericht.",
+    "alert_confirm_send": "🚨 Je staat op het punt dit bericht naar AL je actieve fans te sturen. Doorgaan?",
+    "alert_success": "🚀 Berichtenreeks succesvol verzonden naar al je fans!",
+    "alert_error": "Er is een fout opgetreden bij het verzenden van de uitzending. Controleer je verbinding.",
+    "nav_title": "Massa Berichten",
+    "btn_back": "Terug",
+    "banner_title": "Vermenigvuldig uw omzet met 1 klik",
+    "banner_desc_1": "Stuur vergrendelde foto's of video's (PPV) rechtstreeks naar de inbox van",
+    "banner_desc_2": "al uw actieve abonnees",
+    "banner_desc_3": "tegelijkertijd.",
+    "lbl_recipients": "Ontvangers:",
+    "val_recipients": "Al uw actieve VIP's",
+    "lbl_message": "Bericht Tekst",
+    "ph_message": "Hé lieverd! Ik heb deze speciale video voor je gemaakt, ontgrendel hem...",
+    "btn_attach": "Bijvoegen",
+    "btn_charge_ppv": "PPV in rekening brengen",
+    "ph_price": "Prijs",
+    "btn_processing": "Verzendingen verwerken...",
+    "btn_send": "Verzenden naar Alle Fans"
   }
 }

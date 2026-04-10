@@ -305,5 +305,29 @@
     "btn_remove": "Hapus ✕",
     "locked_status": "Terkunci",
     "click_to_unlock": "Klik untuk membuka kunci"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "Hanya kreator yang dapat menggunakan alat Siaran.",
+    "alert_missing_content": "Anda harus menyertakan pesan atau file.",
+    "alert_invalid_price": "Tentukan harga yang valid untuk pesan PPV Anda.",
+    "alert_confirm_send": "🚨 Anda akan mengirim pesan ini ke SEMUA penggemar aktif Anda. Lanjutkan?",
+    "alert_success": "🚀 Berondongan pesan berhasil dikirim ke semua penggemar Anda!",
+    "alert_error": "Terjadi kesalahan saat mengirim siaran. Periksa koneksi Anda.",
+    "nav_title": "Pesan Massal",
+    "btn_back": "Kembali",
+    "banner_title": "Lipatgandakan penjualan Anda dengan 1 klik",
+    "banner_desc_1": "Kirim foto atau video terkunci (PPV) langsung ke kotak masuk",
+    "banner_desc_2": "semua pelanggan aktif Anda",
+    "banner_desc_3": "pada saat yang sama.",
+    "lbl_recipients": "Penerima:",
+    "val_recipients": "Semua VIP Aktif Anda",
+    "lbl_message": "Teks Pesan",
+    "ph_message": "Hai sayang! Aku membuat video khusus ini untukmu, buka kuncinya...",
+    "btn_attach": "Lampirkan",
+    "btn_charge_ppv": "Isi Daya PPV",
+    "ph_price": "Harga",
+    "btn_processing": "Memproses pengiriman...",
+    "btn_send": "Kirim ke Semua Penggemar"
   }
 }

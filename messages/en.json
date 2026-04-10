@@ -304,5 +304,29 @@
     "btn_remove": "Remove ✕",
     "locked_status": "Locked",
     "click_to_unlock": "Click to unlock"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "Only creators can use the Broadcast tool.",
+    "alert_missing_content": "You must include a message or a file.",
+    "alert_invalid_price": "Define a valid price for your PPV message.",
+    "alert_confirm_send": "🚨 You are about to send this message to ALL your active fans. Continue?",
+    "alert_success": "🚀 Message burst successfully sent to all your fans!",
+    "alert_error": "There was an error sending the broadcast. Check your connection.",
+    "nav_title": "Mass Messaging",
+    "btn_back": "Back",
+    "banner_title": "Multiply your sales with 1 click",
+    "banner_desc_1": "Send locked photos or videos (PPV) directly to the inbox of",
+    "banner_desc_2": "all your active subscribers",
+    "banner_desc_3": "at the same time.",
+    "lbl_recipients": "Recipients:",
+    "val_recipients": "All your Active VIPs",
+    "lbl_message": "Message Text",
+    "ph_message": "Hey love! I made this special video for you, unlock it...",
+    "btn_attach": "Attach",
+    "btn_charge_ppv": "Charge PPV",
+    "ph_price": "Price",
+    "btn_processing": "Processing sends...",
+    "btn_send": "Send to All Fans"
   }
 }

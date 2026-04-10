@@ -305,5 +305,29 @@
     "btn_remove": "Quitar ✕",
     "locked_status": "Bloqueado",
     "click_to_unlock": "Haz clic para ir a desbloquearlo"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "Solo los creadores pueden usar la herramienta de Broadcast.",
+    "alert_missing_content": "Debes incluir un mensaje o un archivo.",
+    "alert_invalid_price": "Define un precio válido para tu mensaje PPV.",
+    "alert_confirm_send": "🚨 Estás a punto de enviar este mensaje a TODOS tus fans activos. ¿Continuar?",
+    "alert_success": "🚀 ¡Ráfaga de mensajes enviada con éxito a todos tus fans!",
+    "alert_error": "Hubo un error al enviar el broadcast. Revisa tu conexión.",
+    "nav_title": "Mensajería Masiva",
+    "btn_back": "Volver",
+    "banner_title": "Multiplica tus ventas con 1 clic",
+    "banner_desc_1": "Envía fotos o videos bloqueados (PPV) directamente a la bandeja de entrada de",
+    "banner_desc_2": "todos tus suscriptores activos",
+    "banner_desc_3": "al mismo tiempo.",
+    "lbl_recipients": "Destinatarios:",
+    "val_recipients": "Todos tus VIPs Activos",
+    "lbl_message": "Texto del Mensaje",
+    "ph_message": "¡Hola amor! Te hice este video especial, desbloquéalo...",
+    "btn_attach": "Adjuntar",
+    "btn_charge_ppv": "Cobrar PPV",
+    "ph_price": "Precio",
+    "btn_processing": "Procesando envíos...",
+    "btn_send": "Enviar a Todos los Fans"
   }
 }

@@ -305,5 +305,29 @@
     "btn_remove": "Ta bort ✕",
     "locked_status": "Låst",
     "click_to_unlock": "Klicka för att låsa upp"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "Endast skapare kan använda sändningsverktyget.",
+    "alert_missing_content": "Du måste inkludera ett meddelande eller en fil.",
+    "alert_invalid_price": "Definiera ett giltigt pris för ditt PPV-meddelande.",
+    "alert_confirm_send": "🚨 Du är på väg att skicka det här meddelandet till ALLA dina aktiva fans. Fortsätt?",
+    "alert_success": "🚀 Meddelandeskur skickad till alla dina fans!",
+    "alert_error": "Det uppstod ett fel när sändningen skickades. Kontrollera din anslutning.",
+    "nav_title": "Massmeddelanden",
+    "btn_back": "Tillbaka",
+    "banner_title": "Multiplicera din försäljning med 1 klick",
+    "banner_desc_1": "Skicka låsta foton eller videor (PPV) direkt till inkorgen för",
+    "banner_desc_2": "alla dina aktiva prenumeranter",
+    "banner_desc_3": "samtidigt.",
+    "lbl_recipients": "Mottagare:",
+    "val_recipients": "Alla dina aktiva VIPs",
+    "lbl_message": "Meddelandetext",
+    "ph_message": "Hej älskling! Jag gjorde den här speciella videon till dig, lås upp den...",
+    "btn_attach": "Bifoga",
+    "btn_charge_ppv": "Ta betalt för PPV",
+    "ph_price": "Pris",
+    "btn_processing": "Bearbetar sändningar...",
+    "btn_send": "Skicka till Alla Fans"
   }
 }

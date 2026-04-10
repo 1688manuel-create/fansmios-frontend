@@ -305,5 +305,29 @@
     "btn_remove": "移除 ✕",
     "locked_status": "已锁定",
     "click_to_unlock": "点击解锁"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "只有创作者可以使用群发工具。",
+    "alert_missing_content": "您必须包含一条消息或一个文件。",
+    "alert_invalid_price": "为您的 PPV 消息定义一个有效的价格。",
+    "alert_confirm_send": "🚨 您即将向所有活跃的粉丝发送此消息。继续吗？",
+    "alert_success": "🚀 消息爆发已成功发送给您所有的粉丝！",
+    "alert_error": "发送群发消息时出错。请检查您的连接。",
+    "nav_title": "群发消息",
+    "btn_back": "返回",
+    "banner_title": "一键让您的销售额翻倍",
+    "banner_desc_1": "将锁定的照片或视频 (PPV) 直接发送到",
+    "banner_desc_2": "所有活跃订阅者",
+    "banner_desc_3": "的收件箱中。",
+    "lbl_recipients": "收件人：",
+    "val_recipients": "您所有活跃的 VIP",
+    "lbl_message": "消息文本",
+    "ph_message": "亲爱的！我为你制作了这个特别的视频，解锁它...",
+    "btn_attach": "附件",
+    "btn_charge_ppv": "收取 PPV",
+    "ph_price": "价格",
+    "btn_processing": "正在处理发送...",
+    "btn_send": "发送给所有粉丝"
   }
 }

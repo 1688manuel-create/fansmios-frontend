@@ -305,5 +305,29 @@
     "btn_remove": "削除 ✕",
     "locked_status": "ロック中",
     "click_to_unlock": "クリックしてロック解除"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "クリエイターのみがブロードキャストツールを使用できます。",
+    "alert_missing_content": "メッセージまたはファイルを含める必要があります。",
+    "alert_invalid_price": "PPVメッセージの有効な価格を定義してください。",
+    "alert_confirm_send": "🚨 このメッセージをすべてのアクティブなファンに送信しようとしています。続行しますか？",
+    "alert_success": "🚀 ファン全員にメッセージを一斉送信しました！",
+    "alert_error": "ブロードキャストの送信中にエラーが発生しました。接続を確認してください。",
+    "nav_title": "一斉送信",
+    "btn_back": "戻る",
+    "banner_title": "1クリックで売上を倍増",
+    "banner_desc_1": "ロックされた写真やビデオ (PPV) を、",
+    "banner_desc_2": "すべてのアクティブな購読者",
+    "banner_desc_3": "の受信トレイに直接同時に送信します。",
+    "lbl_recipients": "宛先:",
+    "val_recipients": "すべてのアクティブなVIP",
+    "lbl_message": "メッセージテキスト",
+    "ph_message": "ねえ愛してる！あなたのためにこの特別なビデオを作りました、ロックを解除して...",
+    "btn_attach": "添付",
+    "btn_charge_ppv": "PPVを請求する",
+    "ph_price": "価格",
+    "btn_processing": "送信を処理中...",
+    "btn_send": "すべてのファンに送信"
   }
 }

@@ -305,5 +305,29 @@
     "btn_remove": "제거 ✕",
     "locked_status": "잠김",
     "click_to_unlock": "잠금 해제하려면 클릭하세요"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "크리에이터만 브로드캐스트 도구를 사용할 수 있습니다.",
+    "alert_missing_content": "메시지나 파일을 포함해야 합니다.",
+    "alert_invalid_price": "PPV 메시지에 대한 유효한 가격을 정의하세요.",
+    "alert_confirm_send": "🚨 이 메시지를 활성 팬 모두에게 보내려고 합니다. 계속하시겠습니까?",
+    "alert_success": "🚀 메시지 버스트가 모든 팬에게 성공적으로 전송되었습니다!",
+    "alert_error": "브로드캐스트를 전송하는 중 오류가 발생했습니다. 연결을 확인하세요.",
+    "nav_title": "대량 메시지",
+    "btn_back": "뒤로",
+    "banner_title": "클릭 1번으로 판매 증대",
+    "banner_desc_1": "잠긴 사진이나 동영상(PPV)을 ",
+    "banner_desc_2": "모든 활성 구독자",
+    "banner_desc_3": "의 받은 편지함으로 동시에 직접 보냅니다.",
+    "lbl_recipients": "수신자:",
+    "val_recipients": "모든 활성 VIP",
+    "lbl_message": "메시지 텍스트",
+    "ph_message": "안녕 내 사랑! 널 위해 특별한 영상을 만들었어, 잠금을 해제해...",
+    "btn_attach": "첨부",
+    "btn_charge_ppv": "PPV 청구",
+    "ph_price": "가격",
+    "btn_processing": "전송 처리 중...",
+    "btn_send": "모든 팬에게 보내기"
   }
 }

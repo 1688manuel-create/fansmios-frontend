@@ -305,5 +305,29 @@
     "btn_remove": "Usuń ✕",
     "locked_status": "Zablokowane",
     "click_to_unlock": "Kliknij, aby odblokować"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "Tylko twórcy mogą korzystać z narzędzia Transmisji.",
+    "alert_missing_content": "Musisz dołączyć wiadomość lub plik.",
+    "alert_invalid_price": "Zdefiniuj prawidłową cenę dla swojej wiadomości PPV.",
+    "alert_confirm_send": "🚨 Zamierzasz wysłać tę wiadomość do WSZYSTKICH swoich aktywnych fanów. Kontynuować?",
+    "alert_success": "🚀 Seria wiadomości pomyślnie wysłana do wszystkich Twoich fanów!",
+    "alert_error": "Wystąpił błąd podczas wysyłania transmisji. Sprawdź swoje połączenie.",
+    "nav_title": "Masowe Wiadomości",
+    "btn_back": "Wróć",
+    "banner_title": "Zwiększ swoją sprzedaż jednym kliknięciem",
+    "banner_desc_1": "Wysyłaj zablokowane zdjęcia lub wideo (PPV) bezpośrednio do skrzynek odbiorczych",
+    "banner_desc_2": "wszystkich swoich aktywnych subskrybentów",
+    "banner_desc_3": "w tym samym czasie.",
+    "lbl_recipients": "Odbiorcy:",
+    "val_recipients": "Wszyscy Twoi Aktywni VIP",
+    "lbl_message": "Tekst Wiadomości",
+    "ph_message": "Hej kochanie! Zrobiłam to specjalne wideo dla ciebie, odblokuj je...",
+    "btn_attach": "Załącz",
+    "btn_charge_ppv": "Pobierz opłatę PPV",
+    "ph_price": "Cena",
+    "btn_processing": "Przetwarzanie wysyłania...",
+    "btn_send": "Wyślij do Wszystkich Fanów"
   }
 }

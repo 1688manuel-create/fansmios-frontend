@@ -305,5 +305,29 @@
     "btn_remove": "Retirer ✕",
     "locked_status": "Verrouillé",
     "click_to_unlock": "Cliquez pour déverrouiller"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "Seuls les créateurs peuvent utiliser l'outil de diffusion.",
+    "alert_missing_content": "Vous devez inclure un message ou un fichier.",
+    "alert_invalid_price": "Définissez un prix valide pour votre message PPV.",
+    "alert_confirm_send": "🚨 Vous êtes sur le point d'envoyer ce message à TOUS vos fans actifs. Continuer ?",
+    "alert_success": "🚀 Rafale de messages envoyée avec succès à tous vos fans !",
+    "alert_error": "Erreur lors de l'envoi de la diffusion. Vérifiez votre connexion.",
+    "nav_title": "Messagerie de Masse",
+    "btn_back": "Retour",
+    "banner_title": "Multipliez vos ventes en 1 clic",
+    "banner_desc_1": "Envoyez des photos ou vidéos verrouillées (PPV) directement dans la boîte de réception de",
+    "banner_desc_2": "tous vos abonnés actifs",
+    "banner_desc_3": "en même temps.",
+    "lbl_recipients": "Destinataires :",
+    "val_recipients": "Tous vos VIPs Actifs",
+    "lbl_message": "Texte du message",
+    "ph_message": "Coucou mon amour ! J'ai fait cette vidéo spéciale pour toi, débloque-la...",
+    "btn_attach": "Joindre",
+    "btn_charge_ppv": "Faire payer PPV",
+    "ph_price": "Prix",
+    "btn_processing": "Traitement des envois...",
+    "btn_send": "Envoyer à Tous les Fans"
   }
 }

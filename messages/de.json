@@ -305,5 +305,29 @@
     "btn_remove": "Entfernen ✕",
     "locked_status": "Gesperrt",
     "click_to_unlock": "Klicken zum Entsperren"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "Nur Creators können das Broadcast-Tool verwenden.",
+    "alert_missing_content": "Sie müssen eine Nachricht oder eine Datei beifügen.",
+    "alert_invalid_price": "Legen Sie einen gültigen Preis für Ihre PPV-Nachricht fest.",
+    "alert_confirm_send": "🚨 Sie sind dabei, diese Nachricht an ALLE Ihre aktiven Fans zu senden. Fortfahren?",
+    "alert_success": "🚀 Nachrichten-Salve erfolgreich an alle Ihre Fans gesendet!",
+    "alert_error": "Fehler beim Senden des Broadcasts. Überprüfen Sie Ihre Verbindung.",
+    "nav_title": "Massen-Nachrichten",
+    "btn_back": "Zurück",
+    "banner_title": "Multiplizieren Sie Ihre Verkäufe mit 1 Klick",
+    "banner_desc_1": "Senden Sie gesperrte Fotos oder Videos (PPV) direkt in den Posteingang von",
+    "banner_desc_2": "all Ihren aktiven Abonnenten",
+    "banner_desc_3": "zur gleichen Zeit.",
+    "lbl_recipients": "Empfänger:",
+    "val_recipients": "Alle Ihre aktiven VIPs",
+    "lbl_message": "Nachrichtentext",
+    "ph_message": "Hey Liebling! Ich habe dieses spezielle Video für dich gemacht, schalte es frei...",
+    "btn_attach": "Anhängen",
+    "btn_charge_ppv": "PPV berechnen",
+    "ph_price": "Preis",
+    "btn_processing": "Sendevorgang läuft...",
+    "btn_send": "An alle Fans senden"
   }
 }

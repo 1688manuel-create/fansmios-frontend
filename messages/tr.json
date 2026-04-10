@@ -305,5 +305,29 @@
     "btn_remove": "Kaldır ✕",
     "locked_status": "Kilitli",
     "click_to_unlock": "Kilidi açmak için tıkla"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "Sadece yaratıcılar Yayın aracını kullanabilir.",
+    "alert_missing_content": "Bir mesaj veya dosya eklemelisiniz.",
+    "alert_invalid_price": "PPV mesajınız için geçerli bir fiyat belirleyin.",
+    "alert_confirm_send": "🚨 Bu mesajı TÜM aktif hayranlarınıza göndermek üzeresiniz. Devam edilsin mi?",
+    "alert_success": "🚀 Mesaj yağmuru tüm hayranlarınıza başarıyla gönderildi!",
+    "alert_error": "Yayın gönderilirken bir hata oluştu. Bağlantınızı kontrol edin.",
+    "nav_title": "Toplu Mesajlaşma",
+    "btn_back": "Geri",
+    "banner_title": "Satışlarınızı 1 tıklamayla katlayın",
+    "banner_desc_1": "Kilitli fotoğraf veya videoları (PPV) doğrudan",
+    "banner_desc_2": "tüm aktif abonelerinizin",
+    "banner_desc_3": "gelen kutusuna aynı anda gönderin.",
+    "lbl_recipients": "Alıcılar:",
+    "val_recipients": "Tüm Aktif VIP'leriniz",
+    "lbl_message": "Mesaj Metni",
+    "ph_message": "Selam aşkım! Senin için bu özel videoyu çektim, kilidini aç...",
+    "btn_attach": "Ekle",
+    "btn_charge_ppv": "PPV Ücretlendir",
+    "ph_price": "Fiyat",
+    "btn_processing": "Gönderimler işleniyor...",
+    "btn_send": "Tüm Hayranlara Gönder"
   }
 }

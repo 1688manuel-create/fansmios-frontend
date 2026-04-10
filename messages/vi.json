@@ -305,5 +305,29 @@
     "btn_remove": "Gỡ bỏ ✕",
     "locked_status": "Đã khóa",
     "click_to_unlock": "Nhấp để mở khóa"
+  },
+
+  "BroadcastPage": {
+    "alert_only_creators": "Chỉ người sáng tạo mới có thể sử dụng công cụ Phát sóng.",
+    "alert_missing_content": "Bạn phải bao gồm một tin nhắn hoặc một tập tin.",
+    "alert_invalid_price": "Xác định một mức giá hợp lệ cho tin nhắn PPV của bạn.",
+    "alert_confirm_send": "🚨 Bạn sắp gửi tin nhắn này đến TẤT CẢ những người hâm mộ đang hoạt động của mình. Tiếp tục?",
+    "alert_success": "🚀 Loạt tin nhắn đã được gửi thành công đến tất cả người hâm mộ của bạn!",
+    "alert_error": "Đã xảy ra lỗi khi gửi chương trình phát sóng. Kiểm tra kết nối của bạn.",
+    "nav_title": "Nhắn tin hàng loạt",
+    "btn_back": "Trở lại",
+    "banner_title": "Nhân nhân doanh số bán hàng của bạn với 1 cú nhấp chuột",
+    "banner_desc_1": "Gửi ảnh hoặc video bị khóa (PPV) trực tiếp vào hộp thư đến của",
+    "banner_desc_2": "tất cả những người đăng ký đang hoạt động của bạn",
+    "banner_desc_3": "cùng một lúc.",
+    "lbl_recipients": "Người nhận:",
+    "val_recipients": "Tất cả VIP đang hoạt động của bạn",
+    "lbl_message": "Nội dung tin nhắn",
+    "ph_message": "Chào tình yêu! Em đã làm video đặc biệt này cho anh, hãy mở khóa nó nhé...",
+    "btn_attach": "Đính kèm",
+    "btn_charge_ppv": "Tính phí PPV",
+    "ph_price": "Giá",
+    "btn_processing": "Đang xử lý gửi...",
+    "btn_send": "Gửi cho Tất cả Người hâm mộ"
   }
 }

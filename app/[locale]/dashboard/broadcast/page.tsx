@@ -10,9 +10,11 @@ import {
   Megaphone, ArrowLeft, Image as ImageIcon, Lock, 
   Send, Users, Loader2, Sparkles, DollarSign, X
 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function BroadcastPage() {
   const router = useRouter();
+  const t = useTranslations('BroadcastPage'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [content, setContent] = useState('');
   const [isPPV, setIsPPV] = useState(false);
   const [price, setPrice] = useState('');
@@ -25,10 +27,10 @@ export default function BroadcastPage() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (user.role !== 'CREATOR' && user.role !== 'ADMIN') {
-      alert("Solo los creadores pueden usar la herramienta de Broadcast.");
+      alert(t('alert_only_creators'));
       router.push('/dashboard');
     }
-  }, [router]);
+  }, [router, t]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -40,15 +42,15 @@ export default function BroadcastPage() {
 
   const handleSendBroadcast = async () => {
     if (!content.trim() && !selectedFile) {
-      alert("Debes incluir un mensaje o un archivo.");
+      alert(t('alert_missing_content'));
       return;
     }
     if (isPPV && (!price || Number(price) <= 0)) {
-      alert("Define un precio válido para tu mensaje PPV.");
+      alert(t('alert_invalid_price'));
       return;
     }
 
-    const confirmSend = window.confirm("🚨 Estás a punto de enviar este mensaje a TODOS tus fans activos. ¿Continuar?");
+    const confirmSend = window.confirm(t('alert_confirm_send'));
     if (!confirmSend) return;
 
     setIsSending(true);
@@ -60,7 +62,7 @@ export default function BroadcastPage() {
         selectedFile
       );
       
-      alert("🚀 ¡Ráfaga de mensajes enviada con éxito a todos tus fans!");
+      alert(t('alert_success'));
       setContent('');
       setIsPPV(false);
       setPrice('');
@@ -68,7 +70,7 @@ export default function BroadcastPage() {
       setFilePreview(null);
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al enviar el broadcast. Revisa tu conexión.");
+      alert(t('alert_error'));
     } finally {
       setIsSending(false);
     }
@@ -86,10 +88,10 @@ export default function BroadcastPage() {
             <div className="w-10 h-10 nm-inset bg-black rounded-xl flex items-center justify-center text-purple-500 border border-purple-500/20">
               <Megaphone className="w-5 h-5" />
             </div>
-            Mensajería Masiva
+            {t('nav_title')}
           </h1>
           <button onClick={() => router.push('/dashboard')} className="text-sm nm-btn text-gray-300 px-5 py-2.5 rounded-full hover:text-white transition-colors font-bold flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" /> Volver
+            <ArrowLeft className="w-4 h-4" /> {t('btn_back')}
           </button>
         </nav>
 
@@ -101,8 +103,8 @@ export default function BroadcastPage() {
               <Sparkles className="w-6 h-6 text-purple-400" />
             </div>
             <div>
-              <h2 className="text-white font-black text-lg">Multiplica tus ventas con 1 clic</h2>
-              <p className="text-gray-400 text-sm font-medium">Envía fotos o videos bloqueados (PPV) directamente a la bandeja de entrada de <strong>todos tus suscriptores activos</strong> al mismo tiempo.</p>
+              <h2 className="text-white font-black text-lg">{t('banner_title')}</h2>
+              <p className="text-gray-400 text-sm font-medium">{t('banner_desc_1')} <strong>{t('banner_desc_2')}</strong> {t('banner_desc_3')}</p>
             </div>
           </div>
 
@@ -113,17 +115,17 @@ export default function BroadcastPage() {
               {/* Destinatarios */}
               <div className="flex items-center gap-3 text-gray-300 font-bold text-sm bg-white/5 p-4 rounded-xl border border-white/5">
                 <Users className="w-5 h-5 text-blue-400" />
-                <span>Destinatarios:</span>
-                <span className="text-blue-400 bg-blue-500/10 px-3 py-1 rounded-md border border-blue-500/20">Todos tus VIPs Activos</span>
+                <span>{t('lbl_recipients')}</span>
+                <span className="text-blue-400 bg-blue-500/10 px-3 py-1 rounded-md border border-blue-500/20">{t('val_recipients')}</span>
               </div>
 
               {/* Mensaje */}
               <div>
-                <label className="text-[10px] text-gray-500 font-black uppercase tracking-widest block mb-2 pl-2">Texto del Mensaje</label>
+                <label className="text-[10px] text-gray-500 font-black uppercase tracking-widest block mb-2 pl-2">{t('lbl_message')}</label>
                 <textarea 
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  placeholder="¡Hola amor! Te hice este video especial, desbloquéalo..."
+                  placeholder={t('ph_message')}
                   className="w-full nm-inset rounded-2xl p-5 text-white outline-none focus:border-purple-500/50 transition-colors resize-none placeholder:text-gray-600 font-medium"
                   rows={4}
                 />
@@ -149,11 +151,11 @@ export default function BroadcastPage() {
                 <div className="flex gap-3 w-full sm:w-auto">
                   <input type="file" accept="image/*,video/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
                   <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-5 py-3 nm-btn text-gray-300 hover:text-white transition-colors font-bold rounded-xl flex-1 sm:flex-none justify-center">
-                    <ImageIcon className="w-4 h-4" /> Adjuntar
+                    <ImageIcon className="w-4 h-4" /> {t('btn_attach')}
                   </button>
                   
                   <button onClick={() => setIsPPV(!isPPV)} className={`flex items-center gap-2 px-5 py-3 nm-btn font-bold rounded-xl transition-all flex-1 sm:flex-none justify-center ${isPPV ? 'text-green-400 border border-green-500/30 shadow-[inset_0_0_10px_rgba(34,197,94,0.1)]' : 'text-gray-500 hover:text-yellow-500'}`}>
-                    <Lock className="w-4 h-4" /> Cobrar PPV
+                    <Lock className="w-4 h-4" /> {t('btn_charge_ppv')}
                   </button>
                 </div>
 
@@ -163,7 +165,7 @@ export default function BroadcastPage() {
                     <input 
                       type="number" min="1" step="0.01" 
                       value={price} onChange={(e) => setPrice(e.target.value)}
-                      placeholder="Precio" 
+                      placeholder={t('ph_price')} 
                       className="w-full nm-inset rounded-xl pl-10 pr-4 py-3 text-white font-black outline-none focus:border-green-500/50"
                     />
                   </div>
@@ -177,9 +179,9 @@ export default function BroadcastPage() {
                 className="w-full nm-btn-primary py-5 text-lg flex items-center justify-center gap-3 disabled:opacity-50 transition-all mt-6 font-black"
               >
                 {isSending ? (
-                  <><Loader2 className="w-6 h-6 animate-spin" /> Procesando envíos...</>
+                  <><Loader2 className="w-6 h-6 animate-spin" /> {t('btn_processing')}</>
                 ) : (
-                  <><Send className="w-6 h-6" /> Enviar a Todos los Fans</>
+                  <><Send className="w-6 h-6" /> {t('btn_send')}</>
                 )}
               </button>
 
