@@ -329,5 +329,36 @@
     "ph_price": "Pris",
     "btn_processing": "Bearbetar sändningar...",
     "btn_send": "Skicka till Alla Fans"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "Du behöver en titel, ett pris och välja minst 1 inlägg.",
+    "alert_created": "📦 Paket skapat!",
+    "alert_error_create": "Fel vid skapande av paketet",
+    "alert_confirm_delete": "Är du säker på att du vill ta bort detta paket? De som redan har köpt det kommer att behålla åtkomsten.",
+    "alert_error_delete": "Fel vid borttagning.",
+    "nav_title": "Innehållspaket",
+    "title_create": "Skapa Nytt Paket",
+    "desc_create": "Gruppera dina exklusiva inlägg och sälj dem tillsammans.",
+    "btn_cancel": "Avbryt",
+    "btn_start_bundle": "+ Bygg Paket",
+    "lbl_title": "Pakettitel",
+    "ph_title": "T.ex.: VIP Sommarkollektion",
+    "lbl_price": "Totalt pris att ta betalt (USD)",
+    "lbl_desc": "Beskrivning (Övertyga dina fans)",
+    "ph_desc": "Vad kommer de att hitta här inne?",
+    "lbl_step_2": "Steg 2: Välj de PPV-inlägg som ska inkluderas",
+    "empty_eligible_1": "Du har inga inlägg med media tillgängliga.",
+    "empty_eligible_2": "Ladda upp betalinnehåll först!",
+    "no_text": "Ingen text",
+    "btn_packaging": "Paketerar...",
+    "btn_create_with": "Skapa Paket med",
+    "btn_posts": "inlägg",
+    "msg_click_start": "Klicka på \"Bygg Paket\" för att börja gruppera ditt innehåll.",
+    "title_active_bundles": "Dina Paket till Salu",
+    "empty_bundles": "Du har inte skapat några paket ännu.",
+    "lbl_files": "Filer",
+    "lbl_sales": "Försäljning",
+    "btn_delete": "Ta bort"
   }
 }

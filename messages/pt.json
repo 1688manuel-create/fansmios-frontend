@@ -329,5 +329,36 @@
     "ph_price": "Preço",
     "btn_processing": "Processando envios...",
     "btn_send": "Enviar para Todos os Fãs"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "Você precisa de um título, um preço e selecionar pelo menos 1 post.",
+    "alert_created": "📦 Pacote criado com sucesso!",
+    "alert_error_create": "Erro ao criar o pacote",
+    "alert_confirm_delete": "Tem certeza que deseja excluir este pacote? Aqueles que já compraram continuarão tendo acesso.",
+    "alert_error_delete": "Erro ao excluir.",
+    "nav_title": "Pacotes de Conteúdo",
+    "title_create": "Criar Novo Pacote",
+    "desc_create": "Agrupe seus posts exclusivos e venda-os juntos.",
+    "btn_cancel": "Cancelar",
+    "btn_start_bundle": "+ Montar Pacote",
+    "lbl_title": "Título do Pacote",
+    "ph_title": "Ex: Coleção Verão VIP",
+    "lbl_price": "Preço Total a cobrar (USD)",
+    "lbl_desc": "Descrição (Convença seus fãs)",
+    "ph_desc": "O que eles encontrarão aqui dentro?",
+    "lbl_step_2": "Passo 2: Selecione os Posts PPV que incluirá",
+    "empty_eligible_1": "Você não tem posts com mídia disponíveis.",
+    "empty_eligible_2": "Faça upload de conteúdo pago primeiro!",
+    "no_text": "Sem texto",
+    "btn_packaging": "Empacotando...",
+    "btn_create_with": "Criar Pacote com",
+    "btn_posts": "posts",
+    "msg_click_start": "Clique em \"Montar Pacote\" para começar a agrupar seu conteúdo.",
+    "title_active_bundles": "Seus Pacotes à Venda",
+    "empty_bundles": "Você ainda não criou nenhum pacote.",
+    "lbl_files": "Arquivos",
+    "lbl_sales": "Vendas",
+    "btn_delete": "Excluir"
   }
 }

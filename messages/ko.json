@@ -329,5 +329,36 @@
     "ph_price": "가격",
     "btn_processing": "전송 처리 중...",
     "btn_send": "모든 팬에게 보내기"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "제목, 가격이 필요하며 게시물을 하나 이상 선택해야 합니다.",
+    "alert_created": "📦 번들이 성공적으로 생성되었습니다!",
+    "alert_error_create": "번들 생성 오류",
+    "alert_confirm_delete": "이 번들을 삭제하시겠습니까? 이미 구매한 사람은 계속 액세스할 수 있습니다.",
+    "alert_error_delete": "삭제 오류.",
+    "nav_title": "콘텐츠 번들",
+    "title_create": "새 번들 생성",
+    "desc_create": "독점 게시물을 그룹화하여 함께 판매하세요.",
+    "btn_cancel": "취소",
+    "btn_start_bundle": "+ 번들 구성",
+    "lbl_title": "번들 제목",
+    "ph_title": "예: VIP 여름 컬렉션",
+    "lbl_price": "청구할 총 가격(USD)",
+    "lbl_desc": "설명(팬들을 설득하세요)",
+    "ph_desc": "팬들이 안에서 무엇을 보게 될까요?",
+    "lbl_step_2": "2단계: 포함할 PPV 게시물 선택",
+    "empty_eligible_1": "사용 가능한 미디어가 포함된 게시물이 없습니다.",
+    "empty_eligible_2": "먼저 유료 콘텐츠를 업로드하세요!",
+    "no_text": "텍스트 없음",
+    "btn_packaging": "패키징 중...",
+    "btn_create_with": "번들 생성(게시물 수:",
+    "btn_posts": ")",
+    "msg_click_start": "콘텐츠 그룹화를 시작하려면 \"번들 구성\"을 클릭하세요.",
+    "title_active_bundles": "판매 중인 번들",
+    "empty_bundles": "아직 번들을 생성하지 않았습니다.",
+    "lbl_files": "파일",
+    "lbl_sales": "판매",
+    "btn_delete": "삭제"
   }
 }

@@ -329,5 +329,36 @@
     "ph_price": "Cena",
     "btn_processing": "Przetwarzanie wysyłania...",
     "btn_send": "Wyślij do Wszystkich Fanów"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "Potrzebujesz tytułu, ceny i zaznaczenia co najmniej 1 posta.",
+    "alert_created": "📦 Pakiet utworzony pomyślnie!",
+    "alert_error_create": "Błąd podczas tworzenia pakietu",
+    "alert_confirm_delete": "Czy na pewno chcesz usunąć ten pakiet? Ci, którzy już go kupili, zachowają dostęp.",
+    "alert_error_delete": "Błąd podczas usuwania.",
+    "nav_title": "Pakiety Treści",
+    "title_create": "Utwórz Nowy Pakiet",
+    "desc_create": "Grupuj swoje ekskluzywne posty i sprzedawaj je razem.",
+    "btn_cancel": "Anuluj",
+    "btn_start_bundle": "+ Zbuduj Pakiet",
+    "lbl_title": "Tytuł Pakietu",
+    "ph_title": "Np.: Letnia Kolekcja VIP",
+    "lbl_price": "Cena całkowita (USD)",
+    "lbl_desc": "Opis (Przekonaj swoich fanów)",
+    "ph_desc": "Co znajdą w środku?",
+    "lbl_step_2": "Krok 2: Wybierz Posty PPV do uwzględnienia",
+    "empty_eligible_1": "Nie masz dostępnych postów z multimediami.",
+    "empty_eligible_2": "Najpierw prześlij płatną treść!",
+    "no_text": "Brak teksu",
+    "btn_packaging": "Pakowanie...",
+    "btn_create_with": "Utwórz Pakiet z",
+    "btn_posts": "postami",
+    "msg_click_start": "Kliknij \"Zbuduj Pakiet\", aby rozpocząć grupowanie treści.",
+    "title_active_bundles": "Twoje Pakiety na Sprzedaż",
+    "empty_bundles": "Nie utworzyłeś jeszcze żadnych pakietów.",
+    "lbl_files": "Pliki",
+    "lbl_sales": "Sprzedaż",
+    "btn_delete": "Usuń"
   }
 }

@@ -7,6 +7,7 @@ import api from '../../../../lib/api'; // 🔥 Añadido para poder eliminar
 import { bundleService } from '../../../../lib/bundleService';
 import AppLayout from '../../../../components/AppLayout';
 import { Package, Plus, Tag, DollarSign, Image as ImageIcon, CheckCircle2, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -19,6 +20,7 @@ const getImageUrl = (path: string | null) => {
 
 export default function ContentBundlesPage() {
   const router = useRouter();
+  const t = useTranslations('ContentBundles'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   
   const [isCreating, setIsCreating] = useState(false);
   const [bundles, setBundles] = useState<any[]>([]);
@@ -60,7 +62,7 @@ export default function ContentBundlesPage() {
   const handleCreateBundle = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !price || selectedPostIds.length === 0) {
-        alert("Necesitas un título, un precio y seleccionar al menos 1 post.");
+        alert(t('alert_validation'));
         return;
     }
 
@@ -73,24 +75,24 @@ export default function ContentBundlesPage() {
           postIds: selectedPostIds
       });
       
-      alert('📦 ¡Paquete creado exitosamente!');
+      alert(t('alert_created'));
       setTitle(''); setDescription(''); setPrice(''); setSelectedPostIds([]);
       setIsCreating(false);
       fetchData(); 
     } catch (error: any) {
-      alert(error.response?.data?.error || 'Error al crear el paquete');
+      alert(error.response?.data?.error || t('alert_error_create'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDeleteBundle = async (id: string) => {
-    if (!confirm("¿Seguro que deseas eliminar este paquete? Quienes ya lo compraron seguirán teniendo acceso.")) return;
+    if (!confirm(t('alert_confirm_delete'))) return;
     try {
       await api.delete(`/bundles/${id}`); 
       fetchData();
     } catch (error) {
-      alert("Error al eliminar.");
+      alert(t('alert_error_delete'));
     }
   };
 
@@ -103,7 +105,7 @@ export default function ContentBundlesPage() {
         {/* NAVBAR SUPERIOR NEUMÓRFICA */}
         <nav className="sticky top-0 z-50 bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-5 backdrop-blur-xl shadow-md">
           <h1 className="text-xl font-black flex items-center gap-2">
-            <Package className="w-6 h-6 text-blue-500" strokeWidth={2.5}/> Paquetes de Contenido
+            <Package className="w-6 h-6 text-blue-500" strokeWidth={2.5}/> {t('nav_title')}
           </h1>
         </nav>
 
@@ -113,26 +115,26 @@ export default function ContentBundlesPage() {
           <div className="nm-inset rounded-[2rem] border border-white/5 p-6 sm:p-8 h-fit">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
-                <h2 className="text-lg font-bold text-white flex items-center gap-2"><Plus className="w-5 h-5 text-green-400"/> Crear Nuevo Paquete</h2>
-                <p className="text-sm text-gray-400 font-medium mt-1">Agrupa tus posts exclusivos y véndelos juntos.</p>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2"><Plus className="w-5 h-5 text-green-400"/> {t('title_create')}</h2>
+                <p className="text-sm text-gray-400 font-medium mt-1">{t('desc_create')}</p>
               </div>
               <button onClick={() => setIsCreating(!isCreating)} className={`font-bold py-2.5 px-6 rounded-full transition-transform text-sm whitespace-nowrap ${isCreating ? 'nm-btn text-gray-400 hover:text-white' : 'nm-btn-primary shadow-[0_0_15px_rgba(59,130,246,0.3)]'}`}>
-                {isCreating ? 'Cancelar' : '+ Armar Paquete'}
+                {isCreating ? t('btn_cancel') : t('btn_start_bundle')}
               </button>
             </div>
             
             {isCreating ? (
               <form onSubmit={handleCreateBundle} className="space-y-6 animate-fade-in border-t border-white/5 pt-6">
                 <div>
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">Título del Paquete</label>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">{t('lbl_title')}</label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"><Tag className="w-4 h-4"/></span>
-                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Ej: Colección Verano VIP" className="w-full nm-inset border border-white/5 rounded-xl pl-11 pr-4 py-3 text-white outline-none focus:border-blue-500/50 text-sm" />
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder={t('ph_title')} className="w-full nm-inset border border-white/5 rounded-xl pl-11 pr-4 py-3 text-white outline-none focus:border-blue-500/50 text-sm" />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">Precio Total a cobrar (USD)</label>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">{t('lbl_price')}</label>
                   <div className="relative w-1/2">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-green-500 font-bold"><DollarSign className="w-4 h-4"/></span>
                     <input type="number" min="1" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="19.99" className="w-full nm-inset border border-green-500/20 rounded-xl pl-10 pr-4 py-3 text-white outline-none focus:border-green-500/50 font-bold" />
@@ -140,18 +142,18 @@ export default function ContentBundlesPage() {
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">Descripción (Convence a tus fans)</label>
-                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} required placeholder="¿Qué encontrarán aquí adentro?" rows={3} className="w-full nm-inset border border-white/5 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500/50 text-sm resize-none custom-scrollbar" />
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">{t('lbl_desc')}</label>
+                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} required placeholder={t('ph_desc')} rows={3} className="w-full nm-inset border border-white/5 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500/50 text-sm resize-none custom-scrollbar" />
                 </div>
 
                 {/* SELECCIÓN DE POSTS PPV */}
                 <div className="pt-2 border-t border-white/5">
-                  <label className="text-[10px] font-bold text-white uppercase tracking-widest bg-blue-500/20 px-3 py-1.5 rounded-lg mb-4 inline-block border border-blue-500/30">Paso 2: Selecciona los Posts PPV que incluirá</label>
+                  <label className="text-[10px] font-bold text-white uppercase tracking-widest bg-blue-500/20 px-3 py-1.5 rounded-lg mb-4 inline-block border border-blue-500/30">{t('lbl_step_2')}</label>
                   
                   {eligiblePosts.length === 0 ? (
                     <div className="nm-inset border border-white/5 rounded-2xl p-6 text-center">
                       <ImageIcon className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-                      <p className="text-gray-500 text-sm">No tienes posts con contenido multimedia disponibles.<br/>¡Sube contenido cobrando primero!</p>
+                      <p className="text-gray-500 text-sm">{t('empty_eligible_1')}<br/>{t('empty_eligible_2')}</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-64 overflow-y-auto custom-scrollbar p-1">
@@ -163,10 +165,9 @@ export default function ContentBundlesPage() {
                             onClick={() => togglePostSelection(post.id)}
                             className={`relative rounded-xl overflow-hidden cursor-pointer border-2 transition-all h-28 group nm-inset ${isSelected ? 'border-blue-500 scale-105 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'border-transparent hover:border-white/20'}`}
                           >
-                            {/* 🔥 AHORA SÍ FUNCIONARÁ ESTO */}
                             <img src={getImageUrl(post.mediaUrl)} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" alt="Post" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-2 pointer-events-none">
-                                <span className="text-white text-[10px] font-bold truncate">{post.content || 'Sin texto'}</span>
+                                <span className="text-white text-[10px] font-bold truncate">{post.content || t('no_text')}</span>
                                 <span className="text-green-400 text-xs font-bold">${post.price}</span>
                             </div>
                             {isSelected && (
@@ -182,25 +183,25 @@ export default function ContentBundlesPage() {
                 </div>
 
                 <button type="submit" disabled={isSubmitting || selectedPostIds.length === 0 || !title || !price} className="w-full nm-btn-primary py-4 rounded-xl font-bold mt-4 flex items-center justify-center gap-2">
-                  {isSubmitting ? 'Empaquetando...' : `Crear Paquete con ${selectedPostIds.length} posts`}
+                  {isSubmitting ? t('btn_packaging') : `${t('btn_create_with')} ${selectedPostIds.length} ${t('btn_posts')}`}
                 </button>
               </form>
             ) : (
               <div className="text-center py-10 opacity-50">
                 <Package className="w-16 h-16 mx-auto mb-4 text-gray-500" />
-                <p className="text-sm font-medium">Haz clic en "Armar Paquete" para empezar a agrupar tu contenido.</p>
+                <p className="text-sm font-medium">{t('msg_click_start')}</p>
               </div>
             )}
           </div>
 
           {/* ================= COLUMNA 2: LISTA DE PAQUETES ACTIVOS ================= */}
           <div className="space-y-6">
-            <h2 className="text-lg font-bold text-white mb-2 flex items-center gap-2 pl-2"><Package className="w-5 h-5 text-gray-400"/> Tus Paquetes a la Venta</h2>
+            <h2 className="text-lg font-bold text-white mb-2 flex items-center gap-2 pl-2"><Package className="w-5 h-5 text-gray-400"/> {t('title_active_bundles')}</h2>
             
             {bundles.length === 0 ? (
               <div className="nm-inset border border-white/5 rounded-[2rem] p-10 text-center flex flex-col items-center">
                 <Package className="w-12 h-12 text-gray-600 mb-3" />
-                <p className="text-gray-400 font-medium text-sm">Aún no has creado ningún paquete.</p>
+                <p className="text-gray-400 font-medium text-sm">{t('empty_bundles')}</p>
               </div>
             ) : (
               bundles.map(bundle => (
@@ -230,18 +231,18 @@ export default function ContentBundlesPage() {
                               </div>
                           )}
                       </div>
-                      <p className="text-xs text-blue-400 font-bold uppercase tracking-widest">{bundle.posts?.length || 0} Archivos</p>
+                      <p className="text-xs text-blue-400 font-bold uppercase tracking-widest">{bundle.posts?.length || 0} {t('lbl_files')}</p>
                     </div>
                   </div>
 
                   {/* Acciones */}
                   <div className="flex flex-row sm:flex-col justify-end gap-2 border-t sm:border-t-0 sm:border-l border-white/5 pt-4 sm:pt-0 sm:pl-4 z-10 w-full sm:w-auto">
                     <div className="flex-1 sm:flex-none text-center bg-white/5 rounded-xl p-2 border border-white/5">
-                      <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Ventas</p>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">{t('lbl_sales')}</p>
                       <p className="text-lg font-black text-white">{bundle._count?.purchases || 0}</p>
                     </div>
                     <button onClick={() => handleDeleteBundle(bundle.id)} className="flex-1 sm:flex-none nm-btn border border-red-500/20 text-red-500 hover:bg-red-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2">
-                      <Trash2 className="w-4 h-4"/> Eliminar
+                      <Trash2 className="w-4 h-4"/> {t('btn_delete')}
                     </button>
                   </div>
                 </div>

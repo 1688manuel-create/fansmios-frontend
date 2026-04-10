@@ -329,5 +329,36 @@
     "ph_price": "Prijs",
     "btn_processing": "Verzendingen verwerken...",
     "btn_send": "Verzenden naar Alle Fans"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "Je hebt een titel, een prijs nodig en moet minimaal 1 post selecteren.",
+    "alert_created": "📦 Bundel succesvol aangemaakt!",
+    "alert_error_create": "Fout bij het maken van de bundel",
+    "alert_confirm_delete": "Weet je zeker dat je deze bundel wilt verwijderen? Degenen die het al hebben gekocht, behouden toegang.",
+    "alert_error_delete": "Fout bij verwijderen.",
+    "nav_title": "Inhoudsbundels",
+    "title_create": "Nieuwe Bundel Maken",
+    "desc_create": "Groepeer je exclusieve posts en verkoop ze samen.",
+    "btn_cancel": "Annuleren",
+    "btn_start_bundle": "+ Bundel Samenstellen",
+    "lbl_title": "Bundel Titel",
+    "ph_title": "Bijv: VIP Zomercollectie",
+    "lbl_price": "Totale prijs in rekening te brengen (USD)",
+    "lbl_desc": "Beschrijving (Overtuig je fans)",
+    "ph_desc": "Wat zullen ze hierbinnen vinden?",
+    "lbl_step_2": "Stap 2: Selecteer de PPV Posts om toe te voegen",
+    "empty_eligible_1": "Je hebt geen posts met media beschikbaar.",
+    "empty_eligible_2": "Upload eerst betaalde inhoud!",
+    "no_text": "Geen tekst",
+    "btn_packaging": "Inpakken...",
+    "btn_create_with": "Maak Bundel met",
+    "btn_posts": "posts",
+    "msg_click_start": "Klik op \"Bundel Samenstellen\" om je inhoud te groeperen.",
+    "title_active_bundles": "Je Bundels te Koop",
+    "empty_bundles": "Je hebt nog geen bundels gemaakt.",
+    "lbl_files": "Bestanden",
+    "lbl_sales": "Verkopen",
+    "btn_delete": "Verwijderen"
   }
 }

@@ -329,5 +329,36 @@
     "ph_price": "Fiyat",
     "btn_processing": "Gönderimler işleniyor...",
     "btn_send": "Tüm Hayranlara Gönder"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "Bir başlığa, bir fiyata ihtiyacınız var ve en az 1 gönderi seçmelisiniz.",
+    "alert_created": "📦 Paket başarıyla oluşturuldu!",
+    "alert_error_create": "Paket oluşturulurken hata",
+    "alert_confirm_delete": "Bu paketi silmek istediğinizden emin misiniz? Zaten satın alanlar erişime sahip olmaya devam edecektir.",
+    "alert_error_delete": "Silinirken hata oluştu.",
+    "nav_title": "İçerik Paketleri",
+    "title_create": "Yeni Paket Oluştur",
+    "desc_create": "Özel gönderilerinizi gruplayın ve birlikte satın.",
+    "btn_cancel": "İptal",
+    "btn_start_bundle": "+ Paket Oluştur",
+    "lbl_title": "Paket Başlığı",
+    "ph_title": "Örn: VIP Yaz Koleksiyonu",
+    "lbl_price": "Tahsil edilecek Toplam Fiyat (USD)",
+    "lbl_desc": "Açıklama (Hayranlarınızı ikna edin)",
+    "ph_desc": "İçeride ne bulacaklar?",
+    "lbl_step_2": "Adım 2: Eklenecek PPV Gönderilerini seçin",
+    "empty_eligible_1": "Medyaya sahip mevcut gönderiniz yok.",
+    "empty_eligible_2": "Önce ücretli içerik yükleyin!",
+    "no_text": "Metin yok",
+    "btn_packaging": "Paketleniyor...",
+    "btn_create_with": "Şununla Paket Oluştur:",
+    "btn_posts": "gönderi",
+    "msg_click_start": "İçeriğinizi gruplandırmaya başlamak için \"Paket Oluştur\"a tıklayın.",
+    "title_active_bundles": "Satıştaki Paketleriniz",
+    "empty_bundles": "Henüz hiç paket oluşturmadınız.",
+    "lbl_files": "Dosyalar",
+    "lbl_sales": "Satışlar",
+    "btn_delete": "Sil"
   }
 }

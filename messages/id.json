@@ -329,5 +329,36 @@
     "ph_price": "Harga",
     "btn_processing": "Memproses pengiriman...",
     "btn_send": "Kirim ke Semua Penggemar"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "Anda memerlukan judul, harga, dan memilih minimal 1 postingan.",
+    "alert_created": "📦 Paket berhasil dibuat!",
+    "alert_error_create": "Kesalahan saat membuat paket",
+    "alert_confirm_delete": "Apakah Anda yakin ingin menghapus paket ini? Mereka yang sudah membelinya akan tetap memiliki akses.",
+    "alert_error_delete": "Kesalahan saat menghapus.",
+    "nav_title": "Paket Konten",
+    "title_create": "Buat Paket Baru",
+    "desc_create": "Kelompokkan postingan eksklusif Anda dan jual bersama.",
+    "btn_cancel": "Batal",
+    "btn_start_bundle": "+ Buat Paket",
+    "lbl_title": "Judul Paket",
+    "ph_title": "Contoh: Koleksi Musim Panas VIP",
+    "lbl_price": "Total Harga yang dikenakan (USD)",
+    "lbl_desc": "Deskripsi (Yakinkan penggemar Anda)",
+    "ph_desc": "Apa yang akan mereka temukan di dalam?",
+    "lbl_step_2": "Langkah 2: Pilih Postingan PPV untuk disertakan",
+    "empty_eligible_1": "Anda tidak memiliki postingan dengan media yang tersedia.",
+    "empty_eligible_2": "Unggah konten berbayar terlebih dahulu!",
+    "no_text": "Tidak ada teks",
+    "btn_packaging": "Sedang mengemas...",
+    "btn_create_with": "Buat Paket dengan",
+    "btn_posts": "postingan",
+    "msg_click_start": "Klik \"Buat Paket\" untuk mulai mengelompokkan konten Anda.",
+    "title_active_bundles": "Paket Anda untuk Dijual",
+    "empty_bundles": "Anda belum membuat paket apa pun.",
+    "lbl_files": "File",
+    "lbl_sales": "Penjualan",
+    "btn_delete": "Hapus"
   }
 }

@@ -328,5 +328,36 @@
     "ph_price": "Price",
     "btn_processing": "Processing sends...",
     "btn_send": "Send to All Fans"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "You need a title, a price, and to select at least 1 post.",
+    "alert_created": "📦 Bundle created successfully!",
+    "alert_error_create": "Error creating the bundle",
+    "alert_confirm_delete": "Are you sure you want to delete this bundle? Those who already bought it will retain access.",
+    "alert_error_delete": "Error deleting.",
+    "nav_title": "Content Bundles",
+    "title_create": "Create New Bundle",
+    "desc_create": "Group your exclusive posts and sell them together.",
+    "btn_cancel": "Cancel",
+    "btn_start_bundle": "+ Build Bundle",
+    "lbl_title": "Bundle Title",
+    "ph_title": "e.g. VIP Summer Collection",
+    "lbl_price": "Total Price to charge (USD)",
+    "lbl_desc": "Description (Convince your fans)",
+    "ph_desc": "What will they find inside?",
+    "lbl_step_2": "Step 2: Select the PPV Posts to include",
+    "empty_eligible_1": "You have no posts with media available.",
+    "empty_eligible_2": "Upload paid content first!",
+    "no_text": "No text",
+    "btn_packaging": "Packaging...",
+    "btn_create_with": "Create Bundle with",
+    "btn_posts": "posts",
+    "msg_click_start": "Click \"Build Bundle\" to start grouping your content.",
+    "title_active_bundles": "Your Bundles for Sale",
+    "empty_bundles": "You haven't created any bundles yet.",
+    "lbl_files": "Files",
+    "lbl_sales": "Sales",
+    "btn_delete": "Delete"
   }
 }

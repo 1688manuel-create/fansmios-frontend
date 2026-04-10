@@ -329,5 +329,36 @@
     "ph_price": "Preis",
     "btn_processing": "Sendevorgang läuft...",
     "btn_send": "An alle Fans senden"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "Sie benötigen einen Titel, einen Preis und müssen mindestens 1 Post auswählen.",
+    "alert_created": "📦 Paket erfolgreich erstellt!",
+    "alert_error_create": "Fehler beim Erstellen des Pakets",
+    "alert_confirm_delete": "Sind Sie sicher, dass Sie dieses Paket löschen möchten? Käufer behalten weiterhin den Zugriff.",
+    "alert_error_delete": "Fehler beim Löschen.",
+    "nav_title": "Inhalts-Pakete",
+    "title_create": "Neues Paket Erstellen",
+    "desc_create": "Gruppieren Sie Ihre exklusiven Posts und verkaufen Sie sie zusammen.",
+    "btn_cancel": "Abbrechen",
+    "btn_start_bundle": "+ Paket Zusammenstellen",
+    "lbl_title": "Paket-Titel",
+    "ph_title": "Z.B.: VIP Sommer-Kollektion",
+    "lbl_price": "Gesamtpreis (USD)",
+    "lbl_desc": "Beschreibung (Überzeugen Sie Ihre Fans)",
+    "ph_desc": "Was werden sie darin finden?",
+    "lbl_step_2": "Schritt 2: Wählen Sie die PPV-Posts aus, die enthalten sein sollen",
+    "empty_eligible_1": "Sie haben keine Posts mit Medien verfügbar.",
+    "empty_eligible_2": "Laden Sie zuerst kostenpflichtige Inhalte hoch!",
+    "no_text": "Kein Text",
+    "btn_packaging": "Wird verpackt...",
+    "btn_create_with": "Paket erstellen mit",
+    "btn_posts": "Posts",
+    "msg_click_start": "Klicken Sie auf \"Paket Zusammenstellen\", um Ihre Inhalte zu gruppieren.",
+    "title_active_bundles": "Ihre Pakete zum Verkauf",
+    "empty_bundles": "Sie haben noch keine Pakete erstellt.",
+    "lbl_files": "Dateien",
+    "lbl_sales": "Verkäufe",
+    "btn_delete": "Löschen"
   }
 }

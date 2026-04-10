@@ -329,5 +329,36 @@
     "ph_price": "Giá",
     "btn_processing": "Đang xử lý gửi...",
     "btn_send": "Gửi cho Tất cả Người hâm mộ"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "Bạn cần một tiêu đề, một mức giá và chọn ít nhất 1 bài đăng.",
+    "alert_created": "📦 Đã tạo gói thành công!",
+    "alert_error_create": "Lỗi khi tạo gói",
+    "alert_confirm_delete": "Bạn có chắc chắn muốn xóa gói này không? Những người đã mua gói sẽ tiếp tục có quyền truy cập.",
+    "alert_error_delete": "Lỗi khi xóa.",
+    "nav_title": "Gói nội dung",
+    "title_create": "Tạo gói mới",
+    "desc_create": "Nhóm các bài đăng độc quyền của bạn và bán chúng cùng nhau.",
+    "btn_cancel": "Hủy bỏ",
+    "btn_start_bundle": "+ Xây dựng Gói",
+    "lbl_title": "Tiêu đề Gói",
+    "ph_title": "VD: Bộ sưu tập Mùa hè VIP",
+    "lbl_price": "Tổng giá tính phí (USD)",
+    "lbl_desc": "Mô tả (Thuyết phục người hâm mộ của bạn)",
+    "ph_desc": "Họ sẽ tìm thấy gì bên trong?",
+    "lbl_step_2": "Bước 2: Chọn Bài đăng PPV để đưa vào",
+    "empty_eligible_1": "Bạn không có bài đăng nào có phương tiện khả dụng.",
+    "empty_eligible_2": "Vui lòng tải lên nội dung trả phí trước!",
+    "no_text": "Không có văn bản",
+    "btn_packaging": "Đang đóng gói...",
+    "btn_create_with": "Tạo Gói với",
+    "btn_posts": "bài đăng",
+    "msg_click_start": "Nhấp vào \"Xây dựng Gói\" để bắt đầu nhóm nội dung của bạn.",
+    "title_active_bundles": "Các gói đang bán của bạn",
+    "empty_bundles": "Bạn chưa tạo bất kỳ gói nào.",
+    "lbl_files": "Tệp",
+    "lbl_sales": "Doanh số",
+    "btn_delete": "Xóa"
   }
 }

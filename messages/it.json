@@ -329,5 +329,36 @@
     "ph_price": "Prezzo",
     "btn_processing": "Elaborazione invii...",
     "btn_send": "Invia a Tutti i Fan"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "Hai bisogno di un titolo, un prezzo e selezionare almeno 1 post.",
+    "alert_created": "📦 Pacchetto creato con successo!",
+    "alert_error_create": "Errore durante la creazione del pacchetto",
+    "alert_confirm_delete": "Sei sicuro di voler eliminare questo pacchetto? Chi lo ha già acquistato continuerà ad avere accesso.",
+    "alert_error_delete": "Errore durante l'eliminazione.",
+    "nav_title": "Pacchetti di Contenuti",
+    "title_create": "Crea Nuovo Pacchetto",
+    "desc_create": "Raggruppa i tuoi post esclusivi e vendili insieme.",
+    "btn_cancel": "Annulla",
+    "btn_start_bundle": "+ Componi Pacchetto",
+    "lbl_title": "Titolo del Pacchetto",
+    "ph_title": "Es: Collezione Estiva VIP",
+    "lbl_price": "Prezzo Totale da addebitare (USD)",
+    "lbl_desc": "Descrizione (Convinci i tuoi fan)",
+    "ph_desc": "Cosa troveranno qui dentro?",
+    "lbl_step_2": "Passo 2: Seleziona i Post PPV da includere",
+    "empty_eligible_1": "Non hai post con contenuti multimediali disponibili.",
+    "empty_eligible_2": "Carica prima dei contenuti a pagamento!",
+    "no_text": "Senza testo",
+    "btn_packaging": "Confezionamento in corso...",
+    "btn_create_with": "Crea Pacchetto con",
+    "btn_posts": "post",
+    "msg_click_start": "Clicca su \"Componi Pacchetto\" per iniziare a raggruppare i tuoi contenuti.",
+    "title_active_bundles": "I Tuoi Pacchetti in Vendita",
+    "empty_bundles": "Non hai ancora creato nessun pacchetto.",
+    "lbl_files": "File",
+    "lbl_sales": "Vendite",
+    "btn_delete": "Elimina"
   }
 }

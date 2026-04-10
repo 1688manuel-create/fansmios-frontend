@@ -329,5 +329,36 @@
     "ph_price": "价格",
     "btn_processing": "正在处理发送...",
     "btn_send": "发送给所有粉丝"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "您需要标题、价格并选择至少 1 个帖子。",
+    "alert_created": "📦 捆绑包创建成功！",
+    "alert_error_create": "创建捆绑包时出错",
+    "alert_confirm_delete": "您确定要删除此捆绑包吗？ 已经购买它的人将继续拥有访问权限。",
+    "alert_error_delete": "删除时出错。",
+    "nav_title": "内容捆绑包",
+    "title_create": "创建新捆绑包",
+    "desc_create": "对您的独家帖子进行分组并一起出售。",
+    "btn_cancel": "取消",
+    "btn_start_bundle": "+ 构建捆绑包",
+    "lbl_title": "捆绑包标题",
+    "ph_title": "例如：VIP 夏季系列",
+    "lbl_price": "总价 (USD)",
+    "lbl_desc": "描述（说服您的粉丝）",
+    "ph_desc": "他们会在里面发现什么？",
+    "lbl_step_2": "第 2 步：选择要包含的 PPV 帖子",
+    "empty_eligible_1": "您没有可用的带有媒体的帖子。",
+    "empty_eligible_2": "请先上传付费内容！",
+    "no_text": "无文字",
+    "btn_packaging": "打包中...",
+    "btn_create_with": "创建捆绑包，包含",
+    "btn_posts": "个帖子",
+    "msg_click_start": "点击“构建捆绑包”开始对您的内容进行分组。",
+    "title_active_bundles": "您出售的捆绑包",
+    "empty_bundles": "您还没有创建任何捆绑包。",
+    "lbl_files": "文件",
+    "lbl_sales": "销量",
+    "btn_delete": "删除"
   }
 }

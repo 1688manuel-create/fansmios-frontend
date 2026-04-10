@@ -329,5 +329,36 @@
     "ph_price": "Prix",
     "btn_processing": "Traitement des envois...",
     "btn_send": "Envoyer à Tous les Fans"
+  },
+
+  "ContentBundles": {
+    "alert_validation": "Vous avez besoin d'un titre, d'un prix et de sélectionner au moins 1 post.",
+    "alert_created": "📦 Pack créé avec succès !",
+    "alert_error_create": "Erreur lors de la création du pack",
+    "alert_confirm_delete": "Êtes-vous sûr de vouloir supprimer ce pack ? Ceux qui l'ont déjà acheté conserveront l'accès.",
+    "alert_error_delete": "Erreur lors de la suppression.",
+    "nav_title": "Packs de Contenu",
+    "title_create": "Créer un Nouveau Pack",
+    "desc_create": "Regroupez vos posts exclusifs et vendez-les ensemble.",
+    "btn_cancel": "Annuler",
+    "btn_start_bundle": "+ Assembler le Pack",
+    "lbl_title": "Titre du Pack",
+    "ph_title": "Ex : Collection Été VIP",
+    "lbl_price": "Prix total à facturer (USD)",
+    "lbl_desc": "Description (Convainquez vos fans)",
+    "ph_desc": "Que trouveront-ils à l'intérieur ?",
+    "lbl_step_2": "Étape 2 : Sélectionnez les Posts PPV à inclure",
+    "empty_eligible_1": "Vous n'avez aucun post avec média disponible.",
+    "empty_eligible_2": "Mettez d'abord en ligne du contenu payant !",
+    "no_text": "Sans texte",
+    "btn_packaging": "Emballage en cours...",
+    "btn_create_with": "Créer un Pack avec",
+    "btn_posts": "posts",
+    "msg_click_start": "Cliquez sur \"Assembler le Pack\" pour commencer à regrouper votre contenu.",
+    "title_active_bundles": "Vos Packs en Vente",
+    "empty_bundles": "Vous n'avez pas encore créé de pack.",
+    "lbl_files": "Fichiers",
+    "lbl_sales": "Ventes",
+    "btn_delete": "Supprimer"
   }
 }
