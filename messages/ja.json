@@ -523,5 +523,19 @@
     "btn_sending": "送信中...",
     "btn_send_all": "全員に送信",
     "lbl_exclusive": "限定"
+  },
+
+  "Notifications": {
+    "nav_title": "通知",
+    "badge_new": "新着",
+    "btn_mark_all_read": "すべて既読にする",
+    "empty_title": "現在通知はありません。",
+    "empty_desc": "サブスクリプション、メッセージ、またはチップを受け取ったときにここでお知らせします。",
+    "time_just_now": "たった今",
+    "time_ago": "",
+    "time_min": "分前",
+    "time_hr": "時間前",
+    "time_yesterday": "昨日",
+    "time_d": "日前"
   }
 }

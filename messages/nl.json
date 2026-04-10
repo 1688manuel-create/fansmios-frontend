@@ -523,5 +523,19 @@
     "btn_sending": "Verzenden...",
     "btn_send_all": "Verzenden naar Iedereen",
     "lbl_exclusive": "EXCLUSIEF"
+  },
+
+  "Notifications": {
+    "nav_title": "Meldingen",
+    "badge_new": "Nieuwe",
+    "btn_mark_all_read": "Markeer alles als gelezen",
+    "empty_title": "Je hebt voorlopig geen meldingen.",
+    "empty_desc": "We laten het je hier weten als je abonnementen, berichten of fooien ontvangt.",
+    "time_just_now": "Zojuist",
+    "time_ago": "",
+    "time_min": "min. geleden",
+    "time_hr": "u. geleden",
+    "time_yesterday": "Gisteren",
+    "time_d": "d. geleden"
   }
 }

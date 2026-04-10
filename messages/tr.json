@@ -523,5 +523,19 @@
     "btn_sending": "Gönderiliyor...",
     "btn_send_all": "Herkese Gönder",
     "lbl_exclusive": "ÖZEL"
+  },
+
+  "Notifications": {
+    "nav_title": "Bildirimler",
+    "badge_new": "Yeni",
+    "btn_mark_all_read": "Tümünü okundu olarak işaretle",
+    "empty_title": "Şu an için bildiriminiz yok.",
+    "empty_desc": "Abonelikler, mesajlar veya bahşişler aldığınızda sizi burada bilgilendireceğiz.",
+    "time_just_now": "Az önce",
+    "time_ago": "",
+    "time_min": "dk önce",
+    "time_hr": "sa önce",
+    "time_yesterday": "Dün",
+    "time_d": "g önce"
   }
 }

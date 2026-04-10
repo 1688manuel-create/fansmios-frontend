@@ -523,5 +523,19 @@
     "btn_sending": "Skickar...",
     "btn_send_all": "Skicka till Alla",
     "lbl_exclusive": "EXKLUSIVT"
+  },
+
+  "Notifications": {
+    "nav_title": "Aviseringar",
+    "badge_new": "Nya",
+    "btn_mark_all_read": "Markera alla som lästa",
+    "empty_title": "Du har inga aviseringar för tillfället.",
+    "empty_desc": "Vi meddelar dig här när du får prenumerationer, meddelanden eller dricks.",
+    "time_just_now": "Alldeles nyss",
+    "time_ago": "För",
+    "time_min": "min sedan",
+    "time_hr": "h sedan",
+    "time_yesterday": "Igår",
+    "time_d": "d sedan"
   }
 }

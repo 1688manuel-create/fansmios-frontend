@@ -18,9 +18,11 @@ import {
   ShieldAlert,
   Clock
 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function NotificationsDashboard() {
   const router = useRouter();
+  const t = useTranslations('Notifications'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -93,14 +95,14 @@ export default function NotificationsDashboard() {
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
     
-    if (diffInSeconds < 60) return 'Hace un momento';
+    if (diffInSeconds < 60) return t('time_just_now');
     const diffInMinutes = Math.floor(diffInSeconds / 60);
-    if (diffInMinutes < 60) return `Hace ${diffInMinutes} min`;
+    if (diffInMinutes < 60) return `${t('time_ago')} ${diffInMinutes} ${t('time_min')}`;
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `Hace ${diffInHours} h`;
+    if (diffInHours < 24) return `${t('time_ago')} ${diffInHours} ${t('time_hr')}`;
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays === 1) return 'Ayer';
-    if (diffInDays < 7) return `Hace ${diffInDays} d`;
+    if (diffInDays === 1) return t('time_yesterday');
+    if (diffInDays < 7) return `${t('time_ago')} ${diffInDays} ${t('time_d')}`;
     return date.toLocaleDateString();
   };
 
@@ -118,14 +120,14 @@ export default function NotificationsDashboard() {
             </button>
             <h1 className="text-xl font-black text-white flex items-center gap-2">
               <Bell className="w-5 h-5 text-red-500" strokeWidth={2.5}/> 
-              Notificaciones
-              {unreadCount > 0 && <span className="bg-red-600 text-white text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.6)]">{unreadCount} Nuevas</span>}
+              {t('nav_title')}
+              {unreadCount > 0 && <span className="bg-red-600 text-white text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.6)]">{unreadCount} {t('badge_new')}</span>}
             </h1>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             {unreadCount > 0 && (
               <button onClick={handleMarkAllAsRead} className="w-full sm:w-auto nm-btn text-gray-300 hover:text-white text-xs font-bold px-4 py-2.5 rounded-full transition-colors flex items-center justify-center gap-2 border border-white/5">
-                <CheckCheck className="w-4 h-4"/> Marcar todo como leído
+                <CheckCheck className="w-4 h-4"/> {t('btn_mark_all_read')}
               </button>
             )}
           </div>
@@ -136,8 +138,8 @@ export default function NotificationsDashboard() {
             {notifications.length === 0 ? (
               <div className="text-center py-20 nm-inset rounded-[2rem] border border-white/5 mt-10">
                 <BellOff className="w-16 h-16 mx-auto text-gray-600 mb-4" strokeWidth={1.5} />
-                <p className="text-gray-300 text-lg font-bold">No tienes notificaciones por ahora.</p>
-                <p className="text-gray-500 text-sm mt-2 font-medium">Aquí te avisaremos cuando recibas suscripciones, mensajes o propinas.</p>
+                <p className="text-gray-300 text-lg font-bold">{t('empty_title')}</p>
+                <p className="text-gray-500 text-sm mt-2 font-medium">{t('empty_desc')}</p>
               </div>
             ) : (
               notifications.map((notif) => {

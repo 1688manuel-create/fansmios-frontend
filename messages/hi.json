@@ -523,5 +523,19 @@
     "btn_sending": "भेजा जा रहा है...",
     "btn_send_all": "सभी को भेजें",
     "lbl_exclusive": "विशिष्ट"
+  },
+
+  "Notifications": {
+    "nav_title": "सूचनाएं",
+    "badge_new": "नई",
+    "btn_mark_all_read": "सभी को पढ़ा हुआ चिह्नित करें",
+    "empty_title": "आपके पास अभी कोई सूचना नहीं है।",
+    "empty_desc": "सदस्यता, संदेश या टिप्स मिलने पर हम आपको यहां सूचित करेंगे।",
+    "time_just_now": "अभी-अभी",
+    "time_ago": "",
+    "time_min": "मिनट पहले",
+    "time_hr": "घंटे पहले",
+    "time_yesterday": "कल",
+    "time_d": "दिन पहले"
   }
 }

@@ -523,5 +523,19 @@
     "btn_sending": "Wysyłanie...",
     "btn_send_all": "Wyślij do Wszystkich",
     "lbl_exclusive": "EKSKLUZYWNE"
+  },
+
+  "Notifications": {
+    "nav_title": "Powiadomienia",
+    "badge_new": "Nowe",
+    "btn_mark_all_read": "Oznacz wszystkie jako przeczytane",
+    "empty_title": "Nie masz na razie żadnych powiadomień.",
+    "empty_desc": "Powiadomimy Cię tutaj, gdy otrzymasz subskrypcje, wiadomości lub napiwki.",
+    "time_just_now": "Przed chwilą",
+    "time_ago": "",
+    "time_min": "min temu",
+    "time_hr": "godz. temu",
+    "time_yesterday": "Wczoraj",
+    "time_d": "dni temu"
   }
 }

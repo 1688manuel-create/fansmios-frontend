@@ -523,5 +523,19 @@
     "btn_sending": "Mengirim...",
     "btn_send_all": "Kirim ke Semua",
     "lbl_exclusive": "EKSKLUSIF"
+  },
+
+  "Notifications": {
+    "nav_title": "Notifikasi",
+    "badge_new": "Baru",
+    "btn_mark_all_read": "Tandai semua telah dibaca",
+    "empty_title": "Anda tidak memiliki notifikasi untuk saat ini.",
+    "empty_desc": "Kami akan memberi tahu Anda di sini saat Anda menerima langganan, pesan, atau tip.",
+    "time_just_now": "Baru saja",
+    "time_ago": "",
+    "time_min": "mnt lalu",
+    "time_hr": "jam lalu",
+    "time_yesterday": "Kemarin",
+    "time_d": "hr lalu"
   }
 }

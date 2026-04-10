@@ -523,5 +523,19 @@
     "btn_sending": "Đang gửi...",
     "btn_send_all": "Gửi cho Tất cả",
     "lbl_exclusive": "ĐỘC QUYỀN"
+  },
+
+  "Notifications": {
+    "nav_title": "Thông báo",
+    "badge_new": "Mới",
+    "btn_mark_all_read": "Đánh dấu tất cả là đã đọc",
+    "empty_title": "Hiện tại bạn không có thông báo nào.",
+    "empty_desc": "Chúng tôi sẽ thông báo cho bạn tại đây khi bạn nhận được lượt đăng ký, tin nhắn hoặc tiền boa.",
+    "time_just_now": "Vừa xong",
+    "time_ago": "Cách đây",
+    "time_min": "phút",
+    "time_hr": "giờ",
+    "time_yesterday": "Hôm qua",
+    "time_d": "ngày"
   }
 }

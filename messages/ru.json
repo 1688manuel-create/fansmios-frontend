@@ -523,5 +523,19 @@
     "btn_sending": "Отправка...",
     "btn_send_all": "Отправить всем",
     "lbl_exclusive": "ЭКСКЛЮЗИВ"
+  },
+
+  "Notifications": {
+    "nav_title": "Уведомления",
+    "badge_new": "Новые",
+    "btn_mark_all_read": "Отметить все как прочитанные",
+    "empty_title": "У вас пока нет уведомлений.",
+    "empty_desc": "Здесь мы будем сообщать вам о подписках, сообщениях или чаевых.",
+    "time_just_now": "Только что",
+    "time_ago": "",
+    "time_min": "мин назад",
+    "time_hr": "ч назад",
+    "time_yesterday": "Вчера",
+    "time_d": "дн назад"
   }
 }

@@ -523,5 +523,19 @@
     "btn_sending": "Envoi en cours...",
     "btn_send_all": "Envoyer à Tous",
     "lbl_exclusive": "EXCLUSIF"
+  },
+
+  "Notifications": {
+    "nav_title": "Notifications",
+    "badge_new": "Nouvelles",
+    "btn_mark_all_read": "Tout marquer comme lu",
+    "empty_title": "Vous n'avez pas de notifications pour le moment.",
+    "empty_desc": "Nous vous informerons ici lorsque vous recevrez des abonnements, des messages ou des pourboires.",
+    "time_just_now": "À l'instant",
+    "time_ago": "Il y a",
+    "time_min": "min",
+    "time_hr": "h",
+    "time_yesterday": "Hier",
+    "time_d": "j"
   }
 }

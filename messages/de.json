@@ -523,5 +523,19 @@
     "btn_sending": "Wird gesendet...",
     "btn_send_all": "An alle senden",
     "lbl_exclusive": "EXKLUSIV"
+  },
+
+  "Notifications": {
+    "nav_title": "Benachrichtigungen",
+    "badge_new": "Neu",
+    "btn_mark_all_read": "Alle als gelesen markieren",
+    "empty_title": "Sie haben vorerst keine Benachrichtigungen.",
+    "empty_desc": "Wir benachrichtigen Sie hier, wenn Sie Abonnements, Nachrichten oder Trinkgelder erhalten.",
+    "time_just_now": "Gerade eben",
+    "time_ago": "Vor",
+    "time_min": "Min",
+    "time_hr": "Std",
+    "time_yesterday": "Gestern",
+    "time_d": "T"
   }
 }

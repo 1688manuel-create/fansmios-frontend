@@ -523,5 +523,19 @@
     "btn_sending": "正在发送...",
     "btn_send_all": "发送给所有人",
     "lbl_exclusive": "独家"
+  },
+
+  "Notifications": {
+    "nav_title": "通知",
+    "badge_new": "新",
+    "btn_mark_all_read": "全部标记为已读",
+    "empty_title": "您目前没有通知。",
+    "empty_desc": "当您收到订阅、消息或小费时，我们将在此处通知您。",
+    "time_just_now": "刚刚",
+    "time_ago": "",
+    "time_min": "分钟前",
+    "time_hr": "小时前",
+    "time_yesterday": "昨天",
+    "time_d": "天前"
   }
 }

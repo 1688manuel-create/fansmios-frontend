@@ -523,5 +523,19 @@
     "btn_sending": "جاري الإرسال...",
     "btn_send_all": "إرسال للجميع",
     "lbl_exclusive": "حصري"
+  },
+
+  "Notifications": {
+    "nav_title": "الإشعارات",
+    "badge_new": "جديدة",
+    "btn_mark_all_read": "تحديد الكل كمقروء",
+    "empty_title": "ليس لديك إشعارات في الوقت الحالي.",
+    "empty_desc": "سنقوم بإعلامك هنا عندما تتلقى اشتراكات أو رسائل أو بقشيش.",
+    "time_just_now": "الآن",
+    "time_ago": "منذ",
+    "time_min": "دقيقة",
+    "time_hr": "ساعة",
+    "time_yesterday": "أمس",
+    "time_d": "يوم"
   }
 }
