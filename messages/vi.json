@@ -293,5 +293,17 @@
     "fans": "Người hâm mộ",
     "creators": "Nhà sáng tạo",
     "live_monitoring": "Giám sát tài chính theo thời gian thực đang hoạt động"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "Lỗi khi xóa khỏi mục đã lưu.",
+    "nav_title": "Mục đã lưu của tôi",
+    "btn_back": "Trở lại",
+    "empty_vault_title": "Kho lưu trữ của bạn trống",
+    "empty_vault_desc": "Khám phá những người sáng tạo và lưu các bài đăng yêu thích của bạn để xem tại đây.",
+    "btn_explore": "Khám phá Nhà sáng tạo",
+    "btn_remove": "Gỡ bỏ ✕",
+    "locked_status": "Đã khóa",
+    "click_to_unlock": "Nhấp để mở khóa"
   }
 }

@@ -293,5 +293,17 @@
     "fans": "Fans",
     "creators": "Creators",
     "live_monitoring": "Echtzeit-Finanzüberwachung aktiv"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "Fehler beim Entfernen aus Favoriten.",
+    "nav_title": "Meine Lesezeichen",
+    "btn_back": "Zurück",
+    "empty_vault_title": "Ihr Tresor ist leer",
+    "empty_vault_desc": "Entdecken Sie Creators und speichern Sie Ihre Lieblingsbeiträge, um sie hier zu sehen.",
+    "btn_explore": "Creators Entdecken",
+    "btn_remove": "Entfernen ✕",
+    "locked_status": "Gesperrt",
+    "click_to_unlock": "Klicken zum Entsperren"
   }
 }

@@ -293,5 +293,17 @@
     "fans": "Penggemar",
     "creators": "Kreator",
     "live_monitoring": "Pemantauan Keuangan Real-Time Aktif"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "Kesalahan saat menghapus dari bookmark.",
+    "nav_title": "Simpanan Saya",
+    "btn_back": "Kembali",
+    "empty_vault_title": "Brankas Anda kosong",
+    "empty_vault_desc": "Jelajahi kreator dan simpan postingan favorit Anda untuk melihatnya di sini.",
+    "btn_explore": "Jelajahi Kreator",
+    "btn_remove": "Hapus ✕",
+    "locked_status": "Terkunci",
+    "click_to_unlock": "Klik untuk membuka kunci"
   }
 }

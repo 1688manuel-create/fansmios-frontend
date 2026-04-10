@@ -293,5 +293,17 @@
     "fans": "المعجبين",
     "creators": "صناع المحتوى",
     "live_monitoring": "المراقبة المالية في الوقت الفعلي نشطة"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "خطأ في الإزالة من الإشارات المرجعية.",
+    "nav_title": "العناصر المحفوظة",
+    "btn_back": "عودة",
+    "empty_vault_title": "الخزنة فارغة",
+    "empty_vault_desc": "استكشف صناع المحتوى واحفظ منشوراتك المفضلة لرؤيتها هنا.",
+    "btn_explore": "استكشاف صناع المحتوى",
+    "btn_remove": "إزالة ✕",
+    "locked_status": "مغلق",
+    "click_to_unlock": "انقر لفتح القفل"
   }
 }

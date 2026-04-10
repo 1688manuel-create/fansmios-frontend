@@ -293,5 +293,17 @@
     "fans": "Fans",
     "creators": "Skapare",
     "live_monitoring": "Finansiell realtidsövervakning aktiv"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "Fel vid borttagning från bokmärken.",
+    "nav_title": "Mina Sparade",
+    "btn_back": "Tillbaka",
+    "empty_vault_title": "Ditt valv är tomt",
+    "empty_vault_desc": "Utforska skapare och spara dina favoritposter för att se dem här.",
+    "btn_explore": "Utforska Skapare",
+    "btn_remove": "Ta bort ✕",
+    "locked_status": "Låst",
+    "click_to_unlock": "Klicka för att låsa upp"
   }
 }

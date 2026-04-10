@@ -293,5 +293,17 @@
     "fans": "Fan",
     "creators": "Creatori",
     "live_monitoring": "Monitoraggio Finanziario in Tempo Reale Attivo"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "Errore durante la rimozione dai preferiti.",
+    "nav_title": "I Miei Salvataggi",
+    "btn_back": "Indietro",
+    "empty_vault_title": "Il tuo caveau è vuoto",
+    "empty_vault_desc": "Esplora creatori e salva i tuoi post preferiti per vederli qui.",
+    "btn_explore": "Esplora Creatori",
+    "btn_remove": "Rimuovi ✕",
+    "locked_status": "Bloccato",
+    "click_to_unlock": "Clicca per sbloccare"
   }
 }

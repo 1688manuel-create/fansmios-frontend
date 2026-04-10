@@ -293,5 +293,17 @@
     "fans": "Hayranlar",
     "creators": "Yaratıcılar",
     "live_monitoring": "Gerçek Zamanlı Finansal İzleme Aktif"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "Yer imlerinden kaldırılırken hata oluştu.",
+    "nav_title": "Kaydedilenlerim",
+    "btn_back": "Geri",
+    "empty_vault_title": "Kasanız boş",
+    "empty_vault_desc": "Burada görmek için yaratıcıları keşfedin ve favori gönderilerinizi kaydedin.",
+    "btn_explore": "Yaratıcıları Keşfet",
+    "btn_remove": "Kaldır ✕",
+    "locked_status": "Kilitli",
+    "click_to_unlock": "Kilidi açmak için tıkla"
   }
 }

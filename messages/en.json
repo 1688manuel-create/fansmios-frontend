@@ -292,5 +292,17 @@
     "fans": "Fans",
     "creators": "Creators",
     "live_monitoring": "Real-Time Financial Monitoring Active"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "Error removing from bookmarks.",
+    "nav_title": "My Bookmarks",
+    "btn_back": "Back",
+    "empty_vault_title": "Your vault is empty",
+    "empty_vault_desc": "Explore creators and save your favorite posts to see them here.",
+    "btn_explore": "Explore Creators",
+    "btn_remove": "Remove ✕",
+    "locked_status": "Locked",
+    "click_to_unlock": "Click to unlock"
   }
 }

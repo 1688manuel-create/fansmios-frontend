@@ -293,5 +293,17 @@
     "fans": "Fani",
     "creators": "Twórcy",
     "live_monitoring": "Monitorowanie finansowe w czasie rzeczywistym aktywne"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "Błąd podczas usuwania z zakładek.",
+    "nav_title": "Moje Zapisane",
+    "btn_back": "Wróć",
+    "empty_vault_title": "Twój skarbiec jest pusty",
+    "empty_vault_desc": "Odkrywaj twórców i zapisuj swoje ulubione posty, aby zobaczyć je tutaj.",
+    "btn_explore": "Odkrywaj Twórców",
+    "btn_remove": "Usuń ✕",
+    "locked_status": "Zablokowane",
+    "click_to_unlock": "Kliknij, aby odblokować"
   }
 }

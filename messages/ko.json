@@ -293,5 +293,17 @@
     "fans": "팬",
     "creators": "크리에이터",
     "live_monitoring": "실시간 재무 모니터링 활성화됨"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "북마크에서 제거하는 중 오류가 발생했습니다.",
+    "nav_title": "내 저장 항목",
+    "btn_back": "뒤로",
+    "empty_vault_title": "보관함이 비어 있습니다",
+    "empty_vault_desc": "크리에이터를 탐색하고 좋아하는 게시물을 저장하여 여기에서 확인하세요.",
+    "btn_explore": "크리에이터 탐색",
+    "btn_remove": "제거 ✕",
+    "locked_status": "잠김",
+    "click_to_unlock": "잠금 해제하려면 클릭하세요"
   }
 }

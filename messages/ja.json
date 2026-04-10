@@ -293,5 +293,17 @@
     "fans": "ファン",
     "creators": "クリエイター",
     "live_monitoring": "リアルタイムの財務監視がアクティブです"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "ブックマークからの削除中にエラーが発生しました。",
+    "nav_title": "保存済み",
+    "btn_back": "戻る",
+    "empty_vault_title": "保管庫は空です",
+    "empty_vault_desc": "クリエイターを探索し、お気に入りの投稿を保存してここで確認しましょう。",
+    "btn_explore": "クリエイターを探索",
+    "btn_remove": "削除 ✕",
+    "locked_status": "ロック中",
+    "click_to_unlock": "クリックしてロック解除"
   }
 }

@@ -293,5 +293,17 @@
     "fans": "Fans",
     "creators": "Makers",
     "live_monitoring": "Realtime financiële monitoring actief"
+  },
+
+  "BookmarksPage": {
+    "alert_error_remove": "Fout bij het verwijderen uit bladwijzers.",
+    "nav_title": "Mijn Opgeslagen Items",
+    "btn_back": "Terug",
+    "empty_vault_title": "Je kluis is leeg",
+    "empty_vault_desc": "Ontdek makers en sla je favoriete posts op om ze hier te bekijken.",
+    "btn_explore": "Ontdek Makers",
+    "btn_remove": "Verwijderen ✕",
+    "locked_status": "Vergrendeld",
+    "click_to_unlock": "Klik om te ontgrendelen"
   }
 }
