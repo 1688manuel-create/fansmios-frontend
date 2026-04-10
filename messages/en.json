@@ -359,5 +359,37 @@
     "lbl_files": "Files",
     "lbl_sales": "Sales",
     "btn_delete": "Delete"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ Coupon successfully created.",
+    "alert_error_create": "Error creating coupon",
+    "alert_error_toggle": "Error toggling status",
+    "alert_copy_1": "Code",
+    "alert_copy_2": "copied to clipboard 📋",
+    "nav_title": "Offer Central",
+    "btn_back": "Back",
+    "form_title": "Create Promotion",
+    "form_desc": "Launch discount codes to attract new fans or reward the most loyal ones.",
+    "lbl_code": "Secret Code",
+    "ph_code": "E.g.: PROMO50",
+    "lbl_discount": "% Discount",
+    "ph_discount": "E.g.: 20",
+    "lbl_max_uses": "Usage Limit (Optional)",
+    "ph_unlimited": "Unlimited",
+    "lbl_expires": "Expiration Date (Optional)",
+    "btn_generate": "Generate Coupon",
+    "list_title": "Your Active Codes",
+    "lbl_registered": "Registered",
+    "empty_title": "Empty Vault",
+    "empty_desc": "You haven't created any discount coupons. Use the left panel to launch your first offer.",
+    "lbl_off": "OFF",
+    "btn_copy": "Copy code",
+    "lbl_uses": "Uses",
+    "lbl_expires_date": "Expires",
+    "status_online": "Online",
+    "status_offline": "Offline",
+    "btn_activate": "Activate",
+    "btn_deactivate": "Deactivate"
   }
 }

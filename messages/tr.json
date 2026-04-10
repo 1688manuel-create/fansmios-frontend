@@ -360,5 +360,37 @@
     "lbl_files": "Dosyalar",
     "lbl_sales": "Satışlar",
     "btn_delete": "Sil"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ Kupon başarıyla oluşturuldu.",
+    "alert_error_create": "Kupon oluşturulurken hata",
+    "alert_error_toggle": "Durum değiştirilirken hata",
+    "alert_copy_1": "Kod",
+    "alert_copy_2": "panoya kopyalandı 📋",
+    "nav_title": "Fırsat Merkezi",
+    "btn_back": "Geri",
+    "form_title": "Promosyon Oluştur",
+    "form_desc": "Yeni hayranlar çekmek veya en sadık olanları ödüllendirmek için indirim kodları başlatın.",
+    "lbl_code": "Gizli Kod",
+    "ph_code": "Örn: INDIRIM50",
+    "lbl_discount": "% İndirim",
+    "ph_discount": "Örn: 20",
+    "lbl_max_uses": "Kullanım Sınırı (İsteğe Bağlı)",
+    "ph_unlimited": "Sınırsız",
+    "lbl_expires": "Son Kullanma Tarihi (İsteğe Bağlı)",
+    "btn_generate": "Kupon Oluştur",
+    "list_title": "Aktif Kodlarınız",
+    "lbl_registered": "Kayıtlı",
+    "empty_title": "Kasa boş",
+    "empty_desc": "Henüz herhangi bir indirim kuponu oluşturmadınız. İlk teklifinizi başlatmak için sol paneli kullanın.",
+    "lbl_off": "İNDİRİM",
+    "btn_copy": "Kodu kopyala",
+    "lbl_uses": "Kullanımlar",
+    "lbl_expires_date": "Bitiş tarihi",
+    "status_online": "Yayında",
+    "status_offline": "Kapalı",
+    "btn_activate": "Aktifleştir",
+    "btn_deactivate": "Devre Dışı Bırak"
   }
 }

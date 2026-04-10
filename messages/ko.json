@@ -360,5 +360,37 @@
     "lbl_files": "파일",
     "lbl_sales": "판매",
     "btn_delete": "삭제"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ 쿠폰이 성공적으로 생성되었습니다.",
+    "alert_error_create": "쿠폰 생성 오류",
+    "alert_error_toggle": "상태 전환 오류",
+    "alert_copy_1": "코드",
+    "alert_copy_2": "클립보드에 복사됨 📋",
+    "nav_title": "혜택 센터",
+    "btn_back": "뒤로",
+    "form_title": "프로모션 생성",
+    "form_desc": "할인 코드를 발행하여 새로운 팬을 유치하거나 가장 충성스러운 팬에게 보상하세요.",
+    "lbl_code": "비밀 코드",
+    "ph_code": "예: PROMO50",
+    "lbl_discount": "할인율(%)",
+    "ph_discount": "예: 20",
+    "lbl_max_uses": "사용 제한(선택 사항)",
+    "ph_unlimited": "무제한",
+    "lbl_expires": "만료일(선택 사항)",
+    "btn_generate": "쿠폰 생성",
+    "list_title": "활성 코드",
+    "lbl_registered": "등록됨",
+    "empty_title": "보관함이 비어 있습니다",
+    "empty_desc": "아직 할인 쿠폰을 생성하지 않았습니다. 왼쪽 패널을 사용하여 첫 번째 혜택을 발행하세요.",
+    "lbl_off": "할인",
+    "btn_copy": "코드 복사",
+    "lbl_uses": "사용 횟수",
+    "lbl_expires_date": "만료일",
+    "status_online": "온라인",
+    "status_offline": "오프라인",
+    "btn_activate": "활성화",
+    "btn_deactivate": "비활성화"
   }
 }

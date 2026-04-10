@@ -360,5 +360,37 @@
     "lbl_files": "Filer",
     "lbl_sales": "Försäljning",
     "btn_delete": "Ta bort"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ Kupong har skapats.",
+    "alert_error_create": "Fel vid skapande av kupong",
+    "alert_error_toggle": "Fel vid ändring av status",
+    "alert_copy_1": "Kod",
+    "alert_copy_2": "kopierad till urklipp 📋",
+    "nav_title": "Erbjudandecenter",
+    "btn_back": "Tillbaka",
+    "form_title": "Skapa Kampanj",
+    "form_desc": "Lansera rabattkoder för att locka nya fans eller belöna de mest lojala.",
+    "lbl_code": "Hemlig Kod",
+    "ph_code": "T.ex.: PROMO50",
+    "lbl_discount": "% Rabatt",
+    "ph_discount": "T.ex.: 20",
+    "lbl_max_uses": "Användningsgräns (Frivilligt)",
+    "ph_unlimited": "Obegränsat",
+    "lbl_expires": "Utgångsdatum (Frivilligt)",
+    "btn_generate": "Generera Kupong",
+    "list_title": "Dina Aktiva Koder",
+    "lbl_registered": "Registrerade",
+    "empty_title": "Tomt valv",
+    "empty_desc": "Du har inte skapat några rabattkuponger än. Använd den vänstra panelen för att lansera ditt första erbjudande.",
+    "lbl_off": "RABATT",
+    "btn_copy": "Kopiera kod",
+    "lbl_uses": "Användningar",
+    "lbl_expires_date": "Löper ut",
+    "status_online": "Påkopplad",
+    "status_offline": "Avstängd",
+    "btn_activate": "Aktivera",
+    "btn_deactivate": "Inaktivera"
   }
 }

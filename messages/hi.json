@@ -360,5 +360,37 @@
     "lbl_files": "फ़ाइलें",
     "lbl_sales": "बिक्री",
     "btn_delete": "हटाएं"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ कूपन सफलतापूर्वक बनाया गया।",
+    "alert_error_create": "कूपन बनाने में त्रुटि",
+    "alert_error_toggle": "स्थिति बदलने में त्रुटि",
+    "alert_copy_1": "कोड",
+    "alert_copy_2": "क्लिपबोर्ड पर कॉपी किया गया 📋",
+    "nav_title": "ऑफर सेंट्रल",
+    "btn_back": "वापस",
+    "form_title": "प्रमोशन बनाएँ",
+    "form_desc": "नए प्रशंसकों को आकर्षित करने या सबसे वफादार लोगों को पुरस्कृत करने के लिए छूट कोड लॉन्च करें।",
+    "lbl_code": "गुप्त कोड",
+    "ph_code": "उदा: PROMO50",
+    "lbl_discount": "% छूट",
+    "ph_discount": "उदा: 20",
+    "lbl_max_uses": "उपयोग सीमा (वैकल्पिक)",
+    "ph_unlimited": "असीमित",
+    "lbl_expires": "समाप्ति तिथि (वैकल्पिक)",
+    "btn_generate": "कूपन जनरेट करें",
+    "list_title": "आपके सक्रिय कोड",
+    "lbl_registered": "पंजीकृत",
+    "empty_title": "तिजोरी खाली है",
+    "empty_desc": "आपने अभी तक कोई डिस्काउंट कूपन नहीं बनाया है। अपना पहला ऑफ़र लॉन्च करने के लिए बाएँ पैनल का उपयोग करें।",
+    "lbl_off": "छूट",
+    "btn_copy": "कोड कॉपी करें",
+    "lbl_uses": "उपयोग",
+    "lbl_expires_date": "समाप्त होता है",
+    "status_online": "ऑनलाइन",
+    "status_offline": "बंद",
+    "btn_activate": "सक्रिय करें",
+    "btn_deactivate": "निष्क्रिय करें"
   }
 }

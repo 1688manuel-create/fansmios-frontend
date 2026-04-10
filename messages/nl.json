@@ -360,5 +360,37 @@
     "lbl_files": "Bestanden",
     "lbl_sales": "Verkopen",
     "btn_delete": "Verwijderen"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ Coupon succesvol aangemaakt.",
+    "alert_error_create": "Fout bij het maken van de coupon",
+    "alert_error_toggle": "Fout bij het wisselen van de status",
+    "alert_copy_1": "Code",
+    "alert_copy_2": "gekopieerd naar klembord 📋",
+    "nav_title": "Aanbiedingencentrum",
+    "btn_back": "Terug",
+    "form_title": "Promotie Maken",
+    "form_desc": "Lanceer kortingscodes om nieuwe fans aan te trekken of de meest loyale fans te belonen.",
+    "lbl_code": "Geheime Code",
+    "ph_code": "Bijv: PROMO50",
+    "lbl_discount": "% Korting",
+    "ph_discount": "Bijv: 20",
+    "lbl_max_uses": "Gebruikslimiet (Optioneel)",
+    "ph_unlimited": "Onbeperkt",
+    "lbl_expires": "Vervaldatum (Optioneel)",
+    "btn_generate": "Coupon Genereren",
+    "list_title": "Je Actieve Codes",
+    "lbl_registered": "Geregistreerd",
+    "empty_title": "Lege kluis",
+    "empty_desc": "Je hebt nog geen kortingscoupons gemaakt. Gebruik het linkerdeelvenster om je eerste aanbieding te lanceren.",
+    "lbl_off": "KORTING",
+    "btn_copy": "Code kopiëren",
+    "lbl_uses": "Gebruikt",
+    "lbl_expires_date": "Verloopt op",
+    "status_online": "Online",
+    "status_offline": "Uit",
+    "btn_activate": "Activeren",
+    "btn_deactivate": "Deactiveren"
   }
 }

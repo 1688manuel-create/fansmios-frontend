@@ -360,5 +360,37 @@
     "lbl_files": "ไฟล์",
     "lbl_sales": "ยอดขาย",
     "btn_delete": "ลบ"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ สร้างคูปองสำเร็จแล้ว",
+    "alert_error_create": "เกิดข้อผิดพลาดในการสร้างคูปอง",
+    "alert_error_toggle": "เกิดข้อผิดพลาดในการเปลี่ยนสถานะ",
+    "alert_copy_1": "คัดลอกรหัส",
+    "alert_copy_2": "ไปยังคลิปบอร์ดแล้ว 📋",
+    "nav_title": "ศูนย์รวมข้อเสนอ",
+    "btn_back": "กลับ",
+    "form_title": "สร้างโปรโมชั่น",
+    "form_desc": "เปิดตัวรหัสส่วนลดเพื่อดึงดูดแฟนๆ ใหม่หรือให้รางวัลแก่แฟนๆ ที่ภักดีที่สุด",
+    "lbl_code": "รหัสลับ",
+    "ph_code": "เช่น PROMO50",
+    "lbl_discount": "ส่วนลด %",
+    "ph_discount": "เช่น 20",
+    "lbl_max_uses": "ขีดจำกัดการใช้งาน (ไม่บังคับ)",
+    "ph_unlimited": "ไม่จำกัด",
+    "lbl_expires": "วันหมดอายุ (ไม่บังคับ)",
+    "btn_generate": "สร้างคูปอง",
+    "list_title": "รหัสที่ใช้งานอยู่ของคุณ",
+    "lbl_registered": "ลงทะเบียนแล้ว",
+    "empty_title": "ห้องนิรภัยว่างเปล่า",
+    "empty_desc": "คุณยังไม่ได้สร้างคูปองส่วนลดใดๆ ใช้แผงด้านซ้ายเพื่อเปิดตัวข้อเสนอแรกของคุณ",
+    "lbl_off": "ส่วนลด",
+    "btn_copy": "คัดลอกรหัส",
+    "lbl_uses": "การใช้งาน",
+    "lbl_expires_date": "หมดอายุเมื่อ",
+    "status_online": "ออนไลน์",
+    "status_offline": "ปิดอยู่",
+    "btn_activate": "เปิดใช้งาน",
+    "btn_deactivate": "ปิดใช้งาน"
   }
 }

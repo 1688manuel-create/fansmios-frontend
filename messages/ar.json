@@ -360,5 +360,37 @@
     "lbl_files": "ملفات",
     "lbl_sales": "المبيعات",
     "btn_delete": "حذف"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ تم إنشاء الكوبون بنجاح.",
+    "alert_error_create": "خطأ في إنشاء الكوبون",
+    "alert_error_toggle": "خطأ في تبديل الحالة",
+    "alert_copy_1": "تم نسخ الرمز",
+    "alert_copy_2": "إلى الحافظة 📋",
+    "nav_title": "مركز العروض",
+    "btn_back": "عودة",
+    "form_title": "إنشاء عرض ترويجي",
+    "form_desc": "أطلق أكواد خصم لجذب معجبين جدد أو مكافأة أكثرهم ولاءً.",
+    "lbl_code": "الرمز السري",
+    "ph_code": "مثال: PROMO50",
+    "lbl_discount": "% خصم",
+    "ph_discount": "مثال: 20",
+    "lbl_max_uses": "حد الاستخدام (اختياري)",
+    "ph_unlimited": "غير محدود",
+    "lbl_expires": "تاريخ الانتهاء (اختياري)",
+    "btn_generate": "إنشاء كوبون",
+    "list_title": "أكوادك النشطة",
+    "lbl_registered": "مسجلة",
+    "empty_title": "الخزنة فارغة",
+    "empty_desc": "لم تقم بإنشاء أي كوبونات خصم. استخدم اللوحة اليسرى لإطلاق عرضك الأول.",
+    "lbl_off": "خصم",
+    "btn_copy": "نسخ الرمز",
+    "lbl_uses": "الاستخدامات",
+    "lbl_expires_date": "ينتهي في",
+    "status_online": "متصل",
+    "status_offline": "غير متصل",
+    "btn_activate": "تفعيل",
+    "btn_deactivate": "إلغاء التفعيل"
   }
 }

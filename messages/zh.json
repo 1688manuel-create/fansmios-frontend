@@ -360,5 +360,37 @@
     "lbl_files": "文件",
     "lbl_sales": "销量",
     "btn_delete": "删除"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ 优惠券创建成功。",
+    "alert_error_create": "创建优惠券时出错",
+    "alert_error_toggle": "切换状态时出错",
+    "alert_copy_1": "代码",
+    "alert_copy_2": "已复制到剪贴板 📋",
+    "nav_title": "优惠中心",
+    "btn_back": "返回",
+    "form_title": "创建促销",
+    "form_desc": "发布折扣代码以吸引新粉丝或奖励最忠诚的粉丝。",
+    "lbl_code": "密码",
+    "ph_code": "例如：PROMO50",
+    "lbl_discount": "折扣 %",
+    "ph_discount": "例如：20",
+    "lbl_max_uses": "使用限制（可选）",
+    "ph_unlimited": "无限制",
+    "lbl_expires": "到期日期（可选）",
+    "btn_generate": "生成优惠券",
+    "list_title": "您活跃的代码",
+    "lbl_registered": "已注册",
+    "empty_title": "空金库",
+    "empty_desc": "您还没有创建任何折扣优惠券。使用左侧面板发布您的第一个优惠。",
+    "lbl_off": "折扣",
+    "btn_copy": "复制代码",
+    "lbl_uses": "使用次数",
+    "lbl_expires_date": "到期时间",
+    "status_online": "在线",
+    "status_offline": "离线",
+    "btn_activate": "激活",
+    "btn_deactivate": "停用"
   }
 }

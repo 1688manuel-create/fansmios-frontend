@@ -360,5 +360,37 @@
     "lbl_files": "Tệp",
     "lbl_sales": "Doanh số",
     "btn_delete": "Xóa"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ Đã tạo phiếu giảm giá thành công.",
+    "alert_error_create": "Lỗi khi tạo phiếu giảm giá",
+    "alert_error_toggle": "Lỗi khi chuyển đổi trạng thái",
+    "alert_copy_1": "Mã",
+    "alert_copy_2": "đã được sao chép vào khay nhớ tạm 📋",
+    "nav_title": "Trung tâm Ưu đãi",
+    "btn_back": "Trở lại",
+    "form_title": "Tạo Khuyến mãi",
+    "form_desc": "Khởi chạy mã giảm giá để thu hút người hâm mộ mới hoặc thưởng cho những người trung thành nhất.",
+    "lbl_code": "Mã Bí mật",
+    "ph_code": "VD: PROMO50",
+    "lbl_discount": "% Giảm giá",
+    "ph_discount": "VD: 20",
+    "lbl_max_uses": "Giới hạn Sử dụng (Tùy chọn)",
+    "ph_unlimited": "Không giới hạn",
+    "lbl_expires": "Ngày hết hạn (Tùy chọn)",
+    "btn_generate": "Tạo Phiếu giảm giá",
+    "list_title": "Mã Hoạt động của bạn",
+    "lbl_registered": "Đã đăng ký",
+    "empty_title": "Kho lưu trữ trống",
+    "empty_desc": "Bạn chưa tạo bất kỳ phiếu giảm giá nào. Sử dụng bảng bên trái để khởi chạy ưu đãi đầu tiên của bạn.",
+    "lbl_off": "GIẢM",
+    "btn_copy": "Sao chép mã",
+    "lbl_uses": "Số lần sử dụng",
+    "lbl_expires_date": "Hết hạn vào",
+    "status_online": "Trực tuyến",
+    "status_offline": "Đã tắt",
+    "btn_activate": "Kích hoạt",
+    "btn_deactivate": "Vô hiệu hóa"
   }
 }

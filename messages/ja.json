@@ -360,5 +360,37 @@
     "lbl_files": "ファイル",
     "lbl_sales": "売上",
     "btn_delete": "削除"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ クーポンが正常に作成されました。",
+    "alert_error_create": "クーポンの作成中にエラーが発生しました",
+    "alert_error_toggle": "ステータスの切り替えエラー",
+    "alert_copy_1": "コード",
+    "alert_copy_2": "をクリップボードにコピーしました 📋",
+    "nav_title": "オファーセンター",
+    "btn_back": "戻る",
+    "form_title": "プロモーションを作成",
+    "form_desc": "割引コードを公開して、新しいファンを引き付けたり、最も忠実なファンに報いたりしましょう。",
+    "lbl_code": "シークレットコード",
+    "ph_code": "例: PROMO50",
+    "lbl_discount": "割引率 (%)",
+    "ph_discount": "例: 20",
+    "lbl_max_uses": "使用制限 (任意)",
+    "ph_unlimited": "無制限",
+    "lbl_expires": "有効期限 (任意)",
+    "btn_generate": "クーポンを生成",
+    "list_title": "アクティブなコード",
+    "lbl_registered": "登録済み",
+    "empty_title": "保管庫は空です",
+    "empty_desc": "割引クーポンはまだ作成されていません。左側のパネルを使用して、最初のオファーを公開してください。",
+    "lbl_off": "OFF",
+    "btn_copy": "コードをコピー",
+    "lbl_uses": "使用回数",
+    "lbl_expires_date": "有効期限",
+    "status_online": "オンライン",
+    "status_offline": "オフライン",
+    "btn_activate": "有効化",
+    "btn_deactivate": "無効化"
   }
 }

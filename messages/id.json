@@ -360,5 +360,37 @@
     "lbl_files": "File",
     "lbl_sales": "Penjualan",
     "btn_delete": "Hapus"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ Kupon berhasil dibuat.",
+    "alert_error_create": "Kesalahan saat membuat kupon",
+    "alert_error_toggle": "Kesalahan saat mengubah status",
+    "alert_copy_1": "Kode",
+    "alert_copy_2": "disalin ke papan klip 📋",
+    "nav_title": "Pusat Penawaran",
+    "btn_back": "Kembali",
+    "form_title": "Buat Promosi",
+    "form_desc": "Luncurkan kode diskon untuk menarik penggemar baru atau menghargai mereka yang paling setia.",
+    "lbl_code": "Kode Rahasia",
+    "ph_code": "Cth: PROMO50",
+    "lbl_discount": "% Diskon",
+    "ph_discount": "Cth: 20",
+    "lbl_max_uses": "Batas Penggunaan (Opsional)",
+    "ph_unlimited": "Tak terbatas",
+    "lbl_expires": "Tanggal Kedaluwarsa (Opsional)",
+    "btn_generate": "Buat Kupon",
+    "list_title": "Kode Aktif Anda",
+    "lbl_registered": "Terdaftar",
+    "empty_title": "Brankas kosong",
+    "empty_desc": "Anda belum membuat kupon diskon apa pun. Gunakan panel kiri untuk meluncurkan penawaran pertama Anda.",
+    "lbl_off": "DISKON",
+    "btn_copy": "Salin kode",
+    "lbl_uses": "Penggunaan",
+    "lbl_expires_date": "Kedaluwarsa pada",
+    "status_online": "Online",
+    "status_offline": "Mati",
+    "btn_activate": "Aktifkan",
+    "btn_deactivate": "Nonaktifkan"
   }
 }

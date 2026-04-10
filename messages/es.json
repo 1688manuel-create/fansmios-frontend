@@ -360,5 +360,37 @@
     "lbl_files": "Archivos",
     "lbl_sales": "Ventas",
     "btn_delete": "Eliminar"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ Cupón creado con éxito.",
+    "alert_error_create": "Error al crear cupón",
+    "alert_error_toggle": "Error al cambiar estado",
+    "alert_copy_1": "Código",
+    "alert_copy_2": "copiado al portapapeles 📋",
+    "nav_title": "Central de Ofertas",
+    "btn_back": "Volver",
+    "form_title": "Crear Promoción",
+    "form_desc": "Lanza códigos de descuento para atraer a nuevos fans o premiar a los más leales.",
+    "lbl_code": "Código Secreto",
+    "ph_code": "EJ: OFERTA50",
+    "lbl_discount": "% de Descuento",
+    "ph_discount": "Ej: 20",
+    "lbl_max_uses": "Límite de Usos (Opcional)",
+    "ph_unlimited": "Ilimitado",
+    "lbl_expires": "Fecha de Caducidad (Opcional)",
+    "btn_generate": "Generar Cupón",
+    "list_title": "Tus Códigos Activos",
+    "lbl_registered": "Registrados",
+    "empty_title": "Bóveda vacía",
+    "empty_desc": "No has creado ningún cupón de descuento. Usa el panel izquierdo para lanzar tu primera oferta.",
+    "lbl_off": "OFF",
+    "btn_copy": "Copiar código",
+    "lbl_uses": "Usos",
+    "lbl_expires_date": "Vence",
+    "status_online": "En Línea",
+    "status_offline": "Apagado",
+    "btn_activate": "Activar",
+    "btn_deactivate": "Desactivar"
   }
 }

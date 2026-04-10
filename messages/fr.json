@@ -360,5 +360,37 @@
     "lbl_files": "Fichiers",
     "lbl_sales": "Ventes",
     "btn_delete": "Supprimer"
+  },
+
+  "CouponsDashboard": {
+    "alert_success_create": "🎟️ Coupon créé avec succès.",
+    "alert_error_create": "Erreur lors de la création du coupon",
+    "alert_error_toggle": "Erreur de changement de statut",
+    "alert_copy_1": "Code",
+    "alert_copy_2": "copié dans le presse-papiers 📋",
+    "nav_title": "Centre des offres",
+    "btn_back": "Retour",
+    "form_title": "Créer une promotion",
+    "form_desc": "Lancez des codes promo pour attirer de nouveaux fans ou récompenser les plus fidèles.",
+    "lbl_code": "Code secret",
+    "ph_code": "Ex : PROMO50",
+    "lbl_discount": "% de réduction",
+    "ph_discount": "Ex : 20",
+    "lbl_max_uses": "Limite d'utilisation (Optionnel)",
+    "ph_unlimited": "Illimité",
+    "lbl_expires": "Date d'expiration (Optionnel)",
+    "btn_generate": "Générer le coupon",
+    "list_title": "Vos codes actifs",
+    "lbl_registered": "Enregistrés",
+    "empty_title": "Coffre-fort vide",
+    "empty_desc": "Vous n'avez créé aucun coupon de réduction. Utilisez le panneau de gauche pour lancer votre première offre.",
+    "lbl_off": "OFF",
+    "btn_copy": "Copier le code",
+    "lbl_uses": "Utilisations",
+    "lbl_expires_date": "Expire le",
+    "status_online": "En ligne",
+    "status_offline": "Désactivé",
+    "btn_activate": "Activer",
+    "btn_deactivate": "Désactiver"
   }
 }
