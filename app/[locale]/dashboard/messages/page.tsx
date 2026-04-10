@@ -6,7 +6,8 @@ import { chatService } from '../../../../lib/chatService';
 import { paymentService } from '../../../../lib/paymentService'; 
 import api from '../../../../lib/api'; 
 import PaymentModal from '../../../../components/PaymentModal'; 
-import ReportModal from '../../../../components/ReportModal'; 
+import ReportModal from '../../../../components/ReportModal';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ 
 
 import { 
   MessageCircle, 
@@ -43,6 +44,7 @@ const getImageUrl = (path: string | null) => {
 
 function MessagesContent() {
   const router = useRouter();
+  const t = useTranslations('Messages'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const searchParams = useSearchParams(); 
   
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -322,7 +324,7 @@ function MessagesContent() {
 
       timerRef.current = setInterval(() => setRecordingTime((prev) => prev + 1), 1000);
     } catch (err) {
-      alert("No se pudo acceder al micrófono.");
+      alert(t('alert_mic_error'));
     }
   };
 
@@ -369,44 +371,44 @@ function MessagesContent() {
       
       fetchConversations();
     } catch (error) {
-      alert("Hubo un error al enviar el mensaje.");
+      alert(t('alert_error_send'));
     } finally {
       setIsSending(false);
     }
   };
 
   const handleSendBroadcast = async () => {
-    if (!broadcastContent.trim() && !broadcastFile) return alert("Debes escribir un mensaje o adjuntar un archivo.");
+    if (!broadcastContent.trim() && !broadcastFile) return alert(t('alert_broadcast_empty'));
     if (!broadcastPrice || parseFloat(broadcastPrice) <= 0) {
-      if (!confirm("No has puesto precio. ¿Deseas enviar este mensaje GRATIS a todos tus fans?")) return;
+      if (!confirm(t('confirm_broadcast_free'))) return;
     }
     setIsSendingBroadcast(true);
     try {
       const res = await chatService.sendBroadcast(broadcastContent, broadcastPrice, broadcastFile);
-      alert(`✅ ¡Éxito! ${res.message}`);
+      alert(`✅ ${t('alert_success')} ${res.message}`);
       setIsBroadcastModalOpen(false); setBroadcastContent(''); setBroadcastPrice(''); setBroadcastFile(null);
       fetchConversations(); 
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error de conexión con el servidor.");
+      alert(error.response?.data?.error || t('alert_error_conn'));
     } finally {
       setIsSendingBroadcast(false);
     }
   };
 
   const handleDeleteMessage = async (msgId: string) => {
-    if (!confirm("¿Estás seguro de que quieres borrar este mensaje para todos?")) return;
+    if (!confirm(t('confirm_delete_msg'))) return;
     try {
       await chatService.deleteMessage(msgId);
       setMessages(prev => prev.filter(m => m.id !== msgId));
     } catch (error) {
-      alert("Error al intentar borrar el mensaje.");
+      alert(t('alert_error_delete_msg'));
     }
   };
 
   const handleDeleteFullConversation = async () => {
     if (!activeChat || !activeChat.id) return;
     
-    const confirmDelete = confirm(`⚠️ ALERTA DE SEGURIDAD: ¿Estás seguro de que quieres eliminar TODA la conversación con @${activeChat.user?.username}? \n\nEsta acción borrará todos los mensajes para ambos y NO se puede deshacer.`);
+    const confirmDelete = confirm(t('confirm_delete_chat').replace('{user}', activeChat.user?.username));
     
     if (!confirmDelete) return;
 
@@ -422,15 +424,15 @@ function MessagesContent() {
       setActiveChat(null);
       if (!isGodMode) localStorage.removeItem('lastOpenedChat');
 
-      alert("💥 Chat eliminado por completo.");
+      alert(`💥 ${t('alert_chat_deleted')}`);
     } catch (error: any) {
-      alert("Hubo un error al intentar eliminar la conversación.");
+      alert(t('alert_error_delete_chat'));
     }
   };
 
   const handleUnlockClick = async (message: any) => {
     if (currentUser?.role === 'ADMIN') {
-      alert("👑 MODO DIOS: Los Administradores no necesitan pagar, el servidor debió haber desbloqueado esto automáticamente.");
+      alert(t('alert_god_mode_unlock'));
       return;
     }
 
@@ -443,7 +445,7 @@ function MessagesContent() {
         messageId: message.id 
       } as any);
       
-      alert("✨ ¡Mensaje desbloqueado con éxito!");
+      alert(t('alert_msg_unlocked'));
       
       if (activeChat) {
         const chatData = await chatService.getMessages(activeChat.id, 1);
@@ -451,7 +453,7 @@ function MessagesContent() {
       }
 
     } catch (error: any) { 
-      alert(error.response?.data?.error || 'Error al procesar el pago. Verifica tu saldo.'); 
+      alert(error.response?.data?.error || t('alert_error_payment')); 
     }
   };
 
@@ -461,9 +463,9 @@ function MessagesContent() {
       if (isBlockedByMe) {
         await chatService.unblockUser(activeChat.user.id);
         setIsBlockedByMe(false);
-        alert("✅ Usuario desbloqueado.");
+        alert(t('alert_user_unblocked'));
       } else {
-        const confirmBlock = confirm("🚨 ¿Estás seguro de que quieres bloquear a este usuario?");
+        const confirmBlock = confirm(t('confirm_block_user'));
         if (!confirmBlock) return;
         try {
           await chatService.blockUser(activeChat.user.id);
@@ -471,10 +473,10 @@ function MessagesContent() {
           if (err.response?.data?.error !== 'El usuario ya estaba bloqueado.') throw err;
         }
         setIsBlockedByMe(true);
-        alert("🚫 Usuario ha sido bloqueado.");
+        alert(t('alert_user_blocked'));
       }
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al actualizar bloqueo.");
+      alert(error.response?.data?.error || t('alert_error_block'));
     }
   };
 
@@ -491,7 +493,7 @@ function MessagesContent() {
       <nav className="bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center z-10 shrink-0 backdrop-blur-xl shadow-md">
         <h1 className="text-xl font-black text-white flex items-center gap-2">
           <MessageCircle className={`w-5 h-5 ${isGodMode ? 'text-red-500' : 'text-teal-500'}`} strokeWidth={2.5}/> 
-          {isGodMode ? 'Moderador Global' : 'Mensajes VIP'}
+          {isGodMode ? t('nav_god_mode') : t('nav_vip_msgs')}
         </h1>
         <div className="flex gap-3">
           {currentUser?.role === 'ADMIN' && (
@@ -499,7 +501,7 @@ function MessagesContent() {
               onClick={() => { setActiveChat(null); setIsGodMode(!isGodMode); }}
               className={`text-sm px-4 py-2 rounded-full font-bold flex items-center gap-2 transition-all ${isGodMode ? 'bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.5)]' : 'nm-inset border border-red-500/30 text-red-500 hover:bg-red-500/10'}`}
             >
-              <Eye className="w-4 h-4" /> <span className="hidden md:inline">Modo Dios</span>
+              <Eye className="w-4 h-4" /> <span className="hidden md:inline">{t('btn_god_mode')}</span>
             </button>
           )}
 
@@ -508,14 +510,14 @@ function MessagesContent() {
               onClick={() => setIsBroadcastModalOpen(true)}
               className="text-sm nm-btn-primary border-teal-500/30 text-teal-400 hover:text-white hover:bg-teal-600 px-4 py-2 rounded-full font-bold flex items-center gap-2"
             >
-              <Megaphone className="w-4 h-4" /> <span className="hidden md:inline">Broadcast PPV</span>
+              <Megaphone className="w-4 h-4" /> <span className="hidden md:inline">{t('btn_broadcast_ppv')}</span>
             </button>
           )}
           <button 
             onClick={() => router.push('/dashboard')} 
             className="text-sm nm-btn text-gray-300 px-4 py-2 rounded-full hover:text-white transition-colors flex items-center gap-2 font-bold"
           >
-            <ArrowLeft className="w-4 h-4" /> <span className="hidden md:inline">Volver</span>
+            <ArrowLeft className="w-4 h-4" /> <span className="hidden md:inline">{t('btn_back')}</span>
           </button>
         </div>
       </nav>
@@ -530,7 +532,7 @@ function MessagesContent() {
               </span>
               <input 
                 type="text" 
-                placeholder={isGodMode ? "Buscar por usuario..." : "Buscar fan..."}
+                placeholder={isGodMode ? t('search_admin') : t('search_fan')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`w-full nm-inset rounded-xl pl-10 pr-4 py-2.5 text-white outline-none transition-colors shadow-inner text-sm ${isGodMode ? 'focus:border-red-500/50' : 'focus:border-teal-500/50'}`}
@@ -540,7 +542,7 @@ function MessagesContent() {
           <div className="flex-1 overflow-y-auto custom-scrollbar px-2 py-2">
             {filteredConversations.length === 0 ? (
               <p className="text-gray-500 text-sm text-center mt-10 px-4 font-medium">
-                {searchTerm ? 'No se encontraron resultados.' : 'No tienes conversaciones activas.'}
+                {searchTerm ? t('empty_search') : t('empty_chats')}
               </p>
             ) : (
               filteredConversations.map(chat => (
@@ -591,7 +593,7 @@ function MessagesContent() {
                     {activeChat.user?.username || 'Usuario'}
                     {!isGodMode && <span className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_5px_rgba(34,197,94,0.8)]"></span>}
                   </h3>
-                  <p className="text-[10px] text-gray-400 font-medium">{isGodMode ? 'Espiando conexión...' : 'En línea'}</p>
+                  <p className="text-[10px] text-gray-400 font-medium">{isGodMode ? t('status_spying') : t('status_online')}</p>
                 </div>
               </div>
               
@@ -600,7 +602,7 @@ function MessagesContent() {
                   <button 
                     onClick={handleDeleteFullConversation}
                     className="text-xs font-bold p-2 rounded-full transition-all flex items-center text-gray-400 nm-btn hover:text-red-500"
-                    title="Eliminar Todo el Chat"
+                    title={t('title_delete_msg')}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -608,7 +610,7 @@ function MessagesContent() {
                   <button 
                     onClick={() => { setReportingMessageId(null); setIsReportModalOpen(true); }}
                     className="text-xs font-bold p-2 rounded-full transition-all flex items-center text-gray-400 nm-btn hover:text-red-400"
-                    title="Reportar Usuario"
+                    title={t('title_report_msg')}
                   >
                     <Flag className="w-4 h-4" />
                   </button>
@@ -622,7 +624,7 @@ function MessagesContent() {
                     }`}
                   >
                     {isBlockedByMe ? <Unlock className="w-4 h-4"/> : <Ban className="w-4 h-4"/>} 
-                    <span className="hidden sm:inline">{isBlockedByMe ? 'Desbloquear' : 'Bloquear'}</span>
+                    <span className="hidden sm:inline">{isBlockedByMe ? t('btn_unblock') : t('btn_block')}</span>
                   </button>
                 </div>
               )}
@@ -640,7 +642,7 @@ function MessagesContent() {
                 </div>
               )}
               
-              {messages.length === 0 && !isLoadingMore && <p className="text-center text-gray-500 mt-10 font-medium">No hay mensajes en este chat.</p>}
+              {messages.length === 0 && !isLoadingMore && <p className="text-center text-gray-500 mt-10 font-medium">{t('empty_messages')}</p>}
               
               {messages.map((msg) => {
                 const hasMedia = msg.mediaUrl && msg.mediaUrl !== 'null';
@@ -653,7 +655,7 @@ function MessagesContent() {
                   <div key={msg.id} className={`flex flex-col ${alignRight ? 'items-end' : 'items-start'} animate-fade-in group`}>
                     
                     {isGodMode && (
-                      <span className="text-[10px] text-gray-500 mb-1 ml-1 font-mono">ID Remitente: {msg.senderId}</span>
+                      <span className="text-[10px] text-gray-500 mb-1 ml-1 font-mono">{t('lbl_sender_id')}: {msg.senderId}</span>
                     )}
 
                     <div className="flex items-center">
@@ -661,7 +663,7 @@ function MessagesContent() {
                         <button 
                           onClick={() => handleDeleteMessage(msg.id)} 
                           className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 mr-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full"
-                          title="Borrar mensaje"
+                          title={t('title_delete_msg')}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -670,7 +672,7 @@ function MessagesContent() {
                           <button 
                             onClick={() => { setReportingMessageId(msg.id); setIsReportModalOpen(true); }} 
                             className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-500 ml-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full order-last"
-                            title="Reportar este mensaje"
+                            title={t('title_report_msg')}
                           >
                             <Flag className="w-4 h-4" />
                           </button>
@@ -700,19 +702,19 @@ function MessagesContent() {
                               <>
                                 <div className="absolute inset-0 bg-gradient-to-t from-teal-900/40 to-transparent"></div>
                                 <Lock className="w-10 h-10 text-teal-500 relative z-10 drop-shadow-[0_0_10px_rgba(20,184,166,0.5)] mb-2" />
-                                <p className="font-bold relative z-10 text-sm text-white">Contenido Privado</p>
+                                <p className="font-bold relative z-10 text-sm text-white">{t('lbl_private_content')}</p>
                                 {msg.senderId !== 'me' && !isGodMode ? (
                                   <button onClick={() => handleUnlockClick(msg)} className="mt-3 bg-teal-500 hover:bg-teal-400 text-black text-xs font-bold py-2 px-6 rounded-full relative z-10 transition-transform hover:scale-105 shadow-[0_0_10px_rgba(20,184,166,0.3)] flex items-center gap-1">
-                                    <Unlock className="w-3 h-3" /> Desbloquear ${msg.price?.toFixed(2)}
+                                    <Unlock className="w-3 h-3" /> {t('btn_unlock')} ${msg.price?.toFixed(2)}
                                   </button>
                                 ) : (
-                                   <span className="nm-inset border border-teal-500/50 text-teal-400 font-bold px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest mt-2 relative z-10">{isGodMode ? `PPV Bloqueado ($${msg.price})` : `Tú cobraste: $${msg.price?.toFixed(2)}`}</span>
+                                   <span className="nm-inset border border-teal-500/50 text-teal-400 font-bold px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest mt-2 relative z-10">{isGodMode ? `${t('lbl_ppv_locked')} ($${msg.price})` : `${t('lbl_you_charged')}: $${msg.price?.toFixed(2)}`}</span>
                                 )}
                               </>
                             ) : (
                               <div className="text-center relative z-10 py-2 flex flex-col items-center">
                                  <Unlock className="w-8 h-8 text-teal-400 mb-2 drop-shadow-md" />
-                                 <span className="text-[10px] text-teal-300 font-bold nm-inset px-3 py-1 rounded-full border border-teal-500/30 uppercase tracking-widest">{isGodMode ? 'PPV Auditado' : `¡Desbloqueado por $${msg.price?.toFixed(2)}!`}</span>
+                                 <span className="text-[10px] text-teal-300 font-bold nm-inset px-3 py-1 rounded-full border border-teal-500/30 uppercase tracking-widest">{isGodMode ? t('lbl_ppv_audited') : `${t('lbl_unlocked_for')} $${msg.price?.toFixed(2)}!`}</span>
                               </div>
                             )}
                           </div>
@@ -737,7 +739,7 @@ function MessagesContent() {
                                  <div 
                                    onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'video' }); }}
                                    className="absolute top-4 right-4 bg-black/80 hover:bg-teal-500 p-2.5 rounded-full cursor-pointer opacity-100 sm:opacity-0 sm:group-hover/media:opacity-100 transition-all z-30 shadow-lg border border-white/10"
-                                   title="Ver en grande"
+                                   title={t('title_view_large')}
                                  >
                                    <Maximize className="w-5 h-5 text-white" />
                                  </div>
@@ -774,7 +776,7 @@ function MessagesContent() {
               <div className="p-4 border-t border-white/5 bg-nm-base relative z-20 min-h-[95px] flex flex-col justify-center shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
                 {isBlockedByMe ? (
                   <div className="w-full text-center py-3 text-red-400 text-sm font-bold nm-inset border border-red-500/30 rounded-full shadow-inner flex items-center justify-center gap-2">
-                    <Ban className="w-4 h-4" /> Tienes bloqueado a este usuario.
+                    <Ban className="w-4 h-4" /> {t('msg_user_blocked')}
                   </div>
                 ) : (
                   <>
@@ -788,7 +790,7 @@ function MessagesContent() {
                       )}
                       {isPPVMode && currentUser?.role === 'CREATOR' && (
                         <div className="flex items-center gap-2 nm-inset border border-teal-500/50 w-max px-3 py-1.5 rounded-xl animate-fade-in">
-                          <span className="text-teal-400 font-bold text-xs uppercase tracking-widest">Cobrar: $</span>
+                          <span className="text-teal-400 font-bold text-xs uppercase tracking-widest">{t('lbl_charge')}: $</span>
                           <input type="number" min="1" step="0.01" placeholder="0.00" value={ppvPrice} onChange={(e) => setPpvPrice(e.target.value)} className="bg-transparent border-b border-teal-500/30 text-white outline-none w-16 px-1 py-0.5 text-sm font-bold focus:border-teal-400" />
                           <button onClick={() => { setIsPPVMode(false); setPpvPrice(''); }} className="text-gray-400 hover:text-red-400 ml-1 transition-colors"><X className="w-4 h-4"/></button>
                         </div>
@@ -814,10 +816,10 @@ function MessagesContent() {
                       {isRecording ? (
                         <div className="flex-1 flex items-center justify-between nm-inset border border-red-500/30 rounded-full px-4 py-2 self-center">
                           <span className="text-red-400 font-bold flex items-center gap-2 text-sm tracking-wide">
-                            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span> Grabando {formatTime(recordingTime)}
+                            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span> {t('lbl_recording')} {formatTime(recordingTime)}
                           </span>
                           <div className="flex items-center gap-3">
-                            <button onClick={cancelRecording} className="text-gray-400 hover:text-white transition-colors text-sm font-bold">Cancelar</button>
+                            <button onClick={cancelRecording} className="text-gray-400 hover:text-white transition-colors text-sm font-bold">{t('btn_cancel')}</button>
                             <button onClick={stopRecording} className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold hover:bg-red-600 transition-colors">
                               <Square className="w-3 h-3 fill-current" />
                             </button>
@@ -827,12 +829,12 @@ function MessagesContent() {
                         <div className="flex-1 flex items-center justify-between nm-inset border border-teal-500/30 rounded-full px-4 py-1.5 self-center">
                           <audio controls src={URL.createObjectURL(audioBlob)} className="h-8 w-full max-w-[200px]" />
                           <button onClick={cancelRecording} className="text-gray-400 hover:text-red-400 transition-colors ml-2 flex items-center gap-1 font-bold text-xs">
-                            <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Borrar</span>
+                            <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">{t('btn_delete')}</span>
                           </button>
                         </div>
                       ) : (
                         <div className="flex-1 relative flex items-center bg-transparent self-center">
-                          <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Escribe un mensaje privado..." className="flex-1 bg-transparent text-white outline-none px-4 py-3 max-h-32 resize-none custom-scrollbar text-sm md:text-base placeholder:text-gray-600" rows={1} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }} />
+                          <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder={t('ph_write_msg')} className="flex-1 bg-transparent text-white outline-none px-4 py-3 max-h-32 resize-none custom-scrollbar text-sm md:text-base placeholder:text-gray-600" rows={1} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }} />
                           
                           {/* 🔥 MENÚ DE EMOJIS RÁPIDOS */}
                           <div className="relative mr-2" ref={emojiMenuRef}>
@@ -859,12 +861,12 @@ function MessagesContent() {
                           </button>
                         ) : (
                           <button disabled className="nm-btn-primary h-11 w-11 sm:w-auto sm:px-6 rounded-full transition-all disabled:opacity-50 shrink-0 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
-                            <Send className="w-5 h-5" /> <span className="hidden sm:inline">Enviar</span>
+                            <Send className="w-5 h-5" /> <span className="hidden sm:inline">{t('btn_send')}</span>
                           </button>
                         )
                       ) : (
                         <button onClick={handleSendMessage} disabled={isSending || (isPPVMode && !ppvPrice) || isRecording} className="nm-btn-primary h-11 w-11 sm:w-auto sm:px-6 rounded-full transition-all disabled:opacity-50 shrink-0 flex items-center justify-center gap-2">
-                          {isSending ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : <><Send className="w-5 h-5" /> <span className="hidden sm:inline">Enviar</span></>}
+                          {isSending ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : <><Send className="w-5 h-5" /> <span className="hidden sm:inline">{t('btn_send')}</span></>}
                         </button>
                       )}
                     </div>
@@ -882,8 +884,8 @@ function MessagesContent() {
                  <MessageCircle className="w-12 h-12 drop-shadow-[0_0_15px_rgba(20,184,166,0.4)]" />
               )}
             </div>
-            <h2 className="text-2xl font-black text-white mb-2 tracking-tighter">{isGodMode ? 'Radar Global Activo' : 'Bóveda de Mensajes'}</h2>
-            <p className="text-gray-500 max-w-sm font-medium">{isGodMode ? 'Estás interceptando la base de datos completa. Selecciona un chat para auditarlo.' : 'Selecciona un fan de la lista izquierda para enviar contenido exclusivo o conversar.'}</p>
+            <h2 className="text-2xl font-black text-white mb-2 tracking-tighter">{isGodMode ? t('empty_vault_title_god') : t('empty_vault_title')}</h2>
+            <p className="text-gray-500 max-w-sm font-medium">{isGodMode ? t('empty_vault_desc_god') : t('empty_vault_desc')}</p>
           </div>
         )}
       </div>
@@ -893,7 +895,7 @@ function MessagesContent() {
            <div className="nm-inset border border-teal-500/30 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(20,184,166,0.1)]">
             <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#0e0e0e]">
               <h3 className="text-white font-black flex items-center gap-2">
-                <Megaphone className="w-5 h-5 text-teal-400" /> Difusión Masiva
+                <Megaphone className="w-5 h-5 text-teal-400" /> {t('modal_broadcast_title')}
               </h3>
               <button onClick={() => setIsBroadcastModalOpen(false)} className="nm-btn p-2 rounded-full text-gray-400 hover:text-white">
                 <X className="w-4 h-4" />
@@ -901,15 +903,15 @@ function MessagesContent() {
             </div>
             <div className="p-6 space-y-5 bg-[#0a0a0a]">
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Mensaje (Opcional)</label>
-                <textarea value={broadcastContent} onChange={(e) => setBroadcastContent(e.target.value)} className="w-full nm-inset border border-white/5 rounded-xl p-4 text-white outline-none focus:border-teal-500/50 resize-none text-sm placeholder:text-gray-600" rows={3} placeholder="Escribe un mensaje para todos tus fans..."/>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">{t('lbl_msg_optional')}</label>
+                <textarea value={broadcastContent} onChange={(e) => setBroadcastContent(e.target.value)} className="w-full nm-inset border border-white/5 rounded-xl p-4 text-white outline-none focus:border-teal-500/50 resize-none text-sm placeholder:text-gray-600" rows={3} placeholder={t('ph_broadcast_msg')}/>
               </div>
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Archivo (Opcional)</label>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">{t('lbl_file_optional')}</label>
                 <input type="file" accept="image/*,video/*" className="hidden" ref={broadcastFileInputRef} onChange={handleBroadcastFileChange} />
                 <div className="flex gap-2 items-center">
                   <button onClick={() => broadcastFileInputRef.current?.click()} className="nm-btn text-gray-300 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
-                    <Paperclip className="w-4 h-4" /> Elegir
+                    <Paperclip className="w-4 h-4" /> {t('btn_choose')}
                   </button>
                   {broadcastFile && <span className="flex-1 nm-inset text-teal-400 text-xs px-4 py-2.5 rounded-xl flex justify-between items-center border border-teal-500/20">
                     <span className="truncate pr-2">{broadcastFile.name}</span> 
@@ -918,7 +920,7 @@ function MessagesContent() {
                 </div>
               </div>
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">Precio PPV ($)</label>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">{t('lbl_price_ppv')}</label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
                   <input type="number" min="0" step="0.01" value={broadcastPrice} onChange={(e) => setBroadcastPrice(e.target.value)} className="w-full nm-inset border border-white/5 rounded-xl pl-8 pr-4 py-3 text-white font-bold outline-none focus:border-teal-500/50"/>
@@ -926,9 +928,9 @@ function MessagesContent() {
               </div>
             </div>
             <div className="p-5 border-t border-white/5 bg-[#0e0e0e] flex justify-end gap-3">
-              <button onClick={() => setIsBroadcastModalOpen(false)} className="nm-btn px-6 py-2.5 text-sm text-gray-400 font-bold rounded-xl">Cancelar</button>
+              <button onClick={() => setIsBroadcastModalOpen(false)} className="nm-btn px-6 py-2.5 text-sm text-gray-400 font-bold rounded-xl">{t('btn_cancel')}</button>
               <button onClick={handleSendBroadcast} disabled={isSendingBroadcast || (!broadcastContent.trim() && !broadcastFile)} className="nm-btn-primary px-6 py-2.5 rounded-xl disabled:opacity-50 flex items-center gap-2 text-sm">
-                {isSendingBroadcast ? 'Enviando...' : <><Send className="w-4 h-4" /> Enviar a Todos</>}
+                {isSendingBroadcast ? t('btn_sending') : <><Send className="w-4 h-4" /> {t('btn_send_all')}</>}
               </button>
             </div>
           </div>
@@ -945,7 +947,7 @@ function MessagesContent() {
             setIsPaymentModalOpen(false); 
             try { 
               await paymentService.confirmPurchase(selectedMessageToUnlock.id); 
-              alert("✨ ¡Contenido desbloqueado con éxito!"); 
+              alert(t('alert_msg_unlocked')); 
               if (activeChat) { 
                 const data = await chatService.getMessages(activeChat.id, 1); 
                 setMessages(data.messages || []); 
@@ -976,7 +978,7 @@ function MessagesContent() {
             onClick={(e) => { e.stopPropagation(); setExpandedMedia(null); }}
             className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all border border-white/10"
             style={{ zIndex: 1000000 }}
-            title="Cerrar"
+            title={t('btn_cancel')}
           >
             <X className="w-6 h-6" />
           </button>
@@ -992,7 +994,7 @@ function MessagesContent() {
             ) : (
               <img 
                 src={expandedMedia.url} 
-                alt="Contenido Exclusivo" 
+                alt={t('lbl_exclusive')} 
                 className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none relative z-10"
                 draggable="false"
               />
@@ -1004,7 +1006,7 @@ function MessagesContent() {
                    FansMio
                  </span>
                  <span className="text-white text-xl md:text-3xl font-bold drop-shadow-[0_5px_5px_rgba(0,0,0,1)] mt-2">
-                   @{activeChat?.user?.username || 'EXCLUSIVO'}
+                   @{activeChat?.user?.username || t('lbl_exclusive')}
                  </span>
                </div>
             </div>
