@@ -647,5 +647,30 @@
     "lbl_joined": "Bergabung",
     "status_active": "Aktif",
     "status_inactive": "Tidak aktif"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "Kesalahan saat membuat kode QR.",
+    "alert_code_length": "Kode harus tepat 6 digit.",
+    "alert_success": "🛡️ Berhasil! Akun Anda sekarang diamankan dengan Autentikasi 2 Langkah.",
+    "alert_error_code": "Kode salah atau kedaluwarsa.",
+    "loading_vault": "Memuat Brankas Keamanan...",
+    "page_title": "Pusat Keamanan",
+    "page_desc": "Lindungi penghasilan dan akun Anda dengan menambahkan lapisan keamanan tingkat militer ekstra.",
+    "status_enabled_title": "Autentikasi 2FA Diaktifkan",
+    "status_enabled_desc": "Brankas Anda aman. Tidak ada yang dapat menarik dana Anda tanpa akses fisik ke ponsel Anda.",
+    "status_vulnerable_title": "Akun Anda rentan",
+    "status_vulnerable_desc": "Kami merekomendasikan untuk mengaktifkan Autentikasi 2 Langkah (2FA). Ini akan wajib untuk dapat menarik penghasilan Anda ke dompet kripto Anda.",
+    "btn_activate": "Aktifkan Keamanan 2FA",
+    "setup_title": "Konfigurasi Google Authenticator",
+    "step1_title": "1. Pindai kode QR ini",
+    "step1_desc": "Gunakan aplikasi Google Authenticator atau Authy.",
+    "lbl_cant_scan": "Tidak bisa memindai? Gunakan kunci ini:",
+    "step2_title": "2. Masukkan kode 6 digit",
+    "step2_desc": "Aplikasi akan menghasilkan kode baru setiap 30 detik.",
+    "ph_code": "Cth: 123456",
+    "btn_verifying": "Memverifikasi...",
+    "btn_verify_activate": "Verifikasi dan Aktifkan 🛡️",
+    "btn_cancel": "Batal"
   }
 }

@@ -647,5 +647,30 @@
     "lbl_joined": "Beigetreten",
     "status_active": "Aktiv",
     "status_inactive": "Inaktiv"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "Fehler beim Generieren des QR-Codes.",
+    "alert_code_length": "Der Code muss genau 6 Ziffern haben.",
+    "alert_success": "🛡️ Erfolg! Ihr Konto ist jetzt mit der 2-Schritt-Authentifizierung gesichert.",
+    "alert_error_code": "Falscher oder abgelaufener Code.",
+    "loading_vault": "Sicherheitstresor wird geladen...",
+    "page_title": "Sicherheitszentrum",
+    "page_desc": "Schützen Sie Ihre Einnahmen und Ihr Konto, indem Sie eine zusätzliche militärische Sicherheitsschicht hinzufügen.",
+    "status_enabled_title": "2FA-Authentifizierung aktiviert",
+    "status_enabled_desc": "Ihr Tresor ist gesichert. Niemand kann Ihr Geld ohne physischen Zugang zu Ihrem Mobiltelefon abheben.",
+    "status_vulnerable_title": "Ihr Konto ist gefährdet",
+    "status_vulnerable_desc": "Wir empfehlen die Aktivierung der 2-Schritt-Authentifizierung (2FA). Sie ist obligatorisch, um Ihre Einnahmen auf Ihre Krypto-Wallet abzuheben.",
+    "btn_activate": "2FA-Sicherheit aktivieren",
+    "setup_title": "Google Authenticator konfigurieren",
+    "step1_title": "1. Scannen Sie diesen QR-Code",
+    "step1_desc": "Verwenden Sie die Google Authenticator- oder Authy-App.",
+    "lbl_cant_scan": "Kann nicht gescannt werden? Verwenden Sie diesen Schlüssel:",
+    "step2_title": "2. Geben Sie den 6-stelligen Code ein",
+    "step2_desc": "Die App generiert alle 30 Sekunden einen neuen Code.",
+    "ph_code": "Z.B.: 123456",
+    "btn_verifying": "Wird überprüft...",
+    "btn_verify_activate": "Überprüfen und Aktivieren 🛡️",
+    "btn_cancel": "Abbrechen"
   }
 }

@@ -647,5 +647,30 @@
     "lbl_joined": "参加日",
     "status_active": "アクティブ",
     "status_inactive": "非アクティブ"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "QRコードの生成中にエラーが発生しました。",
+    "alert_code_length": "コードは正確に6桁である必要があります。",
+    "alert_success": "🛡️ 成功！アカウントは2段階認証で保護されました。",
+    "alert_error_code": "コードが間違っているか、期限切れです。",
+    "loading_vault": "セキュリティ保管庫を読み込んでいます...",
+    "page_title": "セキュリティセンター",
+    "page_desc": "ミリタリーグレードのセキュリティレイヤーを追加して、収益とアカウントを保護します。",
+    "status_enabled_title": "2FA認証が有効",
+    "status_enabled_desc": "保管庫は安全です。携帯電話への物理的なアクセスなしに、誰もあなたの資金を引き出すことはできません。",
+    "status_vulnerable_title": "アカウントが脆弱です",
+    "status_vulnerable_desc": "2段階認証 (2FA) の有効化をお勧めします。仮想通貨ウォレットに収益を引き出すために必須となります。",
+    "btn_activate": "2FAセキュリティを有効にする",
+    "setup_title": "Google Authenticatorを設定する",
+    "step1_title": "1. このQRコードをスキャンします",
+    "step1_desc": "Google AuthenticatorまたはAuthyアプリを使用します。",
+    "lbl_cant_scan": "スキャンできませんか？このキーを使用してください：",
+    "step2_title": "2. 6桁のコードを入力します",
+    "step2_desc": "アプリは30秒ごとに新しいコードを生成します。",
+    "ph_code": "例：123456",
+    "btn_verifying": "確認中...",
+    "btn_verify_activate": "確認して有効化 🛡️",
+    "btn_cancel": "キャンセル"
   }
 }

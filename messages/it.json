@@ -647,5 +647,30 @@
     "lbl_joined": "Unito il",
     "status_active": "Attivo",
     "status_inactive": "Inattivo"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "Errore durante la generazione del codice QR.",
+    "alert_code_length": "Il codice deve essere di esattamente 6 cifre.",
+    "alert_success": "🛡️ Successo! Il tuo account è ora protetto con l'Autenticazione a 2 Passaggi.",
+    "alert_error_code": "Codice errato o scaduto.",
+    "loading_vault": "Caricamento Caveau di Sicurezza...",
+    "page_title": "Centro Sicurezza",
+    "page_desc": "Proteggi i tuoi guadagni e il tuo account aggiungendo un livello extra di sicurezza di livello militare.",
+    "status_enabled_title": "Autenticazione 2FA Attivata",
+    "status_enabled_desc": "Il tuo caveau è protetto. Nessuno potrà prelevare i tuoi fondi senza accesso fisico al tuo telefono cellulare.",
+    "status_vulnerable_title": "Il tuo account è vulnerabile",
+    "status_vulnerable_desc": "Ti consigliamo di attivare l'Autenticazione a 2 Passaggi (2FA). Sarà obbligatorio per poter prelevare i tuoi guadagni sul tuo portafoglio crypto.",
+    "btn_activate": "Attiva Sicurezza 2FA",
+    "setup_title": "Configura Google Authenticator",
+    "step1_title": "1. Scansiona questo codice QR",
+    "step1_desc": "Usa l'app Google Authenticator o Authy.",
+    "lbl_cant_scan": "Non riesci a scansionarlo? Usa questa chiave:",
+    "step2_title": "2. Inserisci il codice a 6 cifre",
+    "step2_desc": "L'app genererà un nuovo codice ogni 30 secondi.",
+    "ph_code": "Es: 123456",
+    "btn_verifying": "Verifica in corso...",
+    "btn_verify_activate": "Verifica e Attiva 🛡️",
+    "btn_cancel": "Annulla"
   }
 }

@@ -647,5 +647,30 @@
     "lbl_joined": "Entrou",
     "status_active": "Ativo",
     "status_inactive": "Inativo"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "Erro ao gerar o código QR.",
+    "alert_code_length": "O código deve ter exatamente 6 dígitos.",
+    "alert_success": "🛡️ Sucesso! Sua conta agora está protegida com Autenticação de 2 Fatores.",
+    "alert_error_code": "Código incorreto ou expirado.",
+    "loading_vault": "Carregando Cofre de Segurança...",
+    "page_title": "Centro de Segurança",
+    "page_desc": "Proteja seus ganhos e sua conta adicionando uma camada extra de segurança de nível militar.",
+    "status_enabled_title": "Autenticação 2FA Ativada",
+    "status_enabled_desc": "Seu cofre está protegido. Ninguém poderá retirar seus fundos sem acesso físico ao seu celular.",
+    "status_vulnerable_title": "Sua conta é vulnerável",
+    "status_vulnerable_desc": "Recomendamos ativar a Autenticação de 2 Fatores (2FA). Será obrigatória para poder sacar seus ganhos para sua carteira cripto.",
+    "btn_activate": "Ativar Segurança 2FA",
+    "setup_title": "Configurar Google Authenticator",
+    "step1_title": "1. Escaneie este código QR",
+    "step1_desc": "Use o aplicativo Google Authenticator ou Authy.",
+    "lbl_cant_scan": "Não consegue escanear? Use esta chave:",
+    "step2_title": "2. Insira o código de 6 dígitos",
+    "step2_desc": "O aplicativo gerará um novo código a cada 30 segundos.",
+    "ph_code": "Ex: 123456",
+    "btn_verifying": "Verificando...",
+    "btn_verify_activate": "Verificar e Ativar 🛡️",
+    "btn_cancel": "Cancelar"
   }
 }

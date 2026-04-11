@@ -647,5 +647,30 @@
     "lbl_joined": "Aangesloten",
     "status_active": "Actief",
     "status_inactive": "Inactief"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "Fout bij het genereren van QR-code.",
+    "alert_code_length": "De code moet precies 6 cijfers lang zijn.",
+    "alert_success": "🛡️ Succes! Je account is nu beveiligd met 2-stapsverificatie.",
+    "alert_error_code": "Onjuiste of verlopen code.",
+    "loading_vault": "Veiligheidskluis Laden...",
+    "page_title": "Beveiligingscentrum",
+    "page_desc": "Bescherm je inkomsten en je account door een extra beveiligingslaag op militair niveau toe te voegen.",
+    "status_enabled_title": "2FA Authenticatie Ingeschakeld",
+    "status_enabled_desc": "Je kluis is beveiligd. Niemand kan je geld opnemen zonder fysieke toegang tot je mobiele telefoon.",
+    "status_vulnerable_title": "Je account is kwetsbaar",
+    "status_vulnerable_desc": "We raden aan om 2-stapsverificatie (2FA) te activeren. Het wordt verplicht om je inkomsten naar je crypto-portemonnee te kunnen opnemen.",
+    "btn_activate": "Activeer 2FA Beveiliging",
+    "setup_title": "Configureer Google Authenticator",
+    "step1_title": "1. Scan deze QR-code",
+    "step1_desc": "Gebruik de Google Authenticator of Authy app.",
+    "lbl_cant_scan": "Kun je het niet scannen? Gebruik deze sleutel:",
+    "step2_title": "2. Voer de 6-cijferige code in",
+    "step2_desc": "De app genereert elke 30 seconden een nieuwe code.",
+    "ph_code": "Bijv: 123456",
+    "btn_verifying": "Verifiëren...",
+    "btn_verify_activate": "Verifiëren en Activeren 🛡️",
+    "btn_cancel": "Annuleren"
   }
 }

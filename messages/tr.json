@@ -647,5 +647,30 @@
     "lbl_joined": "Katıldı",
     "status_active": "Aktif",
     "status_inactive": "Pasif"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "QR kodu oluşturulurken hata oluştu.",
+    "alert_code_length": "Kod tam olarak 6 haneli olmalıdır.",
+    "alert_success": "🛡️ Başarılı! Hesabınız artık 2 Adımlı Doğrulama ile güvende.",
+    "alert_error_code": "Yanlış veya süresi dolmuş kod.",
+    "loading_vault": "Güvenlik Kasası Yükleniyor...",
+    "page_title": "Güvenlik Merkezi",
+    "page_desc": "Askeri düzeyde ekstra bir güvenlik katmanı ekleyerek kazançlarınızı ve hesabınızı koruyun.",
+    "status_enabled_title": "2FA Doğrulaması Etkin",
+    "status_enabled_desc": "Kasanız güvende. Cep telefonunuza fiziksel erişim olmadan hiç kimse fonlarınızı çekemez.",
+    "status_vulnerable_title": "Hesabınız savunmasız",
+    "status_vulnerable_desc": "2 Adımlı Doğrulamayı (2FA) etkinleştirmenizi öneririz. Kazançlarınızı kripto cüzdanınıza çekebilmeniz için zorunlu olacaktır.",
+    "btn_activate": "2FA Güvenliğini Etkinleştir",
+    "setup_title": "Google Authenticator'ı Yapılandır",
+    "step1_title": "1. Bu QR kodunu tarayın",
+    "step1_desc": "Google Authenticator veya Authy uygulamasını kullanın.",
+    "lbl_cant_scan": "Tarayamıyor musunuz? Bu anahtarı kullanın:",
+    "step2_title": "2. 6 haneli kodu girin",
+    "step2_desc": "Uygulama her 30 saniyede bir yeni bir kod üretecektir.",
+    "ph_code": "Örn: 123456",
+    "btn_verifying": "Doğrulanıyor...",
+    "btn_verify_activate": "Doğrula ve Etkinleştir 🛡️",
+    "btn_cancel": "İptal"
   }
 }

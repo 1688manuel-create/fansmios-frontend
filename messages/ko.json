@@ -647,5 +647,30 @@
     "lbl_joined": "가입일",
     "status_active": "활성",
     "status_inactive": "비활성"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "QR 코드를 생성하는 중 오류가 발생했습니다.",
+    "alert_code_length": "코드는 정확히 6자리여야 합니다.",
+    "alert_success": "🛡️ 성공! 이제 2단계 인증으로 계정이 안전하게 보호됩니다.",
+    "alert_error_code": "잘못되었거나 만료된 코드입니다.",
+    "loading_vault": "보안 금고 로드 중...",
+    "page_title": "보안 센터",
+    "page_desc": "군사 등급의 추가 보안 계층을 추가하여 수입과 계정을 보호하세요.",
+    "status_enabled_title": "2FA 인증 활성화됨",
+    "status_enabled_desc": "금고가 안전하게 보호됩니다. 휴대폰에 물리적으로 액세스하지 않고는 누구도 자금을 인출할 수 없습니다.",
+    "status_vulnerable_title": "계정이 취약합니다",
+    "status_vulnerable_desc": "2단계 인증(2FA)을 활성화하는 것이 좋습니다. 암호화폐 지갑으로 수입을 인출하려면 필수입니다.",
+    "btn_activate": "2FA 보안 활성화",
+    "setup_title": "Google Authenticator 구성",
+    "step1_title": "1. 이 QR 코드를 스캔하세요",
+    "step1_desc": "Google Authenticator 또는 Authy 앱을 사용하세요.",
+    "lbl_cant_scan": "스캔할 수 없나요? 이 키를 사용하세요:",
+    "step2_title": "2. 6자리 코드를 입력하세요",
+    "step2_desc": "앱은 30초마다 새로운 코드를 생성합니다.",
+    "ph_code": "예: 123456",
+    "btn_verifying": "확인 중...",
+    "btn_verify_activate": "확인 및 활성화 🛡️",
+    "btn_cancel": "취소"
   }
 }

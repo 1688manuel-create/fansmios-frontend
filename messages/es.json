@@ -647,5 +647,30 @@
     "lbl_joined": "Se unió",
     "status_active": "Activo",
     "status_inactive": "Inactivo"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "Error al generar el código QR.",
+    "alert_code_length": "El código debe tener exactamente 6 dígitos.",
+    "alert_success": "🛡️ ¡Éxito! Tu cuenta ahora está blindada con Autenticación de 2 Pasos.",
+    "alert_error_code": "Código incorrecto o expirado.",
+    "loading_vault": "Cargando Bóveda de Seguridad...",
+    "page_title": "Centro de Seguridad",
+    "page_desc": "Protege tus ganancias y tu cuenta añadiendo una capa extra de seguridad de grado militar.",
+    "status_enabled_title": "Autenticación 2FA Activada",
+    "status_enabled_desc": "Tu bóveda está blindada. Nadie podrá retirar tus fondos sin acceso físico a tu teléfono celular.",
+    "status_vulnerable_title": "Tu cuenta es vulnerable",
+    "status_vulnerable_desc": "Te recomendamos activar la Autenticación de 2 Pasos (2FA). Será obligatoria para poder retirar tus ganancias a tu billetera cripto.",
+    "btn_activate": "Activar Seguridad 2FA",
+    "setup_title": "Configurar Google Authenticator",
+    "step1_title": "1. Escanea este código QR",
+    "step1_desc": "Usa la app de Google Authenticator o Authy.",
+    "lbl_cant_scan": "¿No puedes escanearlo? Usa esta clave:",
+    "step2_title": "2. Ingresa el código de 6 dígitos",
+    "step2_desc": "La app generará un nuevo código cada 30 segundos.",
+    "ph_code": "Ej: 123456",
+    "btn_verifying": "Verificando...",
+    "btn_verify_activate": "Verificar y Activar 🛡️",
+    "btn_cancel": "Cancelar"
   }
 }

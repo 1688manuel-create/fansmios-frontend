@@ -647,5 +647,30 @@
     "lbl_joined": "Dołączył",
     "status_active": "Aktywny",
     "status_inactive": "Nieaktywny"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "Błąd podczas generowania kodu QR.",
+    "alert_code_length": "Kod musi składać się dokładnie z 6 cyfr.",
+    "alert_success": "🛡️ Sukces! Twoje konto jest teraz zabezpieczone autoryzacją dwuetapową.",
+    "alert_error_code": "Nieprawidłowy lub wygasły kod.",
+    "loading_vault": "Ładowanie Skarbca Bezpieczeństwa...",
+    "page_title": "Centrum Bezpieczeństwa",
+    "page_desc": "Chroń swoje zarobki i konto, dodając dodatkową warstwę bezpieczeństwa klasy wojskowej.",
+    "status_enabled_title": "Uwierzytelnianie 2FA Włączone",
+    "status_enabled_desc": "Twój skarbiec jest zabezpieczony. Nikt nie będzie mógł wypłacić Twoich środków bez fizycznego dostępu do Twojego telefonu komórkowego.",
+    "status_vulnerable_title": "Twoje konto jest podatne na ataki",
+    "status_vulnerable_desc": "Zalecamy aktywację autoryzacji dwuetapowej (2FA). Będzie ona obowiązkowa, aby móc wypłacić zarobki na swój portfel krypto.",
+    "btn_activate": "Aktywuj Bezpieczeństwo 2FA",
+    "setup_title": "Skonfiguruj Google Authenticator",
+    "step1_title": "1. Zeskanuj ten kod QR",
+    "step1_desc": "Użyj aplikacji Google Authenticator lub Authy.",
+    "lbl_cant_scan": "Nie możesz tego zeskanować? Użyj tego klucza:",
+    "step2_title": "2. Wprowadź 6-cyfrowy kod",
+    "step2_desc": "Aplikacja wygeneruje nowy kod co 30 sekund.",
+    "ph_code": "Np.: 123456",
+    "btn_verifying": "Weryfikacja...",
+    "btn_verify_activate": "Zweryfikuj i Aktywuj 🛡️",
+    "btn_cancel": "Anuluj"
   }
 }

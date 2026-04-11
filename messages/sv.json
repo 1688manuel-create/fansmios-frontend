@@ -647,5 +647,30 @@
     "lbl_joined": "Gick med",
     "status_active": "Aktiv",
     "status_inactive": "Inaktiv"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "Fel vid generering av QR-kod.",
+    "alert_code_length": "Koden måste vara exakt 6 siffror.",
+    "alert_success": "🛡️ Framgång! Ditt konto är nu säkrat med tvåstegsverifiering.",
+    "alert_error_code": "Felaktig eller utgången kod.",
+    "loading_vault": "Laddar Säkerhetsvalv...",
+    "page_title": "Säkerhetscenter",
+    "page_desc": "Skydda dina inkomster och ditt konto genom att lägga till ett extra säkerhetslager av militär klass.",
+    "status_enabled_title": "2FA-autentisering aktiverad",
+    "status_enabled_desc": "Ditt valv är säkrat. Ingen kommer att kunna ta ut dina medel utan fysisk åtkomst till din mobiltelefon.",
+    "status_vulnerable_title": "Ditt konto är sårbart",
+    "status_vulnerable_desc": "Vi rekommenderar att du aktiverar tvåstegsverifiering (2FA). Det kommer att vara obligatoriskt för att kunna ta ut dina intäkter till din kryptoplånbok.",
+    "btn_activate": "Aktivera 2FA-säkerhet",
+    "setup_title": "Konfigurera Google Authenticator",
+    "step1_title": "1. Skanna denna QR-kod",
+    "step1_desc": "Använd Google Authenticator eller Authy-appen.",
+    "lbl_cant_scan": "Kan du inte skanna den? Använd denna nyckel:",
+    "step2_title": "2. Ange den 6-siffriga koden",
+    "step2_desc": "Appen genererar en ny kod var 30:e sekund.",
+    "ph_code": "T.ex.: 123456",
+    "btn_verifying": "Verifierar...",
+    "btn_verify_activate": "Verifiera och aktivera 🛡️",
+    "btn_cancel": "Avbryt"
   }
 }

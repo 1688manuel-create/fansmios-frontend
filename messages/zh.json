@@ -647,5 +647,30 @@
     "lbl_joined": "加入时间",
     "status_active": "活跃",
     "status_inactive": "不活跃"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "生成 QR 码时出错。",
+    "alert_code_length": "代码必须正好是 6 位数。",
+    "alert_success": "🛡️ 成功！您的帐户现在受到两步验证的保护。",
+    "alert_error_code": "代码不正确或已过期。",
+    "loading_vault": "正在加载安全金库...",
+    "page_title": "安全中心",
+    "page_desc": "通过添加额外的军用级安全层来保护您的收入和您的帐户。",
+    "status_enabled_title": "已启用 2FA 身份验证",
+    "status_enabled_desc": "您的金库是安全的。如果没有对您手机的物理访问权限，任何人都无法提取您的资金。",
+    "status_vulnerable_title": "您的帐户很脆弱",
+    "status_vulnerable_desc": "我们建议激活两步验证 (2FA)。将您的收入提取到您的加密钱包将是强制性的。",
+    "btn_activate": "激活 2FA 安全",
+    "setup_title": "配置 Google Authenticator",
+    "step1_title": "1. 扫描此二维码",
+    "step1_desc": "使用 Google Authenticator 或 Authy 应用程序。",
+    "lbl_cant_scan": "无法扫描？使用此密钥：",
+    "step2_title": "2. 输入 6 位数代码",
+    "step2_desc": "该应用程序每 30 秒将生成一个新代码。",
+    "ph_code": "例如：123456",
+    "btn_verifying": "正在验证...",
+    "btn_verify_activate": "验证并激活 🛡️",
+    "btn_cancel": "取消"
   }
 }

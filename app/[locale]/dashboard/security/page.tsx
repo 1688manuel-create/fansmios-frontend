@@ -4,8 +4,10 @@
 import { useState, useEffect } from 'react';
 import AppLayout from '../../../../components/AppLayout';
 import api from '../../../../lib/api';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function SecuritySettings() {
+  const t = useTranslations('SecuritySettings'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -38,30 +40,30 @@ export default function SecuritySettings() {
       setSecretKey(res.data.secret);
       setSetupMode(true);
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al generar el código QR.");
+      alert(error.response?.data?.error || t('alert_error_qr'));
     }
   };
 
   const handleVerifyAndEnable = async () => {
     if (tokenInput.length !== 6) {
-      alert("El código debe tener exactamente 6 dígitos.");
+      alert(t('alert_code_length'));
       return;
     }
 
     setIsVerifying(true);
     try {
       await api.post('/2fa/verify', { token: tokenInput });
-      alert("🛡️ ¡Éxito! Tu cuenta ahora está blindada con Autenticación de 2 Pasos.");
+      alert(t('alert_success'));
       setIs2FAEnabled(true);
       setSetupMode(false);
     } catch (error: any) {
-      alert(error.response?.data?.error || "Código incorrecto o expirado.");
+      alert(error.response?.data?.error || t('alert_error_code'));
     } finally {
       setIsVerifying(false);
     }
   };
 
-  if (isLoading) return <AppLayout><div className="min-h-screen flex items-center justify-center font-bold text-xl animate-pulse">Cargando Bóveda de Seguridad...</div></AppLayout>;
+  if (isLoading) return <AppLayout><div className="min-h-screen flex items-center justify-center font-bold text-xl animate-pulse">{t('loading_vault')}</div></AppLayout>;
 
   return (
     <AppLayout>
@@ -69,36 +71,36 @@ export default function SecuritySettings() {
         
         <div className="mb-8 border-b border-white/10 pb-6">
           <h1 className="text-3xl font-extrabold text-white flex items-center gap-3">
-            🔒 Centro de Seguridad
+            🔒 {t('page_title')}
           </h1>
           <p className="text-gray-400 mt-2 text-sm">
-            Protege tus ganancias y tu cuenta añadiendo una capa extra de seguridad de grado militar.
+            {t('page_desc')}
           </p>
         </div>
 
         {is2FAEnabled ? (
           <div className="glass-panel p-8 rounded-3xl border border-green-500/50 bg-green-500/10 text-center shadow-[0_0_30px_rgba(34,197,94,0.2)]">
             <div className="text-6xl mb-4">🛡️</div>
-            <h2 className="text-2xl font-bold text-green-400">Autenticación 2FA Activada</h2>
-            <p className="text-gray-300 mt-2">Tu bóveda está blindada. Nadie podrá retirar tus fondos sin acceso físico a tu teléfono celular.</p>
+            <h2 className="text-2xl font-bold text-green-400">{t('status_enabled_title')}</h2>
+            <p className="text-gray-300 mt-2">{t('status_enabled_desc')}</p>
           </div>
         ) : !setupMode ? (
           <div className="glass-panel p-8 rounded-3xl border border-white/10 text-center hover:border-blue-500/50 transition-colors">
             <div className="text-6xl mb-4">🔓</div>
-            <h2 className="text-2xl font-bold text-white">Tu cuenta es vulnerable</h2>
+            <h2 className="text-2xl font-bold text-white">{t('status_vulnerable_title')}</h2>
             <p className="text-gray-400 mt-2 mb-6 text-sm max-w-md mx-auto">
-              Te recomendamos activar la Autenticación de 2 Pasos (2FA). Será obligatoria para poder retirar tus ganancias a tu billetera cripto.
+              {t('status_vulnerable_desc')}
             </p>
             <button 
               onClick={handleStartSetup}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:scale-105 transition-transform text-white font-extrabold py-3 px-8 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)]"
             >
-              Activar Seguridad 2FA
+              {t('btn_activate')}
             </button>
           </div>
         ) : (
           <div className="glass-panel p-8 rounded-3xl border border-blue-500/30 bg-black/50 shadow-2xl animate-fade-in">
-            <h2 className="text-xl font-bold text-white mb-6 text-center">Configurar Google Authenticator</h2>
+            <h2 className="text-xl font-bold text-white mb-6 text-center">{t('setup_title')}</h2>
             
             <div className="grid md:grid-cols-2 gap-8 items-center">
               
@@ -112,11 +114,11 @@ export default function SecuritySettings() {
                   )}
                 </div>
                 <div>
-                  <p className="text-sm text-gray-300 font-bold">1. Escanea este código QR</p>
-                  <p className="text-xs text-gray-500 mt-1">Usa la app de Google Authenticator o Authy.</p>
+                  <p className="text-sm text-gray-300 font-bold">{t('step1_title')}</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('step1_desc')}</p>
                 </div>
                 <div className="bg-black/50 border border-white/10 p-2 rounded-lg w-full">
-                  <p className="text-[10px] text-gray-500">¿No puedes escanearlo? Usa esta clave:</p>
+                  <p className="text-[10px] text-gray-500">{t('lbl_cant_scan')}</p>
                   <p className="text-xs text-blue-400 font-mono tracking-widest mt-1 select-all">{secretKey}</p>
                 </div>
               </div>
@@ -124,16 +126,16 @@ export default function SecuritySettings() {
               {/* PASO 2: Ingresar el Código */}
               <div className="flex flex-col justify-center space-y-4">
                 <div>
-                  <p className="text-sm text-gray-300 font-bold mb-2">2. Ingresa el código de 6 dígitos</p>
-                  <p className="text-xs text-gray-500 mb-4">La app generará un nuevo código cada 30 segundos.</p>
+                  <p className="text-sm text-gray-300 font-bold mb-2">{t('step2_title')}</p>
+                  <p className="text-xs text-gray-500 mb-4">{t('step2_desc')}</p>
                 </div>
                 
                 <input 
                   type="text" 
                   maxLength={6}
-                  placeholder="Ej: 123456" 
+                  placeholder={t('ph_code')} 
                   value={tokenInput}
-                  onChange={(e) => setTokenInput(e.target.value.replace(/\D/g, ''))} // Solo permite números
+                  onChange={(e) => setTokenInput(e.target.value.replace(/\D/g, ''))} 
                   className="w-full bg-black border-2 border-white/10 focus:border-blue-500 rounded-xl px-4 py-4 text-white text-center text-3xl tracking-[0.5em] font-mono outline-none transition-colors placeholder:text-gray-700"
                 />
 
@@ -142,13 +144,13 @@ export default function SecuritySettings() {
                   disabled={isVerifying || tokenInput.length !== 6}
                   className="w-full bg-green-600 hover:bg-green-500 text-white font-extrabold py-4 rounded-xl shadow-[0_0_15px_rgba(34,197,94,0.4)] transition-all disabled:opacity-50 mt-2"
                 >
-                  {isVerifying ? 'Verificando...' : 'Verificar y Activar 🛡️'}
+                  {isVerifying ? t('btn_verifying') : t('btn_verify_activate')}
                 </button>
                 <button 
                   onClick={() => setSetupMode(false)}
                   className="w-full text-gray-500 hover:text-white text-sm mt-2 transition-colors"
                 >
-                  Cancelar
+                  {t('btn_cancel')}
                 </button>
               </div>
 

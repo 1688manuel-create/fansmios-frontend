@@ -647,5 +647,30 @@
     "lbl_joined": "انضم",
     "status_active": "نشط",
     "status_inactive": "غير نشط"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "خطأ في إنشاء رمز الاستجابة السريعة.",
+    "alert_code_length": "يجب أن يتكون الرمز من 6 أرقام بالضبط.",
+    "alert_success": "🛡️ نجاح! حسابك الآن مؤمن بالمصادقة الثنائية.",
+    "alert_error_code": "رمز غير صحيح أو منتهي الصلاحية.",
+    "loading_vault": "جاري تحميل خزنة الأمان...",
+    "page_title": "مركز الأمان",
+    "page_desc": "قم بحماية أرباحك وحسابك من خلال إضافة طبقة إضافية من الأمان من الدرجة العسكرية.",
+    "status_enabled_title": "تم تفعيل المصادقة 2FA",
+    "status_enabled_desc": "خزنتك مؤمنة. لن يتمكن أحد من سحب أموالك دون الوصول الفعلي إلى هاتفك المحمول.",
+    "status_vulnerable_title": "حسابك ضعيف",
+    "status_vulnerable_desc": "نوصي بتفعيل المصادقة الثنائية (2FA). سيكون إلزاميًا لتتمكن من سحب أرباحك إلى محفظة العملات الرقمية الخاصة بك.",
+    "btn_activate": "تفعيل أمان 2FA",
+    "setup_title": "تكوين Google Authenticator",
+    "step1_title": "1. امسح رمز الاستجابة السريعة هذا",
+    "step1_desc": "استخدم تطبيق Google Authenticator أو Authy.",
+    "lbl_cant_scan": "لا يمكنك مسحه ضوئيًا؟ استخدم هذا المفتاح:",
+    "step2_title": "2. أدخل الرمز المكون من 6 أرقام",
+    "step2_desc": "سينشئ التطبيق رمزًا جديدًا كل 30 ثانية.",
+    "ph_code": "مثال: 123456",
+    "btn_verifying": "جاري التحقق...",
+    "btn_verify_activate": "التحقق والتفعيل 🛡️",
+    "btn_cancel": "إلغاء"
   }
 }

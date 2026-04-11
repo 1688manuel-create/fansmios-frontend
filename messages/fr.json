@@ -647,5 +647,30 @@
     "lbl_joined": "A rejoint",
     "status_active": "Actif",
     "status_inactive": "Inactif"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "Erreur lors de la génération du code QR.",
+    "alert_code_length": "Le code doit comporter exactement 6 chiffres.",
+    "alert_success": "🛡️ Succès ! Votre compte est maintenant sécurisé avec l'authentification à 2 facteurs.",
+    "alert_error_code": "Code incorrect ou expiré.",
+    "loading_vault": "Chargement du coffre de sécurité...",
+    "page_title": "Centre de sécurité",
+    "page_desc": "Protégez vos gains et votre compte en ajoutant une couche supplémentaire de sécurité de niveau militaire.",
+    "status_enabled_title": "Authentification 2FA activée",
+    "status_enabled_desc": "Votre coffre-fort est sécurisé. Personne ne pourra retirer vos fonds sans accès physique à votre téléphone portable.",
+    "status_vulnerable_title": "Votre compte est vulnérable",
+    "status_vulnerable_desc": "Nous vous recommandons d'activer l'authentification à 2 facteurs (2FA). Elle sera obligatoire pour pouvoir retirer vos gains vers votre portefeuille crypto.",
+    "btn_activate": "Activer la sécurité 2FA",
+    "setup_title": "Configurer Google Authenticator",
+    "step1_title": "1. Scannez ce code QR",
+    "step1_desc": "Utilisez l'application Google Authenticator ou Authy.",
+    "lbl_cant_scan": "Vous ne pouvez pas le scanner ? Utilisez cette clé :",
+    "step2_title": "2. Entrez le code à 6 chiffres",
+    "step2_desc": "L'application générera un nouveau code toutes les 30 secondes.",
+    "ph_code": "Ex : 123456",
+    "btn_verifying": "Vérification...",
+    "btn_verify_activate": "Vérifier et Activer 🛡️",
+    "btn_cancel": "Annuler"
   }
 }

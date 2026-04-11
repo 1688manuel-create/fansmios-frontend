@@ -647,5 +647,30 @@
     "lbl_joined": "Đã tham gia",
     "status_active": "Hoạt động",
     "status_inactive": "Không hoạt động"
+  },
+
+  "SecuritySettings": {
+    "alert_error_qr": "Lỗi khi tạo mã QR.",
+    "alert_code_length": "Mã phải có chính xác 6 chữ số.",
+    "alert_success": "🛡️ Thành công! Tài khoản của bạn hiện đã được bảo mật bằng Xác thực 2 bước.",
+    "alert_error_code": "Mã không chính xác hoặc đã hết hạn.",
+    "loading_vault": "Đang tải Hầm bảo mật...",
+    "page_title": "Trung tâm Bảo mật",
+    "page_desc": "Bảo vệ thu nhập và tài khoản của bạn bằng cách thêm một lớp bảo mật cấp quân sự.",
+    "status_enabled_title": "Đã bật Xác thực 2FA",
+    "status_enabled_desc": "Hầm của bạn đã được bảo mật. Không ai có thể rút tiền của bạn mà không có quyền truy cập vật lý vào điện thoại di động của bạn.",
+    "status_vulnerable_title": "Tài khoản của bạn dễ bị tấn công",
+    "status_vulnerable_desc": "Chúng tôi khuyên bạn nên kích hoạt Xác thực 2 bước (2FA). Nó sẽ là bắt buộc để có thể rút thu nhập của bạn về ví tiền điện tử của bạn.",
+    "btn_activate": "Kích hoạt Bảo mật 2FA",
+    "setup_title": "Cấu hình Google Authenticator",
+    "step1_title": "1. Quét mã QR này",
+    "step1_desc": "Sử dụng ứng dụng Google Authenticator hoặc Authy.",
+    "lbl_cant_scan": "Không thể quét nó? Sử dụng khóa này:",
+    "step2_title": "2. Nhập mã 6 chữ số",
+    "step2_desc": "Ứng dụng sẽ tạo mã mới cứ sau 30 giây.",
+    "ph_code": "VD: 123456",
+    "btn_verifying": "Đang xác minh...",
+    "btn_verify_activate": "Xác minh và Kích hoạt 🛡️",
+    "btn_cancel": "Hủy bỏ"
   }
 }
