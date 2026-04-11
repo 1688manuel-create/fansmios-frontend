@@ -672,5 +672,33 @@
     "btn_verifying": "Verifiëren...",
     "btn_verify_activate": "Verifiëren en Activeren 🛡️",
     "btn_cancel": "Annuleren"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "Titel en prijs zijn verplicht.",
+    "alert_success_series": "✅ Serie succesvol gemaakt!",
+    "alert_error_series": "🚨 Fout bij het maken van de serie.",
+    "alert_validation_video": "De titel en het videobestand zijn verplicht.",
+    "alert_success_video": "🎬 Video succesvol geüpload en aan de serie toegevoegd!",
+    "alert_error_video": "🚨 Fout bij het uploaden van de video. Zorg ervoor dat deze niet te zwaar is.",
+    "header_title": "VIP Academie",
+    "header_subtitle": "Maak cursussen en upload exclusieve, hoogwaardige video's.",
+    "form_create_title": "Nieuwe Serie Maken",
+    "lbl_title": "Titel",
+    "ph_title": "Bijv: Trading Cursus 2026",
+    "lbl_price": "Totale Prijs (USD)",
+    "lbl_thumbnail": "Omslag (Miniatuur)",
+    "btn_upload_img": "Upload afbeelding...",
+    "btn_building": "Serie bouwen...",
+    "btn_create_empty": "Lege Serie Maken",
+    "list_title": "Jouw Actieve Series",
+    "list_empty": "Je hebt nog geen cursussen gemaakt.",
+    "lbl_uploaded_videos": "geüploade video's",
+    "btn_add_video": "Video Toevoegen",
+    "form_upload_video_title": "Upload een nieuwe video voor deze cursus",
+    "ph_video_title": "Viedeotitel (Bijv: Klas 1)",
+    "btn_select_mp4": "Selecteer MP4-bestand...",
+    "btn_uploading_video": "Video uploaden (Sluit het tabblad niet)...",
+    "btn_save_video": "Video Uploaden en Opslaan"
   }
 }

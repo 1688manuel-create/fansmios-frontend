@@ -672,5 +672,33 @@
     "btn_verifying": "Vérification...",
     "btn_verify_activate": "Vérifier et Activer 🛡️",
     "btn_cancel": "Annuler"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "Le titre et le prix sont obligatoires.",
+    "alert_success_series": "✅ Série créée avec succès !",
+    "alert_error_series": "🚨 Erreur lors de la création de la série.",
+    "alert_validation_video": "Le titre et le fichier vidéo sont obligatoires.",
+    "alert_success_video": "🎬 Vidéo téléchargée et injectée dans la série avec succès !",
+    "alert_error_video": "🚨 Erreur lors du téléchargement de la vidéo. Assurez-vous qu'elle n'est pas trop lourde.",
+    "header_title": "Académie VIP",
+    "header_subtitle": "Créez des cours et téléchargez des vidéos exclusives de grande valeur.",
+    "form_create_title": "Créer une nouvelle série",
+    "lbl_title": "Titre",
+    "ph_title": "Ex : Cours de Trading 2026",
+    "lbl_price": "Prix total (USD)",
+    "lbl_thumbnail": "Couverture (Miniature)",
+    "btn_upload_img": "Télécharger l'image...",
+    "btn_building": "Construction de la série...",
+    "btn_create_empty": "Créer une série vide",
+    "list_title": "Vos Séries Actives",
+    "list_empty": "Vous n'avez pas encore créé de cours.",
+    "lbl_uploaded_videos": "vidéos téléchargées",
+    "btn_add_video": "Ajouter une vidéo",
+    "form_upload_video_title": "Télécharger une nouvelle vidéo pour ce cours",
+    "ph_video_title": "Titre de la vidéo (Ex : Classe 1)",
+    "btn_select_mp4": "Sélectionner un fichier MP4...",
+    "btn_uploading_video": "Téléchargement de la vidéo (Ne fermez pas l'onglet)...",
+    "btn_save_video": "Télécharger et enregistrer la vidéo"
   }
 }

@@ -672,5 +672,33 @@
     "btn_verifying": "확인 중...",
     "btn_verify_activate": "확인 및 활성화 🛡️",
     "btn_cancel": "취소"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "제목과 가격은 필수입니다.",
+    "alert_success_series": "✅ 시리즈가 성공적으로 생성되었습니다!",
+    "alert_error_series": "🚨 시리즈 생성 오류입니다.",
+    "alert_validation_video": "제목과 비디오 파일은 필수입니다.",
+    "alert_success_video": "🎬 비디오가 성공적으로 업로드되어 시리즈에 삽입되었습니다!",
+    "alert_error_video": "🚨 비디오 업로드 오류입니다. 파일이 너무 크지 않은지 확인하세요.",
+    "header_title": "VIP 아카데미",
+    "header_subtitle": "과정을 만들고 고가치의 독점 비디오를 업로드하세요.",
+    "form_create_title": "새 시리즈 만들기",
+    "lbl_title": "제목",
+    "ph_title": "예: 2026 트레이딩 과정",
+    "lbl_price": "총 가격(USD)",
+    "lbl_thumbnail": "표지(썸네일)",
+    "btn_upload_img": "이미지 업로드...",
+    "btn_building": "시리즈 구축 중...",
+    "btn_create_empty": "빈 시리즈 만들기",
+    "list_title": "활성 시리즈",
+    "list_empty": "아직 과정을 만들지 않았습니다.",
+    "lbl_uploaded_videos": "업로드된 비디오",
+    "btn_add_video": "비디오 추가",
+    "form_upload_video_title": "이 과정에 새 비디오 업로드",
+    "ph_video_title": "비디오 제목(예: 1강)",
+    "btn_select_mp4": "MP4 파일 선택...",
+    "btn_uploading_video": "비디오 업로드 중(탭을 닫지 마세요)...",
+    "btn_save_video": "비디오 업로드 및 저장"
   }
 }

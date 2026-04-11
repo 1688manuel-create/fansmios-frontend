@@ -672,5 +672,33 @@
     "btn_verifying": "確認中...",
     "btn_verify_activate": "確認して有効化 🛡️",
     "btn_cancel": "キャンセル"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "タイトルと価格は必須です。",
+    "alert_success_series": "✅ シリーズが正常に作成されました！",
+    "alert_error_series": "🚨 シリーズの作成中にエラーが発生しました。",
+    "alert_validation_video": "タイトルとビデオファイルは必須です。",
+    "alert_success_video": "🎬 ビデオが正常にアップロードされ、シリーズに追加されました！",
+    "alert_error_video": "🚨 ビデオのアップロード中にエラーが発生しました。ファイルが大きすぎないことを確認してください。",
+    "header_title": "VIP アカデミー",
+    "header_subtitle": "コースを作成し、価値の高い限定ビデオをアップロードします。",
+    "form_create_title": "新しいシリーズを作成",
+    "lbl_title": "タイトル",
+    "ph_title": "例: トレーディングコース2026",
+    "lbl_price": "合計価格 (USD)",
+    "lbl_thumbnail": "カバー (サムネイル)",
+    "btn_upload_img": "画像をアップロード...",
+    "btn_building": "シリーズを構築中...",
+    "btn_create_empty": "空のシリーズを作成",
+    "list_title": "アクティブなシリーズ",
+    "list_empty": "まだコースを作成していません。",
+    "lbl_uploaded_videos": "アップロードされたビデオ",
+    "btn_add_video": "ビデオを追加",
+    "form_upload_video_title": "このコースに新しいビデオをアップロードする",
+    "ph_video_title": "ビデオのタイトル (例: クラス 1)",
+    "btn_select_mp4": "MP4ファイルを選択...",
+    "btn_uploading_video": "ビデオをアップロード中（タブを閉じないでください）...",
+    "btn_save_video": "ビデオをアップロードして保存"
   }
 }

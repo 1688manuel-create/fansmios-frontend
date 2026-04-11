@@ -671,5 +671,33 @@
     "btn_verifying": "Verifying...",
     "btn_verify_activate": "Verify and Activate 🛡️",
     "btn_cancel": "Cancel"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "Title and price are required.",
+    "alert_success_series": "✅ Series successfully created!",
+    "alert_error_series": "🚨 Error creating the series.",
+    "alert_validation_video": "Title and video file are required.",
+    "alert_success_video": "🎬 Video successfully uploaded and injected into the series!",
+    "alert_error_video": "🚨 Error uploading video. Make sure it's not too heavy.",
+    "header_title": "VIP Academy",
+    "header_subtitle": "Create courses and upload high-value exclusive videos.",
+    "form_create_title": "Create New Series",
+    "lbl_title": "Title",
+    "ph_title": "e.g., Trading Course 2026",
+    "lbl_price": "Total Price (USD)",
+    "lbl_thumbnail": "Cover (Thumbnail)",
+    "btn_upload_img": "Upload image...",
+    "btn_building": "Building Series...",
+    "btn_create_empty": "Create Empty Series",
+    "list_title": "Your Active Series",
+    "list_empty": "You haven't created any courses yet.",
+    "lbl_uploaded_videos": "uploaded videos",
+    "btn_add_video": "Add Video",
+    "form_upload_video_title": "Upload new video to this course",
+    "ph_video_title": "Video Title (e.g., Class 1)",
+    "btn_select_mp4": "Select MP4 File...",
+    "btn_uploading_video": "Uploading video (Do not close tab)...",
+    "btn_save_video": "Upload and Save Video"
   }
 }

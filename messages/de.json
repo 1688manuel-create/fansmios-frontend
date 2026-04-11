@@ -672,5 +672,33 @@
     "btn_verifying": "Wird überprüft...",
     "btn_verify_activate": "Überprüfen und Aktivieren 🛡️",
     "btn_cancel": "Abbrechen"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "Titel und Preis sind erforderlich.",
+    "alert_success_series": "✅ Serie erfolgreich erstellt!",
+    "alert_error_series": "🚨 Fehler beim Erstellen der Serie.",
+    "alert_validation_video": "Der Titel und die Videodatei sind erforderlich.",
+    "alert_success_video": "🎬 Video erfolgreich hochgeladen und in die Serie eingefügt!",
+    "alert_error_video": "🚨 Fehler beim Hochladen des Videos. Stellen Sie sicher, dass es nicht zu schwer ist.",
+    "header_title": "VIP Akademie",
+    "header_subtitle": "Erstellen Sie Kurse und laden Sie hochwertige exklusive Videos hoch.",
+    "form_create_title": "Neue Serie Erstellen",
+    "lbl_title": "Titel",
+    "ph_title": "Z.B.: Trading-Kurs 2026",
+    "lbl_price": "Gesamtpreis (USD)",
+    "lbl_thumbnail": "Titelbild (Miniaturansicht)",
+    "btn_upload_img": "Bild hochladen...",
+    "btn_building": "Serie wird erstellt...",
+    "btn_create_empty": "Leere Serie Erstellen",
+    "list_title": "Ihre Aktiven Serien",
+    "list_empty": "Sie haben noch keine Kurse erstellt.",
+    "lbl_uploaded_videos": "hochgeladene Videos",
+    "btn_add_video": "Video Hinzufügen",
+    "form_upload_video_title": "Neues Video für diesen Kurs hochladen",
+    "ph_video_title": "Videotitel (Z.B.: Klasse 1)",
+    "btn_select_mp4": "MP4-Datei auswählen...",
+    "btn_uploading_video": "Video wird hochgeladen (Tab nicht schließen)...",
+    "btn_save_video": "Video hochladen und speichern"
   }
 }

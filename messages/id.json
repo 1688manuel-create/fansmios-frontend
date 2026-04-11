@@ -672,5 +672,33 @@
     "btn_verifying": "Memverifikasi...",
     "btn_verify_activate": "Verifikasi dan Aktifkan 🛡️",
     "btn_cancel": "Batal"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "Judul dan harga wajib diisi.",
+    "alert_success_series": "✅ Seri berhasil dibuat!",
+    "alert_error_series": "🚨 Kesalahan saat membuat seri.",
+    "alert_validation_video": "Judul dan file video wajib diisi.",
+    "alert_success_video": "🎬 Video berhasil diunggah dan dimasukkan ke dalam seri!",
+    "alert_error_video": "🚨 Kesalahan saat mengunggah video. Pastikan tidak terlalu berat.",
+    "header_title": "Akademi VIP",
+    "header_subtitle": "Buat kursus dan unggah video eksklusif bernilai tinggi.",
+    "form_create_title": "Buat Seri Baru",
+    "lbl_title": "Judul",
+    "ph_title": "Cth: Kursus Trading 2026",
+    "lbl_price": "Total Harga (USD)",
+    "lbl_thumbnail": "Sampul (Thumbnail)",
+    "btn_upload_img": "Unggah gambar...",
+    "btn_building": "Membangun Seri...",
+    "btn_create_empty": "Buat Seri Kosong",
+    "list_title": "Seri Aktif Anda",
+    "list_empty": "Anda belum membuat kursus apa pun.",
+    "lbl_uploaded_videos": "video yang diunggah",
+    "btn_add_video": "Tambahkan Video",
+    "form_upload_video_title": "Unggah video baru ke kursus ini",
+    "ph_video_title": "Judul Video (Cth: Kelas 1)",
+    "btn_select_mp4": "Pilih File MP4...",
+    "btn_uploading_video": "Mengunggah video (Jangan tutup tab)...",
+    "btn_save_video": "Unggah dan Simpan Video"
   }
 }

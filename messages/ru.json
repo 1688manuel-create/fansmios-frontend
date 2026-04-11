@@ -672,5 +672,33 @@
     "btn_verifying": "Проверка...",
     "btn_verify_activate": "Проверить и активировать 🛡️",
     "btn_cancel": "Отмена"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "Название и цена обязательны.",
+    "alert_success_series": "✅ Серия успешно создана!",
+    "alert_error_series": "🚨 Ошибка при создании серии.",
+    "alert_validation_video": "Название и видеофайл обязательны.",
+    "alert_success_video": "🎬 Видео успешно загружено и добавлено в серию!",
+    "alert_error_video": "🚨 Ошибка при загрузке видео. Убедитесь, что оно не слишком тяжелое.",
+    "header_title": "VIP Академия",
+    "header_subtitle": "Создавайте курсы и загружайте эксклюзивные видео высокой ценности.",
+    "form_create_title": "Создать Новую Серию",
+    "lbl_title": "Название",
+    "ph_title": "Напр: Курс Трейдинга 2026",
+    "lbl_price": "Общая цена (USD)",
+    "lbl_thumbnail": "Обложка (Миниатюра)",
+    "btn_upload_img": "Загрузить изображение...",
+    "btn_building": "Создание серии...",
+    "btn_create_empty": "Создать пустую серию",
+    "list_title": "Ваши Активные Серии",
+    "list_empty": "У вас еще нет созданных курсов.",
+    "lbl_uploaded_videos": "загруженных видео",
+    "btn_add_video": "Добавить Видео",
+    "form_upload_video_title": "Загрузить новое видео для этого курса",
+    "ph_video_title": "Название видео (Напр: Урок 1)",
+    "btn_select_mp4": "Выбрать MP4-файл...",
+    "btn_uploading_video": "Загрузка видео (Не закрывайте вкладку)...",
+    "btn_save_video": "Загрузить и сохранить видео"
   }
 }

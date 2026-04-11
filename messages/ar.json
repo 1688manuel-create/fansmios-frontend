@@ -672,5 +672,33 @@
     "btn_verifying": "جاري التحقق...",
     "btn_verify_activate": "التحقق والتفعيل 🛡️",
     "btn_cancel": "إلغاء"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "العنوان والسعر مطلوبان.",
+    "alert_success_series": "✅ تم إنشاء السلسلة بنجاح!",
+    "alert_error_series": "🚨 خطأ في إنشاء السلسلة.",
+    "alert_validation_video": "العنوان وملف الفيديو مطلوبان.",
+    "alert_success_video": "🎬 تم رفع الفيديو وحقنه في السلسلة بنجاح!",
+    "alert_error_video": "🚨 خطأ في رفع الفيديو. تأكد من أنه ليس ثقيلًا جدًا.",
+    "header_title": "أكاديمية VIP",
+    "header_subtitle": "قم بإنشاء دورات ورفع مقاطع فيديو حصرية عالية القيمة.",
+    "form_create_title": "إنشاء سلسلة جديدة",
+    "lbl_title": "العنوان",
+    "ph_title": "مثال: دورة التداول 2026",
+    "lbl_price": "السعر الإجمالي (USD)",
+    "lbl_thumbnail": "الغلاف (صورة مصغرة)",
+    "btn_upload_img": "رفع صورة...",
+    "btn_building": "بناء السلسلة...",
+    "btn_create_empty": "إنشاء سلسلة فارغة",
+    "list_title": "سلاسلك النشطة",
+    "list_empty": "لم تقم بإنشاء دورات بعد.",
+    "lbl_uploaded_videos": "مقاطع فيديو مرفوعة",
+    "btn_add_video": "إضافة فيديو",
+    "form_upload_video_title": "رفع فيديو جديد لهذه الدورة",
+    "ph_video_title": "عنوان الفيديو (مثال: الدرس الأول)",
+    "btn_select_mp4": "اختر ملف MP4...",
+    "btn_uploading_video": "جاري رفع الفيديو (لا تغلق علامة التبويب)...",
+    "btn_save_video": "رفع وحفظ الفيديو"
   }
 }

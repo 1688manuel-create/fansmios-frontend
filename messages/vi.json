@@ -672,5 +672,33 @@
     "btn_verifying": "Đang xác minh...",
     "btn_verify_activate": "Xác minh và Kích hoạt 🛡️",
     "btn_cancel": "Hủy bỏ"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "Tiêu đề và giá là bắt buộc.",
+    "alert_success_series": "✅ Tạo series thành công!",
+    "alert_error_series": "🚨 Lỗi khi tạo series.",
+    "alert_validation_video": "Tiêu đề và tập tin video là bắt buộc.",
+    "alert_success_video": "🎬 Video đã được tải lên và đưa vào series thành công!",
+    "alert_error_video": "🚨 Lỗi khi tải video lên. Đảm bảo dung lượng không quá nặng.",
+    "header_title": "Học viện VIP",
+    "header_subtitle": "Tạo khóa học và tải lên các video độc quyền giá trị cao.",
+    "form_create_title": "Tạo Series Mới",
+    "lbl_title": "Tiêu đề",
+    "ph_title": "VD: Khóa học Giao dịch 2026",
+    "lbl_price": "Tổng giá (USD)",
+    "lbl_thumbnail": "Ảnh bìa (Hình thu nhỏ)",
+    "btn_upload_img": "Tải ảnh lên...",
+    "btn_building": "Đang xây dựng Series...",
+    "btn_create_empty": "Tạo Series Trống",
+    "list_title": "Series Hoạt động của bạn",
+    "list_empty": "Bạn chưa tạo bất kỳ khóa học nào.",
+    "lbl_uploaded_videos": "video đã tải lên",
+    "btn_add_video": "Thêm Video",
+    "form_upload_video_title": "Tải video mới lên khóa học này",
+    "ph_video_title": "Tiêu đề video (VD: Bài 1)",
+    "btn_select_mp4": "Chọn tập tin MP4...",
+    "btn_uploading_video": "Đang tải video lên (Không đóng tab)...",
+    "btn_save_video": "Tải lên và Lưu Video"
   }
 }

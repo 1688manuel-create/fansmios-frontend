@@ -672,5 +672,33 @@
     "btn_verifying": "Verifierar...",
     "btn_verify_activate": "Verifiera och aktivera 🛡️",
     "btn_cancel": "Avbryt"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "Titel och pris är obligatoriska.",
+    "alert_success_series": "✅ Serien skapades framgångsrikt!",
+    "alert_error_series": "🚨 Fel vid skapande av serien.",
+    "alert_validation_video": "Titeln och videofilen är obligatoriska.",
+    "alert_success_video": "🎬 Video har laddats upp och injicerats i serien!",
+    "alert_error_video": "🚨 Fel vid uppladdning av videon. Se till att den inte är för tung.",
+    "header_title": "VIP-akademi",
+    "header_subtitle": "Skapa kurser och ladda upp exklusiva videor med högt värde.",
+    "form_create_title": "Skapa Ny Serie",
+    "lbl_title": "Titel",
+    "ph_title": "T.ex.: Tradingkurs 2026",
+    "lbl_price": "Totalt pris (USD)",
+    "lbl_thumbnail": "Omslag (Miniatyr)",
+    "btn_upload_img": "Ladda upp bild...",
+    "btn_building": "Bygger serie...",
+    "btn_create_empty": "Skapa Tom Serie",
+    "list_title": "Dina Aktiva Serier",
+    "list_empty": "Du har inte skapat några kurser ännu.",
+    "lbl_uploaded_videos": "uppladdade videor",
+    "btn_add_video": "Lägg till video",
+    "form_upload_video_title": "Ladda upp en ny video till den här kursen",
+    "ph_video_title": "Videotitel (T.ex.: Klass 1)",
+    "btn_select_mp4": "Välj MP4-fil...",
+    "btn_uploading_video": "Laddar upp video (Stäng inte fliken)...",
+    "btn_save_video": "Ladda upp och spara video"
   }
 }

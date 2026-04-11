@@ -672,5 +672,33 @@
     "btn_verifying": "Doğrulanıyor...",
     "btn_verify_activate": "Doğrula ve Etkinleştir 🛡️",
     "btn_cancel": "İptal"
+  },
+
+  "CreatorSeries": {
+    "alert_validation_series": "Başlık ve fiyat zorunludur.",
+    "alert_success_series": "✅ Seri başarıyla oluşturuldu!",
+    "alert_error_series": "🚨 Seri oluşturulurken hata oluştu.",
+    "alert_validation_video": "Başlık ve video dosyası zorunludur.",
+    "alert_success_video": "🎬 Video başarıyla yüklendi ve seriye eklendi!",
+    "alert_error_video": "🚨 Video yüklenirken hata oluştu. Çok ağır olmadığından emin olun.",
+    "header_title": "VIP Akademi",
+    "header_subtitle": "Kurslar oluşturun ve yüksek değerli özel videolar yükleyin.",
+    "form_create_title": "Yeni Seri Oluştur",
+    "lbl_title": "Başlık",
+    "ph_title": "Örn: Trading Kursu 2026",
+    "lbl_price": "Toplam Fiyat (USD)",
+    "lbl_thumbnail": "Kapak (Küçük Resim)",
+    "btn_upload_img": "Resim yükle...",
+    "btn_building": "Seri Oluşturuluyor...",
+    "btn_create_empty": "Boş Seri Oluştur",
+    "list_title": "Aktif Serileriniz",
+    "list_empty": "Henüz herhangi bir kurs oluşturmadınız.",
+    "lbl_uploaded_videos": "yüklenen video",
+    "btn_add_video": "Video Ekle",
+    "form_upload_video_title": "Bu kurs için yeni video yükle",
+    "ph_video_title": "Video Başlığı (Örn: Ders 1)",
+    "btn_select_mp4": "MP4 Dosyası Seç...",
+    "btn_uploading_video": "Video yükleniyor (Sekmeyi kapatmayın)...",
+    "btn_save_video": "Videoyu Yükle ve Kaydet"
   }
 }
