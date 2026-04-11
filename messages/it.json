@@ -627,5 +627,25 @@
     "feat_gold_crown": "Corona d'Oro sul Profilo",
     "feat_stories": "Storie suggerite",
     "feat_duration_72h": "Durata: 3 Giorni Completi"
+  },
+
+  "Referrals": {
+    "nav_title": "Programma di Referral",
+    "btn_back": "Indietro",
+    "hero_title": "Guadagna Reddito Passivo",
+    "hero_desc_1": "Invita altri creatori a unirsi alla piattaforma. Guadagnerai un",
+    "hero_desc_2": "extra",
+    "hero_desc_3": "da tutti i loro",
+    "hero_desc_4": "abbonamenti mensili",
+    "hero_desc_5": "durante i loro primi 5 mesi.",
+    "btn_copied": "Copiato",
+    "btn_copy_link": "Copia Link",
+    "kpi_invited": "Creatori Invitati",
+    "kpi_earned": "Commissioni Guadagnate",
+    "list_title": "La tua Rete di Affiliati",
+    "list_empty": "Non hai ancora invitato nessuno. Condividi il tuo link!",
+    "lbl_joined": "Unito il",
+    "status_active": "Attivo",
+    "status_inactive": "Inattivo"
   }
 }

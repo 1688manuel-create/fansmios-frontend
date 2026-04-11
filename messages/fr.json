@@ -627,5 +627,25 @@
     "feat_gold_crown": "Couronne d'or sur le profil",
     "feat_stories": "Histoires suggérées",
     "feat_duration_72h": "Durée : 3 Jours Complets"
+  },
+
+  "Referrals": {
+    "nav_title": "Programme de parrainage",
+    "btn_back": "Retour",
+    "hero_title": "Gagnez un revenu passif",
+    "hero_desc_1": "Invitez d'autres créateurs à rejoindre la plateforme. Vous gagnerez un bonus de",
+    "hero_desc_2": "",
+    "hero_desc_3": "sur tous leurs",
+    "hero_desc_4": "abonnements mensuels",
+    "hero_desc_5": "pendant leurs 5 premiers mois.",
+    "btn_copied": "Copié",
+    "btn_copy_link": "Copier le lien",
+    "kpi_invited": "Créateurs invités",
+    "kpi_earned": "Commissions gagnées",
+    "list_title": "Votre réseau d'affiliés",
+    "list_empty": "Vous n'avez encore invité personne. Partagez votre lien !",
+    "lbl_joined": "A rejoint",
+    "status_active": "Actif",
+    "status_inactive": "Inactif"
   }
 }

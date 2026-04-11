@@ -626,5 +626,25 @@
     "feat_gold_crown": "Gold Crown on Profile",
     "feat_stories": "Suggested Stories",
     "feat_duration_72h": "Duration: 3 Full Days"
+  },
+
+  "Referrals": {
+    "nav_title": "Referral Program",
+    "btn_back": "Back",
+    "hero_title": "Earn Passive Income",
+    "hero_desc_1": "Invite other creators to join the platform. You will earn an extra",
+    "hero_desc_2": "",
+    "hero_desc_3": "from all their",
+    "hero_desc_4": "monthly subscriptions",
+    "hero_desc_5": "during their first 5 months.",
+    "btn_copied": "Copied",
+    "btn_copy_link": "Copy Link",
+    "kpi_invited": "Invited Creators",
+    "kpi_earned": "Earned Commissions",
+    "list_title": "Your Affiliate Network",
+    "list_empty": "You haven't invited anyone yet. Share your link!",
+    "lbl_joined": "Joined",
+    "status_active": "Active",
+    "status_inactive": "Inactive"
   }
 }

@@ -627,5 +627,25 @@
     "feat_gold_crown": "Goldene Krone im Profil",
     "feat_stories": "Vorgeschlagene Stories",
     "feat_duration_72h": "Dauer: 3 volle Tage"
+  },
+
+  "Referrals": {
+    "nav_title": "Empfehlungsprogramm",
+    "btn_back": "Zurück",
+    "hero_title": "Passives Einkommen verdienen",
+    "hero_desc_1": "Laden Sie andere Creators ein, der Plattform beizutreten. Sie verdienen",
+    "hero_desc_2": "extra",
+    "hero_desc_3": "von all ihren",
+    "hero_desc_4": "monatlichen Abonnements",
+    "hero_desc_5": "während ihrer ersten 5 Monate.",
+    "btn_copied": "Kopiert",
+    "btn_copy_link": "Link kopieren",
+    "kpi_invited": "Eingeladene Creators",
+    "kpi_earned": "Verdiente Provisionen",
+    "list_title": "Ihr Affiliate-Netzwerk",
+    "list_empty": "Sie haben noch niemanden eingeladen. Teilen Sie Ihren Link!",
+    "lbl_joined": "Beigetreten",
+    "status_active": "Aktiv",
+    "status_inactive": "Inaktiv"
   }
 }

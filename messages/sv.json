@@ -627,5 +627,25 @@
     "feat_gold_crown": "Guldkrona på Profilen",
     "feat_stories": "Föreslagna Berättelser",
     "feat_duration_72h": "Varaktighet: 3 Hela Dagar"
+  },
+
+  "Referrals": {
+    "nav_title": "Värvningsprogram",
+    "btn_back": "Tillbaka",
+    "hero_title": "Tjäna passiv inkomst",
+    "hero_desc_1": "Bjud in andra skapare att gå med i plattformen. Du kommer att tjäna",
+    "hero_desc_2": "extra",
+    "hero_desc_3": "från alla deras",
+    "hero_desc_4": "månatliga prenumerationer",
+    "hero_desc_5": "under deras första 5 månader.",
+    "btn_copied": "Kopierad",
+    "btn_copy_link": "Kopiera Länk",
+    "kpi_invited": "Inbjudna Skapare",
+    "kpi_earned": "Intjänade Provisioner",
+    "list_title": "Ditt Affiliate-nätverk",
+    "list_empty": "Du har inte bjudit in någon ännu. Dela din länk!",
+    "lbl_joined": "Gick med",
+    "status_active": "Aktiv",
+    "status_inactive": "Inaktiv"
   }
 }

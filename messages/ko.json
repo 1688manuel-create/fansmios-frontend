@@ -627,5 +627,25 @@
     "feat_gold_crown": "프로필의 골드 크라운",
     "feat_stories": "추천 스토리",
     "feat_duration_72h": "기간: 3일 내내"
+  },
+
+  "Referrals": {
+    "nav_title": "추천 프로그램",
+    "btn_back": "뒤로",
+    "hero_title": "수동적 소득 창출",
+    "hero_desc_1": "다른 크리에이터를 플랫폼에 초대하세요. 처음 5개월 동안 그들의 모든",
+    "hero_desc_2": "추가",
+    "hero_desc_3": "에서",
+    "hero_desc_4": "월간 구독",
+    "hero_desc_5": "수익을 얻습니다.",
+    "btn_copied": "복사됨",
+    "btn_copy_link": "링크 복사",
+    "kpi_invited": "초대한 크리에이터",
+    "kpi_earned": "획득한 커미션",
+    "list_title": "어필리에이트 네트워크",
+    "list_empty": "아직 아무도 초대하지 않았습니다. 링크를 공유하세요!",
+    "lbl_joined": "가입일",
+    "status_active": "활성",
+    "status_inactive": "비활성"
   }
 }

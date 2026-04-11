@@ -10,9 +10,11 @@ import {
   Gift, ArrowLeft, Link as LinkIcon, Copy, Users, 
   DollarSign, CheckCircle2, TrendingUp, Network
 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function ReferralsPage() {
   const router = useRouter();
+  const t = useTranslations('Referrals'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [referralData, setReferralData] = useState<any>(null);
   const [copied, setCopied] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,10 +66,10 @@ export default function ReferralsPage() {
             <div className="w-10 h-10 nm-inset bg-black rounded-xl flex items-center justify-center text-yellow-500 border border-yellow-500/20">
               <Gift className="w-5 h-5" />
             </div>
-            Programa de Referidos
+            {t('nav_title')}
           </h1>
           <button onClick={() => router.push('/dashboard')} className="text-sm nm-btn text-gray-300 px-5 py-2.5 rounded-full hover:text-white transition-colors font-bold flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" /> Volver
+            <ArrowLeft className="w-4 h-4" /> {t('btn_back')}
           </button>
         </nav>
 
@@ -78,9 +80,9 @@ export default function ReferralsPage() {
             <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
             
             <Network className="w-16 h-16 text-yellow-500 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]" />
-            <h2 className="text-3xl font-black text-white mb-2">Gana Dinero Pasivo</h2>
+            <h2 className="text-3xl font-black text-white mb-2">{t('hero_title')}</h2>
             <p className="text-gray-400 font-medium mb-8 max-w-xl mx-auto">
-              Invita a otros creadores a unirse a la plataforma. Ganarás un <strong className="text-yellow-400">{referralData?.commissionRate} extra</strong> de todas sus <strong className="text-white border-b border-yellow-500/50">suscripciones mensuales</strong> durante sus primeros 5 meses.
+              {t('hero_desc_1')} <strong className="text-yellow-400">{referralData?.commissionRate} {t('hero_desc_2')}</strong> {t('hero_desc_3')} <strong className="text-white border-b border-yellow-500/50">{t('hero_desc_4')}</strong> {t('hero_desc_5')}
             </p>
 
             <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center gap-4">
@@ -97,7 +99,7 @@ export default function ReferralsPage() {
                 onClick={handleCopyLink}
                 className="w-full sm:w-auto nm-btn-primary bg-yellow-600 hover:bg-yellow-500 text-black px-8 py-4 flex items-center justify-center gap-2 font-black transition-all shadow-[0_0_20px_rgba(234,179,8,0.3)]"
               >
-                {copied ? <><CheckCircle2 className="w-5 h-5"/> Copiado</> : <><Copy className="w-5 h-5"/> Copiar Link</>}
+                {copied ? <><CheckCircle2 className="w-5 h-5"/> {t('btn_copied')}</> : <><Copy className="w-5 h-5"/> {t('btn_copy_link')}</>}
               </button>
             </div>
           </div>
@@ -109,7 +111,7 @@ export default function ReferralsPage() {
                 <div className="w-12 h-12 rounded-full nm-inset bg-black flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
                   <Users className="w-5 h-5 text-blue-400" />
                 </div>
-                <h3 className="text-gray-500 font-black uppercase tracking-widest text-xs">Creadores Invitados</h3>
+                <h3 className="text-gray-500 font-black uppercase tracking-widest text-xs">{t('kpi_invited')}</h3>
               </div>
               <p className="text-5xl font-black text-white">{referralData?.totalReferred}</p>
             </div>
@@ -119,7 +121,7 @@ export default function ReferralsPage() {
                 <div className="w-12 h-12 rounded-full nm-inset bg-black flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
                   <TrendingUp className="w-5 h-5 text-green-400" />
                 </div>
-                <h3 className="text-gray-500 font-black uppercase tracking-widest text-xs">Comisiones Ganadas</h3>
+                <h3 className="text-gray-500 font-black uppercase tracking-widest text-xs">{t('kpi_earned')}</h3>
               </div>
               <p className="text-5xl font-black text-green-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">
                 ${referralData?.totalEarned?.toFixed(2)}
@@ -130,26 +132,26 @@ export default function ReferralsPage() {
           {/* LISTA DE REFERIDOS RECIENTES */}
           <div className="nm-inset border border-white/5 p-6 sm:p-8 rounded-[2rem]">
             <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
-              <Users className="w-4 h-4 text-gray-400" /> Tu Red de Afiliados
+              <Users className="w-4 h-4 text-gray-400" /> {t('list_title')}
             </h3>
             
             {referralData?.recentReferrals?.length === 0 ? (
-              <p className="text-gray-500 text-center py-10 font-medium">Aún no has invitado a nadie. ¡Comparte tu link!</p>
+              <p className="text-gray-500 text-center py-10 font-medium">{t('list_empty')}</p>
             ) : (
               <div className="space-y-3">
                 {referralData?.recentReferrals.map((ref: any, idx: number) => (
                   <div key={idx} className="flex justify-between items-center nm-btn border border-white/5 p-4 rounded-2xl cursor-default hover:border-white/10 transition-colors">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-800 to-gray-600 flex items-center justify-center text-white font-bold shadow-inner">
-                        {ref.username[0].toUpperCase()}
+                        {ref.username.toUpperCase()}
                       </div>
                       <div>
                         <p className="text-white font-bold text-sm">@{ref.username}</p>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-0.5">Se unió: {ref.date}</p>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-0.5">{t('lbl_joined')}: {ref.date}</p>
                       </div>
                     </div>
                     <span className={`text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest ${ref.status === 'Activo' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'}`}>
-                      {ref.status}
+                      {ref.status === 'Activo' ? t('status_active') : t('status_inactive')}
                     </span>
                   </div>
                 ))}

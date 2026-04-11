@@ -627,5 +627,25 @@
     "feat_gold_crown": "Coroa Dourada no Perfil",
     "feat_stories": "Histórias sugeridas",
     "feat_duration_72h": "Duração: 3 Dias Completos"
+  },
+
+  "Referrals": {
+    "nav_title": "Programa de Indicações",
+    "btn_back": "Voltar",
+    "hero_title": "Ganhe Dinheiro Passivo",
+    "hero_desc_1": "Convide outros criadores para se juntarem à plataforma. Você ganhará um",
+    "hero_desc_2": "extra",
+    "hero_desc_3": "de todas as suas",
+    "hero_desc_4": "assinaturas mensais",
+    "hero_desc_5": "durante seus primeiros 5 meses.",
+    "btn_copied": "Copiado",
+    "btn_copy_link": "Copiar Link",
+    "kpi_invited": "Criadores Convidados",
+    "kpi_earned": "Comissões Ganhas",
+    "list_title": "Sua Rede de Afiliados",
+    "list_empty": "Você ainda não convidou ninguém. Compartilhe seu link!",
+    "lbl_joined": "Entrou",
+    "status_active": "Ativo",
+    "status_inactive": "Inativo"
   }
 }

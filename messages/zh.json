@@ -627,5 +627,25 @@
     "feat_gold_crown": "个人资料上的金冠",
     "feat_stories": "推荐故事",
     "feat_duration_72h": "持续时间：整整 3 天"
+  },
+
+  "Referrals": {
+    "nav_title": "推荐计划",
+    "btn_back": "返回",
+    "hero_title": "赚取被动收入",
+    "hero_desc_1": "邀请其他创作者加入该平台。在他们的前 5 个月内，您将从他们所有的",
+    "hero_desc_2": "额外",
+    "hero_desc_3": "中赚取",
+    "hero_desc_4": "包月订阅",
+    "hero_desc_5": "。",
+    "btn_copied": "已复制",
+    "btn_copy_link": "复制链接",
+    "kpi_invited": "邀请的创作者",
+    "kpi_earned": "赚取的佣金",
+    "list_title": "您的联盟网络",
+    "list_empty": "您还没有邀请任何人。分享您的链接！",
+    "lbl_joined": "加入时间",
+    "status_active": "活跃",
+    "status_inactive": "不活跃"
   }
 }

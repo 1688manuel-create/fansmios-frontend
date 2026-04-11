@@ -627,5 +627,25 @@
     "feat_gold_crown": "Profilde Altın Taç",
     "feat_stories": "Önerilen Hikayeler",
     "feat_duration_72h": "Süre: 3 Tam Gün"
+  },
+
+  "Referrals": {
+    "nav_title": "Referans Programı",
+    "btn_back": "Geri",
+    "hero_title": "Pasif Gelir Elde Edin",
+    "hero_desc_1": "Diğer yaratıcıları platforma katılmaya davet edin. İlk 5 ay boyunca tüm",
+    "hero_desc_2": "ekstra",
+    "hero_desc_3": "kazanacaksınız",
+    "hero_desc_4": "aylık aboneliklerinden",
+    "hero_desc_5": ".",
+    "btn_copied": "Kopyalandı",
+    "btn_copy_link": "Bağlantıyı Kopyala",
+    "kpi_invited": "Davet Edilen Yaratıcılar",
+    "kpi_earned": "Kazanılan Komisyonlar",
+    "list_title": "Satış Ortaklığı Ağınız",
+    "list_empty": "Henüz kimseyi davet etmediniz. Bağlantınızı paylaşın!",
+    "lbl_joined": "Katıldı",
+    "status_active": "Aktif",
+    "status_inactive": "Pasif"
   }
 }

@@ -627,5 +627,25 @@
     "feat_gold_crown": "プロフィールのゴールドクラウン",
     "feat_stories": "おすすめのストーリー",
     "feat_duration_72h": "期間：丸3日"
+  },
+
+  "Referrals": {
+    "nav_title": "紹介プログラム",
+    "btn_back": "戻る",
+    "hero_title": "受動的所得を得る",
+    "hero_desc_1": "他のクリエイターをプラットフォームに招待しましょう。彼らの最初の5ヶ月間、すべての",
+    "hero_desc_2": "",
+    "hero_desc_3": "から追加で",
+    "hero_desc_4": "月額サブスクリプション",
+    "hero_desc_5": "を獲得できます。",
+    "btn_copied": "コピーしました",
+    "btn_copy_link": "リンクをコピー",
+    "kpi_invited": "招待したクリエイター",
+    "kpi_earned": "獲得したコミッション",
+    "list_title": "あなたのアフィリエイトネットワーク",
+    "list_empty": "まだ誰も招待していません。リンクを共有しましょう！",
+    "lbl_joined": "参加日",
+    "status_active": "アクティブ",
+    "status_inactive": "非アクティブ"
   }
 }

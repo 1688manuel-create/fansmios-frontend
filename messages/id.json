@@ -627,5 +627,25 @@
     "feat_gold_crown": "Mahkota Emas di Profil",
     "feat_stories": "Cerita yang Disarankan",
     "feat_duration_72h": "Durasi: 3 Hari Penuh"
+  },
+
+  "Referrals": {
+    "nav_title": "Program Rujukan",
+    "btn_back": "Kembali",
+    "hero_title": "Hasilkan Pendapatan Pasif",
+    "hero_desc_1": "Undang kreator lain untuk bergabung dengan platform. Anda akan mendapatkan",
+    "hero_desc_2": "ekstra",
+    "hero_desc_3": "dari semua",
+    "hero_desc_4": "langganan bulanan",
+    "hero_desc_5": "mereka selama 5 bulan pertama mereka.",
+    "btn_copied": "Disalin",
+    "btn_copy_link": "Salin Tautan",
+    "kpi_invited": "Kreator yang Diundang",
+    "kpi_earned": "Komisi yang Diperoleh",
+    "list_title": "Jaringan Afiliasi Anda",
+    "list_empty": "Anda belum mengundang siapa pun. Bagikan tautan Anda!",
+    "lbl_joined": "Bergabung",
+    "status_active": "Aktif",
+    "status_inactive": "Tidak aktif"
   }
 }

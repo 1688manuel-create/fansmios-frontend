@@ -627,5 +627,25 @@
     "feat_gold_crown": "Vương miện vàng trên hồ sơ",
     "feat_stories": "Câu chuyện được đề xuất",
     "feat_duration_72h": "Thời lượng: 3 Ngày trọn vẹn"
+  },
+
+  "Referrals": {
+    "nav_title": "Chương trình giới thiệu",
+    "btn_back": "Trở lại",
+    "hero_title": "Kiếm thu nhập thụ động",
+    "hero_desc_1": "Mời những người sáng tạo khác tham gia nền tảng. Bạn sẽ kiếm thêm",
+    "hero_desc_2": "",
+    "hero_desc_3": "từ tất cả",
+    "hero_desc_4": "đăng ký hàng tháng",
+    "hero_desc_5": "của họ trong 5 tháng đầu tiên.",
+    "btn_copied": "Đã sao chép",
+    "btn_copy_link": "Sao chép liên kết",
+    "kpi_invited": "Người sáng tạo được mời",
+    "kpi_earned": "Hoa hồng kiếm được",
+    "list_title": "Mạng lưới liên kết của bạn",
+    "list_empty": "Bạn chưa mời ai cả. Hãy chia sẻ liên kết của bạn!",
+    "lbl_joined": "Đã tham gia",
+    "status_active": "Hoạt động",
+    "status_inactive": "Không hoạt động"
   }
 }

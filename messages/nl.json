@@ -627,5 +627,25 @@
     "feat_gold_crown": "Gouden Kroon op Profiel",
     "feat_stories": "Voorgestelde Verhalen",
     "feat_duration_72h": "Duur: 3 Volle Dagen"
+  },
+
+  "Referrals": {
+    "nav_title": "Verwijzingsprogramma",
+    "btn_back": "Terug",
+    "hero_title": "Verdien Passief Inkomen",
+    "hero_desc_1": "Nodig andere makers uit om lid te worden van het platform. Je verdient een",
+    "hero_desc_2": "extra",
+    "hero_desc_3": "op al hun",
+    "hero_desc_4": "maandelijkse abonnementen",
+    "hero_desc_5": "tijdens hun eerste 5 maanden.",
+    "btn_copied": "Gekopieerd",
+    "btn_copy_link": "Kopieer Link",
+    "kpi_invited": "Uitgenodigde Makers",
+    "kpi_earned": "Verdiende Commissies",
+    "list_title": "Uw Affiliate Netwerk",
+    "list_empty": "Je hebt nog niemand uitgenodigd. Deel je link!",
+    "lbl_joined": "Aangesloten",
+    "status_active": "Actief",
+    "status_inactive": "Inactief"
   }
 }

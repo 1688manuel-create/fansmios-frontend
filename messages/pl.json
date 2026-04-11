@@ -627,5 +627,25 @@
     "feat_gold_crown": "Złota Korona w Profilu",
     "feat_stories": "Sugerowane Relacje",
     "feat_duration_72h": "Czas trwania: 3 Pełne Dni"
+  },
+
+  "Referrals": {
+    "nav_title": "Program Poleceń",
+    "btn_back": "Wróć",
+    "hero_title": "Zarabiaj Pasywny Dochód",
+    "hero_desc_1": "Zaproś innych twórców do dołączenia do platformy. Zarobisz",
+    "hero_desc_2": "dodatkowo",
+    "hero_desc_3": "ze wszystkich ich",
+    "hero_desc_4": "miesięcznych subskrypcji",
+    "hero_desc_5": "przez pierwsze 5 miesięcy.",
+    "btn_copied": "Skopiowano",
+    "btn_copy_link": "Skopiuj Link",
+    "kpi_invited": "Zaproszeni Twórcy",
+    "kpi_earned": "Zarobione Prowizje",
+    "list_title": "Twoja Sieć Afiliacyjna",
+    "list_empty": "Nikogo jeszcze nie zaprosiłeś. Udostępnij swój link!",
+    "lbl_joined": "Dołączył",
+    "status_active": "Aktywny",
+    "status_inactive": "Nieaktywny"
   }
 }
