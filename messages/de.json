@@ -721,5 +721,18 @@
     "top_fans_title": "Top-Fans (Wale)",
     "top_fans_desc": "Ihre stärksten historischen Investoren.",
     "no_records": "Keine Einträge"
+  },
+
+  "Stories": {
+    "alert_published": "Story veröffentlicht! Sie ist 24 Stunden lang sichtbar. ⏱️",
+    "nav_title": "Meine Storys",
+    "btn_back": "Zurück",
+    "upload_title": "Neue Story hochladen",
+    "upload_desc": "Teile Momente deines Tages. Storys verschwinden nach 24 Stunden automatisch.",
+    "btn_select_file": "Datei auswählen",
+    "btn_uploading": "Hochladen...",
+    "btn_publish": "In meiner Story posten",
+    "active_stories_title": "Aktive Storys (24h)",
+    "story_viewed": "Gesehen"
   }
 }

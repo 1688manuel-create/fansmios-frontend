@@ -721,5 +721,18 @@
     "top_fans_title": "Top Fans (Ballenas)",
     "top_fans_desc": "Tus inversores más fuertes históricamente.",
     "no_records": "Sin registros"
+  },
+
+  "Stories": {
+    "alert_published": "¡Historia publicada! Estará visible por 24 horas. ⏱️",
+    "nav_title": "Mis Historias",
+    "btn_back": "Volver",
+    "upload_title": "Sube una nueva Historia",
+    "upload_desc": "Comparte momentos de tu día. Las historias desaparecen automáticamente después de 24 horas.",
+    "btn_select_file": "Seleccionar Archivo",
+    "btn_uploading": "Subiendo...",
+    "btn_publish": "Publicar en mi Historia",
+    "active_stories_title": "Historias Activas (24h)",
+    "story_viewed": "Vista"
   }
 }

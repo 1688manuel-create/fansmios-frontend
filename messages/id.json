@@ -721,5 +721,18 @@
     "top_fans_title": "Penggemar Teratas (Paus)",
     "top_fans_desc": "Investor historis terkuat Anda.",
     "no_records": "Tidak ada catatan"
+  },
+
+  "Stories": {
+    "alert_published": "Cerita diterbitkan! Ini akan terlihat selama 24 jam. ⏱️",
+    "nav_title": "Cerita Saya",
+    "btn_back": "Kembali",
+    "upload_title": "Unggah Cerita baru",
+    "upload_desc": "Bagikan momen hari Anda. Cerita menghilang secara otomatis setelah 24 jam.",
+    "btn_select_file": "Pilih File",
+    "btn_uploading": "Mengunggah...",
+    "btn_publish": "Publikasikan ke Cerita saya",
+    "active_stories_title": "Cerita Aktif (24j)",
+    "story_viewed": "Dilihat"
   }
 }

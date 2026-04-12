@@ -721,5 +721,18 @@
     "top_fans_title": "Người hâm mộ hàng đầu (Cá voi)",
     "top_fans_desc": "Những nhà đầu tư lịch sử mạnh nhất của bạn.",
     "no_records": "Không có hồ sơ"
+  },
+
+  "Stories": {
+    "alert_published": "Tin đã được xuất bản! Nó sẽ hiển thị trong 24 giờ. ⏱️",
+    "nav_title": "Tin của tôi",
+    "btn_back": "Trở lại",
+    "upload_title": "Tải lên một Tin mới",
+    "upload_desc": "Chia sẻ những khoảnh khắc trong ngày của bạn. Tin sẽ tự động biến mất sau 24 giờ.",
+    "btn_select_file": "Chọn tệp",
+    "btn_uploading": "Đang tải lên...",
+    "btn_publish": "Xuất bản lên Tin của tôi",
+    "active_stories_title": "Tin hoạt động (24h)",
+    "story_viewed": "Đã xem"
   }
 }

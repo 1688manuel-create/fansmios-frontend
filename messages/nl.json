@@ -721,5 +721,18 @@
     "top_fans_title": "Topfans (Walvissen)",
     "top_fans_desc": "Je sterkste historische investeerders.",
     "no_records": "Geen gegevens"
+  },
+
+  "Stories": {
+    "alert_published": "Verhaal gepubliceerd! Het zal 24 uur zichtbaar zijn. ⏱️",
+    "nav_title": "Mijn Verhalen",
+    "btn_back": "Terug",
+    "upload_title": "Upload een nieuw Verhaal",
+    "upload_desc": "Deel momenten van je dag. Verhalen verdwijnen automatisch na 24 uur.",
+    "btn_select_file": "Selecteer Bestand",
+    "btn_uploading": "Uploaden...",
+    "btn_publish": "Publiceren op mijn Verhaal",
+    "active_stories_title": "Actieve Verhalen (24u)",
+    "story_viewed": "Gezien"
   }
 }

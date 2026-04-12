@@ -721,5 +721,18 @@
     "top_fans_title": "Top Fan (Balene)",
     "top_fans_desc": "I tuoi investitori storici più forti.",
     "no_records": "Nessun record"
+  },
+
+  "Stories": {
+    "alert_published": "Storia pubblicata! Sarà visibile per 24 ore. ⏱️",
+    "nav_title": "Le mie Storie",
+    "btn_back": "Indietro",
+    "upload_title": "Carica una nuova Storia",
+    "upload_desc": "Condividi momenti della tua giornata. Le storie scompaiono automaticamente dopo 24 ore.",
+    "btn_select_file": "Seleziona file",
+    "btn_uploading": "Caricamento...",
+    "btn_publish": "Pubblica nella mia Storia",
+    "active_stories_title": "Storie Attive (24h)",
+    "story_viewed": "Visualizzata"
   }
 }

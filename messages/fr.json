@@ -721,5 +721,18 @@
     "top_fans_title": "Top Fans (Baleines)",
     "top_fans_desc": "Vos investisseurs historiques les plus forts.",
     "no_records": "Aucun enregistrement"
+  },
+
+  "Stories": {
+    "alert_published": "Histoire publiée ! Elle sera visible pendant 24 heures. ⏱️",
+    "nav_title": "Mes Histoires",
+    "btn_back": "Retour",
+    "upload_title": "Téléchargez une nouvelle Histoire",
+    "upload_desc": "Partagez des moments de votre journée. Les histoires disparaissent automatiquement après 24 heures.",
+    "btn_select_file": "Sélectionner un Fichier",
+    "btn_uploading": "Téléchargement...",
+    "btn_publish": "Publier dans mon Histoire",
+    "active_stories_title": "Histoires Actives (24h)",
+    "story_viewed": "Vue"
   }
 }

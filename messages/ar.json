@@ -721,5 +721,18 @@
     "top_fans_title": "أفضل المعجبين (الحيتان)",
     "top_fans_desc": "أقوى المستثمرين لديك تاريخياً.",
     "no_records": "لا توجد سجلات"
+  },
+
+  "Stories": {
+    "alert_published": "تم نشر القصة! ستكون مرئية لمدة 24 ساعة. ⏱️",
+    "nav_title": "قصصي",
+    "btn_back": "عودة",
+    "upload_title": "رفع قصة جديدة",
+    "upload_desc": "شارك لحظات من يومك. تختفي القصص تلقائيًا بعد 24 ساعة.",
+    "btn_select_file": "تحديد ملف",
+    "btn_uploading": "جاري الرفع...",
+    "btn_publish": "نشر في قصتي",
+    "active_stories_title": "القصص النشطة (24 ساعة)",
+    "story_viewed": "شوهدت"
   }
 }

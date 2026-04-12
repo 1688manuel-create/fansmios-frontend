@@ -721,5 +721,18 @@
     "top_fans_title": "顶级粉丝（巨鲸）",
     "top_fans_desc": "您历史上最强大的投资者。",
     "no_records": "没有记录"
+  },
+
+  "Stories": {
+    "alert_published": "快拍已发布！它将在 24 小时内可见。 ⏱️",
+    "nav_title": "我的快拍",
+    "btn_back": "返回",
+    "upload_title": "上传新的快拍",
+    "upload_desc": "分享您这一天的瞬间。快拍会在 24 小时后自动消失。",
+    "btn_select_file": "选择文件",
+    "btn_uploading": "上传中...",
+    "btn_publish": "发布到我的快拍",
+    "active_stories_title": "活跃快拍（24小时）",
+    "story_viewed": "已看"
   }
 }

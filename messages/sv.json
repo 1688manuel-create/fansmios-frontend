@@ -721,5 +721,18 @@
     "top_fans_title": "Toppfans (Valar)",
     "top_fans_desc": "Dina historiskt starkaste investerare.",
     "no_records": "Inga poster"
+  },
+
+  "Stories": {
+    "alert_published": "Händelse publicerad! Den kommer att vara synlig i 24 timmar. ⏱️",
+    "nav_title": "Mina Händelser",
+    "btn_back": "Tillbaka",
+    "upload_title": "Ladda upp en ny Händelse",
+    "upload_desc": "Dela stunder från din dag. Händelser försvinner automatiskt efter 24 timmar.",
+    "btn_select_file": "Välj Fil",
+    "btn_uploading": "Laddar upp...",
+    "btn_publish": "Publicera i min Händelse",
+    "active_stories_title": "Aktiva Händelser (24h)",
+    "story_viewed": "Visad"
   }
 }

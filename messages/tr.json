@@ -721,5 +721,18 @@
     "top_fans_title": "En İyi Hayranlar (Balinalar)",
     "top_fans_desc": "Tarihsel olarak en güçlü yatırımcılarınız.",
     "no_records": "Kayıt yok"
+  },
+
+  "Stories": {
+    "alert_published": "Hikaye yayınlandı! 24 saat boyunca görünür olacak. ⏱️",
+    "nav_title": "Hikayelerim",
+    "btn_back": "Geri",
+    "upload_title": "Yeni bir Hikaye yükle",
+    "upload_desc": "Gününüzün anlarını paylaşın. Hikayeler 24 saat sonra otomatik olarak kaybolur.",
+    "btn_select_file": "Dosya Seç",
+    "btn_uploading": "Yükleniyor...",
+    "btn_publish": "Hikayemde Yayınla",
+    "active_stories_title": "Aktif Hikayeler (24s)",
+    "story_viewed": "Görüldü"
   }
 }

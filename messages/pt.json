@@ -721,5 +721,18 @@
     "top_fans_title": "Top Fans (Baleias)",
     "top_fans_desc": "Seus investidores mais fortes historicamente.",
     "no_records": "Sem registros"
+  },
+
+  "Stories": {
+    "alert_published": "História publicada! Estará visível por 24 horas. ⏱️",
+    "nav_title": "Minhas Histórias",
+    "btn_back": "Voltar",
+    "upload_title": "Envie uma nova História",
+    "upload_desc": "Compartilhe momentos do seu dia. As histórias desaparecem automaticamente após 24 horas.",
+    "btn_select_file": "Selecionar Arquivo",
+    "btn_uploading": "Enviando...",
+    "btn_publish": "Publicar na minha História",
+    "active_stories_title": "Histórias Ativas (24h)",
+    "story_viewed": "Vista"
   }
 }

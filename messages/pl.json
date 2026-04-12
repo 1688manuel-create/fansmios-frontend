@@ -721,5 +721,18 @@
     "top_fans_title": "Najlepsi Fani (Wieloryby)",
     "top_fans_desc": "Twoi historycznie najsilniejszy inwestorzy.",
     "no_records": "Brak zapisów"
+  },
+
+  "Stories": {
+    "alert_published": "Relacja opublikowana! Będzie widoczna przez 24 godziny. ⏱️",
+    "nav_title": "Moje Relacje",
+    "btn_back": "Wróć",
+    "upload_title": "Prześlij nową Relację",
+    "upload_desc": "Dziel się momentami ze swojego dnia. Relacje znikają automatycznie po 24 godzinach.",
+    "btn_select_file": "Wybierz Plik",
+    "btn_uploading": "Przesyłanie...",
+    "btn_publish": "Opublikuj w mojej Relacji",
+    "active_stories_title": "Aktywne Relacje (24h)",
+    "story_viewed": "Wyświetlono"
   }
 }

@@ -721,5 +721,18 @@
     "top_fans_title": "トップファン（クジラ）",
     "top_fans_desc": "歴史的に最も強力な投資家。",
     "no_records": "記録なし"
+  },
+
+  "Stories": {
+    "alert_published": "ストーリーが公開されました！24時間表示されます。 ⏱️",
+    "nav_title": "マイストーリー",
+    "btn_back": "戻る",
+    "upload_title": "新しいストーリーをアップロード",
+    "upload_desc": "一日の出来事を共有しましょう。ストーリーは24時間後に自動的に消えます。",
+    "btn_select_file": "ファイルを選択",
+    "btn_uploading": "アップロード中...",
+    "btn_publish": "マイストーリーに公開",
+    "active_stories_title": "アクティブなストーリー (24時間)",
+    "story_viewed": "閲覧済み"
   }
 }

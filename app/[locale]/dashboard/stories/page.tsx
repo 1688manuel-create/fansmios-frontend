@@ -3,9 +3,11 @@
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function StoriesDashboard() {
   const router = useRouter();
+  const t = useTranslations('Stories'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -21,7 +23,7 @@ export default function StoriesDashboard() {
   const handleUpload = () => {
     setIsUploading(true);
     setTimeout(() => {
-      alert("¡Historia publicada! Estará visible por 24 horas. ⏱️");
+      alert(t('alert_published'));
       setIsUploading(false);
       setSelectedImage(null);
     }, 1500);
@@ -30,8 +32,8 @@ export default function StoriesDashboard() {
   return (
     <div className="min-h-screen pb-20 bg-black">
       <nav className="sticky top-0 z-50 glass-panel border-b border-white/10 px-6 py-4 flex justify-between items-center backdrop-blur-xl">
-        <h1 className="text-xl font-bold text-white">⏱️ Mis Historias</h1>
-        <button onClick={() => router.push('/dashboard')} className="text-sm bg-white/10 text-white px-4 py-2 rounded-full hover:bg-white/20">Volver</button>
+        <h1 className="text-xl font-bold text-white">⏱️ {t('nav_title')}</h1>
+        <button onClick={() => router.push('/dashboard')} className="text-sm bg-white/10 text-white px-4 py-2 rounded-full hover:bg-white/20">{t('btn_back')}</button>
       </nav>
 
       <main className="max-w-4xl mx-auto mt-10 px-4 space-y-8">
@@ -42,15 +44,15 @@ export default function StoriesDashboard() {
             📸
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">Sube una nueva Historia</h2>
-            <p className="text-gray-400 mt-2 max-w-md mx-auto">Comparte momentos de tu día. Las historias desaparecen automáticamente después de 24 horas.</p>
+            <h2 className="text-2xl font-bold text-white">{t('upload_title')}</h2>
+            <p className="text-gray-400 mt-2 max-w-md mx-auto">{t('upload_desc')}</p>
           </div>
 
           <input type="file" accept="image/*,video/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
 
           {!selectedImage ? (
             <button onClick={() => fileInputRef.current?.click()} className="bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold py-3 px-8 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(236,72,153,0.4)]">
-              Seleccionar Archivo
+              {t('btn_select_file')}
             </button>
           ) : (
             <div className="space-y-4 w-full max-w-sm">
@@ -59,7 +61,7 @@ export default function StoriesDashboard() {
                 <button onClick={() => setSelectedImage(null)} className="absolute top-4 right-4 bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500">✕</button>
               </div>
               <button onClick={handleUpload} disabled={isUploading} className="w-full bg-pink-600 hover:bg-pink-500 text-white font-bold py-4 rounded-xl transition-all disabled:opacity-50">
-                {isUploading ? 'Subiendo...' : 'Publicar en mi Historia'}
+                {isUploading ? t('btn_uploading') : t('btn_publish')}
               </button>
             </div>
           )}
@@ -67,7 +69,7 @@ export default function StoriesDashboard() {
 
         {/* HISTORIAS ACTIVAS (Simuladas) */}
         <div className="space-y-4">
-          <h3 className="text-lg font-bold text-white border-b border-white/10 pb-2">Historias Activas (24h)</h3>
+          <h3 className="text-lg font-bold text-white border-b border-white/10 pb-2">{t('active_stories_title')}</h3>
           <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
             {/* Círculo de añadir */}
             <div onClick={() => fileInputRef.current?.click()} className="min-w-[80px] w-20 h-20 rounded-full border-2 border-dashed border-gray-500 flex items-center justify-center cursor-pointer hover:border-pink-500 transition-colors">
@@ -76,7 +78,7 @@ export default function StoriesDashboard() {
             {/* Historia Simulada */}
             <div className="min-w-[80px] w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-yellow-400 to-pink-500 cursor-pointer hover:scale-105 transition-transform">
               <div className="w-full h-full rounded-full bg-black border-2 border-black overflow-hidden relative">
-                <div className="absolute inset-0 bg-pink-900/50 flex items-center justify-center text-xs text-white">Vista</div>
+                <div className="absolute inset-0 bg-pink-900/50 flex items-center justify-center text-xs text-white">{t('story_viewed')}</div>
               </div>
             </div>
           </div>

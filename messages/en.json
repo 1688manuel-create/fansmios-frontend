@@ -720,5 +720,18 @@
     "top_fans_title": "Top Fans (Whales)",
     "top_fans_desc": "Your strongest historical investors.",
     "no_records": "No records"
+  },
+
+  "Stories": {
+    "alert_published": "Story published! It will be visible for 24 hours. ⏱️",
+    "nav_title": "My Stories",
+    "btn_back": "Back",
+    "upload_title": "Upload a new Story",
+    "upload_desc": "Share moments of your day. Stories disappear automatically after 24 hours.",
+    "btn_select_file": "Select File",
+    "btn_uploading": "Uploading...",
+    "btn_publish": "Publish to my Story",
+    "active_stories_title": "Active Stories (24h)",
+    "story_viewed": "Viewed"
   }
 }
