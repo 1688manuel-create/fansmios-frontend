@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { walletService } from '../../../../lib/walletService';
 import api from '../../../../lib/api';
 import AppLayout from '../../../../components/AppLayout';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 // 🔥 IMPORTAMOS ICONOS DE ALTA GAMA
 import { 
@@ -36,6 +37,7 @@ import {
 
 export default function WalletDashboard() {
   const router = useRouter();
+  const t = useTranslations('WalletDashboard'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [financeData, setFinanceData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<string>('FAN'); 
@@ -79,7 +81,7 @@ export default function WalletDashboard() {
 
   const handleSaveCryptoWallet = async () => {
     if (!cryptoAddress.trim() || cryptoAddress.length < 10) {
-      alert("Por favor ingresa una billetera USDT (TRC20) válida.");
+      alert(t('alert_invalid_wallet'));
       return;
     }
     setIsSavingWallet(true);
@@ -88,10 +90,10 @@ export default function WalletDashboard() {
         cryptoAddress,
         cryptoNetwork: 'TRC20' 
       });
-      alert("✅ ¡Billetera guardada con éxito!");
+      alert(t('alert_wallet_saved'));
       fetchWallet();
     } catch (error) {
-      alert("Error al guardar la billetera. Inténtalo de nuevo.");
+      alert(t('alert_error_wallet'));
     } finally {
       setIsSavingWallet(false);
     }
@@ -102,19 +104,19 @@ export default function WalletDashboard() {
     const availableBalance = financeData?.wallet?.balance || 0;
     
     if (!amount || amount < 50) {
-      alert("El retiro mínimo es de $50 USD.");
+      alert(t('alert_min_withdraw'));
       return;
     }
     if (amount > availableBalance) {
-      alert("No puedes retirar más de tu Balance Disponible.");
+      alert(t('alert_exceed_balance'));
       return;
     }
     if (!financeData?.wallet?.cryptoAddress) {
-      alert("⚠️ Debes configurar tu Billetera Cripto (USDT TRC20) antes de poder retirar.");
+      alert(t('alert_missing_crypto'));
       return;
     }
     if (!twoFactorToken || twoFactorToken.length !== 6) {
-      alert("Debes ingresar el código de 6 dígitos de tu Google Authenticator.");
+      alert(t('alert_missing_2fa'));
       return;
     }
 
@@ -125,12 +127,12 @@ export default function WalletDashboard() {
         isExpress,
         twoFactorToken
       });
-      alert(`🏦 ¡Éxito! ${res.data.message || 'Retiro en proceso.'}`);
+      alert(`🏦 ${t('alert_success')} ${res.data.message || t('alert_withdraw_process')}`);
       setWithdrawAmount(''); 
       setTwoFactorToken('');
       fetchWallet(); 
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al solicitar el retiro.");
+      alert(error.response?.data?.error || t('alert_error_withdraw'));
     } finally {
       setIsWithdrawing(false);
     }
@@ -169,10 +171,10 @@ export default function WalletDashboard() {
               <div className="w-10 h-10 nm-inset bg-black rounded-xl flex items-center justify-center text-green-400 border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
                 <Wallet className="w-5 h-5" />
               </div>
-              Estado de Cuenta
+              {t('fan_nav_title')}
             </h1>
             <button onClick={() => router.push('/dashboard')} className="text-sm nm-btn text-gray-300 px-5 py-2.5 rounded-full hover:text-white transition-colors font-bold flex items-center gap-2">
-              <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Volver</span>
+              <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">{t('btn_back')}</span>
             </button>
           </nav>
 
@@ -181,9 +183,9 @@ export default function WalletDashboard() {
             <div className="nm-inset p-8 rounded-[2rem] border border-green-500/20 flex flex-col md:flex-row justify-between items-center gap-6">
               <div>
                 <h3 className="text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2 mb-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-400" /> Saldo en FansMio
+                  <CheckCircle2 className="w-5 h-5 text-green-400" /> {t('fan_balance_title')}
                 </h3>
-                <p className="text-gray-400 text-sm font-medium">Estos son tus créditos actuales. Úsalos para dar propinas, suscribirte o desbloquear PPV.</p>
+                <p className="text-gray-400 text-sm font-medium">{t('fan_balance_desc')}</p>
               </div>
               <div className="bg-[#0a0a0a] border border-green-500/20 px-10 py-6 rounded-3xl shadow-[inset_0_0_20px_rgba(34,197,94,0.05)] text-center">
                 <div className="flex items-baseline justify-center gap-1">
@@ -198,11 +200,11 @@ export default function WalletDashboard() {
             {/* HISTORIAL DE MOVIMIENTOS DEL FAN */}
             <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default">
               <h2 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
-                <History className="w-5 h-5 text-green-500" /> Historial de Movimientos
+                <History className="w-5 h-5 text-green-500" /> {t('fan_history_title')}
               </h2>
               
               {allTransactions.length === 0 ? (
-                <div className="text-center text-gray-600 py-12 font-medium">Aún no tienes movimientos en tu bóveda.</div>
+                <div className="text-center text-gray-600 py-12 font-medium">{t('fan_empty_history')}</div>
               ) : (
                 <div className="space-y-4">
                   {allTransactions.map((tx: any) => {
@@ -214,12 +216,12 @@ export default function WalletDashboard() {
                     const sign = isIncome ? '+' : '-';
                     const bgClass = isIncome ? 'border-green-500/20 hover:border-green-500/40 bg-green-500/5' : 'border-white/5 hover:border-red-500/20 nm-inset';
 
-                    let concept = "Transacción";
-                    if (isTopUp) concept = "Recarga de Billetera";
-                    else if (tx.type === 'TIP') concept = `Propina para @${tx.receiver?.username || 'creador'}`;
-                    else if (tx.type === 'SUBSCRIPTION') concept = `Suscripción a @${tx.receiver?.username || 'creador'}`;
-                    else if (tx.type === 'PPV_MESSAGE') concept = `Mensaje PPV de @${tx.receiver?.username || 'creador'}`;
-                    else concept = `Pago a @${tx.receiver?.username || 'creador'}`;
+                    let concept = t('tx_default');
+                    if (isTopUp) concept = t('tx_topup');
+                    else if (tx.type === 'TIP') concept = `${t('tx_tip')} @${tx.receiver?.username || t('anonymous')}`;
+                    else if (tx.type === 'SUBSCRIPTION') concept = `${t('tx_sub')} @${tx.receiver?.username || t('anonymous')}`;
+                    else if (tx.type === 'PPV_MESSAGE') concept = `${t('tx_ppv')} @${tx.receiver?.username || t('anonymous')}`;
+                    else concept = `${t('tx_payment')} @${tx.receiver?.username || t('anonymous')}`;
 
                     return (
                       <div key={tx.id} className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${bgClass}`}>
@@ -230,7 +232,7 @@ export default function WalletDashboard() {
                           <div>
                             <p className="text-sm text-white font-black tracking-wide">{concept}</p>
                             <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mt-1">
-                              {new Date(tx.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute:'2-digit' })}
+                              {new Date(tx.createdAt).toLocaleDateString()}
                             </p>
                           </div>
                         </div>
@@ -238,7 +240,7 @@ export default function WalletDashboard() {
                           <p className={`font-black text-lg font-mono tracking-tight ${colorClass}`}>
                             {sign}${parseFloat(tx.amount || tx.netAmount || 0).toFixed(2)}
                           </p>
-                          <p className="text-[10px] text-gray-500 font-bold uppercase mt-1">Completado</p>
+                          <p className="text-[10px] text-gray-500 font-bold uppercase mt-1">{t('lbl_completed')}</p>
                         </div>
                       </div>
                     );
@@ -267,10 +269,10 @@ export default function WalletDashboard() {
             <div className="w-10 h-10 nm-inset bg-black rounded-xl flex items-center justify-center text-green-400 border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
               <Wallet className="w-5 h-5" />
             </div>
-            Mi Bóveda Covra Pay
+            {t('creator_nav_title')}
           </h1>
           <button onClick={() => router.push('/dashboard')} className="text-sm nm-btn text-gray-300 px-5 py-2.5 rounded-full hover:text-white transition-colors font-bold flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Volver</span>
+            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">{t('btn_back')}</span>
           </button>
         </nav>
 
@@ -287,13 +289,13 @@ export default function WalletDashboard() {
                 <DollarSign className="w-48 h-48" strokeWidth={1} />
               </div>
               <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-2 z-10">
-                <CheckCircle2 className="w-4 h-4 text-green-400" /> Balance Disponible
+                <CheckCircle2 className="w-4 h-4 text-green-400" /> {t('lbl_available_balance')}
               </h3>
               <p className="text-5xl font-black text-white z-10 drop-shadow-[0_0_10px_rgba(34,197,94,0.2)]">
                 ${Number(availableBalance || 0).toFixed(2)}
               </p>
               <p className="text-[10px] text-green-400 mt-4 font-bold uppercase tracking-widest nm-inset bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-md inline-flex w-fit z-10">
-                Fondos listos para retirar
+                {t('lbl_funds_ready')}
               </p>
             </div>
             
@@ -303,13 +305,13 @@ export default function WalletDashboard() {
                 <Clock className="w-48 h-48" strokeWidth={1} />
               </div>
               <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-2 z-10">
-                <ShieldCheck className="w-4 h-4 text-yellow-500" /> En Cuarentena (Pending)
+                <ShieldCheck className="w-4 h-4 text-yellow-500" /> {t('lbl_pending_balance')}
               </h3>
               <p className="text-5xl font-black text-white z-10">
-                ${Number(totalEarned || 0).toFixed(2)}
+                ${Number(pendingBalance || 0).toFixed(2)}
               </p>
               <p className="text-[10px] text-yellow-500 mt-4 font-bold uppercase tracking-widest z-10">
-                Liberación automática Anti-Fraude
+                {t('lbl_anti_fraud')}
               </p>
             </div>
 
@@ -319,13 +321,13 @@ export default function WalletDashboard() {
                 <TrendingUp className="w-48 h-48" strokeWidth={1} />
               </div>
               <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-2 z-10">
-                <TrendingUp className="w-4 h-4 text-purple-400" /> Histórico Facturado
+                <TrendingUp className="w-4 h-4 text-purple-400" /> {t('lbl_total_earned')}
               </h3>
               <p className="text-5xl font-black text-purple-400 z-10">
                 ${totalEarned.toFixed(2)}
               </p>
               <p className="text-[10px] text-gray-500 mt-4 font-bold uppercase tracking-widest z-10">
-                Total generado en la plataforma
+                {t('lbl_total_platform')}
               </p>
             </div>
           </div>
@@ -338,7 +340,7 @@ export default function WalletDashboard() {
             {/* CAJERO: Solicitar Retiro */}
             <div className="nm-inset p-8 rounded-[2rem] border border-white/5">
               <h2 className="text-xl font-black text-white mb-6 flex items-center gap-3 tracking-wide">
-                <SendToBack className="w-6 h-6 text-green-500" /> Solicitar Retiro
+                <SendToBack className="w-6 h-6 text-green-500" /> {t('withdraw_title')}
               </h2>
               
               <div className="space-y-6">
@@ -346,7 +348,7 @@ export default function WalletDashboard() {
                 {/* Monto */}
                 <div>
                   <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-3 pl-1">
-                    Monto a retirar (Min. $50 USD)
+                    {t('lbl_withdraw_amount')}
                   </label>
                   <div className="relative">
                     <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-black text-2xl">$</span>
@@ -373,10 +375,10 @@ export default function WalletDashboard() {
                     }`}
                   >
                     <div className="flex items-center gap-2 font-black mb-1">
-                      <Turtle className="w-5 h-5" /> Estándar
+                      <Turtle className="w-5 h-5" /> {t('type_standard')}
                     </div>
-                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-80 mt-2">Comisión 2%</p>
-                    <p className="text-[10px] opacity-60 font-medium">Hasta 7 días</p>
+                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-80 mt-2">{t('fee_2')}</p>
+                    <p className="text-[10px] opacity-60 font-medium">{t('time_7d')}</p>
                   </button>
                   
                   <button 
@@ -388,10 +390,10 @@ export default function WalletDashboard() {
                     }`}
                   >
                     <div className="flex items-center gap-2 font-black mb-1">
-                      <Zap className="w-5 h-5" /> Exprés
+                      <Zap className="w-5 h-5" /> {t('type_express')}
                     </div>
-                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-80 mt-2">Comisión 5%</p>
-                    <p className="text-[10px] opacity-60 font-medium">Menos de 24 hrs</p>
+                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-80 mt-2">{t('fee_5')}</p>
+                    <p className="text-[10px] opacity-60 font-medium">{t('time_24h')}</p>
                   </button>
                 </div>
 
@@ -399,10 +401,10 @@ export default function WalletDashboard() {
                 <div>
                   <div className="flex justify-between items-center mb-3 px-1">
                     <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-                      Google Authenticator (2FA)
+                      {t('lbl_2fa')}
                     </label>
                     <span className="text-[9px] font-black uppercase tracking-widest text-blue-400 flex items-center gap-1 bg-blue-500/10 px-2 py-1 rounded-md border border-blue-500/20">
-                      <Lock className="w-3 h-3"/> Requerido
+                      <Lock className="w-3 h-3"/> {t('lbl_required')}
                     </span>
                   </div>
                   <input 
@@ -421,9 +423,9 @@ export default function WalletDashboard() {
                   className="w-full nm-btn-primary py-5 rounded-2xl text-lg flex justify-center items-center gap-3 disabled:opacity-50 disabled:scale-100 mt-4"
                 >
                   {isWithdrawing ? (
-                    <><Loader2 className="w-6 h-6 animate-spin"/> Procesando Retiro...</>
+                    <><Loader2 className="w-6 h-6 animate-spin"/> {t('btn_processing_withdraw')}</>
                   ) : (
-                    <><SendToBack className="w-6 h-6"/> Enviar Solicitud a Bóveda</>
+                    <><SendToBack className="w-6 h-6"/> {t('btn_submit_withdraw')}</>
                   )}
                 </button>
               </div>
@@ -435,10 +437,10 @@ export default function WalletDashboard() {
               {/* Configurar Billetera USDT */}
               <div className="nm-btn border border-white/5 p-8 rounded-[2rem] flex-1">
                 <h3 className="text-xl font-black text-white mb-2 flex items-center gap-3 tracking-wide">
-                  <LinkIcon className="w-6 h-6 text-purple-500" /> Billetera Receptora
+                  <LinkIcon className="w-6 h-6 text-purple-500" /> {t('wallet_title')}
                 </h3>
                 <p className="text-xs text-gray-400 mb-6 font-medium leading-relaxed">
-                  Ingresa tu dirección exacta de <strong>USDT (Red Tron / TRC20)</strong>. Aquí depositaremos tus ganancias automáticamente.
+                  {t('wallet_desc_1')} <strong>USDT (Red Tron / TRC20)</strong>. {t('wallet_desc_2')}
                 </p>
                 
                 <div className="space-y-4">
@@ -446,7 +448,7 @@ export default function WalletDashboard() {
                     type="text" 
                     value={cryptoAddress} 
                     onChange={(e) => setCryptoAddress(e.target.value)} 
-                    placeholder="Pega tu dirección (Ej: Txyz...)" 
+                    placeholder={t('ph_wallet')} 
                     className="w-full nm-inset rounded-xl px-5 py-4 text-sm font-mono text-white outline-none focus:border-purple-500/50 transition-colors placeholder:text-gray-700 font-bold" 
                   />
                   <button 
@@ -454,7 +456,7 @@ export default function WalletDashboard() {
                     disabled={isSavingWallet || !cryptoAddress} 
                     className="w-full nm-btn border border-purple-500/30 text-purple-400 hover:bg-purple-600 hover:text-white font-bold px-4 py-4 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {isSavingWallet ? <><Loader2 className="w-5 h-5 animate-spin"/> Guardando...</> : <><CheckCircle2 className="w-5 h-5"/> Guardar Dirección Cripto</>}
+                    {isSavingWallet ? <><Loader2 className="w-5 h-5 animate-spin"/> {t('btn_saving')}</> : <><CheckCircle2 className="w-5 h-5"/> {t('btn_save_wallet')}</>}
                   </button>
                 </div>
               </div>
@@ -462,13 +464,13 @@ export default function WalletDashboard() {
               {/* Checklist de Seguridad */}
               <div className="nm-inset border border-orange-500/20 bg-[#110505] p-6 rounded-[2rem]">
                 <p className="font-black flex items-center gap-2 mb-4 text-orange-500 text-sm uppercase tracking-wide">
-                  <AlertTriangle className="w-5 h-5" /> Reglas de Retiro
+                  <AlertTriangle className="w-5 h-5" /> {t('rules_title')}
                 </p>
                 <ul className="space-y-3 text-xs text-gray-400 font-medium">
-                  <li className="flex items-center gap-3"><CheckCircle2 className="w-4 h-4 text-green-500 shrink-0"/> Monto mínimo de solicitud: $50 USD.</li>
-                  <li className="flex items-center gap-3"><IdCard className="w-4 h-4 text-blue-400 shrink-0"/> Identidad Legal (KYC) debe estar aprobada.</li>
-                  <li className="flex items-center gap-3"><Smartphone className="w-4 h-4 text-purple-400 shrink-0"/> App de Google Authenticator (2FA) activa.</li>
-                  <li className="flex items-center gap-3"><Turtle className="w-4 h-4 text-yellow-500 shrink-0"/> Retiro estándar limitado a 1 por semana.</li>
+                  <li className="flex items-center gap-3"><CheckCircle2 className="w-4 h-4 text-green-500 shrink-0"/> {t('rule_1')}</li>
+                  <li className="flex items-center gap-3"><IdCard className="w-4 h-4 text-blue-400 shrink-0"/> {t('rule_2')}</li>
+                  <li className="flex items-center gap-3"><Smartphone className="w-4 h-4 text-purple-400 shrink-0"/> {t('rule_3')}</li>
+                  <li className="flex items-center gap-3"><Turtle className="w-4 h-4 text-yellow-500 shrink-0"/> {t('rule_4')}</li>
                 </ul>
               </div>
 
@@ -483,10 +485,10 @@ export default function WalletDashboard() {
             {/* ÚLTIMOS INGRESOS */}
             <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default">
               <h2 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <Download className="w-4 h-4 text-green-500" /> Últimos Ingresos (Fans)
+                <Download className="w-4 h-4 text-green-500" /> {t('income_title')}
               </h2>
               {(!financeData?.recentTransactions || financeData.recentTransactions.length === 0) ? (
-                <div className="text-center text-gray-600 py-12 font-medium">No hay ingresos registrados aún.</div>
+                <div className="text-center text-gray-600 py-12 font-medium">{t('income_empty')}</div>
               ) : (
                 <div className="space-y-4">
                   {financeData.recentTransactions.map((tx: any) => (
@@ -496,7 +498,7 @@ export default function WalletDashboard() {
                           {tx.type === 'SUBSCRIPTION' ? <Star className="w-4 h-4 text-purple-400" /> : tx.type === 'TIP' ? <DollarSign className="w-4 h-4 text-green-400" /> : <Lock className="w-4 h-4 text-blue-400" />}
                         </div>
                         <div>
-                          <p className="text-sm text-white font-black tracking-wide">@{tx.sender?.username || 'Anónimo'}</p>
+                          <p className="text-sm text-white font-black tracking-wide">@{tx.sender?.username || t('anonymous')}</p>
                           <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">{new Date(tx.createdAt).toLocaleDateString()}</p>
                         </div>
                       </div>
@@ -512,10 +514,10 @@ export default function WalletDashboard() {
             {/* HISTORIAL DE RETIROS */}
             <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default">
               <h2 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <History className="w-4 h-4 text-blue-500" /> Estado de Retiros
+                <History className="w-4 h-4 text-blue-500" /> {t('history_title')}
               </h2>
               {(!financeData?.withdrawalHistory || financeData.withdrawalHistory.length === 0) ? (
-                <div className="text-center text-gray-600 py-12 font-medium">Aún no has solicitado ningún retiro.</div>
+                <div className="text-center text-gray-600 py-12 font-medium">{t('history_empty')}</div>
               ) : (
                 <div className="space-y-4">
                   {financeData.withdrawalHistory.map((w: any) => (
@@ -539,10 +541,10 @@ export default function WalletDashboard() {
                             (w.status === 'APPROVED' || w.status === 'PAID') ? 'text-blue-400' : 
                             'text-red-500'
                           }`}>
-                            {w.status === 'PENDING' ? 'En Espera' : 
-                             w.status === 'PROCESSING' ? 'Procesando' : 
-                             w.status === 'APPROVED' ? 'Aprobado' : 
-                             w.status === 'PAID' ? 'Transferido' : 'Rechazado'}
+                            {w.status === 'PENDING' ? t('status_pending') : 
+                             w.status === 'PROCESSING' ? t('status_processing') : 
+                             w.status === 'APPROVED' ? t('status_approved') : 
+                             w.status === 'PAID' ? t('status_paid') : t('status_rejected')}
                           </p>
                           <p className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-widest">{new Date(w.createdAt).toLocaleDateString()}</p>
                         </div>
