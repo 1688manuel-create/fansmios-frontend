@@ -734,5 +734,33 @@
     "btn_publish": "Publiceren op mijn Verhaal",
     "active_stories_title": "Actieve Verhalen (24u)",
     "story_viewed": "Gezien"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Weet je zeker dat je je abonnement op",
+    "confirm_cancel_2": "wilt annuleren? Je behoudt toegang tot het einde van je betaalde periode, maar er worden geen kosten meer in rekening gebracht.",
+    "alert_cancel_success": "✅ Abonnement geannuleerd. Er zijn geen automatische afschrijvingen meer.",
+    "alert_error_cancel": "Er is een fout opgetreden bij het verwerken van de annulering. Probeer het opnieuw.",
+    "alert_error_reactivate": "Fout bij het starten van heractivering.",
+    "nav_title": "Mijn Abonnementen",
+    "btn_back": "Terug",
+    "header_title": "Lidmaatschapsbeheer",
+    "header_desc": "Hier kun je alle makers zien die je momenteel steunt en je betalingen beheren.",
+    "empty_title": "Je steunt nog geen enkele maker",
+    "empty_desc": "Verken het platform en vind exclusieve inhoud waar je van houdt.",
+    "btn_explore": "Ontdek Makers",
+    "active_subs_title": "Actieve Abonnementen",
+    "unknown_user": "Gebruiker",
+    "status_active": "Actief",
+    "lbl_month": "maand",
+    "lbl_renewal": "Vernieuwing",
+    "btn_view_profile": "Bekijk Profiel",
+    "btn_cancel": "Annuleren",
+    "inactive_subs_title": "Geschiedenis en Geannuleerd",
+    "status_canceled": "Geannuleerd (Toegang Eindigt)",
+    "status_expired": "Verlopen",
+    "lbl_expires": "Verloopt op",
+    "btn_reactivate": "Abonnement Heractiveren",
+    "alert_renew_success": "✅ Abonnement succesvol verlengd!"
   }
 }

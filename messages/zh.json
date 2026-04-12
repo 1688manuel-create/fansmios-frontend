@@ -734,5 +734,33 @@
     "btn_publish": "发布到我的快拍",
     "active_stories_title": "活跃快拍（24小时）",
     "story_viewed": "已看"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "您确定要取消对",
+    "confirm_cancel_2": "的订阅吗？在已付费期间结束前您将继续拥有访问权限，但不会再次向您收费。",
+    "alert_cancel_success": "✅ 订阅已取消。将不会再有自动扣费。",
+    "alert_error_cancel": "处理取消时出错。请重试。",
+    "alert_error_reactivate": "开始重新激活时出错。",
+    "nav_title": "我的订阅",
+    "btn_back": "返回",
+    "header_title": "会员管理",
+    "header_desc": "在这里您可以查看您当前支持的所有创作者并管理您的付款。",
+    "empty_title": "您还没有支持任何创作者",
+    "empty_desc": "探索平台并找到您喜欢的独家内容。",
+    "btn_explore": "探索创作者",
+    "active_subs_title": "活跃的订阅",
+    "unknown_user": "用户",
+    "status_active": "活跃",
+    "lbl_month": "月",
+    "lbl_renewal": "续订",
+    "btn_view_profile": "查看个人资料",
+    "btn_cancel": "取消",
+    "inactive_subs_title": "历史记录和已取消",
+    "status_canceled": "已取消（访问即将结束）",
+    "status_expired": "已过期",
+    "lbl_expires": "到期时间",
+    "btn_reactivate": "重新激活订阅",
+    "alert_renew_success": "✅ 订阅续订成功！"
   }
 }

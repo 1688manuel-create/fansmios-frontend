@@ -734,5 +734,33 @@
     "btn_publish": "Publier dans mon Histoire",
     "active_stories_title": "Histoires Actives (24h)",
     "story_viewed": "Vue"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Êtes-vous sûr de vouloir annuler votre abonnement à",
+    "confirm_cancel_2": "Vous continuerez à y avoir accès jusqu'à la fin de votre période payée, mais vous ne serez plus facturé.",
+    "alert_cancel_success": "✅ Abonnement annulé. Il n'y aura plus de frais automatiques.",
+    "alert_error_cancel": "Une erreur s'est produite lors du traitement de l'annulation. Réessayez.",
+    "alert_error_reactivate": "Erreur lors du démarrage de la réactivation.",
+    "nav_title": "Mes Abonnements",
+    "btn_back": "Retour",
+    "header_title": "Gestion des Adhésions",
+    "header_desc": "Ici, vous pouvez voir tous les créateurs que vous soutenez actuellement et gérer vos paiements.",
+    "empty_title": "Vous ne soutenez encore aucun créateur",
+    "empty_desc": "Explorez la plateforme et trouvez du contenu exclusif que vous adorerez.",
+    "btn_explore": "Explorer les Créateurs",
+    "active_subs_title": "Abonnements Actifs",
+    "unknown_user": "Utilisateur",
+    "status_active": "Actif",
+    "lbl_month": "mois",
+    "lbl_renewal": "Renouvellement",
+    "btn_view_profile": "Voir le profil",
+    "btn_cancel": "Annuler",
+    "inactive_subs_title": "Historique et Annulés",
+    "status_canceled": "Annulé (Fin de l'accès)",
+    "status_expired": "Expiré",
+    "lbl_expires": "Expire le",
+    "btn_reactivate": "Réactiver l'abonnement",
+    "alert_renew_success": "✅ Abonnement renouvelé avec succès !"
   }
 }

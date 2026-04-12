@@ -734,5 +734,33 @@
     "btn_publish": "Publicar na minha História",
     "active_stories_title": "Histórias Ativas (24h)",
     "story_viewed": "Vista"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Tem certeza de que deseja cancelar sua assinatura com",
+    "confirm_cancel_2": "Você continuará tendo acesso até o final do período pago, mas não será cobrado novamente.",
+    "alert_cancel_success": "✅ Assinatura cancelada. Não haverá mais cobranças automáticas.",
+    "alert_error_cancel": "Houve um erro ao processar o cancelamento. Tente novamente.",
+    "alert_error_reactivate": "Erro ao iniciar a reativação.",
+    "nav_title": "Minhas Assinaturas",
+    "btn_back": "Voltar",
+    "header_title": "Gestão de Membros",
+    "header_desc": "Aqui você pode ver todos os criadores que você apoia atualmente e gerenciar seus pagamentos.",
+    "empty_title": "Você ainda não apoia nenhum criador",
+    "empty_desc": "Explore a plataforma e encontre conteúdo exclusivo que você vai adorar.",
+    "btn_explore": "Explorar Criadores",
+    "active_subs_title": "Assinaturas Ativas",
+    "unknown_user": "Usuário",
+    "status_active": "Ativa",
+    "lbl_month": "mês",
+    "lbl_renewal": "Renovação",
+    "btn_view_profile": "Ver Perfil",
+    "btn_cancel": "Cancelar",
+    "inactive_subs_title": "Histórico e Canceladas",
+    "status_canceled": "Cancelada (Acesso Terminando)",
+    "status_expired": "Expirada",
+    "lbl_expires": "Vence em",
+    "btn_reactivate": "Reativar Assinatura",
+    "alert_renew_success": "✅ Assinatura renovada com sucesso!"
   }
 }

@@ -734,5 +734,33 @@
     "btn_publish": "Hikayemde Yayınla",
     "active_stories_title": "Aktif Hikayeler (24s)",
     "story_viewed": "Görüldü"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Şu kişiye olan aboneliğinizi iptal etmek istediğinizden emin misiniz:",
+    "confirm_cancel_2": "Ücretli süreniz bitene kadar erişime sahip olmaya devam edeceksiniz, ancak tekrar ücretlendirilmeyeceksiniz.",
+    "alert_cancel_success": "✅ Abonelik iptal edildi. Artık otomatik çekim yapılmayacak.",
+    "alert_error_cancel": "İptal işlemi işlenirken bir hata oluştu. Tekrar deneyin.",
+    "alert_error_reactivate": "Yeniden etkinleştirme başlatılırken hata oluştu.",
+    "nav_title": "Aboneliklerim",
+    "btn_back": "Geri",
+    "header_title": "Üyelik Yönetimi",
+    "header_desc": "Burada şu anda desteklediğiniz tüm yaratıcıları görebilir ve ödemelerinizi yönetebilirsiniz.",
+    "empty_title": "Henüz hiçbir yaratıcıyı desteklemiyorsunuz",
+    "empty_desc": "Platformu keşfedin ve seveceğiniz özel içerikler bulun.",
+    "btn_explore": "Yaratıcıları Keşfet",
+    "active_subs_title": "Aktif Abonelikler",
+    "unknown_user": "Kullanıcı",
+    "status_active": "Aktif",
+    "lbl_month": "ay",
+    "lbl_renewal": "Yenileme",
+    "btn_view_profile": "Profili Gör",
+    "btn_cancel": "İptal",
+    "inactive_subs_title": "Geçmiş ve İptal Edilenler",
+    "status_canceled": "İptal Edildi (Erişim Bitiyor)",
+    "status_expired": "Süresi Doldu",
+    "lbl_expires": "Bitiş Tarihi",
+    "btn_reactivate": "Aboneliği Yeniden Etkinleştir",
+    "alert_renew_success": "✅ Abonelik başarıyla yenilendi!"
   }
 }

@@ -734,5 +734,33 @@
     "btn_publish": "Publicera i min Händelse",
     "active_stories_title": "Aktiva Händelser (24h)",
     "story_viewed": "Visad"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Är du säker på att du vill avbryta din prenumeration på",
+    "confirm_cancel_2": "Du kommer att fortsätta att ha åtkomst tills din betalda period är slut, men du kommer inte att debiteras igen.",
+    "alert_cancel_success": "✅ Prenumerationen har avbrutits. Det blir inga fler automatiska debiteringar.",
+    "alert_error_cancel": "Ett fel uppstod vid behandlingen av avbokningen. Försök igen.",
+    "alert_error_reactivate": "Fel vid start av återaktivering.",
+    "nav_title": "Mina prenumerationer",
+    "btn_back": "Tillbaka",
+    "header_title": "Medlemshantering",
+    "header_desc": "Här kan du se alla skapare du för närvarande stöder och hantera dina betalningar.",
+    "empty_title": "Du stöder inte någon skapare ännu",
+    "empty_desc": "Utforska plattformen och hitta exklusivt innehåll som du älskar.",
+    "btn_explore": "Utforska Skapare",
+    "active_subs_title": "Aktiva Prenumerationer",
+    "unknown_user": "Användare",
+    "status_active": "Aktiv",
+    "lbl_month": "månad",
+    "lbl_renewal": "Förnyelse",
+    "btn_view_profile": "Visa Profil",
+    "btn_cancel": "Avbryt",
+    "inactive_subs_title": "Historik och Avbrutna",
+    "status_canceled": "Avbruten (Åtkomst Avslutas)",
+    "status_expired": "Utgången",
+    "lbl_expires": "Löper ut den",
+    "btn_reactivate": "Återaktivera Prenumeration",
+    "alert_renew_success": "✅ Prenumerationen har förnyats!"
   }
 }

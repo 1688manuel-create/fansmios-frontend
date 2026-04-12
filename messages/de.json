@@ -734,5 +734,33 @@
     "btn_publish": "In meiner Story posten",
     "active_stories_title": "Aktive Storys (24h)",
     "story_viewed": "Gesehen"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Sind Sie sicher, dass Sie Ihr Abonnement kündigen möchten bei",
+    "confirm_cancel_2": "Sie haben weiterhin Zugriff bis zum Ende Ihres bezahlten Zeitraums, aber es werden keine weiteren Gebühren erhoben.",
+    "alert_cancel_success": "✅ Abonnement gekündigt. Es werden keine automatischen Abbuchungen mehr vorgenommen.",
+    "alert_error_cancel": "Fehler bei der Bearbeitung der Stornierung. Versuchen Sie es erneut.",
+    "alert_error_reactivate": "Fehler beim Starten der Reaktivierung.",
+    "nav_title": "Meine Abonnements",
+    "btn_back": "Zurück",
+    "header_title": "Mitgliederverwaltung",
+    "header_desc": "Hier können Sie alle Creators sehen, die Sie derzeit unterstützen, und Ihre Zahlungen verwalten.",
+    "empty_title": "Sie unterstützen noch keinen Creator",
+    "empty_desc": "Erkunden Sie die Plattform und finden Sie exklusive Inhalte, die Sie lieben werden.",
+    "btn_explore": "Creators Erkunden",
+    "active_subs_title": "Aktive Abonnements",
+    "unknown_user": "Benutzer",
+    "status_active": "Aktiv",
+    "lbl_month": "Monat",
+    "lbl_renewal": "Erneuerung",
+    "btn_view_profile": "Profil Ansehen",
+    "btn_cancel": "Abbrechen",
+    "inactive_subs_title": "Verlauf und Gekündigt",
+    "status_canceled": "Gekündigt (Zugriff Endet)",
+    "status_expired": "Abgelaufen",
+    "lbl_expires": "Läuft ab am",
+    "btn_reactivate": "Abonnement Reaktivieren",
+    "alert_renew_success": "✅ Abonnement erfolgreich erneuert!"
   }
 }

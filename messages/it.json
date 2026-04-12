@@ -734,5 +734,33 @@
     "btn_publish": "Pubblica nella mia Storia",
     "active_stories_title": "Storie Attive (24h)",
     "story_viewed": "Visualizzata"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Sei sicuro di voler annullare il tuo abbonamento a",
+    "confirm_cancel_2": "Continuerai ad avere accesso fino alla fine del periodo pagato, ma non ti verranno addebitati ulteriori costi.",
+    "alert_cancel_success": "✅ Abbonamento annullato. Non ci saranno ulteriori addebiti automatici.",
+    "alert_error_cancel": "Si è verificato un errore durante l'elaborazione dell'annullamento. Riprova.",
+    "alert_error_reactivate": "Errore durante l'avvio della riattivazione.",
+    "nav_title": "I Miei Abbonamenti",
+    "btn_back": "Indietro",
+    "header_title": "Gestione Abbonamenti",
+    "header_desc": "Qui puoi vedere tutti i creatori che supporti attualmente e gestire i tuoi pagamenti.",
+    "empty_title": "Non supporti ancora nessun creatore",
+    "empty_desc": "Esplora la piattaforma e trova contenuti esclusivi che ami.",
+    "btn_explore": "Esplora Creatori",
+    "active_subs_title": "Abbonamenti Attivi",
+    "unknown_user": "Utente",
+    "status_active": "Attivo",
+    "lbl_month": "mese",
+    "lbl_renewal": "Rinnovo",
+    "btn_view_profile": "Vedi Profilo",
+    "btn_cancel": "Annulla",
+    "inactive_subs_title": "Cronologia e Annullati",
+    "status_canceled": "Annullato (Accesso in Scadenza)",
+    "status_expired": "Scaduto",
+    "lbl_expires": "Scade il",
+    "btn_reactivate": "Riattiva Abbonamento",
+    "alert_renew_success": "✅ Abbonamento rinnovato con successo!"
   }
 }

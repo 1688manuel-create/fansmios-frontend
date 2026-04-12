@@ -734,5 +734,33 @@
     "btn_publish": "マイストーリーに公開",
     "active_stories_title": "アクティブなストーリー (24時間)",
     "story_viewed": "閲覧済み"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "次のサブスクリプションをキャンセルしてもよろしいですか：",
+    "confirm_cancel_2": "支払い済み期間が終了するまで引き続きアクセスできますが、再度請求されることはありません。",
+    "alert_cancel_success": "✅ サブスクリプションをキャンセルしました。これ以上の自動請求はありません。",
+    "alert_error_cancel": "キャンセルの処理中にエラーが発生しました。もう一度お試しください。",
+    "alert_error_reactivate": "再アクティブ化の開始中にエラーが発生しました。",
+    "nav_title": "サブスクリプション",
+    "btn_back": "戻る",
+    "header_title": "メンバーシップ管理",
+    "header_desc": "ここでは、現在サポートしているすべてのクリエイターを表示し、支払いを管理できます。",
+    "empty_title": "まだクリエイターをサポートしていません",
+    "empty_desc": "プラットフォームを探索して、お気に入りの限定コンテンツを見つけてください。",
+    "btn_explore": "クリエイターを探索",
+    "active_subs_title": "アクティブなサブスクリプション",
+    "unknown_user": "ユーザー",
+    "status_active": "アクティブ",
+    "lbl_month": "月",
+    "lbl_renewal": "更新",
+    "btn_view_profile": "プロフィールを見る",
+    "btn_cancel": "キャンセル",
+    "inactive_subs_title": "履歴とキャンセル済み",
+    "status_canceled": "キャンセル済み（アクセス終了）",
+    "status_expired": "期限切れ",
+    "lbl_expires": "有効期限",
+    "btn_reactivate": "サブスクリプションを再開",
+    "alert_renew_success": "✅ サブスクリプションの更新に成功しました！"
   }
 }

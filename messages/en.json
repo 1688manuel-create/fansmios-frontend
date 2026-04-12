@@ -733,5 +733,33 @@
     "btn_publish": "Publish to my Story",
     "active_stories_title": "Active Stories (24h)",
     "story_viewed": "Viewed"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Are you sure you want to cancel your subscription to",
+    "confirm_cancel_2": "You will continue to have access until your paid period ends, but you will not be charged again.",
+    "alert_cancel_success": "✅ Subscription canceled. There will be no more automatic charges.",
+    "alert_error_cancel": "There was an error processing the cancellation. Try again.",
+    "alert_error_reactivate": "Error starting reactivation.",
+    "nav_title": "My Subscriptions",
+    "btn_back": "Back",
+    "header_title": "Membership Management",
+    "header_desc": "Here you can see all the creators you currently support and manage your payments.",
+    "empty_title": "You don't support any creator yet",
+    "empty_desc": "Explore the platform and find exclusive content you love.",
+    "btn_explore": "Explore Creators",
+    "active_subs_title": "Active Subscriptions",
+    "unknown_user": "User",
+    "status_active": "Active",
+    "lbl_month": "month",
+    "lbl_renewal": "Renewal",
+    "btn_view_profile": "View Profile",
+    "btn_cancel": "Cancel",
+    "inactive_subs_title": "History and Canceled",
+    "status_canceled": "Canceled (Access Ending)",
+    "status_expired": "Expired",
+    "lbl_expires": "Expires on",
+    "btn_reactivate": "Reactivate Subscription",
+    "alert_renew_success": "✅ Subscription successfully renewed!"
   }
 }

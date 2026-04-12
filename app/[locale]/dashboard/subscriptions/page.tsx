@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation';
 import { fanService } from '../../../../lib/fanService';
 import api from '../../../../lib/api'; 
 import PaymentModal from '../../../../components/PaymentModal'; // 🔥 Importamos el nuevo Modal Cripto-Invisible
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function FanSubscriptions() {
   const router = useRouter();
+  const t = useTranslations('Subscriptions'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,17 +38,17 @@ export default function FanSubscriptions() {
   // Lógica de cancelación 
   const handleCancelSubscription = async (creatorId: string, username: string) => {
     const confirmAction = window.confirm(
-      `¿Estás seguro de que deseas cancelar tu suscripción a @${username}?\n\nSeguirás teniendo acceso hasta que termine tu periodo pagado, pero no se te volverá a cobrar.`
+      `${t('confirm_cancel_1')} @${username}?\n\n${t('confirm_cancel_2')}`
     );
 
     if (!confirmAction) return;
 
     try {
       await api.post('/payments/cancel-subscription', { creatorId });
-      alert("✅ Suscripción cancelada. No habrá más cargos automáticos.");
+      alert(t('alert_cancel_success'));
       fetchSubs(); 
     } catch (error) {
-      alert("Hubo un error al procesar la cancelación. Inténtalo de nuevo.");
+      alert(t('alert_error_cancel'));
     }
   };
 
@@ -64,7 +66,7 @@ export default function FanSubscriptions() {
       setPaymentData({ payAddress: res.data.payAddress, amountUsd: res.data.finalAmount, transactionId: res.data.transactionId });
       setIsPaymentModalOpen(true);
     } catch (error) {
-      alert("Error al iniciar la reactivación.");
+      alert(t('alert_error_reactivate'));
     }
   };
 
@@ -79,24 +81,24 @@ export default function FanSubscriptions() {
       <div className="absolute top-0 left-1/2 w-[600px] h-[300px] bg-pink-900/20 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
 
       <nav className="sticky top-0 z-50 glass-panel border-b border-white/10 px-6 py-4 flex justify-between items-center backdrop-blur-xl">
-        <h1 className="text-xl font-bold text-white">⭐ Mis Suscripciones</h1>
-        <button onClick={() => router.push('/dashboard')} className="text-sm bg-white/10 text-white px-4 py-2 rounded-full hover:bg-white/20 transition-colors">Volver</button>
+        <h1 className="text-xl font-bold text-white">⭐ {t('nav_title')}</h1>
+        <button onClick={() => router.push('/dashboard')} className="text-sm bg-white/10 text-white px-4 py-2 rounded-full hover:bg-white/20 transition-colors">{t('btn_back')}</button>
       </nav>
 
       <main className="max-w-3xl mx-auto mt-10 px-4 space-y-8 relative z-10">
         
         <div className="glass-panel p-8 rounded-3xl border border-white/5 bg-gradient-to-r from-pink-500/10 to-orange-500/10">
-          <h2 className="text-2xl font-bold text-white">Gestión de Membresías</h2>
-          <p className="text-gray-400 mt-2">Aquí puedes ver a todos los creadores que apoyas actualmente y administrar tus pagos.</p>
+          <h2 className="text-2xl font-bold text-white">{t('header_title')}</h2>
+          <p className="text-gray-400 mt-2">{t('header_desc')}</p>
         </div>
 
         {subscriptions.length === 0 ? (
           <div className="text-center py-16 glass-panel rounded-3xl border border-white/5">
             <span className="text-5xl">🥺</span>
-            <h3 className="text-xl font-bold text-white mt-4">Aún no apoyas a ningún creador</h3>
-            <p className="text-gray-400 mt-2 mb-6">Explora la plataforma y encuentra contenido exclusivo que te encante.</p>
+            <h3 className="text-xl font-bold text-white mt-4">{t('empty_title')}</h3>
+            <p className="text-gray-400 mt-2 mb-6">{t('empty_desc')}</p>
             <button onClick={() => router.push('/explore')} className="bg-gradient-to-r from-pink-600 to-orange-500 text-white font-bold py-3 px-8 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(236,72,153,0.4)]">
-              🔍 Explorar Creadores
+              🔍 {t('btn_explore')}
             </button>
           </div>
         ) : (
@@ -105,7 +107,7 @@ export default function FanSubscriptions() {
             {/* 🟢 SECCIÓN ACTIVAS */}
             {activeSubs.length > 0 && (
               <div className="space-y-4">
-                <h3 className="text-pink-400 font-bold uppercase tracking-widest text-xs ml-2">Suscripciones Activas</h3>
+                <h3 className="text-pink-400 font-bold uppercase tracking-widest text-xs ml-2">{t('active_subs_title')}</h3>
                 {activeSubs.map(sub => (
                   <div key={sub.id} className="glass-panel p-6 rounded-3xl border border-white/5 shadow-lg flex flex-col sm:flex-row justify-between items-center gap-6 hover:border-pink-500/30 transition-colors">
                     <div className="flex items-center gap-4 w-full sm:w-auto">
@@ -115,20 +117,20 @@ export default function FanSubscriptions() {
                           : sub.creator?.username?.[0].toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="text-white font-bold text-xl">@{sub.creator?.username || 'Usuario'}</h3>
-                        <p className="text-sm text-green-400 font-medium mt-0.5">Activa • ${sub.price} USD / mes</p>
-                        <p className="text-xs text-gray-500 mt-1">Renovación: {new Date(sub.endDate).toLocaleDateString()}</p>
+                        <h3 className="text-white font-bold text-xl">@{sub.creator?.username || t('unknown_user')}</h3>
+                        <p className="text-sm text-green-400 font-medium mt-0.5">{t('status_active')} • ${sub.price} USD / {t('lbl_month')}</p>
+                        <p className="text-xs text-gray-500 mt-1">{t('lbl_renewal')}: {new Date(sub.endDate).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="flex gap-3 w-full sm:w-auto">
                       <button onClick={() => router.push(`/${sub.creator?.username}`)} className="flex-1 sm:flex-none bg-white/10 hover:bg-white/20 text-white font-bold py-2.5 px-6 rounded-full transition-colors text-sm">
-                        Ver Perfil
+                        {t('btn_view_profile')}
                       </button>
                       <button 
                         onClick={() => handleCancelSubscription(sub.creatorId, sub.creator?.username)}
                         className="flex-1 sm:flex-none bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-bold py-2.5 px-6 rounded-full transition-colors text-sm"
                       >
-                        Cancelar
+                        {t('btn_cancel')}
                       </button>
                     </div>
                   </div>
@@ -139,7 +141,7 @@ export default function FanSubscriptions() {
             {/* 🔴 SECCIÓN HISTORIAL / CANCELADAS / EXPIRADAS */}
             {inactiveOrCanceled.length > 0 && (
               <div className="space-y-4">
-                <h3 className="text-gray-500 font-bold uppercase tracking-widest text-xs ml-2">Historial y Canceladas</h3>
+                <h3 className="text-gray-500 font-bold uppercase tracking-widest text-xs ml-2">{t('inactive_subs_title')}</h3>
                 {inactiveOrCanceled.map(sub => (
                   <div key={sub.id} className="glass-panel p-6 rounded-3xl border border-white/5 opacity-60 flex flex-col sm:flex-row justify-between items-center gap-6 grayscale-[0.5]">
                     <div className="flex items-center gap-4 w-full sm:w-auto">
@@ -149,9 +151,9 @@ export default function FanSubscriptions() {
                           : sub.creator?.username?.[0].toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="text-white font-bold text-lg">@{sub.creator?.username || 'Usuario'}</h3>
-                        <p className="text-xs text-red-400 font-medium uppercase">{sub.status === 'CANCELED' ? 'Cancelada (Acceso Finalizando)' : 'Expirada'}</p>
-                        <p className="text-xs text-gray-500 mt-1">Vence el: {new Date(sub.endDate).toLocaleDateString()}</p>
+                        <h3 className="text-white font-bold text-lg">@{sub.creator?.username || t('unknown_user')}</h3>
+                        <p className="text-xs text-red-400 font-medium uppercase">{sub.status === 'CANCELED' ? t('status_canceled') : t('status_expired')}</p>
+                        <p className="text-xs text-gray-500 mt-1">{t('lbl_expires')}: {new Date(sub.endDate).toLocaleDateString()}</p>
                       </div>
                     </div>
                     {/* 🔥 EL NUEVO BOTÓN DE REACTIVACIÓN QUE ABRE ONRAMPER */}
@@ -159,7 +161,7 @@ export default function FanSubscriptions() {
                       onClick={() => handleReactivateSubscription(sub.creatorId, sub.price, sub.creator?.username)} 
                       className="w-full sm:w-auto bg-pink-500/20 text-pink-400 font-bold py-2 px-6 rounded-full text-sm hover:bg-pink-500 hover:text-white transition-all"
                     >
-                      Reactivar Suscripción
+                      {t('btn_reactivate')}
                     </button>
                   </div>
                 ))}
@@ -182,7 +184,7 @@ export default function FanSubscriptions() {
             onClose={() => setIsPaymentModalOpen(false)}
             onSuccess={() => {
               setIsPaymentModalOpen(false);
-              alert("✅ ¡Suscripción renovada con éxito!");
+              alert(t('alert_renew_success'));
               window.location.reload(); {/* 🔥 SOLUCIÓN INFALIBLE */}
             }}
         />

@@ -734,5 +734,33 @@
     "btn_publish": "Publicar en mi Historia",
     "active_stories_title": "Historias Activas (24h)",
     "story_viewed": "Vista"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "¿Estás seguro de que deseas cancelar tu suscripción a",
+    "confirm_cancel_2": "Seguirás teniendo acceso hasta que termine tu periodo pagado, pero no se te volverá a cobrar.",
+    "alert_cancel_success": "✅ Suscripción cancelada. No habrá más cargos automáticos.",
+    "alert_error_cancel": "Hubo un error al procesar la cancelación. Inténtalo de nuevo.",
+    "alert_error_reactivate": "Error al iniciar la reactivación.",
+    "nav_title": "Mis Suscripciones",
+    "btn_back": "Volver",
+    "header_title": "Gestión de Membresías",
+    "header_desc": "Aquí puedes ver a todos los creadores que apoyas actualmente y administrar tus pagos.",
+    "empty_title": "Aún no apoyas a ningún creador",
+    "empty_desc": "Explora la plataforma y encuentra contenido exclusivo que te encante.",
+    "btn_explore": "Explorar Creadores",
+    "active_subs_title": "Suscripciones Activas",
+    "unknown_user": "Usuario",
+    "status_active": "Activa",
+    "lbl_month": "mes",
+    "lbl_renewal": "Renovación",
+    "btn_view_profile": "Ver Perfil",
+    "btn_cancel": "Cancelar",
+    "inactive_subs_title": "Historial y Canceladas",
+    "status_canceled": "Cancelada (Acceso Finalizando)",
+    "status_expired": "Expirada",
+    "lbl_expires": "Vence el",
+    "btn_reactivate": "Reactivar Suscripción",
+    "alert_renew_success": "✅ ¡Suscripción renovada con éxito!"
   }
 }

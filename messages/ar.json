@@ -734,5 +734,33 @@
     "btn_publish": "نشر في قصتي",
     "active_stories_title": "القصص النشطة (24 ساعة)",
     "story_viewed": "شوهدت"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "هل أنت متأكد أنك تريد إلغاء اشتراكك في",
+    "confirm_cancel_2": "ستستمر في التمتع بالوصول حتى انتهاء الفترة المدفوعة، ولكن لن يتم تحصيل رسوم منك مرة أخرى.",
+    "alert_cancel_success": "✅ تم إلغاء الاشتراك. لن تكون هناك رسوم تلقائية أخرى.",
+    "alert_error_cancel": "حدث خطأ أثناء معالجة الإلغاء. حاول مرة أخرى.",
+    "alert_error_reactivate": "خطأ في بدء إعادة التنشيط.",
+    "nav_title": "اشتراكاتي",
+    "btn_back": "عودة",
+    "header_title": "إدارة العضوية",
+    "header_desc": "هنا يمكنك رؤية جميع صناع المحتوى الذين تدعمهم حاليًا وإدارة مدفوعاتك.",
+    "empty_title": "أنت لا تدعم أي صانع محتوى حتى الآن",
+    "empty_desc": "استكشف المنصة وابحث عن محتوى حصري تحبه.",
+    "btn_explore": "استكشاف صناع المحتوى",
+    "active_subs_title": "الاشتراكات النشطة",
+    "unknown_user": "مستخدم",
+    "status_active": "نشط",
+    "lbl_month": "شهر",
+    "lbl_renewal": "التجديد",
+    "btn_view_profile": "عرض الملف الشخصي",
+    "btn_cancel": "إلغاء",
+    "inactive_subs_title": "السجل والملغاة",
+    "status_canceled": "ملغاة (ينتهي الوصول)",
+    "status_expired": "منتهية الصلاحية",
+    "lbl_expires": "ينتهي في",
+    "btn_reactivate": "إعادة تنشيط الاشتراك",
+    "alert_renew_success": "✅ تم تجديد الاشتراك بنجاح!"
   }
 }

@@ -734,5 +734,33 @@
     "btn_publish": "Opublikuj w mojej Relacji",
     "active_stories_title": "Aktywne Relacje (24h)",
     "story_viewed": "Wyświetlono"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Czy na pewno chcesz anulować subskrypcję do",
+    "confirm_cancel_2": "Zachowasz dostęp do końca opłaconego okresu, ale nie zostaniesz ponownie obciążony opłatą.",
+    "alert_cancel_success": "✅ Subskrypcja anulowana. Nie będzie już więcej automatycznych opłat.",
+    "alert_error_cancel": "Wystąpił błąd podczas przetwarzania anulowania. Spróbuj ponownie.",
+    "alert_error_reactivate": "Błąd podczas rozpoczynania ponownej aktywacji.",
+    "nav_title": "Moje Subskrypcje",
+    "btn_back": "Wróć",
+    "header_title": "Zarządzanie Członkostwem",
+    "header_desc": "Tutaj możesz zobaczyć wszystkich twórców, których obecnie wspierasz i zarządzać swoimi płatnościami.",
+    "empty_title": "Nie wspierasz jeszcze żadnego twórcy",
+    "empty_desc": "Odkrywaj platformę i znajdź ekskluzywne treści, które pokochasz.",
+    "btn_explore": "Odkrywaj Twórców",
+    "active_subs_title": "Aktywne Subskrypcje",
+    "unknown_user": "Użytkownik",
+    "status_active": "Aktywna",
+    "lbl_month": "miesiąc",
+    "lbl_renewal": "Odnowienie",
+    "btn_view_profile": "Zobacz Profil",
+    "btn_cancel": "Anuluj",
+    "inactive_subs_title": "Historia i Anulowane",
+    "status_canceled": "Anulowana (Dostęp Wygasa)",
+    "status_expired": "Wygasła",
+    "lbl_expires": "Wygasa",
+    "btn_reactivate": "Reaktywuj Subskrypcję",
+    "alert_renew_success": "✅ Subskrypcja pomyślnie odnowiona!"
   }
 }

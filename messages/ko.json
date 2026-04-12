@@ -734,5 +734,33 @@
     "btn_publish": "내 스토리에 게시",
     "active_stories_title": "활성 스토리(24시간)",
     "story_viewed": "조회됨"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "다음 구독을 취소하시겠습니까:",
+    "confirm_cancel_2": "유료 기간이 끝날 때까지 계속 액세스할 수 있지만 다시 요금이 청구되지는 않습니다.",
+    "alert_cancel_success": "✅ 구독이 취소되었습니다. 더 이상 자동 청구가 발생하지 않습니다.",
+    "alert_error_cancel": "취소를 처리하는 중 오류가 발생했습니다. 다시 시도하세요.",
+    "alert_error_reactivate": "재활성화를 시작하는 중 오류가 발생했습니다.",
+    "nav_title": "내 구독",
+    "btn_back": "뒤로",
+    "header_title": "멤버십 관리",
+    "header_desc": "여기에서 현재 지원하는 모든 크리에이터를 보고 결제를 관리할 수 있습니다.",
+    "empty_title": "아직 크리에이터를 지원하지 않습니다",
+    "empty_desc": "플랫폼을 탐색하고 좋아하는 독점 콘텐츠를 찾아보세요.",
+    "btn_explore": "크리에이터 탐색",
+    "active_subs_title": "활성 구독",
+    "unknown_user": "사용자",
+    "status_active": "활성",
+    "lbl_month": "월",
+    "lbl_renewal": "갱신",
+    "btn_view_profile": "프로필 보기",
+    "btn_cancel": "취소",
+    "inactive_subs_title": "기록 및 취소됨",
+    "status_canceled": "취소됨(액세스 종료 중)",
+    "status_expired": "만료됨",
+    "lbl_expires": "만료일",
+    "btn_reactivate": "구독 재활성화",
+    "alert_renew_success": "✅ 구독이 성공적으로 갱신되었습니다!"
   }
 }

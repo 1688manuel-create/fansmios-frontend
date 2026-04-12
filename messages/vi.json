@@ -734,5 +734,33 @@
     "btn_publish": "Xuất bản lên Tin của tôi",
     "active_stories_title": "Tin hoạt động (24h)",
     "story_viewed": "Đã xem"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Bạn có chắc chắn muốn hủy đăng ký của mình với",
+    "confirm_cancel_2": "Bạn sẽ tiếp tục có quyền truy cập cho đến khi kết thúc giai đoạn đã thanh toán, nhưng bạn sẽ không bị tính phí nữa.",
+    "alert_cancel_success": "✅ Đã hủy đăng ký. Sẽ không có thêm các khoản phí tự động nào.",
+    "alert_error_cancel": "Đã xảy ra lỗi khi xử lý việc hủy. Vui lòng thử lại.",
+    "alert_error_reactivate": "Lỗi khi bắt đầu kích hoạt lại.",
+    "nav_title": "Đăng ký của tôi",
+    "btn_back": "Trở lại",
+    "header_title": "Quản lý tư cách thành viên",
+    "header_desc": "Tại đây, bạn có thể xem tất cả những người sáng tạo mà bạn hiện đang hỗ trợ và quản lý các khoản thanh toán của mình.",
+    "empty_title": "Bạn chưa hỗ trợ bất kỳ người sáng tạo nào",
+    "empty_desc": "Khám phá nền tảng và tìm nội dung độc quyền mà bạn yêu thích.",
+    "btn_explore": "Khám phá Nhà sáng tạo",
+    "active_subs_title": "Đăng ký Đang hoạt động",
+    "unknown_user": "Người dùng",
+    "status_active": "Đang hoạt động",
+    "lbl_month": "tháng",
+    "lbl_renewal": "Gia hạn",
+    "btn_view_profile": "Xem Hồ sơ",
+    "btn_cancel": "Hủy bỏ",
+    "inactive_subs_title": "Lịch sử và Đã hủy",
+    "status_canceled": "Đã hủy (Quyền truy cập sắp kết thúc)",
+    "status_expired": "Đã hết hạn",
+    "lbl_expires": "Hết hạn vào",
+    "btn_reactivate": "Kích hoạt lại Đăng ký",
+    "alert_renew_success": "✅ Đã gia hạn đăng ký thành công!"
   }
 }

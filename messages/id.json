@@ -734,5 +734,33 @@
     "btn_publish": "Publikasikan ke Cerita saya",
     "active_stories_title": "Cerita Aktif (24j)",
     "story_viewed": "Dilihat"
+  },
+
+  "Subscriptions": {
+    "confirm_cancel_1": "Apakah Anda yakin ingin membatalkan langganan ke",
+    "confirm_cancel_2": "Anda akan terus memiliki akses hingga periode berbayar Anda berakhir, tetapi Anda tidak akan dikenakan biaya lagi.",
+    "alert_cancel_success": "✅ Langganan dibatalkan. Tidak akan ada lagi tagihan otomatis.",
+    "alert_error_cancel": "Terjadi kesalahan saat memproses pembatalan. Coba lagi.",
+    "alert_error_reactivate": "Kesalahan saat memulai pengaktifan ulang.",
+    "nav_title": "Langganan Saya",
+    "btn_back": "Kembali",
+    "header_title": "Manajemen Keanggotaan",
+    "header_desc": "Di sini Anda dapat melihat semua kreator yang saat ini Anda dukung dan mengelola pembayaran Anda.",
+    "empty_title": "Anda belum mendukung kreator mana pun",
+    "empty_desc": "Jelajahi platform dan temukan konten eksklusif yang Anda sukai.",
+    "btn_explore": "Jelajahi Kreator",
+    "active_subs_title": "Langganan Aktif",
+    "unknown_user": "Pengguna",
+    "status_active": "Aktif",
+    "lbl_month": "bulan",
+    "lbl_renewal": "Pembaruan",
+    "btn_view_profile": "Lihat Profil",
+    "btn_cancel": "Batal",
+    "inactive_subs_title": "Riwayat dan Dibatalkan",
+    "status_canceled": "Dibatalkan (Akses Berakhir)",
+    "status_expired": "Kedaluwarsa",
+    "lbl_expires": "Kedaluwarsa pada",
+    "btn_reactivate": "Aktifkan Ulang Langganan",
+    "alert_renew_success": "✅ Langganan berhasil diperbarui!"
   }
 }
