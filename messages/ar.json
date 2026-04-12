@@ -700,5 +700,26 @@
     "btn_select_mp4": "اختر ملف MP4...",
     "btn_uploading_video": "جاري رفع الفيديو (لا تغلق علامة التبويب)...",
     "btn_save_video": "رفع وحفظ الفيديو"
+  },
+
+  "Statistics": {
+    "nav_title": "التحليلات",
+    "btn_back": "عودة",
+    "sec1_title": "الأداء المالي",
+    "lbl_income_today": "أرباح اليوم",
+    "lbl_income_month": "إيرادات الشهر",
+    "lbl_conversion": "التحويل (من المشاهدات إلى المشتريات)",
+    "lbl_churn": "معدل الإلغاء",
+    "chart_income": "تطور الإيرادات",
+    "chart_subs": "المشتركون الجدد",
+    "sec2_title": "التأثير الاجتماعي لعلامتك التجارية",
+    "kpi_active_vips": "VIP النشطين",
+    "kpi_likes": "الإعجابات",
+    "kpi_story_views": "مشاهدات القصص",
+    "kpi_comments": "التعليقات",
+    "kpi_posts": "المحتوى (المنشورات)",
+    "top_fans_title": "أفضل المعجبين (الحيتان)",
+    "top_fans_desc": "أقوى المستثمرين لديك تاريخياً.",
+    "no_records": "لا توجد سجلات"
   }
 }

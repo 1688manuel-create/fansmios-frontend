@@ -700,5 +700,26 @@
     "btn_select_mp4": "MP4-Datei auswählen...",
     "btn_uploading_video": "Video wird hochgeladen (Tab nicht schließen)...",
     "btn_save_video": "Video hochladen und speichern"
+  },
+
+  "Statistics": {
+    "nav_title": "Analytik",
+    "btn_back": "Zurück",
+    "sec1_title": "Finanzielle Leistung",
+    "lbl_income_today": "Heute in Rechnung gestellt",
+    "lbl_income_month": "Monatlicher Umsatz",
+    "lbl_conversion": "Konvertierung (Ansichten zu Käufen)",
+    "lbl_churn": "Abwanderungsrate (Churn)",
+    "chart_income": "Umsatzentwicklung",
+    "chart_subs": "Neue Abonnenten",
+    "sec2_title": "Sozialer Einfluss Ihrer Marke",
+    "kpi_active_vips": "Aktive VIPs",
+    "kpi_likes": "Gefällt mir",
+    "kpi_story_views": "Story-Aufrufe",
+    "kpi_comments": "Kommentare",
+    "kpi_posts": "Inhalte (Posts)",
+    "top_fans_title": "Top-Fans (Wale)",
+    "top_fans_desc": "Ihre stärksten historischen Investoren.",
+    "no_records": "Keine Einträge"
   }
 }

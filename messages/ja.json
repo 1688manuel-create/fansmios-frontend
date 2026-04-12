@@ -700,5 +700,26 @@
     "btn_select_mp4": "MP4ファイルを選択...",
     "btn_uploading_video": "ビデオをアップロード中（タブを閉じないでください）...",
     "btn_save_video": "ビデオをアップロードして保存"
+  },
+
+  "Statistics": {
+    "nav_title": "アナリティクス",
+    "btn_back": "戻る",
+    "sec1_title": "財務実績",
+    "lbl_income_today": "本日の請求額",
+    "lbl_income_month": "月間収益",
+    "lbl_conversion": "コンバージョン（閲覧から購入へ）",
+    "lbl_churn": "解約率（チャーンレート）",
+    "chart_income": "収益の推移",
+    "chart_subs": "新規サブスクライバー",
+    "sec2_title": "ブランドの社会的影響力",
+    "kpi_active_vips": "アクティブVIP",
+    "kpi_likes": "いいね",
+    "kpi_story_views": "ストーリー閲覧数",
+    "kpi_comments": "コメント",
+    "kpi_posts": "コンテンツ (投稿)",
+    "top_fans_title": "トップファン（クジラ）",
+    "top_fans_desc": "歴史的に最も強力な投資家。",
+    "no_records": "記録なし"
   }
 }

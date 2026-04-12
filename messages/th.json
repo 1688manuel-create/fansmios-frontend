@@ -700,5 +700,26 @@
     "btn_select_mp4": "เลือกไฟล์ MP4...",
     "btn_uploading_video": "กำลังอัปโหลดวิดีโอ (อย่าปิดแท็บ)...",
     "btn_save_video": "อัปโหลดและบันทึกวิดีโอ"
+  },
+
+  "Statistics": {
+    "nav_title": "การวิเคราะห์",
+    "btn_back": "กลับ",
+    "sec1_title": "ผลประกอบการทางการเงิน",
+    "lbl_income_today": "รายได้วันนี้",
+    "lbl_income_month": "รายได้ต่อเดือน",
+    "lbl_conversion": "คอนเวอร์ชั่น (จากยอดดูสู่การซื้อ)",
+    "lbl_churn": "อัตราการยกเลิก",
+    "chart_income": "วิวัฒนาการของรายได้",
+    "chart_subs": "ผู้ติดตามใหม่",
+    "sec2_title": "ผลกระทบทางสังคมของแบรนด์คุณ",
+    "kpi_active_vips": "VIP ที่ใช้งานอยู่",
+    "kpi_likes": "ถูกใจ",
+    "kpi_story_views": "ยอดดูสตอรี่",
+    "kpi_comments": "ความคิดเห็น",
+    "kpi_posts": "เนื้อหา (โพสต์)",
+    "top_fans_title": "แฟนตัวยง (วาฬ)",
+    "top_fans_desc": "นักลงทุนในอดีตที่แข็งแกร่งที่สุดของคุณ",
+    "no_records": "ไม่มีบันทึก"
   }
 }

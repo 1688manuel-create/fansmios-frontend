@@ -700,5 +700,26 @@
     "btn_select_mp4": "Selecteer MP4-bestand...",
     "btn_uploading_video": "Video uploaden (Sluit het tabblad niet)...",
     "btn_save_video": "Video Uploaden en Opslaan"
+  },
+
+  "Statistics": {
+    "nav_title": "Analyses",
+    "btn_back": "Terug",
+    "sec1_title": "Financiële Prestaties",
+    "lbl_income_today": "Gefactureerd Vandaag",
+    "lbl_income_month": "Maandelijkse Inkomsten",
+    "lbl_conversion": "Conversie (Weergaven naar Aankopen)",
+    "lbl_churn": "Opzeggingspercentage (Churn Rate)",
+    "chart_income": "Evolutie van inkomsten",
+    "chart_subs": "Nieuwe Abonnees",
+    "sec2_title": "Sociale impact van uw merk",
+    "kpi_active_vips": "Actieve VIP's",
+    "kpi_likes": "Vind-ik-leuks",
+    "kpi_story_views": "Verhaalweergaven",
+    "kpi_comments": "Opmerkingen",
+    "kpi_posts": "Inhoud (Posts)",
+    "top_fans_title": "Topfans (Walvissen)",
+    "top_fans_desc": "Je sterkste historische investeerders.",
+    "no_records": "Geen gegevens"
   }
 }

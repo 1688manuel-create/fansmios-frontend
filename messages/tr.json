@@ -700,5 +700,26 @@
     "btn_select_mp4": "MP4 Dosyası Seç...",
     "btn_uploading_video": "Video yükleniyor (Sekmeyi kapatmayın)...",
     "btn_save_video": "Videoyu Yükle ve Kaydet"
+  },
+
+  "Statistics": {
+    "nav_title": "Analitik",
+    "btn_back": "Geri",
+    "sec1_title": "Finansal Performans",
+    "lbl_income_today": "Bugün Faturalandırılan",
+    "lbl_income_month": "Aylık Gelir",
+    "lbl_conversion": "Dönüşüm (Görüntülenmeden Satın Almaya)",
+    "lbl_churn": "İptal Oranı (Churn)",
+    "chart_income": "Gelir Gelişimi",
+    "chart_subs": "Yeni Aboneler",
+    "sec2_title": "Markanızın Sosyal Etkisi",
+    "kpi_active_vips": "Aktif VIP'ler",
+    "kpi_likes": "Beğeniler",
+    "kpi_story_views": "Hikaye Görüntülemeleri",
+    "kpi_comments": "Yorumlar",
+    "kpi_posts": "İçerik (Gönderiler)",
+    "top_fans_title": "En İyi Hayranlar (Balinalar)",
+    "top_fans_desc": "Tarihsel olarak en güçlü yatırımcılarınız.",
+    "no_records": "Kayıt yok"
   }
 }

@@ -700,5 +700,26 @@
     "btn_select_mp4": "Выбрать MP4-файл...",
     "btn_uploading_video": "Загрузка видео (Не закрывайте вкладку)...",
     "btn_save_video": "Загрузить и сохранить видео"
+  },
+
+  "Statistics": {
+    "nav_title": "Аналитика",
+    "btn_back": "Назад",
+    "sec1_title": "Финансовые показатели",
+    "lbl_income_today": "Заработано сегодня",
+    "lbl_income_month": "Доход за месяц",
+    "lbl_conversion": "Конверсия (Просмотры в Покупки)",
+    "lbl_churn": "Отток клиентов (Churn Rate)",
+    "chart_income": "Динамика доходов",
+    "chart_subs": "Новые подписчики",
+    "sec2_title": "Социальное влияние вашего бренда",
+    "kpi_active_vips": "Активные VIP",
+    "kpi_likes": "Нравится",
+    "kpi_story_views": "Просмотры историй",
+    "kpi_comments": "Комментарии",
+    "kpi_posts": "Контент (Посты)",
+    "top_fans_title": "Топ Фанатов (Киты)",
+    "top_fans_desc": "Ваши самые сильные исторические инвесторы.",
+    "no_records": "Нет записей"
   }
 }

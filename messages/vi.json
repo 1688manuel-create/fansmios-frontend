@@ -700,5 +700,26 @@
     "btn_select_mp4": "Chọn tập tin MP4...",
     "btn_uploading_video": "Đang tải video lên (Không đóng tab)...",
     "btn_save_video": "Tải lên và Lưu Video"
+  },
+
+  "Statistics": {
+    "nav_title": "Phân tích",
+    "btn_back": "Trở lại",
+    "sec1_title": "Hiệu suất tài chính",
+    "lbl_income_today": "Thanh toán hôm nay",
+    "lbl_income_month": "Doanh thu hàng tháng",
+    "lbl_conversion": "Chuyển đổi (Từ lượt xem sang lượt mua)",
+    "lbl_churn": "Tỷ lệ hủy",
+    "chart_income": "Biến động doanh thu",
+    "chart_subs": "Người đăng ký mới",
+    "sec2_title": "Tác động xã hội của thương hiệu bạn",
+    "kpi_active_vips": "VIP đang hoạt động",
+    "kpi_likes": "Lượt thích",
+    "kpi_story_views": "Lượt xem tin",
+    "kpi_comments": "Bình luận",
+    "kpi_posts": "Nội dung (Bài đăng)",
+    "top_fans_title": "Người hâm mộ hàng đầu (Cá voi)",
+    "top_fans_desc": "Những nhà đầu tư lịch sử mạnh nhất của bạn.",
+    "no_records": "Không có hồ sơ"
   }
 }

@@ -700,5 +700,26 @@
     "btn_select_mp4": "Sélectionner un fichier MP4...",
     "btn_uploading_video": "Téléchargement de la vidéo (Ne fermez pas l'onglet)...",
     "btn_save_video": "Télécharger et enregistrer la vidéo"
+  },
+
+  "Statistics": {
+    "nav_title": "Analytique",
+    "btn_back": "Retour",
+    "sec1_title": "Performance financière",
+    "lbl_income_today": "Facturé aujourd'hui",
+    "lbl_income_month": "Revenu mensuel",
+    "lbl_conversion": "Conversion (Vues vers Achats)",
+    "lbl_churn": "Taux de désabonnement",
+    "chart_income": "Évolution des revenus",
+    "chart_subs": "Nouveaux abonnés",
+    "sec2_title": "Impact social de votre marque",
+    "kpi_active_vips": "VIP actifs",
+    "kpi_likes": "J'aime",
+    "kpi_story_views": "Vues Stories",
+    "kpi_comments": "Commentaires",
+    "kpi_posts": "Contenu (Posts)",
+    "top_fans_title": "Top Fans (Baleines)",
+    "top_fans_desc": "Vos investisseurs historiques les plus forts.",
+    "no_records": "Aucun enregistrement"
   }
 }

@@ -700,5 +700,26 @@
     "btn_select_mp4": "Wybierz Plik MP4...",
     "btn_uploading_video": "Przesyłanie wideo (Nie zamykaj karty)...",
     "btn_save_video": "Prześlij i Zapisz Wideo"
+  },
+
+  "Statistics": {
+    "nav_title": "Analityka",
+    "btn_back": "Wróć",
+    "sec1_title": "Wyniki Finansowe",
+    "lbl_income_today": "Zarobiono dzisiaj",
+    "lbl_income_month": "Miesięczne przychody",
+    "lbl_conversion": "Konwersja (Wyświetlenia na Zakupy)",
+    "lbl_churn": "Wskaźnik Odejść (Churn Rate)",
+    "chart_income": "Ewolucja Przychodów",
+    "chart_subs": "Nowi Subskrybenci",
+    "sec2_title": "Wpływ społeczny Twojej marki",
+    "kpi_active_vips": "Aktywni VIP-owie",
+    "kpi_likes": "Polubienia",
+    "kpi_story_views": "Wyświetlenia relacji",
+    "kpi_comments": "Komentarze",
+    "kpi_posts": "Treść (Posty)",
+    "top_fans_title": "Najlepsi Fani (Wieloryby)",
+    "top_fans_desc": "Twoi historycznie najsilniejszy inwestorzy.",
+    "no_records": "Brak zapisów"
   }
 }

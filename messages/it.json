@@ -700,5 +700,26 @@
     "btn_select_mp4": "Seleziona file MP4...",
     "btn_uploading_video": "Caricamento video (Non chiudere la scheda)...",
     "btn_save_video": "Carica e Salva Video"
+  },
+
+  "Statistics": {
+    "nav_title": "Analisi",
+    "btn_back": "Indietro",
+    "sec1_title": "Rendimento Finanziario",
+    "lbl_income_today": "Fatturato Oggi",
+    "lbl_income_month": "Entrate del Mese",
+    "lbl_conversion": "Conversione (Visualizzazioni in Acquisti)",
+    "lbl_churn": "Tasso di Abbandono (Churn)",
+    "chart_income": "Evoluzione delle Entrate",
+    "chart_subs": "Nuovi Abbonati",
+    "sec2_title": "Impatto Sociale del tuo Brand",
+    "kpi_active_vips": "VIP Attivi",
+    "kpi_likes": "Mi Piace",
+    "kpi_story_views": "Visualizzazioni Storie",
+    "kpi_comments": "Commenti",
+    "kpi_posts": "Contenuto (Post)",
+    "top_fans_title": "Top Fan (Balene)",
+    "top_fans_desc": "I tuoi investitori storici più forti.",
+    "no_records": "Nessun record"
   }
 }

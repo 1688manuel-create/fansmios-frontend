@@ -700,5 +700,26 @@
     "btn_select_mp4": "Välj MP4-fil...",
     "btn_uploading_video": "Laddar upp video (Stäng inte fliken)...",
     "btn_save_video": "Ladda upp och spara video"
+  },
+
+  "Statistics": {
+    "nav_title": "Analys",
+    "btn_back": "Tillbaka",
+    "sec1_title": "Finansiell prestanda",
+    "lbl_income_today": "Fakturerat idag",
+    "lbl_income_month": "Månadsintäkter",
+    "lbl_conversion": "Konvertering (Visningar till Köp)",
+    "lbl_churn": "Bortfallsfrekvens (Churn Rate)",
+    "chart_income": "Intäktsutveckling",
+    "chart_subs": "Nya prenumeranter",
+    "sec2_title": "Ditt varumärkes sociala påverkan",
+    "kpi_active_vips": "Aktiva VIPs",
+    "kpi_likes": "Gilla-markeringar",
+    "kpi_story_views": "Händelsevisningar",
+    "kpi_comments": "Kommentarer",
+    "kpi_posts": "Innehåll (Inlägg)",
+    "top_fans_title": "Toppfans (Valar)",
+    "top_fans_desc": "Dina historiskt starkaste investerare.",
+    "no_records": "Inga poster"
   }
 }

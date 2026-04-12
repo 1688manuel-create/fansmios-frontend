@@ -700,5 +700,26 @@
     "btn_select_mp4": "Pilih File MP4...",
     "btn_uploading_video": "Mengunggah video (Jangan tutup tab)...",
     "btn_save_video": "Unggah dan Simpan Video"
+  },
+
+  "Statistics": {
+    "nav_title": "Analitik",
+    "btn_back": "Kembali",
+    "sec1_title": "Kinerja Keuangan",
+    "lbl_income_today": "Ditagih Hari Ini",
+    "lbl_income_month": "Pendapatan Bulanan",
+    "lbl_conversion": "Konversi (Tayangan ke Pembelian)",
+    "lbl_churn": "Tingkat Pembatalan (Churn Rate)",
+    "chart_income": "Evolusi Pendapatan",
+    "chart_subs": "Pelanggan Baru",
+    "sec2_title": "Dampak Sosial Merek Anda",
+    "kpi_active_vips": "VIP Aktif",
+    "kpi_likes": "Suka",
+    "kpi_story_views": "Tayangan Cerita",
+    "kpi_comments": "Komentar",
+    "kpi_posts": "Konten (Postingan)",
+    "top_fans_title": "Penggemar Teratas (Paus)",
+    "top_fans_desc": "Investor historis terkuat Anda.",
+    "no_records": "Tidak ada catatan"
   }
 }

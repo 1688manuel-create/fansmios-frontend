@@ -700,5 +700,26 @@
     "btn_select_mp4": "MP4 파일 선택...",
     "btn_uploading_video": "비디오 업로드 중(탭을 닫지 마세요)...",
     "btn_save_video": "비디오 업로드 및 저장"
+  },
+
+  "Statistics": {
+    "nav_title": "애널리틱스",
+    "btn_back": "뒤로",
+    "sec1_title": "재무 성과",
+    "lbl_income_today": "오늘 청구액",
+    "lbl_income_month": "월간 수익",
+    "lbl_conversion": "전환율(조회수 대비 구매)",
+    "lbl_churn": "이탈률",
+    "chart_income": "수익 추이",
+    "chart_subs": "신규 구독자",
+    "sec2_title": "브랜드의 사회적 영향력",
+    "kpi_active_vips": "활성 VIP",
+    "kpi_likes": "좋아요",
+    "kpi_story_views": "스토리 조회수",
+    "kpi_comments": "댓글",
+    "kpi_posts": "콘텐츠(게시물)",
+    "top_fans_title": "상위 팬(고래)",
+    "top_fans_desc": "역사상 가장 강력한 투자자입니다.",
+    "no_records": "기록 없음"
   }
 }

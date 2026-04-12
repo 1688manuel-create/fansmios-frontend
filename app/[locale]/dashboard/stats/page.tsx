@@ -11,9 +11,11 @@ import {
   TrendingUp, ArrowLeft, DollarSign, Users, Star, 
   Eye, MessageCircle, ImageIcon, Heart, Crown, Award, Target, Flame
 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function StatisticsDashboard() {
   const router = useRouter();
+  const t = useTranslations('Statistics'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [isLoading, setIsLoading] = useState(true);
   
   // ESTADOS REALES
@@ -70,10 +72,10 @@ export default function StatisticsDashboard() {
             <div className="w-10 h-10 nm-inset bg-black rounded-xl flex items-center justify-center text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
               <TrendingUp className="w-5 h-5" />
             </div>
-            Analytics
+            {t('nav_title')}
           </h1>
           <button onClick={() => router.push('/dashboard')} className="text-sm nm-btn text-gray-300 px-5 py-2.5 rounded-full hover:text-white transition-colors font-bold flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Volver</span>
+            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">{t('btn_back')}</span>
           </button>
         </nav>
 
@@ -82,7 +84,7 @@ export default function StatisticsDashboard() {
           {/* ================= SECCIÓN 1: RESUMEN FINANCIERO ================= */}
           <div>
             <h2 className="text-lg font-black text-white mb-6 flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-500" /> Rendimiento Financiero
+              <DollarSign className="w-5 h-5 text-green-500" /> {t('sec1_title')}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               
@@ -92,7 +94,7 @@ export default function StatisticsDashboard() {
                   <DollarSign className="w-32 h-32" strokeWidth={2} />
                 </div>
                 <h3 className="text-green-400 text-[10px] font-black uppercase tracking-widest mb-2 relative z-10">
-                  Facturado Hoy
+                  {t('lbl_income_today')}
                 </h3>
                 <p className="text-4xl font-black text-white relative z-10 drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">
                   ${financialStats.dailyIncome.toFixed(2)}
@@ -105,7 +107,7 @@ export default function StatisticsDashboard() {
                   <Target className="w-32 h-32" strokeWidth={1} />
                 </div>
                 <h3 className="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2 relative z-10">
-                  Ingresos del Mes
+                  {t('lbl_income_month')}
                 </h3>
                 <p className="text-4xl font-black text-white relative z-10">
                   ${financialStats.monthlyIncome.toFixed(2)}
@@ -118,7 +120,7 @@ export default function StatisticsDashboard() {
                   <Flame className="w-32 h-32" strokeWidth={1} />
                 </div>
                 <h3 className="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2 relative z-10">
-                  Conversión (Vistas a Compras)
+                  {t('lbl_conversion')}
                 </h3>
                 <p className="text-4xl font-black text-white relative z-10">
                   {financialStats.conversionRate}
@@ -131,7 +133,7 @@ export default function StatisticsDashboard() {
                   <Users className="w-32 h-32" strokeWidth={1} />
                 </div>
                 <h3 className="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2 relative z-10">
-                  Tasa de Cancelación (Churn)
+                  {t('lbl_churn')}
                 </h3>
                 <p className="text-4xl font-black text-white relative z-10">
                   {financialStats.churnRate}
@@ -147,7 +149,7 @@ export default function StatisticsDashboard() {
             {/* Gráfica Ingresos */}
             <div className="nm-inset p-6 sm:p-8 rounded-[2rem] border border-white/5">
               <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-blue-500" /> Evolución de Ingresos
+                <TrendingUp className="w-4 h-4 text-blue-500" /> {t('chart_income')}
               </h3>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
@@ -168,7 +170,7 @@ export default function StatisticsDashboard() {
             {/* Gráfica Suscriptores */}
             <div className="nm-inset p-6 sm:p-8 rounded-[2rem] border border-white/5">
               <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <Users className="w-4 h-4 text-purple-500" /> Nuevos Suscriptores
+                <Users className="w-4 h-4 text-purple-500" /> {t('chart_subs')}
               </h3>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
@@ -194,37 +196,37 @@ export default function StatisticsDashboard() {
             {/* Impacto Social */}
             <div className="lg:col-span-2 nm-btn border border-white/5 p-6 sm:p-8 rounded-[2rem] cursor-default">
               <h2 className="text-lg font-black text-white mb-6 flex items-center gap-2">
-                <Heart className="w-5 h-5 text-pink-500" /> Impacto Social de tu Marca
+                <Heart className="w-5 h-5 text-pink-500" /> {t('sec2_title')}
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 
                 <div className="nm-inset p-4 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center group">
                   <Star className="w-6 h-6 text-yellow-400 mb-2 group-hover:scale-125 transition-transform" />
-                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">VIP Activos</p>
+                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">{t('kpi_active_vips')}</p>
                   <h4 className="text-2xl font-black text-white">{socialStats.activeVIPs}</h4>
                 </div>
                 
                 <div className="nm-inset p-4 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center group">
                   <Heart className="w-6 h-6 text-red-500 mb-2 group-hover:scale-125 transition-transform" />
-                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Me Gusta</p>
+                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">{t('kpi_likes')}</p>
                   <h4 className="text-2xl font-black text-white">{socialStats.totalLikes}</h4>
                 </div>
                 
                 <div className="nm-inset p-4 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center group">
                   <Eye className="w-6 h-6 text-blue-400 mb-2 group-hover:scale-125 transition-transform" />
-                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Vistas Historias</p>
+                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">{t('kpi_story_views')}</p>
                   <h4 className="text-2xl font-black text-white">{socialStats.storyViews}</h4>
                 </div>
                 
                 <div className="nm-inset p-4 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center group">
                   <MessageCircle className="w-6 h-6 text-purple-400 mb-2 group-hover:scale-125 transition-transform" />
-                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Comentarios</p>
+                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">{t('kpi_comments')}</p>
                   <h4 className="text-2xl font-black text-white">{socialStats.comments}</h4>
                 </div>
                 
                 <div className="nm-inset p-4 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center group">
                   <ImageIcon className="w-6 h-6 text-teal-400 mb-2 group-hover:scale-125 transition-transform" />
-                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Contenido (Posts)</p>
+                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">{t('kpi_posts')}</p>
                   <h4 className="text-2xl font-black text-white">{socialStats.posts}</h4>
                 </div>
                 
@@ -237,14 +239,14 @@ export default function StatisticsDashboard() {
               <div className="absolute -top-20 -right-20 w-40 h-40 bg-yellow-500/20 blur-[50px] rounded-full"></div>
               
               <h2 className="text-[11px] font-black text-yellow-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                <Crown className="w-4 h-4" /> Top Fans (Ballenas)
+                <Crown className="w-4 h-4" /> {t('top_fans_title')}
               </h2>
-              <p className="text-[10px] text-gray-400 mb-6 font-medium">Tus inversores más fuertes históricamente.</p>
+              <p className="text-[10px] text-gray-400 mb-6 font-medium">{t('top_fans_desc')}</p>
               
               {topFans.length === 0 ? (
                 <div className="text-center py-10 opacity-50">
                   <Award className="w-10 h-10 text-gray-600 mx-auto mb-2" />
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Sin registros</p>
+                  <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">{t('no_records')}</p>
                 </div>
               ) : (
                 <div className="space-y-4 relative z-10">

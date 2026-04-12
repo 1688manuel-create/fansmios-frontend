@@ -700,5 +700,26 @@
     "btn_select_mp4": "选择 MP4 文件...",
     "btn_uploading_video": "正在上传视频（请勿关闭选项卡）...",
     "btn_save_video": "上传并保存视频"
+  },
+
+  "Statistics": {
+    "nav_title": "数据分析",
+    "btn_back": "返回",
+    "sec1_title": "财务表现",
+    "lbl_income_today": "今日开票",
+    "lbl_income_month": "本月收入",
+    "lbl_conversion": "转化率（浏览量到购买量）",
+    "lbl_churn": "流失率",
+    "chart_income": "收入演变",
+    "chart_subs": "新增订阅者",
+    "sec2_title": "您品牌的社会影响力",
+    "kpi_active_vips": "活跃 VIP",
+    "kpi_likes": "点赞",
+    "kpi_story_views": "快拍浏览量",
+    "kpi_comments": "评论",
+    "kpi_posts": "内容（帖子）",
+    "top_fans_title": "顶级粉丝（巨鲸）",
+    "top_fans_desc": "您历史上最强大的投资者。",
+    "no_records": "没有记录"
   }
 }

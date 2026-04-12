@@ -699,5 +699,26 @@
     "btn_select_mp4": "Select MP4 File...",
     "btn_uploading_video": "Uploading video (Do not close tab)...",
     "btn_save_video": "Upload and Save Video"
+  },
+
+  "Statistics": {
+    "nav_title": "Analytics",
+    "btn_back": "Back",
+    "sec1_title": "Financial Performance",
+    "lbl_income_today": "Billed Today",
+    "lbl_income_month": "Monthly Revenue",
+    "lbl_conversion": "Conversion (Views to Purchases)",
+    "lbl_churn": "Churn Rate",
+    "chart_income": "Revenue Evolution",
+    "chart_subs": "New Subscribers",
+    "sec2_title": "Your Brand's Social Impact",
+    "kpi_active_vips": "Active VIPs",
+    "kpi_likes": "Likes",
+    "kpi_story_views": "Story Views",
+    "kpi_comments": "Comments",
+    "kpi_posts": "Content (Posts)",
+    "top_fans_title": "Top Fans (Whales)",
+    "top_fans_desc": "Your strongest historical investors.",
+    "no_records": "No records"
   }
 }

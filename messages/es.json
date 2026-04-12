@@ -700,5 +700,26 @@
     "btn_select_mp4": "Seleccionar Archivo MP4...",
     "btn_uploading_video": "Subiendo video (No cierres la pestaña)...",
     "btn_save_video": "Subir y Guardar Video"
+  },
+
+  "Statistics": {
+    "nav_title": "Analytics",
+    "btn_back": "Volver",
+    "sec1_title": "Rendimiento Financiero",
+    "lbl_income_today": "Facturado Hoy",
+    "lbl_income_month": "Ingresos del Mes",
+    "lbl_conversion": "Conversión (Vistas a Compras)",
+    "lbl_churn": "Tasa de Cancelación (Churn)",
+    "chart_income": "Evolución de Ingresos",
+    "chart_subs": "Nuevos Suscriptores",
+    "sec2_title": "Impacto Social de tu Marca",
+    "kpi_active_vips": "VIP Activos",
+    "kpi_likes": "Me Gusta",
+    "kpi_story_views": "Vistas Historias",
+    "kpi_comments": "Comentarios",
+    "kpi_posts": "Contenido (Posts)",
+    "top_fans_title": "Top Fans (Ballenas)",
+    "top_fans_desc": "Tus inversores más fuertes históricamente.",
+    "no_records": "Sin registros"
   }
 }

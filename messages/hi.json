@@ -700,5 +700,26 @@
     "btn_select_mp4": "MP4 फ़ाइल चुनें...",
     "btn_uploading_video": "वीडियो अपलोड हो रहा है (टैब बंद न करें)...",
     "btn_save_video": "वीडियो अपलोड करें और सहेजें"
+  },
+
+  "Statistics": {
+    "nav_title": "एनालिटिक्स",
+    "btn_back": "वापस",
+    "sec1_title": "वित्तीय प्रदर्शन",
+    "lbl_income_today": "आज का बिल",
+    "lbl_income_month": "मासिक राजस्व",
+    "lbl_conversion": "रूपांतरण (दृश्य से खरीदारी)",
+    "lbl_churn": "मंथन दर (Churn Rate)",
+    "chart_income": "राजस्व विकास",
+    "chart_subs": "नए सदस्य",
+    "sec2_title": "आपके ब्रांड का सामाजिक प्रभाव",
+    "kpi_active_vips": "सक्रिय वीआईपी",
+    "kpi_likes": "पसंद (Likes)",
+    "kpi_story_views": "स्टोरी दृश्य",
+    "kpi_comments": "टिप्पणियाँ",
+    "kpi_posts": "सामग्री (पोस्ट)",
+    "top_fans_title": "शीर्ष प्रशंसक (व्हेल)",
+    "top_fans_desc": "आपके ऐतिहासिक रूप से सबसे मजबूत निवेशक।",
+    "no_records": "कोई रिकॉर्ड नहीं"
   }
 }
