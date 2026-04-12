@@ -883,5 +883,35 @@
     "tx_payment": "支払い：",
     "anonymous": "匿名",
     "lbl_completed": "完了"
+  },
+
+  "Explore": {
+    "nav_title": "発見",
+    "search_placeholder": "クリエイター、カテゴリー、ライブイベントを検索...",
+    "lbl_searching": "検索中",
+    "cat_all": "トレンド",
+    "cat_live": "ライブ配信中",
+    "cat_general": "一般",
+    "cat_fitness": "フィットネス",
+    "cat_gaming": "ゲーム",
+    "cat_msica": "音楽",
+    "cat_arte": "アート",
+    "cat_lifestyle": "ライフスタイル",
+    "cat_educacin": "教育",
+    "cat_adulto": "アダルト",
+    "streams_title": "注目のストリーム",
+    "streams_subtitle": "リアルタイムの会話に参加しましょう",
+    "streams_empty_title": "ここはとても静かです...",
+    "streams_empty_desc": "現在ストリーミング中のクリエイターはいません。",
+    "lbl_live": "ライブ",
+    "lbl_ppv_access": "PPVアクセス",
+    "creators_search": "の検索結果",
+    "creators_category": "のクリエイター",
+    "creators_recommended": "おすすめのクリエイター",
+    "creators_empty_title": "レーダーは空です",
+    "creators_empty_desc": "別の検索フィルターまたは名前をお試しください。",
+    "default_bio": "このクリエイターの限定コンテンツをご覧ください。",
+    "lbl_month": "月",
+    "lbl_free": "無料"
   }
 }

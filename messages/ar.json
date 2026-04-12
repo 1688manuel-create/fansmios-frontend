@@ -883,5 +883,35 @@
     "tx_payment": "دفع لـ",
     "anonymous": "مجهول",
     "lbl_completed": "مكتمل"
+  },
+
+  "Explore": {
+    "nav_title": "استكشاف",
+    "search_placeholder": "ابحث عن صناع المحتوى أو الفئات أو الأحداث المباشرة...",
+    "lbl_searching": "جاري البحث",
+    "cat_all": "الشائعة",
+    "cat_live": "مباشر الآن",
+    "cat_general": "عام",
+    "cat_fitness": "لياقة بدنية",
+    "cat_gaming": "ألعاب",
+    "cat_msica": "موسيقى",
+    "cat_arte": "فن",
+    "cat_lifestyle": "أسلوب حياة",
+    "cat_educacin": "تعليم",
+    "cat_adulto": "للبالغين",
+    "streams_title": "البثوث المميزة",
+    "streams_subtitle": "انضم إلى المحادثة في الوقت الفعلي",
+    "streams_empty_title": "الهدوء يعم المكان...",
+    "streams_empty_desc": "لا يوجد صناع محتوى يبثون في هذه اللحظة.",
+    "lbl_live": "مباشر",
+    "lbl_ppv_access": "وصول PPV",
+    "creators_search": "نتائج لـ",
+    "creators_category": "صناع المحتوى في",
+    "creators_recommended": "صناع المحتوى الموصى بهم",
+    "creators_empty_title": "الرادار فارغ",
+    "creators_empty_desc": "جرب عوامل تصفية بحث أو أسماء مختلفة.",
+    "default_bio": "اكتشف المحتوى الحصري من صانع المحتوى هذا.",
+    "lbl_month": "شهر",
+    "lbl_free": "مجاني"
   }
 }

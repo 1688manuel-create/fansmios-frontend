@@ -883,5 +883,35 @@
     "tx_payment": "ชำระเงินให้",
     "anonymous": "ไม่ระบุชื่อ",
     "lbl_completed": "เสร็จสมบูรณ์"
+  },
+
+  "Explore": {
+    "nav_title": "สำรวจ",
+    "search_placeholder": "ค้นหาครีเอเตอร์ หมวดหมู่ หรืออีเวนต์สด...",
+    "lbl_searching": "กำลังค้นหา",
+    "cat_all": "ยอดนิยม",
+    "cat_live": "ถ่ายทอดสดตอนนี้",
+    "cat_general": "ทั่วไป",
+    "cat_fitness": "ฟิตเนส",
+    "cat_gaming": "เกม",
+    "cat_msica": "ดนตรี",
+    "cat_arte": "ศิลปะ",
+    "cat_lifestyle": "ไลฟ์สไตล์",
+    "cat_educacin": "การศึกษา",
+    "cat_adulto": "ผู้ใหญ่",
+    "streams_title": "สตรีมแนะนำ",
+    "streams_subtitle": "เข้าร่วมการสนทนาแบบเรียลไทม์",
+    "streams_empty_title": "ที่นี่เงียบมาก...",
+    "streams_empty_desc": "ไม่มีครีเอเตอร์กำลังสตรีมอยู่ในขณะนี้",
+    "lbl_live": "สด",
+    "lbl_ppv_access": "การเข้าถึง PPV",
+    "creators_search": "ผลลัพธ์สำหรับ",
+    "creators_category": "ครีเอเตอร์ใน",
+    "creators_recommended": "ครีเอเตอร์ที่แนะนำ",
+    "creators_empty_title": "เรดาร์ว่างเปล่า",
+    "creators_empty_desc": "ลองใช้ตัวกรองการค้นหาหรือชื่ออื่น",
+    "default_bio": "ค้นพบเนื้อหาพิเศษจากครีเอเตอร์คนนี้",
+    "lbl_month": "เดือน",
+    "lbl_free": "ฟรี"
   }
 }

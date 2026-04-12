@@ -883,5 +883,35 @@
     "tx_payment": "Pembayaran ke",
     "anonymous": "Anonim",
     "lbl_completed": "Selesai"
+  },
+
+  "Explore": {
+    "nav_title": "Jelajahi",
+    "search_placeholder": "Cari kreator, kategori, atau acara langsung...",
+    "lbl_searching": "Mencari",
+    "cat_all": "Tren",
+    "cat_live": "Langsung Sekarang",
+    "cat_general": "Umum",
+    "cat_fitness": "Kebugaran",
+    "cat_gaming": "Permainan",
+    "cat_msica": "Musik",
+    "cat_arte": "Seni",
+    "cat_lifestyle": "Gaya Hidup",
+    "cat_educacin": "Pendidikan",
+    "cat_adulto": "Dewasa",
+    "streams_title": "Siaran Unggulan",
+    "streams_subtitle": "Bergabunglah dengan percakapan waktu nyata",
+    "streams_empty_title": "Sangat sepi di sini...",
+    "streams_empty_desc": "Saat ini tidak ada kreator yang melakukan siaran.",
+    "lbl_live": "LANGSUNG",
+    "lbl_ppv_access": "Akses PPV",
+    "creators_search": "Hasil untuk",
+    "creators_category": "Kreator di",
+    "creators_recommended": "Kreator yang Direkomendasikan",
+    "creators_empty_title": "Radar kosong",
+    "creators_empty_desc": "Coba filter pencarian atau nama lain.",
+    "default_bio": "Temukan konten eksklusif dari kreator ini.",
+    "lbl_month": "bln",
+    "lbl_free": "Gratis"
   }
 }

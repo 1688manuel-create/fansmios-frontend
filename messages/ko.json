@@ -883,5 +883,35 @@
     "tx_payment": "결제:",
     "anonymous": "익명",
     "lbl_completed": "완료됨"
+  },
+
+  "Explore": {
+    "nav_title": "탐색",
+    "search_placeholder": "크리에이터, 카테고리 또는 라이브 이벤트 검색...",
+    "lbl_searching": "검색 중",
+    "cat_all": "인기",
+    "cat_live": "현재 라이브",
+    "cat_general": "일반",
+    "cat_fitness": "피트니스",
+    "cat_gaming": "게임",
+    "cat_msica": "음악",
+    "cat_arte": "예술",
+    "cat_lifestyle": "라이프스타일",
+    "cat_educacin": "교육",
+    "cat_adulto": "성인",
+    "streams_title": "주목받는 스트림",
+    "streams_subtitle": "실시간 대화에 참여하세요",
+    "streams_empty_title": "여기는 아주 조용합니다...",
+    "streams_empty_desc": "현재 스트리밍 중인 크리에이터가 없습니다.",
+    "lbl_live": "라이브",
+    "lbl_ppv_access": "PPV 액세스",
+    "creators_search": "검색 결과:",
+    "creators_category": "크리에이터:",
+    "creators_recommended": "추천 크리에이터",
+    "creators_empty_title": "레이더가 비어 있습니다",
+    "creators_empty_desc": "다른 검색 필터나 이름을 시도해 보세요.",
+    "default_bio": "이 크리에이터의 독점 콘텐츠를 찾아보세요.",
+    "lbl_month": "월",
+    "lbl_free": "무료"
   }
 }

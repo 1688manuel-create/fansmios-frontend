@@ -883,5 +883,35 @@
     "tx_payment": "Thanh toán cho",
     "anonymous": "Ẩn danh",
     "lbl_completed": "Hoàn thành"
+  },
+
+  "Explore": {
+    "nav_title": "Khám phá",
+    "search_placeholder": "Tìm kiếm người sáng tạo, danh mục hoặc sự kiện trực tiếp...",
+    "lbl_searching": "Đang tìm",
+    "cat_all": "Xu hướng",
+    "cat_live": "Trực tiếp ngay",
+    "cat_general": "Chung",
+    "cat_fitness": "Thể hình",
+    "cat_gaming": "Trò chơi",
+    "cat_msica": "Âm nhạc",
+    "cat_arte": "Nghệ thuật",
+    "cat_lifestyle": "Phong cách sống",
+    "cat_educacin": "Giáo dục",
+    "cat_adulto": "Người lớn",
+    "streams_title": "Luồng Nổi bật",
+    "streams_subtitle": "Tham gia cuộc trò chuyện trong thời gian thực",
+    "streams_empty_title": "Ở đây rất yên tĩnh...",
+    "streams_empty_desc": "Hiện tại không có người sáng tạo nào đang phát trực tuyến.",
+    "lbl_live": "TRỰC TIẾP",
+    "lbl_ppv_access": "Truy cập PPV",
+    "creators_search": "Kết quả cho",
+    "creators_category": "Người sáng tạo trong",
+    "creators_recommended": "Người sáng tạo được Đề xuất",
+    "creators_empty_title": "Radar trống",
+    "creators_empty_desc": "Hãy thử các bộ lọc tìm kiếm hoặc tên khác.",
+    "default_bio": "Khám phá nội dung độc quyền từ người sáng tạo này.",
+    "lbl_month": "tháng",
+    "lbl_free": "Miễn phí"
   }
 }

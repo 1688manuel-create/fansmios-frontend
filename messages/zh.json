@@ -883,5 +883,35 @@
     "tx_payment": "付款给",
     "anonymous": "匿名",
     "lbl_completed": "已完成"
+  },
+
+  "Explore": {
+    "nav_title": "发现",
+    "search_placeholder": "搜索创作者、类别或直播活动...",
+    "lbl_searching": "搜索中",
+    "cat_all": "趋势",
+    "cat_live": "正在直播",
+    "cat_general": "综合",
+    "cat_fitness": "健身",
+    "cat_gaming": "游戏",
+    "cat_msica": "音乐",
+    "cat_arte": "艺术",
+    "cat_lifestyle": "生活方式",
+    "cat_educacin": "教育",
+    "cat_adulto": "成人",
+    "streams_title": "精选直播",
+    "streams_subtitle": "加入实时对话",
+    "streams_empty_title": "这里很安静...",
+    "streams_empty_desc": "目前没有创作者在直播。",
+    "lbl_live": "直播",
+    "lbl_ppv_access": "PPV 访问权限",
+    "creators_search": "搜索结果",
+    "creators_category": "类别创作者",
+    "creators_recommended": "推荐创作者",
+    "creators_empty_title": "雷达是空的",
+    "creators_empty_desc": "请尝试其他搜索过滤器或名称。",
+    "default_bio": "发现此创作者的独家内容。",
+    "lbl_month": "月",
+    "lbl_free": "免费"
   }
 }

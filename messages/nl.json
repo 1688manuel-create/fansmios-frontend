@@ -883,5 +883,35 @@
     "tx_payment": "Betaling aan",
     "anonymous": "Anoniem",
     "lbl_completed": "Voltooid"
+  },
+
+  "Explore": {
+    "nav_title": "Ontdekken",
+    "search_placeholder": "Zoek makers, categorieën of live evenementen...",
+    "lbl_searching": "Zoeken",
+    "cat_all": "Trending",
+    "cat_live": "Nu Live",
+    "cat_general": "Algemeen",
+    "cat_fitness": "Fitness",
+    "cat_gaming": "Gaming",
+    "cat_msica": "Muziek",
+    "cat_arte": "Kunst",
+    "cat_lifestyle": "Lifestyle",
+    "cat_educacin": "Onderwijs",
+    "cat_adulto": "Volwassen",
+    "streams_title": "Uitgelichte Streams",
+    "streams_subtitle": "Doe mee aan het realtime gesprek",
+    "streams_empty_title": "Het is hier erg rustig...",
+    "streams_empty_desc": "Er zijn momenteel geen makers aan het streamen.",
+    "lbl_live": "LIVE",
+    "lbl_ppv_access": "PPV Toegang",
+    "creators_search": "Resultaten voor",
+    "creators_category": "Makers in",
+    "creators_recommended": "Aanbevolen Makers",
+    "creators_empty_title": "De radar is leeg",
+    "creators_empty_desc": "Probeer andere zoekfilters of namen.",
+    "default_bio": "Ontdek exclusieve content van deze maker.",
+    "lbl_month": "maand",
+    "lbl_free": "Gratis"
   }
 }

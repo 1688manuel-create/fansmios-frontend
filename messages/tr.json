@@ -883,5 +883,35 @@
     "tx_payment": "Ödeme:",
     "anonymous": "Anonim",
     "lbl_completed": "Tamamlandı"
+  },
+
+  "Explore": {
+    "nav_title": "Keşfet",
+    "search_placeholder": "Yaratıcıları, kategorileri veya canlı etkinlikleri arayın...",
+    "lbl_searching": "Aranıyor",
+    "cat_all": "Trend Olanlar",
+    "cat_live": "Şu An Canlı",
+    "cat_general": "Genel",
+    "cat_fitness": "Fitness",
+    "cat_gaming": "Oyun",
+    "cat_msica": "Müzik",
+    "cat_arte": "Sanat",
+    "cat_lifestyle": "Yaşam Tarzı",
+    "cat_educacin": "Eğitim",
+    "cat_adulto": "Yetişkin",
+    "streams_title": "Öne Çıkan Yayınlar",
+    "streams_subtitle": "Gerçek zamanlı sohbete katılın",
+    "streams_empty_title": "Burası çok sessiz...",
+    "streams_empty_desc": "Şu anda yayın yapan bir yaratıcı yok.",
+    "lbl_live": "CANLI",
+    "lbl_ppv_access": "PPV Erişimi",
+    "creators_search": "Sonuçlar:",
+    "creators_category": "Kategorideki Yaratıcılar:",
+    "creators_recommended": "Önerilen Yaratıcılar",
+    "creators_empty_title": "Radar boş",
+    "creators_empty_desc": "Farklı arama filtreleri veya isimleri deneyin.",
+    "default_bio": "Bu yaratıcının özel içeriklerini keşfedin.",
+    "lbl_month": "ay",
+    "lbl_free": "Ücretsiz"
   }
 }

@@ -883,5 +883,35 @@
     "tx_payment": "Betalning till",
     "anonymous": "Anonym",
     "lbl_completed": "Avslutad"
+  },
+
+  "Explore": {
+    "nav_title": "Utforska",
+    "search_placeholder": "Sök skapare, kategorier eller liveevenemang...",
+    "lbl_searching": "Söker",
+    "cat_all": "Trendar",
+    "cat_live": "Live Nu",
+    "cat_general": "Allmänt",
+    "cat_fitness": "Träning",
+    "cat_gaming": "Spel",
+    "cat_msica": "Musik",
+    "cat_arte": "Konst",
+    "cat_lifestyle": "Livsstil",
+    "cat_educacin": "Utbildning",
+    "cat_adulto": "Vuxen",
+    "streams_title": "Utvalda Strömmar",
+    "streams_subtitle": "Delta i realtidskonversationen",
+    "streams_empty_title": "Det är väldigt tyst här...",
+    "streams_empty_desc": "Det finns inga skapare som strömmar just nu.",
+    "lbl_live": "LIVE",
+    "lbl_ppv_access": "PPV-åtkomst",
+    "creators_search": "Resultat för",
+    "creators_category": "Skapare i",
+    "creators_recommended": "Rekommenderade Skapare",
+    "creators_empty_title": "Radarn är tom",
+    "creators_empty_desc": "Prova olika sökfilter eller namn.",
+    "default_bio": "Upptäck exklusivt innehåll från denna skapare.",
+    "lbl_month": "månad",
+    "lbl_free": "Gratis"
   }
 }

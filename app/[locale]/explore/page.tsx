@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import api from '../../../lib/api'; 
 import { Search, Users, Compass, User, Ghost, Radio, Eye, Clock, Tv, Star, Crown } from 'lucide-react';
 import AppLayout from '../../../components/AppLayout';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -18,6 +19,7 @@ const CATEGORIES = ['All', 'Live 🔴', 'Fitness', 'Gaming', 'Música', 'Arte', 
 
 export default function ExplorePage() {
   const router = useRouter();
+  const t = useTranslations('Explore'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Live 🔴'); 
@@ -78,7 +80,7 @@ export default function ExplorePage() {
               <div className="w-8 h-8 nm-inset bg-black rounded-lg flex items-center justify-center border border-white/5">
                 <Compass className="w-4 h-4 text-blue-500" strokeWidth={2.5} />
               </div>
-              Descubrir
+              {t('nav_title')}
             </h1>
           </div>
           
@@ -88,35 +90,39 @@ export default function ExplorePage() {
             </span>
             <input 
               type="text" 
-              placeholder="Busca creadores, categorías o eventos en vivo..." 
+              placeholder={t('search_placeholder')} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-[#111111] border border-white/10 rounded-2xl pl-14 pr-4 py-4 text-white outline-none focus:border-blue-500/50 transition-colors shadow-inner font-medium placeholder:text-gray-600"
             />
             {isSearching && (
                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500 animate-pulse text-[10px] font-black uppercase tracking-widest bg-blue-500/10 px-2 py-1 rounded-md">
-                 Buscando
+                 {t('lbl_searching')}
                </span>
             )}
           </div>
 
           <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar max-w-4xl mx-auto w-full px-2">
-            {CATEGORIES.map(category => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`shrink-0 px-6 py-3 rounded-xl font-bold text-xs transition-all flex items-center gap-2 ${
-                  selectedCategory === category 
-                    ? category === 'Live 🔴' 
-                      ? 'nm-btn border border-red-500/50 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.2)]'
-                      : 'nm-btn-active bg-blue-600 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' 
-                    : 'nm-btn text-gray-400 hover:text-white border border-transparent'
-                }`}
-              >
-                {category === 'Live 🔴' ? <Radio className="w-4 h-4 animate-pulse"/> : category === 'All' ? <Star className="w-4 h-4"/> : null}
-                {category === 'All' ? 'Trending' : category === 'Live 🔴' ? 'En Vivo Ahora' : category}
-              </button>
-            ))}
+            {CATEGORIES.map(category => {
+              // Limpiamos el nombre para la clave de traducción
+              const safeCatKey = category.replace(' 🔴', '').toLowerCase().replace(/[^a-z0-9]/g, '');
+              return (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`shrink-0 px-6 py-3 rounded-xl font-bold text-xs transition-all flex items-center gap-2 ${
+                    selectedCategory === category 
+                      ? category === 'Live 🔴' 
+                        ? 'nm-btn border border-red-500/50 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.2)]'
+                        : 'nm-btn-active bg-blue-600 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' 
+                      : 'nm-btn text-gray-400 hover:text-white border border-transparent'
+                  }`}
+                >
+                  {category === 'Live 🔴' ? <Radio className="w-4 h-4 animate-pulse"/> : category === 'All' ? <Star className="w-4 h-4"/> : null}
+                  {t(`cat_${safeCatKey}`) || category}
+                </button>
+              )
+            })}
           </div>
         </nav>
 
@@ -127,17 +133,17 @@ export default function ExplorePage() {
               <div className="flex justify-between items-end px-2">
                 <div>
                   <h2 className="text-white font-black text-xl flex items-center gap-2 tracking-tight">
-                    <Radio className="w-5 h-5 text-red-500" /> Transmisiones Destacadas
+                    <Radio className="w-5 h-5 text-red-500" /> {t('streams_title')}
                   </h2>
-                  <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">Únete a la conversación en tiempo real</p>
+                  <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">{t('streams_subtitle')}</p>
                 </div>
               </div>
 
               {activeStreams.length === 0 ? (
                 <div className="text-center py-16 nm-inset rounded-[2rem] border border-white/5">
                   <Tv className="w-12 h-12 text-gray-700 mx-auto mb-4" strokeWidth={1.5} />
-                  <h3 className="text-lg font-black text-gray-400">Todo está muy tranquilo...</h3>
-                  <p className="text-gray-600 mt-1 font-medium text-sm">No hay creadores transmitiendo en este momento.</p>
+                  <h3 className="text-lg font-black text-gray-400">{t('streams_empty_title')}</h3>
+                  <p className="text-gray-600 mt-1 font-medium text-sm">{t('streams_empty_desc')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -164,7 +170,7 @@ export default function ExplorePage() {
                         
                         <div className="absolute top-3 left-3 z-10 flex gap-2">
                           <div className="bg-red-600 text-white px-2.5 py-1 rounded-md font-black text-[10px] uppercase tracking-widest flex items-center gap-1.5 shadow-lg">
-                            <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div> EN VIVO
+                            <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div> {t('lbl_live')}
                           </div>
                           <div className="bg-black/60 backdrop-blur-md border border-white/10 text-white px-2.5 py-1 rounded-md font-bold text-[10px] flex items-center gap-1.5">
                             <Eye className="w-3 h-3 text-gray-300"/> {stream._count?.messages || 12}
@@ -193,8 +199,8 @@ export default function ExplorePage() {
                           </h3>
                           <p className="text-gray-400 text-xs font-medium mt-1 truncate">@{stream.creator?.username}</p>
                           <div className="flex gap-2 mt-2">
-                            {stream.isPPV && <span className="text-[9px] font-black bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded uppercase tracking-widest border border-purple-500/30">Acceso PPV</span>}
-                            {stream.creator?.creatorProfile?.category && <span className="text-[9px] font-bold text-gray-500 px-2 py-0.5 rounded border border-white/10 bg-white/5 truncate">{stream.creator.creatorProfile.category}</span>}
+                            {stream.isPPV && <span className="text-[9px] font-black bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded uppercase tracking-widest border border-purple-500/30">{t('lbl_ppv_access')}</span>}
+                            {stream.creator?.creatorProfile?.category && <span className="text-[9px] font-bold text-gray-500 px-2 py-0.5 rounded border border-white/10 bg-white/5 truncate">{t(`cat_${stream.creator.creatorProfile.category.toLowerCase().replace(/[^a-z0-9]/g, '')}`) || stream.creator.creatorProfile.category}</span>}
                           </div>
                         </div>
                       </div>
@@ -208,14 +214,14 @@ export default function ExplorePage() {
           <div className="space-y-6 animate-fade-in">
             <h2 className="text-gray-500 font-bold text-sm uppercase tracking-widest flex items-center gap-2 pl-2">
               <Users className="w-4 h-4" />
-              {searchQuery ? `Resultados para "${searchQuery}"` : selectedCategory !== 'All' && selectedCategory !== 'Live 🔴' ? `Creadores en ${selectedCategory}` : 'Creadores Recomendados'}
+              {searchQuery ? `${t('creators_search')} "${searchQuery}"` : selectedCategory !== 'All' && selectedCategory !== 'Live 🔴' ? `${t('creators_category')} ${t(`cat_${selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '')}`) || selectedCategory}` : t('creators_recommended')}
             </h2>
             
             {creators.length === 0 && !isSearching ? (
               <div className="text-center py-20 nm-inset rounded-[2rem] border border-white/5 max-w-2xl mx-auto">
                 <Ghost className="w-16 h-16 text-gray-700 mx-auto mb-4" strokeWidth={1} />
-                <h3 className="text-xl font-bold text-gray-400">El radar está vacío</h3>
-                <p className="text-gray-600 mt-2 font-medium">Intenta con otros filtros de búsqueda o nombres.</p>
+                <h3 className="text-xl font-bold text-gray-400">{t('creators_empty_title')}</h3>
+                <p className="text-gray-600 mt-2 font-medium">{t('creators_empty_desc')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -252,7 +258,7 @@ export default function ExplorePage() {
                         <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">@{creator.username}</p>
                         
                         <p className="text-[11px] text-gray-400 mt-3 line-clamp-2 leading-relaxed font-medium">
-                          {creator.creatorProfile?.bio || "Descubre el contenido exclusivo de este creador."}
+                          {creator.creatorProfile?.bio || t('default_bio')}
                         </p>
 
                         <div className="mt-auto pt-5">
@@ -261,7 +267,7 @@ export default function ExplorePage() {
                               <Users className="w-3.5 h-3.5 text-blue-500" /> {creator._count?.followers || 0}
                             </span>
                             <span className="text-[10px] font-black text-white bg-blue-600/20 px-2 py-1 rounded-md uppercase tracking-wider text-blue-400 border border-blue-500/20">
-                              {creator.creatorProfile?.monthlyPrice > 0 ? `$${creator.creatorProfile.monthlyPrice.toFixed(0)}/m` : 'Gratis'}
+                              {creator.creatorProfile?.monthlyPrice > 0 ? `$${creator.creatorProfile.monthlyPrice.toFixed(0)}/${t('lbl_month')}` : t('lbl_free')}
                             </span>
                           </div>
                         </div>

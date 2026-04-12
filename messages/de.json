@@ -883,5 +883,35 @@
     "tx_payment": "Zahlung an",
     "anonymous": "Anonym",
     "lbl_completed": "Abgeschlossen"
+  },
+
+  "Explore": {
+    "nav_title": "Entdecken",
+    "search_placeholder": "Suchen Sie nach Erstellern, Kategorien oder Live-Events...",
+    "lbl_searching": "Suchen",
+    "cat_all": "Im Trend",
+    "cat_live": "Jetzt live",
+    "cat_general": "Allgemein",
+    "cat_fitness": "Fitness",
+    "cat_gaming": "Gaming",
+    "cat_msica": "Musik",
+    "cat_arte": "Kunst",
+    "cat_lifestyle": "Lebensstil",
+    "cat_educacin": "Bildung",
+    "cat_adulto": "Erwachsene",
+    "streams_title": "Vorgestellte Streams",
+    "streams_subtitle": "Nehmen Sie an der Echtzeit-Unterhaltung teil",
+    "streams_empty_title": "Es ist sehr ruhig hier...",
+    "streams_empty_desc": "Im Moment streamen keine Creator.",
+    "lbl_live": "LIVE",
+    "lbl_ppv_access": "PPV-Zugang",
+    "creators_search": "Ergebnisse für",
+    "creators_category": "Ersteller in",
+    "creators_recommended": "Empfohlene Ersteller",
+    "creators_empty_title": "Das Radar ist leer",
+    "creators_empty_desc": "Versuchen Sie andere Suchfilter oder Namen.",
+    "default_bio": "Entdecken Sie exklusive Inhalte dieses Erstellers.",
+    "lbl_month": "M.",
+    "lbl_free": "Kostenlos"
   }
 }

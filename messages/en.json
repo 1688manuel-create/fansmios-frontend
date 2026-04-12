@@ -882,5 +882,35 @@
     "tx_payment": "Payment to",
     "anonymous": "Anonymous",
     "lbl_completed": "Completed"
+  },
+
+  "Explore": {
+    "nav_title": "Discover",
+    "search_placeholder": "Search creators, categories, or live events...",
+    "lbl_searching": "Searching",
+    "cat_all": "Trending",
+    "cat_live": "Live Now",
+    "cat_general": "General",
+    "cat_fitness": "Fitness",
+    "cat_gaming": "Gaming",
+    "cat_msica": "Music",
+    "cat_arte": "Art",
+    "cat_lifestyle": "Lifestyle",
+    "cat_educacin": "Education",
+    "cat_adulto": "Adult",
+    "streams_title": "Featured Streams",
+    "streams_subtitle": "Join the real-time conversation",
+    "streams_empty_title": "It's very quiet here...",
+    "streams_empty_desc": "There are no creators streaming at the moment.",
+    "lbl_live": "LIVE",
+    "lbl_ppv_access": "PPV Access",
+    "creators_search": "Results for",
+    "creators_category": "Creators in",
+    "creators_recommended": "Recommended Creators",
+    "creators_empty_title": "The radar is empty",
+    "creators_empty_desc": "Try different search filters or names.",
+    "default_bio": "Discover exclusive content from this creator.",
+    "lbl_month": "mo",
+    "lbl_free": "Free"
   }
 }

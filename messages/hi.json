@@ -883,5 +883,35 @@
     "tx_payment": "को भुगतान",
     "anonymous": "गुमनाम",
     "lbl_completed": "पूर्ण"
+  },
+
+  "Explore": {
+    "nav_title": "खोजें",
+    "search_placeholder": "रचनाकारों, श्रेणियों या लाइव ईवेंट को खोजें...",
+    "lbl_searching": "खोजा जा रहा है",
+    "cat_all": "रुझान (Trending)",
+    "cat_live": "अभी लाइव",
+    "cat_general": "सामान्य",
+    "cat_fitness": "स्वास्थ्य (Fitness)",
+    "cat_gaming": "गेमिंग",
+    "cat_msica": "संगीत",
+    "cat_arte": "कला",
+    "cat_lifestyle": "जीवन शैली",
+    "cat_educacin": "शिक्षा",
+    "cat_adulto": "वयस्क",
+    "streams_title": "विशेष स्ट्रीम",
+    "streams_subtitle": "रीयल-टाइम बातचीत में शामिल हों",
+    "streams_empty_title": "यहाँ बहुत शांति है...",
+    "streams_empty_desc": "इस समय कोई भी क्रिएटर स्ट्रीमिंग नहीं कर रहा है।",
+    "lbl_live": "लाइव",
+    "lbl_ppv_access": "पीपीवी एक्सेस",
+    "creators_search": "के लिए परिणाम",
+    "creators_category": "में क्रिएटर",
+    "creators_recommended": "अनुशंसित क्रिएटर",
+    "creators_empty_title": "रडार खाली है",
+    "creators_empty_desc": "विभिन्न खोज फ़िल्टर या नाम आज़माएँ।",
+    "default_bio": "इस निर्माता से विशेष सामग्री खोजें।",
+    "lbl_month": "महीना",
+    "lbl_free": "मुफ़्त"
   }
 }

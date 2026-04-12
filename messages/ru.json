@@ -883,5 +883,35 @@
     "tx_payment": "Платеж",
     "anonymous": "Аноним",
     "lbl_completed": "Завершено"
+  },
+
+  "Explore": {
+    "nav_title": "Обзор",
+    "search_placeholder": "Поиск авторов, категорий или прямых эфиров...",
+    "lbl_searching": "Поиск",
+    "cat_all": "В тренде",
+    "cat_live": "Прямо сейчас",
+    "cat_general": "Общее",
+    "cat_fitness": "Фитнес",
+    "cat_gaming": "Игры",
+    "cat_msica": "Музыка",
+    "cat_arte": "Искусство",
+    "cat_lifestyle": "Стиль жизни",
+    "cat_educacin": "Образование",
+    "cat_adulto": "Для взрослых",
+    "streams_title": "Рекомендуемые трансляции",
+    "streams_subtitle": "Присоединяйтесь к беседе в реальном времени",
+    "streams_empty_title": "Здесь очень тихо...",
+    "streams_empty_desc": "В данный момент никто из авторов не ведет трансляцию.",
+    "lbl_live": "ЭФИР",
+    "lbl_ppv_access": "Доступ PPV",
+    "creators_search": "Результаты для",
+    "creators_category": "Авторы в",
+    "creators_recommended": "Рекомендуемые авторы",
+    "creators_empty_title": "Радар пуст",
+    "creators_empty_desc": "Попробуйте другие фильтры поиска или имена.",
+    "default_bio": "Откройте для себя эксклюзивный контент от этого автора.",
+    "lbl_month": "мес",
+    "lbl_free": "Бесплатно"
   }
 }

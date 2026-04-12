@@ -883,5 +883,35 @@
     "tx_payment": "Pagamento para",
     "anonymous": "Anônimo",
     "lbl_completed": "Concluído"
+  },
+
+  "Explore": {
+    "nav_title": "Descobrir",
+    "search_placeholder": "Pesquise criadores, categorias ou eventos ao vivo...",
+    "lbl_searching": "Buscando",
+    "cat_all": "Em alta",
+    "cat_live": "Ao Vivo Agora",
+    "cat_general": "Geral",
+    "cat_fitness": "Fitness",
+    "cat_gaming": "Jogos",
+    "cat_msica": "Música",
+    "cat_arte": "Arte",
+    "cat_lifestyle": "Estilo de Vida",
+    "cat_educacin": "Educação",
+    "cat_adulto": "Adulto",
+    "streams_title": "Transmissões em Destaque",
+    "streams_subtitle": "Participe da conversa em tempo real",
+    "streams_empty_title": "Está muito quieto por aqui...",
+    "streams_empty_desc": "Não há criadores transmitindo no momento.",
+    "lbl_live": "AO VIVO",
+    "lbl_ppv_access": "Acesso PPV",
+    "creators_search": "Resultados para",
+    "creators_category": "Criadores em",
+    "creators_recommended": "Criadores Recomendados",
+    "creators_empty_title": "O radar está vazio",
+    "creators_empty_desc": "Tente outros filtros de pesquisa ou nomes.",
+    "default_bio": "Descubra conteúdo exclusivo deste criador.",
+    "lbl_month": "mês",
+    "lbl_free": "Grátis"
   }
 }
