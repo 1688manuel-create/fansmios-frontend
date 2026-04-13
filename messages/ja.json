@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "エリートクリエイターのための独占プラットフォーム。あなたのコンテンツ。あなたのルール。あなたのファン。"
+  },
+
+  "Home": {
+    "alert_created": "🎉 アカウントが正常に作成されました！メールを確認してアカウントを有効にしてください。",
+    "error_connection": "接続エラー",
+    "alert_email_resent": "メールを再送信しました。受信トレイまたは迷惑メールを確認してください。",
+    "error_email_resend": "メールの再送信中にエラーが発生しました。",
+    "subtitle": "エリートクリエイターのための独占プラットフォーム。",
+    "slogan": "あなたのコンテンツ。あなたのルール。あなたのファン。",
+    "tab_login": "ログイン",
+    "tab_register": "登録",
+    "btn_resend_email": "アクティベーションメールを再送する",
+    "vip_invitation": "VIPとして招待されました！",
+    "role_title": "どのように参加しますか？",
+    "role_fan": "ファン",
+    "role_creator": "クリエイター",
+    "username_label": "ユーザー名",
+    "username_placeholder": "ユーザー123",
+    "email_label": "メールアドレス",
+    "email_placeholder": "you@email.com",
+    "password_label": "パスワード",
+    "forgot_password": "パスワードを忘れましたか？",
+    "verifying_conn": "安全な接続を確認中...",
+    "btn_login": "今すぐ入る",
+    "btn_register": "アカウントを作成",
+    "badge_secure": "ミリタリーグレードのセキュリティ",
+    "badge_privacy": "プライバシー保証",
+    "badge_verified": "検証済みのクリエイター"
   }
 }

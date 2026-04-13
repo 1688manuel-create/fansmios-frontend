@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "엘리트 크리에이터를 위한 독점 플랫폼. 당신의 콘텐츠. 당신의 규칙. 당신의 팬."
+  },
+
+  "Home": {
+    "alert_created": "🎉 계정이 성공적으로 생성되었습니다! 이메일을 확인하여 계정을 활성화하세요.",
+    "error_connection": "연결 오류",
+    "alert_email_resent": "이메일이 성공적으로 다시 전송되었습니다. 받은편지함 또는 스팸을 확인하세요.",
+    "error_email_resend": "이메일 다시 보내기 오류입니다.",
+    "subtitle": "엘리트 크리에이터를 위한 독점 플랫폼입니다.",
+    "slogan": "당신의 콘텐츠. 당신의 규칙. 당신의 팬.",
+    "tab_login": "로그인",
+    "tab_register": "가입하기",
+    "btn_resend_email": "활성화 이메일 다시 보내기",
+    "vip_invitation": "VIP로 초대받으셨습니다!",
+    "role_title": "어떻게 가입하시겠습니까?",
+    "role_fan": "팬",
+    "role_creator": "크리에이터",
+    "username_label": "사용자 이름",
+    "username_placeholder": "사용자123",
+    "email_label": "이메일 주소",
+    "email_placeholder": "you@email.com",
+    "password_label": "비밀번호",
+    "forgot_password": "비밀번호를 잊으셨나요?",
+    "verifying_conn": "안전한 연결 확인 중...",
+    "btn_login": "지금 입장하기",
+    "btn_register": "계정 만들기",
+    "badge_secure": "군사 등급 보안",
+    "badge_privacy": "개인정보 보호 보장",
+    "badge_verified": "검증된 크리에이터"
   }
 }

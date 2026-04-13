@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "Het exclusieve platform voor elite makers. Jouw content. Jouw regels. Jouw fans."
+  },
+
+  "Home": {
+    "alert_created": "🎉 Account succesvol aangemaakt! Controleer je e-mail om je account te activeren.",
+    "error_connection": "Verbindingsfout",
+    "alert_email_resent": "E-mail succesvol opnieuw verzonden. Controleer je inbox of SPAM.",
+    "error_email_resend": "Fout bij opnieuw verzenden van e-mail.",
+    "subtitle": "Het exclusieve platform voor elite makers.",
+    "slogan": "Jouw content. Jouw regels. Jouw fans.",
+    "tab_login": "Inloggen",
+    "tab_register": "Registreren",
+    "btn_resend_email": "Activeringsmail opnieuw verzenden",
+    "vip_invitation": "Je bent uitgenodigd als VIP!",
+    "role_title": "HOE WIL JE MEE DOEN?",
+    "role_fan": "Fan",
+    "role_creator": "Maker",
+    "username_label": "Gebruikersnaam",
+    "username_placeholder": "gebruiker123",
+    "email_label": "E-mailadres",
+    "email_placeholder": "jij@email.com",
+    "password_label": "Wachtwoord",
+    "forgot_password": "Wachtwoord vergeten?",
+    "verifying_conn": "Beveiligde Verbinding Verifiëren...",
+    "btn_login": "Nu Binnenkomen",
+    "btn_register": "Account Aanmaken",
+    "badge_secure": "BEVEILIGING VAN MILITAIR NIVEAU",
+    "badge_privacy": "PRIVACY GEGARANDEERD",
+    "badge_verified": "GEVERIFIEERDE MAKERS"
   }
 }

@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "المنصة الحصرية لنخبة صناع المحتوى. المحتوى الخاص بك. قواعدك. معجبينك."
+  },
+
+  "Home": {
+    "alert_created": "🎉 تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني لتنشيط حسابك.",
+    "error_connection": "خطأ في الاتصال",
+    "alert_email_resent": "تمت إعادة إرسال البريد الإلكتروني بنجاح. تحقق من صندوق الوارد أو البريد العشوائي.",
+    "error_email_resend": "خطأ في إعادة إرسال البريد الإلكتروني.",
+    "subtitle": "المنصة الحصرية لنخبة صناع المحتوى.",
+    "slogan": "المحتوى الخاص بك. قواعدك. معجبينك.",
+    "tab_login": "تسجيل الدخول",
+    "tab_register": "التسجيل",
+    "btn_resend_email": "إعادة إرسال بريد التفعيل",
+    "vip_invitation": "لقد تمت دعوتك كـ VIP!",
+    "role_title": "كيف تريد الانضمام؟",
+    "role_fan": "معجب",
+    "role_creator": "صانع محتوى",
+    "username_label": "اسم المستخدم",
+    "username_placeholder": "مستخدم123",
+    "email_label": "البريد الإلكتروني",
+    "email_placeholder": "you@email.com",
+    "password_label": "كلمة المرور",
+    "forgot_password": "هل نسيت كلمة المرور؟",
+    "verifying_conn": "جاري التحقق من الاتصال الآمن...",
+    "btn_login": "الدخول الآن",
+    "btn_register": "إنشاء حساب",
+    "badge_secure": "أمان من الدرجة العسكرية",
+    "badge_privacy": "الخصوصية مضمونة",
+    "badge_verified": "صناع محتوى موثقون"
   }
 }

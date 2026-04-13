@@ -1090,5 +1090,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "The exclusive platform for elite creators. Your content. Your rules. Your fans."
+  },
+
+  "Home": {
+    "alert_created": "🎉 Account successfully created! Please check your email to activate your account.",
+    "error_connection": "Connection error",
+    "alert_email_resent": "Email successfully resent. Check your inbox or SPAM folder.",
+    "error_email_resend": "Error resending email.",
+    "subtitle": "The exclusive platform for elite creators.",
+    "slogan": "Your content. Your rules. Your fans.",
+    "tab_login": "Log In",
+    "tab_register": "Register",
+    "btn_resend_email": "Resend activation email",
+    "vip_invitation": "You have been invited as a VIP!",
+    "role_title": "HOW DO YOU WANT TO JOIN?",
+    "role_fan": "Fan",
+    "role_creator": "Creator",
+    "username_label": "Username",
+    "username_placeholder": "user123",
+    "email_label": "Email Address",
+    "email_placeholder": "you@email.com",
+    "password_label": "Password",
+    "forgot_password": "Forgot password?",
+    "verifying_conn": "Verifying Secure Connection...",
+    "btn_login": "Enter Now",
+    "btn_register": "Create Account",
+    "badge_secure": "MILITARY GRADE SECURITY",
+    "badge_privacy": "PRIVACY GUARANTEED",
+    "badge_verified": "VERIFIED CREATORS"
   }
 }

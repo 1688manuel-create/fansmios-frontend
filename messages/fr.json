@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "La plateforme exclusive pour les créateurs d'élite. Votre contenu. Vos règles. Vos fans."
+  },
+
+  "Home": {
+    "alert_created": "🎉 Compte créé avec succès ! Veuillez vérifier votre e-mail pour activer votre compte.",
+    "error_connection": "Erreur de connexion",
+    "alert_email_resent": "E-mail renvoyé avec succès. Vérifiez votre boîte de réception ou les SPAM.",
+    "error_email_resend": "Erreur lors du renvoi de l'e-mail.",
+    "subtitle": "La plateforme exclusive pour les créateurs d'élite.",
+    "slogan": "Votre contenu. Vos règles. Vos fans.",
+    "tab_login": "Se connecter",
+    "tab_register": "S'inscrire",
+    "btn_resend_email": "Renvoyer l'e-mail d'activation",
+    "vip_invitation": "Vous avez été invité en tant que VIP !",
+    "role_title": "COMMENT VOULEZ-VOUS REJOINDRE ?",
+    "role_fan": "Fan",
+    "role_creator": "Créateur",
+    "username_label": "Nom d'utilisateur",
+    "username_placeholder": "utilisateur123",
+    "email_label": "Adresse E-mail",
+    "email_placeholder": "vous@email.com",
+    "password_label": "Mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "verifying_conn": "Vérification de la connexion sécurisée...",
+    "btn_login": "Entrer maintenant",
+    "btn_register": "Créer un compte",
+    "badge_secure": "SÉCURITÉ DE NIVEAU MILITAIRE",
+    "badge_privacy": "CONFIDENTIALITÉ GARANTIE",
+    "badge_verified": "CRÉATEURS VÉRIFIÉS"
   }
 }

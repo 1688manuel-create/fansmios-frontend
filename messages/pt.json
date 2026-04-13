@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "A plataforma exclusiva para criadores de elite. Seu conteúdo. Suas regras. Seus fãs."
+  },
+
+  "Home": {
+    "alert_created": "🎉 Conta criada com sucesso! Por favor, verifique seu e-mail para ativar sua conta.",
+    "error_connection": "Erro de conexão",
+    "alert_email_resent": "E-mail reenviado com sucesso. Verifique sua caixa de entrada ou SPAM.",
+    "error_email_resend": "Erro ao reenviar o e-mail.",
+    "subtitle": "A plataforma exclusiva para criadores de elite.",
+    "slogan": "Seu conteúdo. Suas regras. Seus fãs.",
+    "tab_login": "Entrar",
+    "tab_register": "Registrar",
+    "btn_resend_email": "Reenviar e-mail de ativação",
+    "vip_invitation": "Você foi convidado como VIP!",
+    "role_title": "COMO VOCÊ QUER ENTRAR?",
+    "role_fan": "Fã",
+    "role_creator": "Criador",
+    "username_label": "Nome de Usuário",
+    "username_placeholder": "usuario123",
+    "email_label": "E-mail",
+    "email_placeholder": "seu@email.com",
+    "password_label": "Senha",
+    "forgot_password": "Esqueceu sua senha?",
+    "verifying_conn": "Verificando Conexão Segura...",
+    "btn_login": "Entrar Agora",
+    "btn_register": "Criar Conta",
+    "badge_secure": "SEGURANÇA DE NÍVEL MILITAR",
+    "badge_privacy": "PRIVACIDADE GARANTIDA",
+    "badge_verified": "CRIADORES VERIFICADOS"
   }
 }

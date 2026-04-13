@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "Elit yaratıcılar için özel platform. Sizin içeriğiniz. Sizin kurallarınız. Sizin hayranlarınız."
+  },
+
+  "Home": {
+    "alert_created": "🎉 Hesap başarıyla oluşturuldu! Lütfen hesabınızı etkinleştirmek için e-postanızı kontrol edin.",
+    "error_connection": "Bağlantı hatası",
+    "alert_email_resent": "E-posta başarıyla yeniden gönderildi. Gelen kutunuzu veya SPAM klasörünüzü kontrol edin.",
+    "error_email_resend": "E-posta yeniden gönderilirken hata oluştu.",
+    "subtitle": "Elit yaratıcılar için özel platform.",
+    "slogan": "Sizin içeriğiniz. Sizin kurallarınız. Sizin hayranlarınız.",
+    "tab_login": "Giriş Yap",
+    "tab_register": "Kayıt Ol",
+    "btn_resend_email": "Aktivasyon e-postasını yeniden gönder",
+    "vip_invitation": "VIP olarak davet edildiniz!",
+    "role_title": "NASIL KATILMAK İSTİYORSUNUZ?",
+    "role_fan": "Hayran",
+    "role_creator": "Yaratıcı",
+    "username_label": "Kullanıcı Adı",
+    "username_placeholder": "kullanici123",
+    "email_label": "E-posta Adresi",
+    "email_placeholder": "siz@email.com",
+    "password_label": "Şifre",
+    "forgot_password": "Şifrenizi mi unuttunuz?",
+    "verifying_conn": "Güvenli Bağlantı Doğrulanıyor...",
+    "btn_login": "Şimdi Gir",
+    "btn_register": "Hesap Oluştur",
+    "badge_secure": "ASKERİ DÜZEYDE GÜVENLİK",
+    "badge_privacy": "GİZLİLİK GARANTİSİ",
+    "badge_verified": "DOĞRULANMIŞ YARATICILAR"
   }
 }

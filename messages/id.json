@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "Platform eksklusif untuk kreator elit. Konten Anda. Aturan Anda. Penggemar Anda."
+  },
+
+  "Home": {
+    "alert_created": "🎉 Akun berhasil dibuat! Silakan periksa email Anda untuk mengaktifkan akun Anda.",
+    "error_connection": "Kesalahan koneksi",
+    "alert_email_resent": "Email berhasil dikirim ulang. Periksa kotak masuk atau SPAM Anda.",
+    "error_email_resend": "Kesalahan saat mengirim ulang email.",
+    "subtitle": "Platform eksklusif untuk kreator elit.",
+    "slogan": "Konten Anda. Aturan Anda. Penggemar Anda.",
+    "tab_login": "Masuk",
+    "tab_register": "Daftar",
+    "btn_resend_email": "Kirim ulang email aktivasi",
+    "vip_invitation": "Anda telah diundang sebagai VIP!",
+    "role_title": "BAGAIMANA ANDA INGIN BERGABUNG?",
+    "role_fan": "Penggemar",
+    "role_creator": "Kreator",
+    "username_label": "Nama Pengguna",
+    "username_placeholder": "pengguna123",
+    "email_label": "Alamat Email",
+    "email_placeholder": "anda@email.com",
+    "password_label": "Kata Sandi",
+    "forgot_password": "Lupa kata sandi?",
+    "verifying_conn": "Memverifikasi Koneksi Aman...",
+    "btn_login": "Masuk Sekarang",
+    "btn_register": "Buat Akun",
+    "badge_secure": "KEAMANAN TINGKAT MILITER",
+    "badge_privacy": "PRIVASI DIJAMIN",
+    "badge_verified": "KREATOR TERVERIFIKASI"
   }
 }

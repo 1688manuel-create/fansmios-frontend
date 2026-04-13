@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "Den exklusiva plattformen för elitskapare. Ditt innehåll. Dina regler. Dina fans."
+  },
+
+  "Home": {
+    "alert_created": "🎉 Kontot skapades framgångsrikt! Kontrollera din e-post för att aktivera ditt konto.",
+    "error_connection": "Anslutningsfel",
+    "alert_email_resent": "E-postmeddelandet skickades igen. Kontrollera din inkorg eller SPAM.",
+    "error_email_resend": "Fel vid återsändning av e-post.",
+    "subtitle": "Den exklusiva plattformen för elitskapare.",
+    "slogan": "Ditt innehåll. Dina regler. Dina fans.",
+    "tab_login": "Logga in",
+    "tab_register": "Registrera",
+    "btn_resend_email": "Skicka aktiveringsmejl igen",
+    "vip_invitation": "Du har blivit inbjuden som VIP!",
+    "role_title": "HUR VILL DU GÅ MED?",
+    "role_fan": "Fan",
+    "role_creator": "Skapare",
+    "username_label": "Användarnamn",
+    "username_placeholder": "anvandare123",
+    "email_label": "E-postadress",
+    "email_placeholder": "du@email.com",
+    "password_label": "Lösenord",
+    "forgot_password": "Glömt ditt lösenord?",
+    "verifying_conn": "Verifierar Säker Anslutning...",
+    "btn_login": "Gå in nu",
+    "btn_register": "Skapa Konto",
+    "badge_secure": "SÄKERHET AV MILITÄR KLASS",
+    "badge_privacy": "INTEGRITET GARANTERAD",
+    "badge_verified": "VERIFIERADE SKAPARE"
   }
 }

@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { ShieldCheck, Lock, CheckCircle2, Loader2, Mail, Gift } from "lucide-react";
-import { useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl'; // 🔥 INVOCAMOS AL TRADUCTOR
 
 export default function Home() {
   const router = useRouter();
-  const t = useTranslations('Index'); // 🔥 INVOCAMOS AL TRADUCTOR
+  const t = useTranslations('Home'); // 🔥 INVOCAMOS AL TRADUCTOR
 
   // UX States
   const [isLogin, setIsLogin] = useState(true);
@@ -103,9 +103,9 @@ export default function Home() {
     setError('');
     try {
       const res = await api.post('/auth/resend-verification', { email: unverifiedEmail });
-      setResendSuccess(res.data.message || 'Correo reenviado con éxito. Revisa tu bandeja de entrada o SPAM.');
+      setResendSuccess(res.data.message || t('alert_email_resent'));
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al reenviar el correo.');
+      setError(err.response?.data?.error || t('error_email_resend'));
     } finally {
       setIsResending(false);
     }
@@ -167,7 +167,7 @@ export default function Home() {
                     className="mt-3 w-full flex items-center justify-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-white py-2.5 rounded-lg transition-colors border border-red-500/30"
                   >
                     {isResending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
-                    Reenviar correo de activación
+                    {t('btn_resend_email')}
                   </button>
                 )}
               </div>
@@ -305,7 +305,7 @@ export default function Home() {
 
       </div>
 
-      {/* FOOTER LEGAL (SIN TRADUCIR PARA MANTENER LA LEGALIDAD BASE, LUEGO LO TRADUCIMOS SI QUIERES) */}
+      {/* FOOTER LEGAL (SIN TRADUCIR PARA MANTENER LA LEGALIDAD BASE) */}
       <footer className="w-full border-t border-white/10 bg-[#050505] pt-8 pb-8 px-4 relative z-10 mt-auto">
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="flex flex-wrap justify-center gap-3 md:gap-4 text-[10px] uppercase font-black tracking-widest opacity-90">

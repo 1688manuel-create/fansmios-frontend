@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "Ekskluzywna platforma dla elitarnych twórców. Twoje treści. Twoje zasady. Twoi fani."
+  },
+
+  "Home": {
+    "alert_created": "🎉 Konto utworzone pomyślnie! Sprawdź swoją pocztę e-mail, aby aktywować konto.",
+    "error_connection": "Błąd połączenia",
+    "alert_email_resent": "E-mail pomyślnie wysłany ponownie. Sprawdź swoją skrzynkę odbiorczą lub SPAM.",
+    "error_email_resend": "Błąd podczas ponownego wysyłania e-maila.",
+    "subtitle": "Ekskluzywna platforma dla elitarnych twórców.",
+    "slogan": "Twoje treści. Twoje zasady. Twoi fani.",
+    "tab_login": "Zaloguj się",
+    "tab_register": "Zarejestruj się",
+    "btn_resend_email": "Wyślij ponownie e-mail aktywacyjny",
+    "vip_invitation": "Zostałeś zaproszony jako VIP!",
+    "role_title": "JAK CHCESZ DOŁĄCZYĆ?",
+    "role_fan": "Fan",
+    "role_creator": "Twórca",
+    "username_label": "Nazwa użytkownika",
+    "username_placeholder": "uzytkownik123",
+    "email_label": "Adres E-mail",
+    "email_placeholder": "ty@email.com",
+    "password_label": "Hasło",
+    "forgot_password": "Zapomniałeś hasła?",
+    "verifying_conn": "Weryfikacja Bezpiecznego Połączenia...",
+    "btn_login": "Wejdź Teraz",
+    "btn_register": "Utwórz Konto",
+    "badge_secure": "BEZPIECZEŃSTWO KLASY WOJSKOWEJ",
+    "badge_privacy": "GWARANCJA PRYWATNOŚCI",
+    "badge_verified": "ZWERYFIKOWANI TWÓRCY"
   }
 }

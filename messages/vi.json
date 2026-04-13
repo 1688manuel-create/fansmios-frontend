@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "Nền tảng độc quyền dành cho những người sáng tạo ưu tú. Nội dung của bạn. Quy tắc của bạn. Người hâm mộ của bạn."
+  },
+
+  "Home": {
+    "alert_created": "🎉 Tạo tài khoản thành công! Vui lòng kiểm tra email của bạn để kích hoạt tài khoản.",
+    "error_connection": "Lỗi kết nối",
+    "alert_email_resent": "Đã gửi lại email thành công. Kiểm tra hộp thư đến hoặc Thư rác của bạn.",
+    "error_email_resend": "Lỗi khi gửi lại email.",
+    "subtitle": "Nền tảng độc quyền dành cho những người sáng tạo ưu tú.",
+    "slogan": "Nội dung của bạn. Quy tắc của bạn. Người hâm mộ của bạn.",
+    "tab_login": "Đăng nhập",
+    "tab_register": "Đăng ký",
+    "btn_resend_email": "Gửi lại email kích hoạt",
+    "vip_invitation": "Bạn đã được mời làm VIP!",
+    "role_title": "BẠN MUỐN THAM GIA NHƯ THẾ NÀO?",
+    "role_fan": "Người hâm mộ",
+    "role_creator": "Người sáng tạo",
+    "username_label": "Tên người dùng",
+    "username_placeholder": "nguoidung123",
+    "email_label": "Địa chỉ Email",
+    "email_placeholder": "ban@email.com",
+    "password_label": "Mật khẩu",
+    "forgot_password": "Quên mật khẩu?",
+    "verifying_conn": "Đang xác minh Kết nối an toàn...",
+    "btn_login": "Vào ngay",
+    "btn_register": "Tạo tài khoản",
+    "badge_secure": "BẢO MẬT CẤP QUÂN SỰ",
+    "badge_privacy": "ĐẢM BẢO QUYỀN RIÊNG TƯ",
+    "badge_verified": "NGƯỜI SÁNG TẠO ĐÃ XÁC MINH"
   }
 }

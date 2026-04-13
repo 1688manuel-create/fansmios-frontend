@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "कुलीन रचनाकारों के लिए विशेष मंच। आपकी सामग्री। आपके नियम। आपके प्रशंसक।"
+  },
+
+  "Home": {
+    "alert_created": "🎉 खाता सफलतापूर्वक बनाया गया! अपना खाता सक्रिय करने के लिए कृपया अपना ईमेल जांचें।",
+    "error_connection": "कनेक्शन त्रुटि",
+    "alert_email_resent": "ईमेल सफलतापूर्वक पुनः भेजा गया। अपना इनबॉक्स या स्पैम जांचें।",
+    "error_email_resend": "ईमेल पुनः भेजने में त्रुटि।",
+    "subtitle": "कुलीन रचनाकारों के लिए विशेष मंच।",
+    "slogan": "आपकी सामग्री। आपके नियम। आपके प्रशंसक।",
+    "tab_login": "लॉग इन करें",
+    "tab_register": "पंजीकरण करें",
+    "btn_resend_email": "सक्रियण ईमेल पुनः भेजें",
+    "vip_invitation": "आपको वीआईपी के रूप में आमंत्रित किया गया है!",
+    "role_title": "आप कैसे शामिल होना चाहते हैं?",
+    "role_fan": "प्रशंसक",
+    "role_creator": "निर्माता",
+    "username_label": "उपयोगकर्ता नाम",
+    "username_placeholder": "user123",
+    "email_label": "ईमेल पता",
+    "email_placeholder": "you@email.com",
+    "password_label": "पासवर्ड",
+    "forgot_password": "पासवर्ड भूल गए?",
+    "verifying_conn": "सुरक्षित कनेक्शन सत्यापित किया जा रहा है...",
+    "btn_login": "अभी दर्ज करें",
+    "btn_register": "खाता बनाएं",
+    "badge_secure": "सैन्य ग्रेड सुरक्षा",
+    "badge_privacy": "गोपनीयता की गारंटी",
+    "badge_verified": "सत्यापित निर्माता"
   }
 }

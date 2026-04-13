@@ -1091,5 +1091,33 @@
   "Metadata": {
     "title": "FansMio VIP",
     "description": "精英创作者的独家平台。你的内容。你的规则。你的粉丝。"
+  },
+
+  "Home": {
+    "alert_created": "🎉 帐户创建成功！请检查您的电子邮件以激活您的帐户。",
+    "error_connection": "连接错误",
+    "alert_email_resent": "电子邮件成功重新发送。请检查您的收件箱或垃圾邮件。",
+    "error_email_resend": "重新发送电子邮件时出错。",
+    "subtitle": "精英创作者的独家平台。",
+    "slogan": "你的内容。你的规则。你的粉丝。",
+    "tab_login": "登录",
+    "tab_register": "注册",
+    "btn_resend_email": "重新发送激活邮件",
+    "vip_invitation": "您已被邀请为 VIP！",
+    "role_title": "你想如何加入？",
+    "role_fan": "粉丝",
+    "role_creator": "创作者",
+    "username_label": "用户名",
+    "username_placeholder": "用户123",
+    "email_label": "电子邮件地址",
+    "email_placeholder": "you@email.com",
+    "password_label": "密码",
+    "forgot_password": "忘记密码？",
+    "verifying_conn": "正在验证安全连接...",
+    "btn_login": "立即进入",
+    "btn_register": "创建帐户",
+    "badge_secure": "军用级安全",
+    "badge_privacy": "隐私保证",
+    "badge_verified": "经过验证的创作者"
   }
 }
