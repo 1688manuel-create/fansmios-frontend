@@ -22,6 +22,7 @@ import '@livekit/components-styles';
 
 // 🔥 ICONOS PREMIUM
 import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 const SOCKET_URL = 'https://api.fansmio.com';
 
@@ -49,6 +50,7 @@ export interface Donator { userId: string; username: string; amount: number; }
 export default function LiveRoom() {
   const { id } = useParams();
   const router = useRouter();
+  const t = useTranslations('LiveRoom'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
 
   const [user, setUser] = useState<any>(null);
   const [streamData, setStreamData] = useState<any>(null);
@@ -92,8 +94,8 @@ export default function LiveRoom() {
         const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
         const isCreatorOrAdmin = String(currentUser.id) === String(data.stream.creatorId) || currentUser.role === 'ADMIN';
 
-        setMessages([{ isSystem: true, content: `👋 Conexión segura a la sala de ${data.stream.creator?.username || 'Creador'}.` }, ...(data.stream.messages || [])].slice(-100));
-        const res = await api.post('/livekit/token', { roomName: id, participantName: currentUser.username || 'Usuario', isCreator: isCreatorOrAdmin });
+        setMessages([{ isSystem: true, content: `👋 ${t('msg_secure_connection')} ${data.stream.creator?.username || t('lbl_creator')}.` }, ...(data.stream.messages || [])].slice(-100));
+        const res = await api.post('/livekit/token', { roomName: id, participantName: currentUser.username || t('lbl_user'), isCreator: isCreatorOrAdmin });
         setLiveKitToken(res.data.token);
       }
     } catch { router.push('/explore'); }
@@ -155,7 +157,7 @@ export default function LiveRoom() {
       }
     },
     onViewerCount: setViewersCount,
-    onStreamKilled: () => { alert("Transmisión finalizada."); router.push('/explore'); }
+    onStreamKilled: () => { alert(t('alert_stream_ended')); router.push('/explore'); }
   });
 
   useEffect(() => {
@@ -193,28 +195,28 @@ export default function LiveRoom() {
   const sendGift = async (gift: Gift) => {
     setShowGiftMenu(false);
     try {
-      const res = await liveService.sendMessage(id as string, `ha enviado un ${gift.name}`, true, gift.amount);
+      const res = await liveService.sendMessage(id as string, `${t('lbl_has_sent_a')} ${gift.name}`, true, gift.amount);
       setMessages((prev) => [...prev.slice(-99), res.chatMessage]);
       socketRef.current?.emit('broadcastMessage', res.chatMessage);
       triggerGiftEffect(gift);
       updateTopDonators(res.chatMessage);
       handleStreak();
     } catch (error) {
-      alert("Error enviando regalo. Verifica saldo.");
+      alert(t('alert_error_gift'));
     }
   };
 
   const handleKickUser = async (targetUserId: string, targetUsername: string) => {
     if (targetUserId === user.id) return;
-    if (!window.confirm(`🚨 ¿EXPULSAR a @${targetUsername}?`)) return;
+    if (!window.confirm(`🚨 ${t('confirm_kick')} @${targetUsername}?`)) return;
     try {
       socketRef.current?.emit('kickParticipant', { streamId: id, userId: targetUserId, username: targetUsername });
-      alert(`🚫 Usuario expulsado.`);
-    } catch (error) { alert("Error al expulsar."); }
+      alert(`🚫 ${t('alert_kicked')}`);
+    } catch (error) { alert(t('alert_error_kick')); }
   };
 
   const handleEndStream = () => {
-    if (window.confirm("🚨 ¿TERMINAR la transmisión?")) {
+    if (window.confirm(`🚨 ${t('confirm_end_stream')}`)) {
       liveService.updateStatus(id as string, 'ENDED').then(() => {
         socketRef.current?.emit('streamEnded', { streamId: id });
         router.push('/dashboard');
@@ -228,16 +230,16 @@ export default function LiveRoom() {
     try {
       const res = await paymentService.createPaymentIntent({ amount: streamData.price, type: 'LIVE_TICKET', creatorId: streamData.creatorId, postId: id as string, description: `Ticket VIP: ${streamData.title}` });
       if (res.success) { setHasAccess(true); loadStreamData(); }
-    } catch { alert('Pago fallido'); } 
+    } catch { alert(t('alert_payment_failed')); } 
     finally { setIsProcessing(false); }
   };
 
-  if (!streamData) return <div className="min-h-[100dvh] bg-black flex items-center justify-center text-white font-mono animate-pulse">Conectando con Covra Pay...</div>;
+  if (!streamData) return <div className="min-h-[100dvh] bg-black flex items-center justify-center text-white font-mono animate-pulse">{t('lbl_connecting_gateway')}</div>;
 
   const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || user?.role === 'ADMIN';
   const actualViewers = connectedUsers.length > 0 ? connectedUsers.length : viewersCount;
 
-  return (
+ return (
     <div className="fixed inset-0 bg-black text-white font-sans overflow-hidden h-[100dvh] w-full">
       
       <style>{`
@@ -277,11 +279,11 @@ export default function LiveRoom() {
                     {streamData.creator?.profileImage ? <img src={streamData.creator.profileImage} className="w-full h-full object-cover" /> : streamData.creator?.username?.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex flex-col mr-3">
-                    <span className="text-sm font-bold leading-tight text-white">{streamData.creator?.username || 'Creador'}</span>
-                    <span className="text-[10px] text-gray-300 font-medium">{actualViewers} espectando</span>
+                    <span className="text-sm font-bold leading-tight text-white">{streamData.creator?.username || t('lbl_creator')}</span>
+                    <span className="text-[10px] text-gray-300 font-medium">{actualViewers} {t('lbl_viewing')}</span>
                   </div>
                   {!isCreatorOrAdmin && (
-                    <button className="bg-teal-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider hover:scale-105 transition-transform">Seguir</button>
+                    <button className="bg-teal-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider hover:scale-105 transition-transform">{t('btn_follow')}</button>
                   )}
                 </div>
 
@@ -363,7 +365,7 @@ export default function LiveRoom() {
                 {/* 🔥 Input Bar Estilo TikTok y CONTROLES CREADOR */}
                 <div className="flex gap-2 items-center mt-2 relative z-30">
                   <div className="flex-1 bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center px-4 py-2 shadow-lg focus-within:border-teal-500/50 transition-colors">
-                    <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Añadir comentario..." className="bg-transparent text-white text-sm w-full outline-none placeholder-gray-300 font-medium" />
+                    <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} placeholder={t('ph_chat')} className="bg-transparent text-white text-sm w-full outline-none placeholder-gray-300 font-medium" />
                     {chatInput.trim() && (
                       <button onClick={handleSendMessage} className="text-teal-400 hover:text-teal-300 transition-colors p-1"><Send className="w-4 h-4" /></button>
                     )}
@@ -414,19 +416,19 @@ export default function LiveRoom() {
           <div className="absolute inset-0 bg-black/40 z-40 pointer-events-auto" onClick={() => setShowGiftMenu(false)}></div>
           <div className="absolute bottom-0 left-0 right-0 md:left-auto md:right-4 md:bottom-4 md:w-[400px] bg-[#111]/95 backdrop-blur-2xl border-t border-x md:border-y border-white/10 rounded-t-3xl md:rounded-3xl p-6 pb-8 animate-drawer shadow-2xl z-50 pointer-events-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-white font-black text-lg flex items-center gap-2"><Diamond className="w-5 h-5 text-teal-400"/> Enviar Regalo</h3>
-              <div className="text-xs bg-white/10 px-3 py-1.5 rounded-full font-mono text-teal-400">Saldo: ${(user?.walletBalance || 0).toFixed(2)}</div>
+              <h3 className="text-white font-black text-lg flex items-center gap-2"><Diamond className="w-5 h-5 text-teal-400"/> {t('gift_title')}</h3>
+              <div className="text-xs bg-white/10 px-3 py-1.5 rounded-full font-mono text-teal-400">{t('lbl_balance')}: ${(user?.walletBalance || 0).toFixed(2)}</div>
             </div>
             <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
               {GIFTS.map((gift) => (
                 <button key={gift.id} onClick={() => sendGift(gift)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-teal-500 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm">
                   <span className="text-3xl group-hover:scale-110 transition-transform mb-1">{gift.emoji}</span>
-                  <span className="text-[9px] text-gray-300 font-bold text-center leading-tight truncate w-full">{gift.name}</span>
+                  <span className="text-[9px] text-gray-300 font-bold text-center leading-tight truncate w-full">{t(`gift_name_${gift.id}`) || gift.name}</span>
                   <span className="text-[10px] text-teal-400 font-mono font-black mt-1">${gift.amount}</span>
                 </button>
               ))}
             </div>
-            <button onClick={() => router.push('/dashboard/wallet')} className="w-full mt-6 bg-white/5 hover:bg-white/10 text-white font-bold py-3 rounded-xl text-sm transition-colors border border-white/10">Recargar Saldo</button>
+            <button onClick={() => router.push('/dashboard/wallet')} className="w-full mt-6 bg-white/5 hover:bg-white/10 text-white font-bold py-3 rounded-xl text-sm transition-colors border border-white/10">{t('btn_reload_balance')}</button>
           </div>
         </>
       )}
@@ -475,6 +477,7 @@ function useLiveSocket({ id, user, streamData, hasAccess, onLike, onMessage, onV
 }
 
 function PreparationLayer({ onStart }: { onStart: () => void }) {
+  const t = useTranslations('LiveRoom'); 
   return (
     <div className="absolute inset-0 z-40 bg-black/80 backdrop-blur-xl flex flex-col items-center justify-center p-4">
       <div className="text-center max-w-sm px-6 flex flex-col items-center">
@@ -482,30 +485,31 @@ function PreparationLayer({ onStart }: { onStart: () => void }) {
           <div className="absolute inset-0 rounded-full border border-teal-500 animate-ping opacity-50"></div>
           <Tv className="w-10 h-10 text-teal-400" />
         </div>
-        <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Estudio en Vivo</h2>
-        <p className="text-gray-400 mb-8 text-sm leading-relaxed">Tu cámara y micrófono están listos. Inicia cuando estés preparado para brillar.</p>
-        <button onClick={onStart} className="w-full bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-black text-lg py-4 rounded-full shadow-[0_10px_30px_rgba(20,184,166,0.4)] flex items-center justify-center gap-2 transition-all hover:scale-105"><Play className="w-5 h-5 fill-white" /> Iniciar Transmisión</button>
+        <h2 className="text-3xl font-black text-white mb-3 tracking-tight">{t('prep_title')}</h2>
+        <p className="text-gray-400 mb-8 text-sm leading-relaxed">{t('prep_desc')}</p>
+        <button onClick={onStart} className="w-full bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-black text-lg py-4 rounded-full shadow-[0_10px_30px_rgba(20,184,166,0.4)] flex items-center justify-center gap-2 transition-all hover:scale-105"><Play className="w-5 h-5 fill-white" /> {t('btn_start_stream')}</button>
       </div>
     </div>
   );
 }
 
 function PaywallLayer({ price, isProcessing, onBuy }: { price: number, isProcessing: boolean, onBuy: () => void }) {
+  const t = useTranslations('LiveRoom'); 
   return (
     <div className="absolute inset-0 z-50 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 pointer-events-auto">
       <div className="text-center p-8 bg-[#0a0a0a] rounded-[2rem] border border-white/5 shadow-[0_0_80px_rgba(0,0,0,1)] max-w-sm w-full relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 to-blue-500"></div>
         <Lock className="w-14 h-14 text-teal-500 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(20,184,166,0.4)]" />
-        <h2 className="text-white font-black text-2xl mb-2 tracking-tight">Evento Exclusivo</h2>
-        <p className="text-gray-400 text-sm mb-8 font-medium">Adquiere tu ticket VIP para entrar a esta transmisión en vivo.</p>
+        <h2 className="text-white font-black text-2xl mb-2 tracking-tight">{t('paywall_title')}</h2>
+        <p className="text-gray-400 text-sm mb-8 font-medium">{t('paywall_desc')}</p>
         
         <div className="bg-white/5 p-5 rounded-2xl mb-8 border border-white/5 nm-inset">
-          <div className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">Costo de Entrada</div>
+          <div className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">{t('lbl_ticket_cost')}</div>
           <div className="text-4xl font-black text-teal-400 font-mono tracking-tight">${price} <span className="text-sm text-gray-500 font-sans">USD</span></div>
         </div>
         
         <button onClick={onBuy} disabled={isProcessing} className="w-full bg-white text-black font-black py-4 rounded-xl text-sm hover:scale-105 transition-transform disabled:opacity-50 flex items-center justify-center gap-2 shadow-xl">
-          {isProcessing ? 'Procesando pago seguro...' : <><Star className="w-4 h-4 fill-black"/> Comprar Ticket Covra</>}
+          {isProcessing ? t('btn_processing') : <><Star className="w-4 h-4 fill-black"/> {t('btn_buy_ticket')}</>}
         </button>
       </div>
     </div>
@@ -524,25 +528,26 @@ function GiftEffectOverlay({ giftEffect }: { giftEffect: Gift }) {
 }
 
 function ViewersModal({ connectedUsers, onClose }: { connectedUsers: any[], onClose: () => void }) {
+  const t = useTranslations('LiveRoom'); 
   return (
     <div className="absolute inset-0 z-[200000] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-auto">
       <div className="bg-[#111] border border-white/10 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-sm overflow-hidden shadow-2xl animate-drawer sm:animate-fade-in pb-safe">
         <div className="flex items-center justify-between p-5 border-b border-white/5">
-          <h3 className="text-white font-black text-base flex items-center gap-2"><Eye className="w-4 h-4 text-teal-400" /> Espectadores ({connectedUsers.length})</h3>
+          <h3 className="text-white font-black text-base flex items-center gap-2"><Eye className="w-4 h-4 text-teal-400" /> {t('modal_viewers_title')} ({connectedUsers.length})</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white p-1.5 bg-white/5 hover:bg-red-500 rounded-full transition-colors"><X className="w-4 h-4" /></button>
         </div>
         <div className="p-2 max-h-[50vh] overflow-y-auto custom-scrollbar">
           {connectedUsers.length === 0 ? (
-            <div className="text-center text-gray-500 py-10 font-medium text-sm">Nadie ha entrado a la sala aún...</div>
+            <div className="text-center text-gray-500 py-10 font-medium text-sm">{t('modal_viewers_empty')}</div>
           ) : (
             connectedUsers.map((p, i) => {
-              const displayName = p.name || p.identity || 'Usuario';
+              const displayName = p.name || p.identity || t('lbl_user');
               return (
                 <div key={p.identity || i} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl transition-colors cursor-default">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center font-black text-white shadow-lg border border-white/10">{displayName.charAt(0).toUpperCase()}</div>
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-white">{displayName}</span>
-                    <span className="text-[10px] text-teal-400 font-mono flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span> Conectado en sala</span>
+                    <span className="text-[10px] text-teal-400 font-mono flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span> {t('lbl_connected')}</span>
                   </div>
                 </div>
               );
