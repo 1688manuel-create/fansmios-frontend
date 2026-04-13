@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "Odblokowane",
     "btn_processing": "Przetwarzanie...",
     "btn_unlock": "Odblokuj"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "Podstawowe Wzmocnienie",
+    "pack_basic_f1": "1 post wstawiony do kanału wszystkich",
+    "pack_basic_f2": "Czas trwania: 24 godziny",
+    "pack_pro_name": "Trendy VIP",
+    "pack_pro_f1": "Pojawia się w 'Trendy VIP' (Pulpit)",
+    "pack_pro_f2": "Post wstawiony do kanału",
+    "pack_pro_f3": "Czas trwania: 48 godzin",
+    "pack_god_name": "Sława na Poziomie Boga",
+    "pack_god_f1": "Globalna Złota Relacja VIP",
+    "pack_god_f2": "Powiadomienie Push do wszystkich użytkowników",
+    "pack_god_f3": "Czas trwania: Cały weekend",
+    "alert_insufficient_funds_1": "Nie masz wystarczających środków. Twoje obecne saldo wynosi",
+    "alert_insufficient_funds_2": "Musisz sprzedać więcej treści lub doładować saldo, aby kupić tę promocję.",
+    "alert_error_payment": "Wystąpił błąd podczas przetwarzania płatności.",
+    "modal_title": "Fansmio Boost",
+    "btn_close": "Zamknij",
+    "modal_desc": "Zainwestuj w swoją sławę. Dotrzyj do tysięcy użytkowników, którzy jeszcze Cię nie znają, i pomnóż liczbę swoich subskrybentów już dziś.",
+    "lbl_my_balance": "Moje Saldo",
+    "btn_processing": "Przetwarzanie...",
+    "btn_pay_promote": "Zapłać i Promuj"
   }
 }

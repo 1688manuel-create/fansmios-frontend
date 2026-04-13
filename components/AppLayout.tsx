@@ -1,10 +1,11 @@
-// frontend/components/AppLayout.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
+// import { useTranslations } from 'next-intl'; // 👈 Listo para usarse si en el futuro agregas texto aquí
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  // const t = useTranslations('AppLayout');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 

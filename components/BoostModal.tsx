@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { X, Rocket, Star, Zap, Crown, Wallet, CreditCard } from 'lucide-react';
 import api from '../lib/api';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 interface BoostModalProps {
   onClose: () => void;
@@ -43,8 +44,42 @@ const PACKAGES = [
 ];
 
 export default function BoostModal({ onClose, creatorBalance = 0 }: BoostModalProps) {
+  const t = useTranslations('BoostModal');
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const PACKAGES = [
+    {
+      id: 'basic',
+      name: t('pack_basic_name'),
+      price: 15.00,
+      icon: Rocket,
+      color: 'text-blue-400',
+      borderColor: 'border-blue-500/30',
+      bgHover: 'hover:bg-blue-500/10',
+      features: [t('pack_basic_f1'), t('pack_basic_f2')]
+    },
+    {
+      id: 'pro',
+      name: t('pack_pro_name'),
+      price: 25.00,
+      icon: Star,
+      color: 'text-yellow-400',
+      borderColor: 'border-yellow-500/50',
+      bgHover: 'hover:bg-yellow-500/10',
+      features: [t('pack_pro_f1'), t('pack_pro_f2'), t('pack_pro_f3')]
+    },
+    {
+      id: 'god',
+      name: t('pack_god_name'),
+      price: 50.00,
+      icon: Crown,
+      color: 'text-red-500',
+      borderColor: 'border-red-500/50',
+      bgHover: 'hover:bg-red-500/10',
+      features: [t('pack_god_f1'), t('pack_god_f2'), t('pack_god_f3')]
+    }
+  ];
 
   const handlePurchase = async () => {
     if (!selectedPackage) return;
@@ -52,15 +87,13 @@ export default function BoostModal({ onClose, creatorBalance = 0 }: BoostModalPr
     
     if (!pack) return;
 
-    // 🔥 VALIDACIÓN FRONTAL: Comparamos directamente si el saldo es menor al precio
     if (creatorBalance < pack.price) {
-        alert(`❌ No tienes saldo suficiente. Tu saldo actual es $${creatorBalance.toFixed(2)}. Necesitas vender más contenido o recargar saldo para comprar esta promoción.`);
+        alert(`❌ ${t('alert_insufficient_funds_1')} $${creatorBalance.toFixed(2)}. ${t('alert_insufficient_funds_2')}`);
         return;
     }
 
     setIsProcessing(true);
     try {
-      // 🚀 CONEXIÓN AL BACKEND: Enviamos a la nueva ruta de Promociones
       const response = await api.post('/promotions/buy', { 
           packageId: pack.id 
       });
@@ -69,7 +102,7 @@ export default function BoostModal({ onClose, creatorBalance = 0 }: BoostModalPr
       window.location.reload(); 
       onClose();
     } catch (error: any) {
-      const errorMessage = error.response?.data?.error || "Hubo un error al procesar el pago.";
+      const errorMessage = error.response?.data?.error || t('alert_error_payment');
       alert(`❌ ${errorMessage}`);
     } finally {
       setIsProcessing(false);
@@ -83,16 +116,16 @@ export default function BoostModal({ onClose, creatorBalance = 0 }: BoostModalPr
         {/* HEADER */}
         <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#0e0e0e]">
           <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500 flex items-center gap-2">
-            <Zap className="w-6 h-6 text-yellow-500 fill-yellow-500" /> Fansmio Boost
+            <Zap className="w-6 h-6 text-yellow-500 fill-yellow-500" /> {t('modal_title')}
           </h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-white nm-btn p-2 rounded-full transition-colors">
+          <button onClick={onClose} className="text-gray-500 hover:text-white nm-btn p-2 rounded-full transition-colors" title={t('btn_close')}>
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* CUERPO - SELECCIÓN DE PAQUETES */}
         <div className="p-6 space-y-6">
-          <p className="text-center text-gray-400 font-medium">Invierte en tu fama. Llega a miles de usuarios que aún no te conocen y multiplica tus suscriptores hoy mismo.</p>
+          <p className="text-center text-gray-400 font-medium">{t('modal_desc')}</p>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {PACKAGES.map((pack) => (
@@ -119,7 +152,7 @@ export default function BoostModal({ onClose, creatorBalance = 0 }: BoostModalPr
         {/* FOOTER - PAGO */}
         <div className="p-6 bg-[#0e0e0e] border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="text-sm font-bold text-gray-400 flex items-center gap-2 nm-inset px-4 py-2 rounded-xl border border-white/5">
-            <Wallet className="w-4 h-4 text-green-500" /> Mi Saldo: <span className="text-white">${creatorBalance > 0 ? creatorBalance.toFixed(2) : '0.00'}</span>
+            <Wallet className="w-4 h-4 text-green-500" /> {t('lbl_my_balance')}: <span className="text-white">${creatorBalance > 0 ? creatorBalance.toFixed(2) : '0.00'}</span>
           </div>
           
           <button 
@@ -127,7 +160,7 @@ export default function BoostModal({ onClose, creatorBalance = 0 }: BoostModalPr
             disabled={!selectedPackage || isProcessing}
             className="nm-btn-primary px-10 py-3 rounded-xl font-bold text-lg disabled:opacity-50 flex items-center gap-2 w-full sm:w-auto justify-center"
           >
-            {isProcessing ? 'Procesando...' : <><CreditCard className="w-5 h-5"/> Pagar y Promocionar</>}
+            {isProcessing ? t('btn_processing') : <><CreditCard className="w-5 h-5"/> {t('btn_pay_promote')}</>}
           </button>
         </div>
       </div>

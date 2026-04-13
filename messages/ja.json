@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "ロック解除済み",
     "btn_processing": "処理中...",
     "btn_unlock": "ロック解除"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "基本ブースト",
+    "pack_basic_f1": "みんなのフィードに1件の投稿を挿入",
+    "pack_basic_f2": "期間：24時間",
+    "pack_pro_name": "トレンドVIP",
+    "pack_pro_f1": "「トレンドVIP」に表示（デスクトップ）",
+    "pack_pro_f2": "フィードに投稿を挿入",
+    "pack_pro_f3": "期間：48時間",
+    "pack_god_name": "神レベルの名声",
+    "pack_god_f1": "グローバルVIPゴールデンストーリー",
+    "pack_god_f2": "全ユーザーにプッシュ通知",
+    "pack_god_f3": "期間：週末全体",
+    "alert_insufficient_funds_1": "残高が不足しています。現在の残高は",
+    "alert_insufficient_funds_2": "このプロモーションを購入するには、より多くのコンテンツを販売するか、残高をチャージする必要があります。",
+    "alert_error_payment": "支払いの処理中にエラーが発生しました。",
+    "modal_title": "Fansmio ブースト",
+    "btn_close": "閉じる",
+    "modal_desc": "あなたの名声に投資しましょう。まだあなたを知らない何千人ものユーザーにリーチし、今すぐ購読者を増やしましょう。",
+    "lbl_my_balance": "マイ残高",
+    "btn_processing": "処理中...",
+    "btn_pay_promote": "支払ってプロモーション"
   }
 }

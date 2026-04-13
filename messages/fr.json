@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "Débloqué",
     "btn_processing": "Traitement...",
     "btn_unlock": "Débloquer"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "Boost de base",
+    "pack_basic_f1": "1 Post injecté dans le flux de tout le monde",
+    "pack_basic_f2": "Durée : 24 heures",
+    "pack_pro_name": "VIP Tendance",
+    "pack_pro_f1": "Apparaît dans 'VIP Tendance' (Bureau)",
+    "pack_pro_f2": "Post injecté dans le flux",
+    "pack_pro_f3": "Durée : 48 heures",
+    "pack_god_name": "Célébrité Niveau Dieu",
+    "pack_god_f1": "Histoire dorée VIP mondiale",
+    "pack_god_f2": "Notification Push à tous les utilisateurs",
+    "pack_god_f3": "Durée : Tout le week-end",
+    "alert_insufficient_funds_1": "Vous n'avez pas un solde suffisant. Votre solde actuel est",
+    "alert_insufficient_funds_2": "Vous devez vendre plus de contenu ou recharger votre solde pour acheter cette promotion.",
+    "alert_error_payment": "Une erreur s'est produite lors du traitement du paiement.",
+    "modal_title": "Fansmio Boost",
+    "btn_close": "Fermer",
+    "modal_desc": "Investissez dans votre renommée. Touchez des milliers d'utilisateurs qui ne vous connaissent pas encore et multipliez vos abonnés dès aujourd'hui.",
+    "lbl_my_balance": "Mon Solde",
+    "btn_processing": "Traitement...",
+    "btn_pay_promote": "Payer et Promouvoir"
   }
 }

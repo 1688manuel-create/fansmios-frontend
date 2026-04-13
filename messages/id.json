@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "Tidak Terkunci",
     "btn_processing": "Memproses...",
     "btn_unlock": "Buka Kunci"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "Dorongan Dasar",
+    "pack_basic_f1": "1 Postingan Dimasukkan ke Umpan semua orang",
+    "pack_basic_f2": "Durasi: 24 Jam",
+    "pack_pro_name": "Trending VIP",
+    "pack_pro_f1": "Muncul di 'Trending VIP' (Desktop)",
+    "pack_pro_f2": "Postingan Dimasukkan ke Umpan",
+    "pack_pro_f3": "Durasi: 48 Jam",
+    "pack_god_name": "Ketenaran Tingkat Dewa",
+    "pack_god_f1": "Cerita Emas VIP Global",
+    "pack_god_f2": "Pemberitahuan Push ke semua pengguna",
+    "pack_god_f3": "Durasi: Sepanjang akhir pekan",
+    "alert_insufficient_funds_1": "Anda tidak memiliki saldo yang cukup. Saldo Anda saat ini adalah",
+    "alert_insufficient_funds_2": "Anda perlu menjual lebih banyak konten atau menambah saldo untuk membeli promosi ini.",
+    "alert_error_payment": "Terjadi kesalahan saat memproses pembayaran.",
+    "modal_title": "Dorongan Fansmio",
+    "btn_close": "Tutup",
+    "modal_desc": "Berinvestasi dalam ketenaran Anda. Jangkau ribuan pengguna yang belum mengenal Anda dan gandakan pelanggan Anda hari ini.",
+    "lbl_my_balance": "Saldo Saya",
+    "btn_processing": "Memproses...",
+    "btn_pay_promote": "Bayar dan Promosikan"
   }
 }

@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "Đã mở khóa",
     "btn_processing": "Đang xử lý...",
     "btn_unlock": "Mở khóa"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "Tăng cường Cơ bản",
+    "pack_basic_f1": "1 Bài đăng được chèn vào Nguồn cấp dữ liệu của mọi người",
+    "pack_basic_f2": "Thời lượng: 24 Giờ",
+    "pack_pro_name": "VIP Xu hướng",
+    "pack_pro_f1": "Xuất hiện trong 'VIP Xu hướng' (Máy tính để bàn)",
+    "pack_pro_f2": "Bài đăng được chèn vào Nguồn cấp dữ liệu",
+    "pack_pro_f3": "Thời lượng: 48 Giờ",
+    "pack_god_name": "Danh tiếng Cấp độ Thần",
+    "pack_god_f1": "Câu chuyện Vàng VIP Toàn cầu",
+    "pack_god_f2": "Thông báo Đẩy cho tất cả người dùng",
+    "pack_god_f3": "Thời lượng: Trọn cuối tuần",
+    "alert_insufficient_funds_1": "Bạn không có đủ số dư. Số dư hiện tại của bạn là",
+    "alert_insufficient_funds_2": "Bạn cần bán thêm nội dung hoặc nạp thêm số dư để mua khuyến mãi này.",
+    "alert_error_payment": "Đã xảy ra lỗi khi xử lý thanh toán.",
+    "modal_title": "Tăng cường Fansmio",
+    "btn_close": "Đóng",
+    "modal_desc": "Đầu tư vào danh tiếng của bạn. Tiếp cận hàng nghìn người dùng chưa biết đến bạn và nhân lên số lượng người đăng ký của bạn ngay hôm nay.",
+    "lbl_my_balance": "Số dư của Tôi",
+    "btn_processing": "Đang xử lý...",
+    "btn_pay_promote": "Thanh toán và Quảng bá"
   }
 }

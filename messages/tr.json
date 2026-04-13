@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "Kilidi Açıldı",
     "btn_processing": "İşleniyor...",
     "btn_unlock": "Kilidini Aç"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "Temel Destek",
+    "pack_basic_f1": "1 Gönderi herkesin Akışına eklenir",
+    "pack_basic_f2": "Süre: 24 Saat",
+    "pack_pro_name": "Trend VIP",
+    "pack_pro_f1": "'Trend VIP'lerde görünür (Masaüstü)",
+    "pack_pro_f2": "Akışa Gönderi Eklendi",
+    "pack_pro_f3": "Süre: 48 Saat",
+    "pack_god_name": "Tanrı Seviyesi Şöhret",
+    "pack_god_f1": "Global VIP Altın Hikaye",
+    "pack_god_f2": "Tüm kullanıcılara Anında Bildirim",
+    "pack_god_f3": "Süre: Tüm hafta sonu",
+    "alert_insufficient_funds_1": "Yeterli bakiyeniz yok. Mevcut bakiyeniz",
+    "alert_insufficient_funds_2": "Bu promosyonu satın almak için daha fazla içerik satmanız veya bakiye yüklemeniz gerekir.",
+    "alert_error_payment": "Ödeme işlenirken bir hata oluştu.",
+    "modal_title": "Fansmio Boost",
+    "btn_close": "Kapat",
+    "modal_desc": "Şöhretinize yatırım yapın. Sizi henüz tanımayan binlerce kullanıcıya ulaşın ve bugün abonelerinizi katlayın.",
+    "lbl_my_balance": "Bakiyem",
+    "btn_processing": "İşleniyor...",
+    "btn_pay_promote": "Öde ve Tanıt"
   }
 }

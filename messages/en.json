@@ -1131,5 +1131,28 @@
     "lbl_unlocked": "Unlocked",
     "btn_processing": "Processing...",
     "btn_unlock": "Unlock"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "Basic Boost",
+    "pack_basic_f1": "1 Post Injected in everyone's Feed",
+    "pack_basic_f2": "Duration: 24 Hours",
+    "pack_pro_name": "Trending VIP",
+    "pack_pro_f1": "Appears in 'Trending VIP' (Desktop)",
+    "pack_pro_f2": "Post Injected in the Feed",
+    "pack_pro_f3": "Duration: 48 Hours",
+    "pack_god_name": "God Tier Fame",
+    "pack_god_f1": "Global VIP Golden Story",
+    "pack_god_f2": "Push Notification to all users",
+    "pack_god_f3": "Duration: Full Weekend",
+    "alert_insufficient_funds_1": "You don't have enough balance. Your current balance is",
+    "alert_insufficient_funds_2": "You need to sell more content or top up your balance to buy this promotion.",
+    "alert_error_payment": "There was an error processing the payment.",
+    "modal_title": "Fansmio Boost",
+    "btn_close": "Close",
+    "modal_desc": "Invest in your fame. Reach thousands of users who don't know you yet and multiply your subscribers today.",
+    "lbl_my_balance": "My Balance",
+    "btn_processing": "Processing...",
+    "btn_pay_promote": "Pay and Promote"
   }
 }

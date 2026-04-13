@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "已解锁",
     "btn_processing": "正在处理...",
     "btn_unlock": "解锁"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "基础提升",
+    "pack_basic_f1": "1 篇帖子插入所有人的动态中",
+    "pack_basic_f2": "持续时间：24 小时",
+    "pack_pro_name": "热门 VIP",
+    "pack_pro_f1": "出现在“热门 VIP”中（桌面端）",
+    "pack_pro_f2": "帖子插入动态中",
+    "pack_pro_f3": "持续时间：48 小时",
+    "pack_god_name": "神级名气",
+    "pack_god_f1": "全球 VIP 黄金快拍",
+    "pack_god_f2": "向所有用户发送推送通知",
+    "pack_god_f3": "持续时间：整个周末",
+    "alert_insufficient_funds_1": "您的余额不足。您当前的余额是",
+    "alert_insufficient_funds_2": "您需要出售更多内容或充值余额才能购买此促销活动。",
+    "alert_error_payment": "处理付款时出错。",
+    "modal_title": "Fansmio 提升",
+    "btn_close": "关闭",
+    "modal_desc": "投资您的名气。触及成千上万还不认识您的用户，并在今天成倍增加您的订阅者。",
+    "lbl_my_balance": "我的余额",
+    "btn_processing": "正在处理...",
+    "btn_pay_promote": "支付并推广"
   }
 }

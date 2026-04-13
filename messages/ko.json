@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "잠금 해제됨",
     "btn_processing": "처리 중...",
     "btn_unlock": "잠금 해제"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "기본 부스트",
+    "pack_basic_f1": "모든 사람의 피드에 1개의 게시물 삽입",
+    "pack_basic_f2": "지속 시간: 24시간",
+    "pack_pro_name": "인기 VIP",
+    "pack_pro_f1": "'인기 VIP'에 표시됨(데스크톱)",
+    "pack_pro_f2": "피드에 게시물 삽입됨",
+    "pack_pro_f3": "지속 시간: 48시간",
+    "pack_god_name": "신급 명성",
+    "pack_god_f1": "글로벌 VIP 골든 스토리",
+    "pack_god_f2": "모든 사용자에게 푸시 알림",
+    "pack_god_f3": "지속 시간: 주말 내내",
+    "alert_insufficient_funds_1": "잔액이 부족합니다. 현재 잔액은",
+    "alert_insufficient_funds_2": "이 프로모션을 구매하려면 더 많은 콘텐츠를 판매하거나 잔액을 충전해야 합니다.",
+    "alert_error_payment": "결제 처리 중 오류가 발생했습니다.",
+    "modal_title": "Fansmio 부스트",
+    "btn_close": "닫기",
+    "modal_desc": "당신의 명성에 투자하세요. 아직 당신을 모르는 수천 명의 사용자에게 도달하고 오늘 구독자를 늘리세요.",
+    "lbl_my_balance": "내 잔액",
+    "btn_processing": "처리 중...",
+    "btn_pay_promote": "결제 및 프로모션"
   }
 }

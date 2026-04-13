@@ -10,6 +10,7 @@ import {
   Lock,
   CheckCircle2
 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 interface PaymentModalProps {
   clientSecret?: string;
@@ -30,6 +31,7 @@ export default function PaymentModal({
   amountUsd
 }: PaymentModalProps) {
   
+  const t = useTranslations('PaymentModal'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [isProcessing, setIsProcessing] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponApplied, setCouponApplied] = useState(false);
@@ -64,6 +66,7 @@ export default function PaymentModal({
         <button 
           onClick={onClose} 
           className="absolute top-5 right-5 text-gray-500 hover:text-white nm-btn w-10 h-10 rounded-full flex items-center justify-center transition-colors z-50"
+          title={t('btn_close')}
         >
           <X className="w-5 h-5" />
         </button>
@@ -73,23 +76,23 @@ export default function PaymentModal({
             <div className="w-16 h-16 nm-inset border border-white/5 rounded-2xl flex items-center justify-center text-red-500 shadow-inner mb-6">
               <CreditCard className="w-8 h-8 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
             </div>
-            <h2 className="text-3xl font-black text-white tracking-tight">Completar Pago</h2>
-            <p className="text-gray-400 text-sm mt-2 font-medium">Estás a un paso de desbloquear contenido exclusivo.</p>
+            <h2 className="text-3xl font-black text-white tracking-tight">{t('title')}</h2>
+            <p className="text-gray-400 text-sm mt-2 font-medium">{t('subtitle')}</p>
           </div>
 
           <div className="nm-inset border border-white/5 rounded-2xl p-6 mb-8 flex-1">
             <div className="flex justify-between items-center mb-4 text-gray-400 text-sm font-bold uppercase tracking-widest">
-              <span>Subtotal</span>
+              <span>{t('lbl_subtotal')}</span>
               {/* 🛡️ APLICAMOS EL ESCUDO AL TOFIXED */}
               <span className="text-white">${safePrice.toFixed(2)} USD</span>
             </div>
             <div className="flex justify-between items-center mb-4 text-gray-400 text-sm font-bold uppercase tracking-widest">
-              <span>Comisión Bancaria</span>
-              <span className="text-green-400">Cubierta</span>
+              <span>{t('lbl_bank_fee')}</span>
+              <span className="text-green-400">{t('lbl_covered')}</span>
             </div>
             {couponApplied && (
                <div className="flex justify-between items-center mb-4 text-green-400 text-sm font-bold uppercase tracking-widest">
-                 <span>Descuento</span>
+                 <span>{t('lbl_discount')}</span>
                  <span>-10%</span>
                </div>
             )}
@@ -97,7 +100,7 @@ export default function PaymentModal({
             <div className="w-full h-px bg-white/5 my-5"></div>
             
             <div className="flex justify-between items-end text-white">
-              <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">Total a Pagar</span>
+              <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">{t('lbl_total')}</span>
               <span className="text-4xl font-black text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]">
                 {/* 🛡️ APLICAMOS EL ESCUDO AL TOFIXED */}
                 ${couponApplied ? (safePrice * 0.9).toFixed(2) : safePrice.toFixed(2)} <span className="text-lg text-red-700">USD</span>
@@ -107,12 +110,12 @@ export default function PaymentModal({
 
           <div className="mt-auto">
             <label className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2 ml-1 flex items-center gap-1.5">
-              <TicketPercent className="w-3 h-3" /> ¿Tienes un cupón promocional?
+              <TicketPercent className="w-3 h-3" /> {t('lbl_have_coupon')}
             </label>
             <div className="flex gap-2">
               <input 
                 type="text" 
-                placeholder="Ej: FANSVIP" 
+                placeholder={t('ph_coupon')} 
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                 disabled={couponApplied}
@@ -123,7 +126,7 @@ export default function PaymentModal({
                 disabled={!couponCode || couponApplied}
                 className="nm-btn border border-white/5 text-white px-6 py-3 rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center gap-2 text-sm"
               >
-                {couponApplied ? <><CheckCircle2 className="w-4 h-4 text-green-500"/> Listo</> : 'Aplicar'}
+                {couponApplied ? <><CheckCircle2 className="w-4 h-4 text-green-500"/> {t('btn_applied')}</> : t('btn_apply')}
               </button>
             </div>
           </div>
@@ -134,7 +137,7 @@ export default function PaymentModal({
             {!payAddress ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-nm-base z-10">
                 <Loader2 className="w-10 h-10 text-red-500 animate-spin mb-4" />
-                <p className="text-white font-bold text-lg">Iniciando pasarela segura...</p>
+                <p className="text-white font-bold text-lg">{t('loading_gateway')}</p>
               </div>
             ) : (
               <iframe 
@@ -151,12 +154,12 @@ export default function PaymentModal({
               disabled={isProcessing}
               className="mt-6 nm-btn border-dashed border-yellow-500/50 text-yellow-500 font-bold py-3 rounded-xl hover:bg-yellow-500 hover:text-black transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-xs uppercase tracking-widest"
             >
-              {isProcessing ? <><Loader2 className="w-4 h-4 animate-spin"/> Simulando...</> : <><ShieldCheck className="w-4 h-4" /> [DEV] Simular Pago Exitoso</>}
+              {isProcessing ? <><Loader2 className="w-4 h-4 animate-spin"/> {t('btn_simulating')}</> : <><ShieldCheck className="w-4 h-4" /> {t('btn_simulate_success')}</>}
             </button>
           )}
 
           <p className="text-[10px] text-gray-500 text-center mt-5 flex items-center justify-center gap-1.5 font-bold uppercase tracking-widest">
-            <Lock className="w-3 h-3"/> Encriptación AES-256 Covra Pay
+            <Lock className="w-3 h-3"/> {t('lbl_encryption')}
           </p>
         </div>
 

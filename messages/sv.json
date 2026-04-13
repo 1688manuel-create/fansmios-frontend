@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "Upplåst",
     "btn_processing": "Bearbetar...",
     "btn_unlock": "Lås upp"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "Grundläggande Boost",
+    "pack_basic_f1": "1 Inlägg injiceras i allas flöde",
+    "pack_basic_f2": "Längd: 24 timmar",
+    "pack_pro_name": "Trending VIP",
+    "pack_pro_f1": "Syns i 'Trending VIP' (Skrivbord)",
+    "pack_pro_f2": "Inlägg injicerat i flödet",
+    "pack_pro_f3": "Längd: 48 timmar",
+    "pack_god_name": "Gudsnivå Berömmelse",
+    "pack_god_f1": "Global VIP Golden Story",
+    "pack_god_f2": "Push-notis till alla användare",
+    "pack_god_f3": "Längd: Hela helgen",
+    "alert_insufficient_funds_1": "Du har inte tillräckligt med saldo. Ditt nuvarande saldo är",
+    "alert_insufficient_funds_2": "Du måste sälja mer innehåll eller fylla på ditt saldo för att köpa den här kampanjen.",
+    "alert_error_payment": "Ett fel uppstod vid betalningshanteringen.",
+    "modal_title": "Fansmio Boost",
+    "btn_close": "Stäng",
+    "modal_desc": "Investera i din berömmelse. Nå tusentals användare som ännu inte känner dig och multiplicera dina prenumeranter idag.",
+    "lbl_my_balance": "Mitt Saldo",
+    "btn_processing": "Bearbetar...",
+    "btn_pay_promote": "Betala och Marknadsför"
   }
 }

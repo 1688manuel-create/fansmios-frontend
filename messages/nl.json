@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "Ontgrendeld",
     "btn_processing": "Verwerken...",
     "btn_unlock": "Ontgrendelen"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "Basis Boost",
+    "pack_basic_f1": "1 Post Geïnjecteerd in ieders Feed",
+    "pack_basic_f2": "Duur: 24 Uur",
+    "pack_pro_name": "Trending VIP",
+    "pack_pro_f1": "Verschijnt in 'Trending VIP' (Desktop)",
+    "pack_pro_f2": "Post Geïnjecteerd in de Feed",
+    "pack_pro_f3": "Duur: 48 Uur",
+    "pack_god_name": "God Level Roem",
+    "pack_god_f1": "Wereldwijde VIP Gouden Verhaal",
+    "pack_god_f2": "Pushmelding naar alle gebruikers",
+    "pack_god_f3": "Duur: Volledig weekend",
+    "alert_insufficient_funds_1": "U heeft niet genoeg saldo. Uw huidige saldo is",
+    "alert_insufficient_funds_2": "U moet meer content verkopen of uw saldo opwaarderen om deze promotie te kopen.",
+    "alert_error_payment": "Er is een fout opgetreden bij het verwerken van de betaling.",
+    "modal_title": "Fansmio Boost",
+    "btn_close": "Sluiten",
+    "modal_desc": "Investeer in uw roem. Bereik duizenden gebruikers die u nog niet kennen en vermenigvuldig uw abonnees vandaag nog.",
+    "lbl_my_balance": "Mijn Saldo",
+    "btn_processing": "Verwerken...",
+    "btn_pay_promote": "Betalen en Promoten"
   }
 }

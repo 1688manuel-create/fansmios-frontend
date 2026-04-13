@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "Desbloqueado",
     "btn_processing": "Processando...",
     "btn_unlock": "Desbloquear"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "Impulso Básico",
+    "pack_basic_f1": "1 Post Injetado no Feed de todos",
+    "pack_basic_f2": "Duração: 24 Horas",
+    "pack_pro_name": "Trending VIP",
+    "pack_pro_f1": "Aparece em 'Trending VIP' (Desktop)",
+    "pack_pro_f2": "Post Injetado no Feed",
+    "pack_pro_f3": "Duração: 48 Horas",
+    "pack_god_name": "Fama Nível Deus",
+    "pack_god_f1": "História Dourada VIP Global",
+    "pack_god_f2": "Notificação Push para todos os usuários",
+    "pack_god_f3": "Duração: Final de semana completo",
+    "alert_insufficient_funds_1": "Você não tem saldo suficiente. Seu saldo atual é",
+    "alert_insufficient_funds_2": "Você precisa vender mais conteúdo ou recarregar saldo para comprar esta promoção.",
+    "alert_error_payment": "Houve um erro ao processar o pagamento.",
+    "modal_title": "Fansmio Boost",
+    "btn_close": "Fechar",
+    "modal_desc": "Invista na sua fama. Alcance milhares de usuários que ainda não conhecem você e multiplique seus assinantes hoje.",
+    "lbl_my_balance": "Meu Saldo",
+    "btn_processing": "Processando...",
+    "btn_pay_promote": "Pagar e Promover"
   }
 }

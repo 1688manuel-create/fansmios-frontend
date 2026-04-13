@@ -1132,5 +1132,28 @@
     "lbl_unlocked": "Freigeschaltet",
     "btn_processing": "Wird bearbeitet...",
     "btn_unlock": "Freischalten"
+  },
+
+  "BoostModal": {
+    "pack_basic_name": "Basis-Boost",
+    "pack_basic_f1": "1 Beitrag im Feed von allen",
+    "pack_basic_f2": "Dauer: 24 Stunden",
+    "pack_pro_name": "Trending VIP",
+    "pack_pro_f1": "Erscheint in 'Trending VIP' (Desktop)",
+    "pack_pro_f2": "Beitrag in den Feed eingefügt",
+    "pack_pro_f3": "Dauer: 48 Stunden",
+    "pack_god_name": "Gott-Level Ruhm",
+    "pack_god_f1": "Globale VIP Golden Story",
+    "pack_god_f2": "Push-Benachrichtigung an alle Benutzer",
+    "pack_god_f3": "Dauer: Ganzes Wochenende",
+    "alert_insufficient_funds_1": "Sie haben nicht genug Guthaben. Ihr aktuelles Guthaben ist",
+    "alert_insufficient_funds_2": "Sie müssen mehr Inhalte verkaufen oder Ihr Guthaben aufladen, um diese Aktion zu kaufen.",
+    "alert_error_payment": "Fehler bei der Zahlungsabwicklung.",
+    "modal_title": "Fansmio Boost",
+    "btn_close": "Schließen",
+    "modal_desc": "Investieren Sie in Ihren Ruhm. Erreichen Sie Tausende von Benutzern, die Sie noch nicht kennen, und vervielfachen Sie Ihre Abonnenten noch heute.",
+    "lbl_my_balance": "Mein Guthaben",
+    "btn_processing": "Wird bearbeitet...",
+    "btn_pay_promote": "Bezahlen und Bewerben"
   }
-}
+}  
