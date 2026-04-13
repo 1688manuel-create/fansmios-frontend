@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 
 import { requestPushPermission } from '../../../lib/firebase';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -56,6 +57,7 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
 
 // 🌳 NODO DE COMENTARIOS (Plano con Escáner y PODERES DE MODERACIÓN TIMIDOS)
 const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDelete, onReport, onBlock, isExpanded }: { comment: any, postId: string, postOwnerId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, onReport: (commentId: string, username: string) => void, onBlock: (userId: string, username: string) => void, isExpanded: boolean }) => {
+  const t = useTranslations('Feed'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   
   // 🛡️ PODERES DE JERARQUÍA
   const isCommentAuthor = currentUser?.id === comment.userId;
@@ -96,20 +98,20 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
         <span className="text-gray-400">{comment.content}</span>
         
         <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-          <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:text-blue-300 font-bold transition-colors">Responder</button>
+          <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:text-blue-300 font-bold transition-colors">{t('btn_reply')}</button>
           
           {/* BOTÓN ELIMINAR (Aparece en Hover) */}
           {canDelete && (
-            <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:text-red-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">Eliminar</button>
+            <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:text-red-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">{t('btn_delete')}</button>
           )}
           
           {/* BOTONES DE MODERACIÓN (Aparecen en Hover) */}
           {!isCommentAuthor && (
             <>
-              <button onClick={() => onReport(comment.id, comment.user?.username)} className="text-[11px] text-yellow-500 hover:text-yellow-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">Reportar</button>
+              <button onClick={() => onReport(comment.id, comment.user?.username)} className="text-[11px] text-yellow-500 hover:text-yellow-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">{t('btn_report')}</button>
               
               {(isPostOwner || isAdmin) && (
-                <button onClick={() => onBlock(comment.userId, comment.user?.username)} className="text-[11px] text-orange-500 hover:text-orange-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">Bloquear</button>
+                <button onClick={() => onBlock(comment.userId, comment.user?.username)} className="text-[11px] text-orange-500 hover:text-orange-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">{t('btn_block')}</button>
               )}
             </>
           )}
@@ -120,7 +122,7 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
         <>
           <button onClick={() => setShowReplies(!showReplies)} className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors">
             <div className="w-6 h-[1px] bg-gray-600"></div>
-            {showReplies ? 'Ocultar respuestas' : `Ver ${comment.replies.length} ${comment.replies.length === 1 ? 'respuesta' : 'respuestas'}`}
+            {showReplies ? t('btn_hide_replies') : `${t('btn_view')} ${comment.replies.length} ${comment.replies.length === 1 ? t('lbl_reply') : t('lbl_replies')}`}
           </button>
 
           {showReplies && (
@@ -138,6 +140,7 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
 
 export default function Feed() {
   const router = useRouter();
+  const t = useTranslations('Feed'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -351,7 +354,7 @@ export default function Feed() {
       setExpandedComments(prev => ({...prev, [postId]: true}));
       fetchData(); 
     } catch (error) {
-      alert("Error al enviar comentario");
+      alert(t('alert_publish_error'));
     } finally {
       setIsSubmittingComment(false);
     }
@@ -363,23 +366,23 @@ export default function Feed() {
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    if (!window.confirm("🚨 ¿Seguro que deseas eliminar este comentario?")) return;
+    if (!window.confirm(t('confirm_delete_comment'))) return;
     try {
       await api.delete(`/posts/comments/${commentId}`); 
       fetchData(); 
     } catch (error) {
-      alert("Error al eliminar comentario.");
+      alert(t('alert_error_delete_comment'));
     }
   };
 
   const handleBlockUser = async (userId: string, username: string) => {
-    if (!window.confirm(`🚨 ¿Estás seguro de que deseas BLOQUEAR a @${username}? Ya no podrá interactuar contigo.`)) return;
+    if (!window.confirm(`${t('confirm_block_user_1')} @${username}? ${t('confirm_block_user_2')}`)) return;
     try {
-      await api.post(`/users/${userId}/block`); // Asegúrate de tener este endpoint en tu backend
-      alert(`🚫 Has bloqueado a @${username}.`);
+      await api.post(`/users/${userId}/block`); 
+      alert(`🚫 ${t('alert_blocked')} @${username}.`);
       fetchData(); 
     } catch (error) {
-      alert("Error al intentar bloquear al usuario.");
+      alert(t('alert_error_block'));
     }
   };
 
@@ -393,14 +396,14 @@ export default function Feed() {
         description: 'Desbloqueo de Post'
       });
       if (data.success || data.receipt) {
-        alert('✅ ¡Contenido desbloqueado con Covra Pay!');
+        alert(t('alert_unlocked'));
         fetchData();
       } else {
         setClientSecret(data.clientSecret);
         setSelectedPost(post);
         setIsPaymentModalOpen(true);
       }
-    } catch (error) { alert('Error con la pasarela.'); }
+    } catch (error) { alert(t('alert_gateway_error')); }
   };
 
   const handleUnlockBundle = async (bundle: any) => {
@@ -414,7 +417,7 @@ export default function Feed() {
       };
       const data = await paymentService.createPaymentIntent(payload);
       if (data.success || data.receipt) {
-        alert('✅ ¡Paquete comprado con éxito por Covra Pay!');
+        alert(t('alert_bundle_bought'));
         fetchData();
       } else {
         setClientSecret(data.clientSecret);
@@ -422,7 +425,7 @@ export default function Feed() {
         setIsPaymentModalOpen(true);
       }
     } catch (error) { 
-      alert('Error al procesar el pago del paquete.'); 
+      alert(t('alert_error_bundle')); 
     }
   };
 
@@ -447,19 +450,19 @@ export default function Feed() {
       setNewPostContent(''); setIsPPV(false); setPrice(''); setSelectedImage(null); setImagePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = ''; 
       fetchData(); 
-    } catch (error: any) { alert(error.response?.data?.error || 'Error al publicar.'); } 
+    } catch (error: any) { alert(error.response?.data?.error || t('alert_publish_error')); } 
     finally { setIsPublishing(false); }
   };
 
   const handleStoryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      const caption = window.prompt("Mensaje para tus fans (Opcional):");
+      const caption = window.prompt(t('prompt_story_msg'));
       setIsUploadingStory(true);
       try {
         await storyService.createStory(file, caption || '');
         await fetchData(); 
-      } catch (error) { alert("Error al subir historia."); } 
+      } catch (error) { alert(t('alert_story_error')); } 
       finally {
         setIsUploadingStory(false);
         if (storyFileInputRef.current) storyFileInputRef.current.value = '';
@@ -468,17 +471,17 @@ export default function Feed() {
   };
 
   const handleStartLive = async () => {
-    const title = window.prompt("Título de tu transmisión:", "¡Cotorreando!");
+    const title = window.prompt(t('prompt_live_title'));
     if (!title) return; 
     try {
       const res = await liveService.createStream(title);
       router.push(`/live/${res.liveStream.id}`);
-    } catch (error) { alert("Error al iniciar Live."); }
+    } catch (error) { alert(t('alert_live_error')); }
   };
 
   const openStory = async (story: any) => {
     setActiveStory(story);
-    setCurrentStoryIndex(0); // 🔥 LA PIEZA CLAVE: Reiniciamos el reloj al abrir
+    setCurrentStoryIndex(0); 
     try { 
       await storyService.viewStory(story.id); 
       fetchData(); 
@@ -486,22 +489,22 @@ export default function Feed() {
   };
 
   const handleDeleteStory = async (storyId: string) => {
-    if (!window.confirm("🚨 ¿Estás seguro de que deseas eliminar esta historia?")) return;
+    if (!window.confirm(t('confirm_delete_story'))) return;
     try {
       await api.delete(`/stories/${storyId}`);
-      alert("✅ Historia eliminada.");
+      alert(t('alert_story_deleted'));
       setActiveStory(null); 
       fetchData(); 
-    } catch (error) { alert("Error al intentar eliminar la historia."); }
+    } catch (error) { alert(t('alert_error_delete_story')); }
   };
 
   const handleDeletePost = async (postId: string) => {
-    if (!window.confirm("🚨 ¿Estás seguro de que deseas eliminar esta publicación para siempre?")) return;
+    if (!window.confirm(t('confirm_delete_post'))) return;
     try {
       await api.delete(`/posts/${postId}`);
-      alert("✅ Publicación eliminada.");
+      alert(t('alert_post_deleted'));
       fetchData();
-    } catch (error) { alert("Error al intentar eliminar la publicación."); }
+    } catch (error) { alert(t('alert_error_delete_post')); }
   };
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
@@ -572,7 +575,7 @@ export default function Feed() {
             </span>
             
             <button onClick={() => router.push('/dashboard/notifications')} className="relative text-xs nm-btn text-gray-300 px-3 sm:px-4 py-2 rounded-full hover:text-white transition-all font-bold flex items-center gap-1.5">
-              <Bell className="w-4 h-4" /> <span className="hidden sm:inline">Notificaciones</span>
+              <Bell className="w-4 h-4" /> <span className="hidden sm:inline">{t('nav_notifs')}</span>
               {unreadNotifications > 0 && (
                 <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -584,14 +587,14 @@ export default function Feed() {
             {/* 🔥 NUEVO BOTÓN BILLETERA COVRA PAY 🔥 */}
             <button onClick={() => router.push('/dashboard/wallet')} className={`relative text-xs px-3 sm:px-4 py-2 rounded-full transition-all font-bold flex items-center gap-1.5 ${walletBalance > 0 ? 'nm-inset border border-green-500/30 text-green-400 shadow-[inset_0_0_10px_rgba(34,197,94,0.1)]' : 'nm-btn text-gray-300 hover:text-white'}`}>
               <Wallet className={`w-4 h-4 ${walletBalance > 0 ? 'drop-shadow-[0_0_5px_rgba(34,197,94,0.8)]' : ''}`} /> 
-              <span className="hidden sm:inline">{walletBalance > 0 ? `$${walletBalance.toFixed(2)}` : 'Billetera'}</span>
+              <span className="hidden sm:inline">{walletBalance > 0 ? `$${walletBalance.toFixed(2)}` : t('nav_wallet')}</span>
             </button>
 
             <button onClick={() => router.push('/dashboard')} className="text-xs nm-btn text-gray-300 px-3 sm:px-4 py-2 rounded-full hover:text-white transition-all font-bold flex items-center gap-1.5">
-              <LayoutDashboard className="w-4 h-4" /> <span className="hidden sm:inline">{user?.role === 'CREATOR' ? 'Panel' : 'Herramientas'}</span>
+              <LayoutDashboard className="w-4 h-4" /> <span className="hidden sm:inline">{user?.role === 'CREATOR' ? t('nav_panel') : t('nav_tools')}</span>
             </button>
-            <button onClick={handleLogout} className="relative text-xs nm-btn text-red-500 px-3 sm:px-4 py-2 rounded-full hover:text-white hover:bg-red-600 transition-all font-bold flex items-center gap-1.5" title="Cerrar Sesión">
-              <LogOut className="w-4 h-4" /> <span className="hidden sm:inline">Salir</span>
+            <button onClick={handleLogout} className="relative text-xs nm-btn text-red-500 px-3 sm:px-4 py-2 rounded-full hover:text-white hover:bg-red-600 transition-all font-bold flex items-center gap-1.5" title={t('btn_logout')}>
+              <LogOut className="w-4 h-4" /> <span className="hidden sm:inline">{t('btn_exit')}</span>
             </button>
           </div>
         </nav>
@@ -608,7 +611,7 @@ export default function Feed() {
                       {isUploadingStory ? <span className="text-xl animate-spin">⏳</span> : <Plus className="w-6 h-6 text-gray-400 group-hover:text-red-400 transition-colors" />}
                     </div>
                   </div>
-                  <span className="text-xs text-gray-400 max-w-[64px] truncate font-medium">Tu historia</span>
+                  <span className="text-xs text-gray-400 max-w-[64px] truncate font-medium">{t('lbl_your_story')}</span>
                   <input type="file" accept="image/*,video/*" className="hidden" ref={storyFileInputRef} onChange={handleStoryUpload} />
                 </div>
               )}
@@ -692,7 +695,7 @@ export default function Feed() {
                   </div>
                   
                   <div className="w-full pt-2">
-                    <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} className="w-full bg-transparent text-white placeholder-gray-500 outline-none resize-none" placeholder="¿Qué contenido exclusivo vas a subir hoy?" rows={2}></textarea>
+                    <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} className="w-full bg-transparent text-white placeholder-gray-500 outline-none resize-none" placeholder={t('ph_new_post')} rows={2}></textarea>
                     {imagePreview && (
                       <div className="relative mt-3 rounded-2xl overflow-hidden border border-white/10 inline-block shadow-lg">
                         <img src={imagePreview} alt="Preview" draggable="false" onContextMenu={(e) => e.preventDefault()} className="max-h-64 object-cover" />
@@ -704,7 +707,7 @@ export default function Feed() {
 
                 {isPPV && (
                   <div className="flex items-center gap-3 pl-16 py-2 animate-fade-in">
-                    <span className="text-green-400 font-bold text-sm">Precio PPV:</span>
+                    <span className="text-green-400 font-bold text-sm">{t('lbl_ppv_price')}</span>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
                       <input type="number" min="1" step="0.01" placeholder="0.00" value={price} onChange={(e) => setPrice(e.target.value)} className="nm-inset border border-green-500/20 rounded-xl pl-8 pr-4 py-2.5 text-white outline-none w-32 font-bold text-sm"/>
@@ -715,11 +718,11 @@ export default function Feed() {
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-white/5">
                   <div className="flex flex-wrap gap-2 text-sm font-bold items-center w-full sm:w-auto">
                     <input type="file" accept="image/*,video/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
-                    <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-4 py-2.5 nm-btn text-gray-400 hover:text-white transition-colors"><ImageIcon className="w-4 h-4" /> <span className="hidden sm:inline">Media</span></button>
+                    <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-4 py-2.5 nm-btn text-gray-400 hover:text-white transition-colors"><ImageIcon className="w-4 h-4" /><span className="hidden sm:inline">{t('btn_media')}</span></button>
                     <button onClick={() => setIsPPV(!isPPV)} className={`flex items-center gap-2 px-4 py-2.5 nm-btn transition-colors ${isPPV ? 'text-green-400 border border-green-500/30' : 'text-yellow-500'}`}><Lock className="w-4 h-4" /> <span className="hidden sm:inline">PPV</span></button>
-                    <button onClick={handleStartLive} className="flex items-center gap-2 px-4 py-2.5 nm-btn text-red-500 hover:text-red-400 group"><Radio className="w-4 h-4 animate-pulse" /> <span className="hidden sm:inline">Live</span></button>
+                    <button onClick={handleStartLive} className="flex items-center gap-2 px-4 py-2.5 nm-btn text-red-500 hover:text-red-400 group"><Radio className="w-4 h-4 animate-pulse" /><span className="hidden sm:inline">{t('btn_live')}</span></button>
                   </div>
-                  <button onClick={handlePublish} disabled={isPublishing || (!newPostContent.trim() && !selectedImage) || (isPPV && !price)} className="w-full sm:w-auto nm-btn-primary px-8 py-3">{isPublishing ? 'Subiendo...' : 'Publicar'}</button>
+                  <button onClick={handlePublish} disabled={isPublishing || (!newPostContent.trim() && !selectedImage) || (isPPV && !price)} className="w-full sm:w-auto nm-btn-primary px-8 py-3">{isPublishing ? t('btn_uploading') : t('btn_publish')}</button>
                 </div>
               </div>
             )}
@@ -727,7 +730,7 @@ export default function Feed() {
             {/* FEED POSTS */}
             <div className="space-y-6">
               {posts.length === 0 ? (
-                <div className="text-center text-gray-500 py-10 nm-inset border border-white/5 rounded-3xl">Sin publicaciones aún.</div>
+                <div className="text-center text-gray-500 py-10 nm-inset border border-white/5 rounded-3xl">{t('empty_feed')}</div>
               ) : (
                 posts.map((post, index) => {
                   const isOwner = user && post.user && user.id === post.user.id;
@@ -743,7 +746,7 @@ export default function Feed() {
                       {post.isPromoted && (
                         <div className="flex items-center gap-2 text-yellow-500 mb-[-12px] ml-4 relative z-10 animate-fade-in">
                           <Star className="w-4 h-4 fill-yellow-500" />
-                          <span className="text-xs font-black uppercase tracking-widest">Recomendado para ti</span>
+                          <span className="text-xs font-black uppercase tracking-widest">{t('lbl_recommended')}</span>
                         </div>
                       )}
 
@@ -754,7 +757,7 @@ export default function Feed() {
                           <button 
                             onClick={() => handleDeletePost(post.id)}
                             className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
-                            title="Eliminar publicación"
+                            title={t('title_delete_post')}
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
@@ -762,7 +765,7 @@ export default function Feed() {
                           <button 
                             onClick={() => setReportData({ type: 'POST', targetId: post.id, reportedUsername: post.user?.username })}
                             className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20 opacity-50 hover:opacity-100"
-                            title="Reportar esta publicación al Administrador"
+                            title={t('title_report_post')}
                           >
                             <Flag className="w-5 h-5" />
                           </button>
@@ -778,12 +781,12 @@ export default function Feed() {
                               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
                                 {post.isPPV ? (
                                   !post.hasAccess ? (
-                                    <><Lock className="w-3 h-3 text-red-400"/> {isOwner ? `Tu PPV: $${(post.price || 0).toFixed(2)}` : 'Exclusivo PPV'}</>
+                                    <><Lock className="w-3 h-3 text-red-400"/> {isOwner ? `Tu PPV: $${(post.price || 0).toFixed(2)}` : t('lbl_exclusive_ppv')}</>
                                   ) : (
-                                    <><Unlock className="w-3 h-3 text-green-400"/> {isOwner ? `Tu PPV: $${(post.price || 0).toFixed(2)}` : 'Desbloqueado'}</>
+                                    <><Unlock className="w-3 h-3 text-green-400"/> {isOwner ? `Tu PPV: $${(post.price || 0).toFixed(2)}` : t('lbl_unlocked')}</>
                                   )
                                 ) : !post.hasAccess ? (
-                                  <><Lock className="w-3 h-3 text-red-400"/> Exclusivo VIP</>
+                                  <><Lock className="w-3 h-3 text-red-400"/> {t('lbl_exclusive_vip')}</>
                                 ) : (
                                   <><Star className="w-3 h-3 text-yellow-500"/> VIP</>
                                 )}
@@ -814,11 +817,11 @@ export default function Feed() {
                               <Lock className={`w-14 h-14 mb-4 ${post.isPromoted ? 'text-yellow-500' : 'text-red-500'}`} />
                               {isOwner ? (
                                 <button disabled className="py-3 px-8 text-sm flex items-center gap-2 font-bold nm-inset text-red-500 cursor-default rounded-xl">
-                                  <Lock className="w-4 h-4"/> Tu PPV (${(post.price || 0).toFixed(2)})
+                                  <Lock className="w-4 h-4"/> {t('lbl_your_ppv')} (${(post.price || 0).toFixed(2)})
                                 </button>
                               ) : (
                                 <button onClick={() => handleUnlockClick(post)} className={`py-3 px-8 text-sm flex items-center gap-2 font-bold ${post.isPromoted ? 'bg-yellow-500 text-black rounded-full shadow-[0_0_15px_rgba(234,179,8,0.4)]' : 'nm-btn-primary rounded-xl'}`}>
-                                  <Unlock className="w-4 h-4"/> Desbloquear por ${(post.price || 0).toFixed(2)}
+                                  {t('btn_unlock_for')} ${(post.price || 0).toFixed(2)}
                                 </button>
                               )}
                             </div>
@@ -871,7 +874,7 @@ export default function Feed() {
                                 {!isOwner && (
                                   <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
                                     <Coins className="w-5 h-5" />
-                                    <span className="text-sm hidden sm:inline">Propina</span>
+                                    <span className="text-sm hidden sm:inline">{t('btn_tip')}</span>
                                   </button>
                                 )}
                               </div>
@@ -880,7 +883,7 @@ export default function Feed() {
                                 <div className="flex flex-col gap-2 animate-fade-in mt-2">
                                   {replyingToCommentId && (
                                     <div className="flex justify-between items-center bg-blue-900/20 px-3 py-1 text-xs text-blue-400 rounded-lg">
-                                      <span>Respondiendo al comentario...</span>
+                                      <span>{t('lbl_replying')}</span>
                                       <button onClick={() => setReplyingToCommentId(null)}><X className="w-3 h-3"/></button>
                                     </div>
                                   )}
@@ -889,7 +892,7 @@ export default function Feed() {
                                       type="text" 
                                       value={commentText} 
                                       onChange={(e) => setCommentText(e.target.value)} 
-                                      placeholder="Escribe un comentario..." 
+                                      placeholder={t('ph_write_comment')}
                                       className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-blue-500/50" 
                                       onKeyDown={(e) => e.key === 'Enter' && submitComment(post.id)}
                                     />
@@ -926,7 +929,7 @@ export default function Feed() {
                                        onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
                                        className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left transition-colors"
                                      >
-                                       {isExpanded ? 'Ocultar comentarios' : `Ver los ${totalComments} comentarios`}
+                                       {isExpanded ? t('btn_hide_comments') : `${t('btn_view_the')} ${totalComments} ${t('lbl_comments')}`}
                                      </button>
                                    )}
                                  </div>
@@ -949,7 +952,7 @@ export default function Feed() {
               <div className="bg-[#0a0a0a] rounded-[2rem] border border-yellow-500/20 shadow-xl overflow-hidden">
                 <div className="bg-gradient-to-r from-yellow-900/30 to-black p-5 border-b border-yellow-500/20 flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-yellow-500" />
-                  <h3 className="text-white font-black uppercase tracking-widest text-sm">Trending VIP</h3>
+                  <h3 className="text-white font-black uppercase tracking-widest text-sm">{t('aside_trending')}</h3>
                 </div>
                 <div className="p-2">
                   {trendingCreators.map((creator, idx) => (
@@ -968,7 +971,7 @@ export default function Feed() {
                 </div>
                 {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
                   <div className="p-4 border-t border-white/5 text-center">
-                    <p onClick={() => setIsBoostModalOpen(true)} className="text-gray-500 text-[10px] uppercase font-bold tracking-widest cursor-pointer hover:text-yellow-500">¿Quieres aparecer aquí?</p>
+                    <p onClick={() => setIsBoostModalOpen(true)} className="text-gray-500 text-[10px] uppercase font-bold tracking-widest cursor-pointer hover:text-yellow-500">{t('aside_want_appear')}</p>
                   </div>
                 )}
               </div>
@@ -976,7 +979,7 @@ export default function Feed() {
               {featuredBundle && (
                 <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/20 rounded-[2rem] border border-blue-500/30 shadow-2xl p-6 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 bg-blue-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl z-10 flex items-center gap-1 shadow-lg">
-                    <Zap className="w-3 h-3 fill-white"/> RECOMENDADO
+                    <Zap className="w-3 h-3 fill-white"/> {t('badge_recommended')}
                   </div>
                   
                   <div onClick={() => router.push(`/${featuredBundle.creator?.username}`)} className="cursor-pointer flex flex-col items-center text-center">
@@ -994,7 +997,7 @@ export default function Feed() {
                     
                     <h3 className="text-white font-black text-lg leading-tight">@{featuredBundle.creator?.username}</h3>
                     <p className="text-blue-300 text-[11px] font-bold mt-1 mb-4 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
-                      Paquete: {featuredBundle.title}
+                      {t('lbl_bundle')}: {featuredBundle.title}
                     </p>
                   </div>
 
@@ -1003,14 +1006,14 @@ export default function Feed() {
                       onClick={(e) => { e.stopPropagation(); handleUnlockBundle(featuredBundle); }}
                       className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl transition-all shadow-[0_0_15px_rgba(59,130,246,0.5)] flex items-center justify-center gap-2 text-sm"
                     >
-                      <Unlock className="w-4 h-4"/> Comprar Paquete ${featuredBundle.price}
+                      <Unlock className="w-4 h-4"/> {t('btn_buy_bundle')} ${featuredBundle.price}
                     </button>
                     
                     <button 
                       onClick={(e) => { e.stopPropagation(); router.push(`/${featuredBundle.creator?.username}`); }}
                       className="w-full bg-transparent border border-blue-500/50 hover:bg-blue-500/10 text-blue-400 font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
                     >
-                      <Crown className="w-4 h-4"/> Ver Perfil y Suscribirse
+                      <Crown className="w-4 h-4"/> {t('btn_view_subscribe')}
                     </button>
                   </div>
                 </div>
@@ -1156,13 +1159,13 @@ export default function Feed() {
               try { 
                 const data = await paymentService.createPaymentIntent({ amount: amount || 0, type: 'TIP', creatorId: tipRecipient.id, description: `Propina: ${message}` }); 
                 if (data.success || data.receipt) {
-                  alert('✅ ¡Propina enviada con Covra Pay!');
+                  alert('✅ ' + t('alert_unlocked'));
                   router.refresh();
                   fetchData();
                 } else {
                   setClientSecret(data.clientSecret); setSelectedPost({ id: 'tip', price: amount }); setIsPaymentModalOpen(true); 
                 }
-              } catch (error) { alert('Error al procesar propina.'); } 
+              } catch (error) { alert(t('alert_error_payment')); }
             }} 
           />
         )}
@@ -1182,7 +1185,7 @@ export default function Feed() {
                   console.error('Error interno al liberar el paquete:', e);
                 }
               }
-              alert("¡Pago exitoso! El contenido ya es tuyo 🔓"); 
+              alert(t('alert_payment_success'));
               fetchData(); 
             }} 
           />
@@ -1216,13 +1219,13 @@ export default function Feed() {
               onClick={(e) => { e.stopPropagation(); setExpandedImage(null); }} 
               className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all border border-white/10" 
               style={{ zIndex: 100000 }} 
-              title="Cerrar"
+              title={t('btn_cancel')}
             >
               <X className="w-6 h-6" />
             </button>
             
             <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-              <img src={expandedImage.url} alt="Exclusivo" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" onContextMenu={(e) => e.preventDefault()} />
+              <img src={expandedImage.url} alt={t('lbl_exclusive')} className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" onContextMenu={(e) => e.preventDefault()} />
               <div className="absolute inset-0 w-full h-full cursor-default" onContextMenu={(e) => e.preventDefault()} style={{ zIndex: 10 }}></div>
             </div>
           </div>
