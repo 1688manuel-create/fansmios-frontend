@@ -1073,5 +1073,18 @@
     "desc_geo_block": "Scrivi le sigle dei paesi che vuoi bloccare, separate da virgola (Es: MX, US, CO, ES, AR).",
     "warning_geo_block": "Gli utenti con un IP da questi paesi vedranno il tuo profilo come 'Non disponibile'.",
     "btn_save_all": "Salva Tutte le Modifiche"
+  },
+
+  "Login": {
+    "alert_error": "Errore di accesso. Controlla le tue credenziali.",
+    "title": "Bentornato",
+    "subtitle": "Inserisci le tue credenziali per continuare",
+    "lbl_email": "Indirizzo Email",
+    "ph_email": "tu@email.com",
+    "lbl_password": "Password",
+    "btn_verifying": "Verifica in corso...",
+    "btn_login": "Accedi",
+    "lbl_no_account": "Non hai un account?",
+    "link_register": "Registrati qui"
   }
 }

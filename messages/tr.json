@@ -1073,5 +1073,18 @@
     "desc_geo_block": "Engellemek istediğiniz ülke kodlarını virgülle ayırarak yazın (Örn: MX, US, CO, ES, AR).",
     "warning_geo_block": "Bu ülkelerden gelen bir IP'ye sahip kullanıcılar profilinizi 'Kullanılamaz' olarak görecektir.",
     "btn_save_all": "Tüm Değişiklikleri Kaydet"
+  },
+
+  "Login": {
+    "alert_error": "Giriş hatası. Bilgilerinizi kontrol edin.",
+    "title": "Tekrar hoş geldiniz",
+    "subtitle": "Devam etmek için bilgilerinizi girin",
+    "lbl_email": "E-posta Adresi",
+    "ph_email": "siz@email.com",
+    "lbl_password": "Şifre",
+    "btn_verifying": "Doğrulanıyor...",
+    "btn_login": "Giriş Yap",
+    "lbl_no_account": "Hesabınız yok mu?",
+    "link_register": "Buradan kayıt olun"
   }
 }

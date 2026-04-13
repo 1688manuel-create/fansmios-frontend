@@ -1073,5 +1073,18 @@
     "desc_geo_block": "Typ de landcodes die u wilt blokkeren, gescheiden door komma's (Bijv: MX, US, CO, ES, AR).",
     "warning_geo_block": "Gebruikers met een IP-adres uit deze landen zien je profiel als 'Niet beschikbaar'.",
     "btn_save_all": "Alle Wijzigingen Opslaan"
+  },
+
+  "Login": {
+    "alert_error": "Inlogfout. Controleer uw gegevens.",
+    "title": "Welkom terug",
+    "subtitle": "Voer uw gegevens in om door te gaan",
+    "lbl_email": "E-mailadres",
+    "ph_email": "jij@email.com",
+    "lbl_password": "Wachtwoord",
+    "btn_verifying": "Verifiëren...",
+    "btn_login": "Inloggen",
+    "lbl_no_account": "Heb je geen account?",
+    "link_register": "Registreer hier"
   }
 }

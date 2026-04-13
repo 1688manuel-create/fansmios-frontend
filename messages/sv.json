@@ -1073,5 +1073,18 @@
     "desc_geo_block": "Skriv in de landskoder du vill blockera, separerade med kommatecken (T.ex.: MX, US, CO, ES, AR).",
     "warning_geo_block": "Användare med IP-adress från dessa länder kommer att se din profil som 'Otillgänglig'.",
     "btn_save_all": "Spara Alla Ändringar"
+  },
+
+  "Login": {
+    "alert_error": "Inloggningsfel. Kontrollera dina uppgifter.",
+    "title": "Välkommen tillbaka",
+    "subtitle": "Ange dina uppgifter för att fortsätta",
+    "lbl_email": "E-postadress",
+    "ph_email": "du@email.com",
+    "lbl_password": "Lösenord",
+    "btn_verifying": "Verifierar...",
+    "btn_login": "Logga in",
+    "lbl_no_account": "Har du inget konto?",
+    "link_register": "Registrera dig här"
   }
 }

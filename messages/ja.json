@@ -1073,5 +1073,18 @@
     "desc_geo_block": "ブロックする国コードをカンマ区切りで入力します（例：MX, US, CO, ES, AR）。",
     "warning_geo_block": "これらの国のIPを持つユーザーには、プロフィールが「利用不可」と表示されます。",
     "btn_save_all": "すべての変更を保存"
+  },
+
+  "Login": {
+    "alert_error": "ログインエラー。認証情報を確認してください。",
+    "title": "おかえりなさい",
+    "subtitle": "続行するには認証情報を入力してください",
+    "lbl_email": "メールアドレス",
+    "ph_email": "you@email.com",
+    "lbl_password": "パスワード",
+    "btn_verifying": "確認中...",
+    "btn_login": "ログイン",
+    "lbl_no_account": "アカウントを持っていませんか？",
+    "link_register": "ここに登録"
   }
 }

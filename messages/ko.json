@@ -1073,5 +1073,18 @@
     "desc_geo_block": "차단할 국가 코드를 쉼표로 구분하여 입력하세요(예: MX, US, CO, ES, AR).",
     "warning_geo_block": "해당 국가의 IP를 가진 사용자는 귀하의 프로필을 '사용 불가'로 보게 됩니다.",
     "btn_save_all": "모든 변경 사항 저장"
+  },
+
+  "Login": {
+    "alert_error": "로그인 오류. 자격 증명을 확인하세요.",
+    "title": "다시 오신 것을 환영합니다",
+    "subtitle": "계속하려면 자격 증명을 입력하세요",
+    "lbl_email": "이메일 주소",
+    "ph_email": "you@email.com",
+    "lbl_password": "비밀번호",
+    "btn_verifying": "확인 중...",
+    "btn_login": "로그인",
+    "lbl_no_account": "계정이 없으신가요?",
+    "link_register": "여기에서 등록하세요"
   }
 }

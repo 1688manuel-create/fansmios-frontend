@@ -1073,5 +1073,18 @@
     "desc_geo_block": "Ketik kode negara yang ingin Anda blokir, dipisahkan dengan koma (Cth: MX, US, CO, ES, AR).",
     "warning_geo_block": "Pengguna dengan IP dari negara-negara ini akan melihat profil Anda sebagai 'Tidak tersedia'.",
     "btn_save_all": "Simpan Semua Perubahan"
+  },
+
+  "Login": {
+    "alert_error": "Kesalahan saat masuk. Periksa kredensial Anda.",
+    "title": "Selamat datang kembali",
+    "subtitle": "Masukkan kredensial Anda untuk melanjutkan",
+    "lbl_email": "Alamat Email",
+    "ph_email": "anda@email.com",
+    "lbl_password": "Kata Sandi",
+    "btn_verifying": "Memverifikasi...",
+    "btn_login": "Masuk",
+    "lbl_no_account": "Belum punya akun?",
+    "link_register": "Daftar di sini"
   }
 }

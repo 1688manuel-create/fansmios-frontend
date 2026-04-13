@@ -1073,5 +1073,18 @@
     "desc_geo_block": "Nhập mã quốc gia bạn muốn chặn, phân cách bằng dấu phẩy (VD: MX, US, CO, ES, AR).",
     "warning_geo_block": "Người dùng có IP từ các quốc gia này sẽ thấy hồ sơ của bạn là 'Không khả dụng'.",
     "btn_save_all": "Lưu tất cả thay đổi"
+  },
+
+  "Login": {
+    "alert_error": "Lỗi đăng nhập. Kiểm tra thông tin của bạn.",
+    "title": "Chào mừng trở lại",
+    "subtitle": "Nhập thông tin xác thực của bạn để tiếp tục",
+    "lbl_email": "Địa chỉ Email",
+    "ph_email": "ban@email.com",
+    "lbl_password": "Mật khẩu",
+    "btn_verifying": "Đang xác minh...",
+    "btn_login": "Đăng nhập",
+    "lbl_no_account": "Chưa có tài khoản?",
+    "link_register": "Đăng ký tại đây"
   }
 }
