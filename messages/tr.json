@@ -1030,5 +1030,48 @@
 
   "RegisterRedirect": {
     "loading": "Yönlendiriliyor..."
+  },
+
+  "ProfileSettings2": {
+    "alert_success_save": "✅ Profil başarıyla güncellendi!",
+    "alert_error_save": "Kaydedilirken bir hata oluştu. Yeni kullanıcı adının kullanımda olmadığından emin olun.",
+    "nav_title": "Profili Yapılandır",
+    "btn_back": "Geri",
+    "sec1_title": "1. Görsel Kimlik",
+    "sec1_desc": "İlk izlenim önemlidir. Yüksek kaliteli resimler yükleyin.",
+    "btn_change_cover": "Kapağı Değiştir",
+    "sec2_title": "2. Herkese Açık Bilgiler",
+    "sec2_desc": "Hayranlar sizi Keşfet sayfasında bu şekilde görecek.",
+    "lbl_display_name": "Görünen Ad",
+    "ph_display_name": "Örn. Ahmet Yılmaz",
+    "lbl_username": "Profil Bağlantınız (Kullanıcı Adı)",
+    "lbl_category": "Ana Kategori",
+    "cat_general": "Genel",
+    "cat_fitness": "Fitness",
+    "cat_gaming": "Oyun",
+    "cat_música": "Müzik",
+    "cat_arte": "Sanat",
+    "cat_lifestyle": "Yaşam Tarzı",
+    "cat_educación": "Eğitim",
+    "cat_adulto": "Yetişkin",
+    "lbl_bio": "Biyografi",
+    "ph_bio": "Hayranlarınıza kim olduğunuzu ve burada hangi içerikleri bulacaklarını anlatın...",
+    "lbl_social_links": "Dış Sosyal Ağlarınız",
+    "desc_social_links": "Hayranlarınızın sizi her yerde takip edebilmesi için diğer hesaplarınızı bağlayın.",
+    "lbl_website": "Web Sitesi veya Linktree",
+    "sec3_title": "3. Para Kazanma ve Hayranlar",
+    "sec3_desc": "Ayda ne kadar ücret alacağınızı ve yeni VIP'lerinizi nasıl karşılayacağınızı ayarlayın.",
+    "lbl_subscription_price": "Aylık Abonelik (USD)",
+    "desc_subscription_price": "İpucu: Profilinizi ücretsiz yapmak ve yalnızca sohbetlerde veya gönderilerde PPV için ücret almak için 0$ ayarlayın.",
+    "lbl_welcome_msg": "Otomatik Karşılama Mesajı",
+    "ph_welcome_msg": "Bu mesaj, abone olan her hayrana otomatik olarak sohbet yoluyla gönderilecektir...",
+    "sec4_title": "4. Gelişmiş Gizlilik",
+    "sec4_desc": "Profilinizi kimlerin görebileceğini ve hangi bilgileri herkese açık yapacağınızı kontrol edin.",
+    "lbl_hide_stats": "İstatistikleri Gizle",
+    "desc_hide_stats": "Bunu etkinleştirirseniz, herkese açık profilinizdeki takipçi veya gönderi sayısını kimse göremez.",
+    "lbl_geo_block": "Coğrafi Engelleme (Ülkeler)",
+    "desc_geo_block": "Engellemek istediğiniz ülke kodlarını virgülle ayırarak yazın (Örn: MX, US, CO, ES, AR).",
+    "warning_geo_block": "Bu ülkelerden gelen bir IP'ye sahip kullanıcılar profilinizi 'Kullanılamaz' olarak görecektir.",
+    "btn_save_all": "Tüm Değişiklikleri Kaydet"
   }
 }

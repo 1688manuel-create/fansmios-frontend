@@ -1030,5 +1030,48 @@
 
   "RegisterRedirect": {
     "loading": "リダイレクト中..."
+  },
+
+  "ProfileSettings2": {
+    "alert_success_save": "✅ プロフィールが正常に更新されました！",
+    "alert_error_save": "保存中にエラーが発生しました。新しいユーザー名がすでに使用されていないか確認してください。",
+    "nav_title": "プロフィールの設定",
+    "btn_back": "戻る",
+    "sec1_title": "1. ビジュアルアイデンティティ",
+    "sec1_desc": "第一印象が重要です。高品質の画像をアップロードしてください。",
+    "btn_change_cover": "カバーを変更",
+    "sec2_title": "2. 公開情報",
+    "sec2_desc": "ファンには「エクスプローラ」ページでこのように表示されます。",
+    "lbl_display_name": "表示名",
+    "ph_display_name": "例：山田 太郎",
+    "lbl_username": "プロフィールリンク (ユーザー名)",
+    "lbl_category": "メインカテゴリー",
+    "cat_general": "一般",
+    "cat_fitness": "フィットネス",
+    "cat_gaming": "ゲーム",
+    "cat_música": "音楽",
+    "cat_arte": "アート",
+    "cat_lifestyle": "ライフスタイル",
+    "cat_educación": "教育",
+    "cat_adulto": "アダルト",
+    "lbl_bio": "自己紹介",
+    "ph_bio": "あなたが誰で、ここでどんなコンテンツが見られるかをファンに伝えましょう...",
+    "lbl_social_links": "外部ソーシャルネットワーク",
+    "desc_social_links": "他のアカウントをリンクして、ファンがどこでもあなたをフォローできるようにします。",
+    "lbl_website": "ウェブサイト または Linktree",
+    "sec3_title": "3. 収益化とファン",
+    "sec3_desc": "月額料金と新しいVIPを歓迎する方法を設定します。",
+    "lbl_subscription_price": "月額サブスクリプション (USD)",
+    "desc_subscription_price": "ヒント: $0 に設定するとプロフィールが無料になり、チャットや投稿のPPVのみが課金されます。",
+    "lbl_welcome_msg": "自動ウェルカムメッセージ",
+    "ph_welcome_msg": "このメッセージは、購読した各ファンにチャットで自動的に送信されます...",
+    "sec4_title": "4. 高度なプライバシー",
+    "sec4_desc": "プロフィールを閲覧できるユーザーと、公開する情報を管理します。",
+    "lbl_hide_stats": "統計を隠す",
+    "desc_hide_stats": "これを有効にすると、公開プロフィールのフォロワー数や投稿数を誰も見ることができなくなります。",
+    "lbl_geo_block": "ジオブロック (国)",
+    "desc_geo_block": "ブロックする国コードをカンマ区切りで入力します（例：MX, US, CO, ES, AR）。",
+    "warning_geo_block": "これらの国のIPを持つユーザーには、プロフィールが「利用不可」と表示されます。",
+    "btn_save_all": "すべての変更を保存"
   }
 }

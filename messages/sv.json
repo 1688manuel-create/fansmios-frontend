@@ -1030,5 +1030,48 @@
 
   "RegisterRedirect": {
     "loading": "Omdirigerar..."
+  },
+
+  "ProfileSettings2": {
+    "alert_success_save": "✅ Profilen har uppdaterats!",
+    "alert_error_save": "Ett fel uppstod vid sparandet. Se till att det nya användarnamnet inte redan används.",
+    "nav_title": "Profilinställningar",
+    "btn_back": "Tillbaka",
+    "sec1_title": "1. Visuell Identitet",
+    "sec1_desc": "Första intrycket räknas. Ladda upp bilder i hög kvalitet.",
+    "btn_change_cover": "Ändra Omslag",
+    "sec2_title": "2. Offentlig Information",
+    "sec2_desc": "Så här kommer fans att se dig på Utforska-sidan.",
+    "lbl_display_name": "Visningsnamn",
+    "ph_display_name": "T.ex. Sven Svensson",
+    "lbl_username": "Din Profillänk (Användarnamn)",
+    "lbl_category": "Huvudkategori",
+    "cat_general": "Allmänt",
+    "cat_fitness": "Träning",
+    "cat_gaming": "Spel",
+    "cat_música": "Musik",
+    "cat_arte": "Konst",
+    "cat_lifestyle": "Livsstil",
+    "cat_educación": "Utbildning",
+    "cat_adulto": "Vuxen",
+    "lbl_bio": "Biografi",
+    "ph_bio": "Berätta för dina fans vem du är och vilket innehåll de hittar här...",
+    "lbl_social_links": "Dina Externa Sociala Nätverk",
+    "desc_social_links": "Länka dina andra konton så att dina fans kan följa dig överallt.",
+    "lbl_website": "Hemsida eller Linktree",
+    "sec3_title": "3. Intäktsgenerering & Fans",
+    "sec3_desc": "Ställ in hur mycket du tar betalt per månad och hur du välkomnar dina nya VIPs.",
+    "lbl_subscription_price": "Månatlig Prenumeration (USD)",
+    "desc_subscription_price": "Tips: Sätt $0 för att göra din profil gratis och ta endast betalt för PPV i chattar eller inlägg.",
+    "lbl_welcome_msg": "Automatiskt Välkomstmeddelande",
+    "ph_welcome_msg": "Detta meddelande skickas automatiskt via chatt till varje fan som prenumererar...",
+    "sec4_title": "4. Avancerad Sekretess",
+    "sec4_desc": "Kontrollera vem som kan se din profil och vilken information du gör offentlig.",
+    "lbl_hide_stats": "Dölj Statistik",
+    "desc_hide_stats": "Om du aktiverar detta kommer ingen att kunna se antalet följare eller inlägg i din offentliga profil.",
+    "lbl_geo_block": "Geo-blockering (Länder)",
+    "desc_geo_block": "Skriv in de landskoder du vill blockera, separerade med kommatecken (T.ex.: MX, US, CO, ES, AR).",
+    "warning_geo_block": "Användare med IP-adress från dessa länder kommer att se din profil som 'Otillgänglig'.",
+    "btn_save_all": "Spara Alla Ändringar"
   }
 }

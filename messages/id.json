@@ -1030,5 +1030,48 @@
 
   "RegisterRedirect": {
     "loading": "Mengarahkan..."
+  },
+
+  "ProfileSettings2": {
+    "alert_success_save": "✅ Profil berhasil diperbarui!",
+    "alert_error_save": "Terjadi kesalahan saat menyimpan. Pastikan nama pengguna baru belum digunakan.",
+    "nav_title": "Konfigurasi Profil",
+    "btn_back": "Kembali",
+    "sec1_title": "1. Identitas Visual",
+    "sec1_desc": "Kesan pertama sangat penting. Unggah gambar berkualitas tinggi.",
+    "btn_change_cover": "Ubah Sampul",
+    "sec2_title": "2. Informasi Publik",
+    "sec2_desc": "Ini adalah bagaimana penggemar akan melihat Anda di halaman Jelajahi.",
+    "lbl_display_name": "Nama Tampilan",
+    "ph_display_name": "Cth. Budi Santoso",
+    "lbl_username": "Tautan Profil Anda (Nama Pengguna)",
+    "lbl_category": "Kategori Utama",
+    "cat_general": "Umum",
+    "cat_fitness": "Kebugaran",
+    "cat_gaming": "Permainan",
+    "cat_música": "Musik",
+    "cat_arte": "Seni",
+    "cat_lifestyle": "Gaya Hidup",
+    "cat_educación": "Pendidikan",
+    "cat_adulto": "Dewasa",
+    "lbl_bio": "Biografi",
+    "ph_bio": "Beri tahu penggemar Anda siapa Anda dan konten apa yang akan mereka temukan di sini...",
+    "lbl_social_links": "Jejaring Sosial Eksternal Anda",
+    "desc_social_links": "Tautkan akun Anda yang lain agar penggemar dapat mengikuti Anda di mana saja.",
+    "lbl_website": "Situs Web atau Linktree",
+    "sec3_title": "3. Monetisasi & Penggemar",
+    "sec3_desc": "Tetapkan berapa biaya yang akan Anda kenakan per bulan dan bagaimana Anda akan menyambut VIP baru Anda.",
+    "lbl_subscription_price": "Langganan Bulanan (USD)",
+    "desc_subscription_price": "Kiat: Tetapkan $0 untuk membuat profil Anda gratis dan hanya mengenakan biaya untuk PPV dalam obrolan atau postingan.",
+    "lbl_welcome_msg": "Pesan Selamat Datang Otomatis",
+    "ph_welcome_msg": "Pesan ini akan dikirim secara otomatis melalui obrolan ke setiap penggemar yang berlangganan...",
+    "sec4_title": "4. Privasi Lanjutan",
+    "sec4_desc": "Kontrol siapa yang dapat melihat profil Anda dan informasi apa yang Anda publikasikan.",
+    "lbl_hide_stats": "Sembunyikan Statistik",
+    "desc_hide_stats": "Jika Anda mengaktifkan ini, tidak ada yang dapat melihat jumlah pengikut atau postingan yang Anda miliki di profil publik Anda.",
+    "lbl_geo_block": "Pemblokiran Geografis (Negara)",
+    "desc_geo_block": "Ketik kode negara yang ingin Anda blokir, dipisahkan dengan koma (Cth: MX, US, CO, ES, AR).",
+    "warning_geo_block": "Pengguna dengan IP dari negara-negara ini akan melihat profil Anda sebagai 'Tidak tersedia'.",
+    "btn_save_all": "Simpan Semua Perubahan"
   }
 }

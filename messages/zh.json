@@ -1030,5 +1030,48 @@
 
   "RegisterRedirect": {
     "loading": "正在重定向..."
+  },
+
+  "ProfileSettings2": {
+    "alert_success_save": "✅ 个人资料更新成功！",
+    "alert_error_save": "保存时出错。请确保新用户名未被使用。",
+    "nav_title": "配置个人资料",
+    "btn_back": "返回",
+    "sec1_title": "1. 视觉识别",
+    "sec1_desc": "第一印象很重要。上传高质量的图片。",
+    "btn_change_cover": "更改封面",
+    "sec2_title": "2. 公开信息",
+    "sec2_desc": "粉丝在探索页面上将如何看到您。",
+    "lbl_display_name": "显示名称",
+    "ph_display_name": "例如：张三",
+    "lbl_username": "您的个人资料链接（用户名）",
+    "lbl_category": "主要类别",
+    "cat_general": "综合",
+    "cat_fitness": "健身",
+    "cat_gaming": "游戏",
+    "cat_música": "音乐",
+    "cat_arte": "艺术",
+    "cat_lifestyle": "生活方式",
+    "cat_educación": "教育",
+    "cat_adulto": "成人",
+    "lbl_bio": "个人简介",
+    "ph_bio": "告诉您的粉丝您是谁以及他们将在这里找到什么内容...",
+    "lbl_social_links": "您的外部社交网络",
+    "desc_social_links": "链接您的其他帐户，以便您的粉丝可以在任何地方关注您。",
+    "lbl_website": "网站 或 Linktree",
+    "sec3_title": "3. 货币化与粉丝",
+    "sec3_desc": "设置您每月的收费标准以及您将如何欢迎新的 VIP。",
+    "lbl_subscription_price": "包月订阅 (USD)",
+    "desc_subscription_price": "提示：设置为 $0 可使您的个人资料免费，仅在聊天或帖子中对 PPV 收费。",
+    "lbl_welcome_msg": "自动欢迎消息",
+    "ph_welcome_msg": "此消息将自动通过聊天发送给每个订阅的粉丝...",
+    "sec4_title": "4. 高级隐私",
+    "sec4_desc": "控制谁可以看到您的个人资料以及您公开的信息。",
+    "lbl_hide_stats": "隐藏统计信息",
+    "desc_hide_stats": "如果您激活此选项，任何人都无法在您的公开个人资料中看到您的关注者或帖子数量。",
+    "lbl_geo_block": "地理屏蔽（国家/地区）",
+    "desc_geo_block": "输入您要屏蔽的国家/地区代码，用逗号分隔（例如：MX, US, CO, ES, AR）。",
+    "warning_geo_block": "来自这些国家/地区 IP 的用户将看到您的个人资料为“不可用”。",
+    "btn_save_all": "保存所有更改"
   }
 }

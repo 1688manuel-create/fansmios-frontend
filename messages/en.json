@@ -1029,5 +1029,48 @@
 
   "RegisterRedirect": {
     "loading": "Redirecting..."
+  },
+
+  "ProfileSettings2": {
+    "alert_success_save": "✅ Profile updated successfully!",
+    "alert_error_save": "There was an error saving changes. Make sure the new username is not already in use.",
+    "nav_title": "Profile Settings",
+    "btn_back": "Back",
+    "sec1_title": "1. Visual Identity",
+    "sec1_desc": "First impressions count. Upload high-quality images.",
+    "btn_change_cover": "Change Cover",
+    "sec2_title": "2. Public Information",
+    "sec2_desc": "This is how fans will see you on the Explore page.",
+    "lbl_display_name": "Display Name",
+    "ph_display_name": "E.g. John Doe",
+    "lbl_username": "Profile Link (Username)",
+    "lbl_category": "Main Category",
+    "cat_general": "General",
+    "cat_fitness": "Fitness",
+    "cat_gaming": "Gaming",
+    "cat_música": "Music",
+    "cat_arte": "Art",
+    "cat_lifestyle": "Lifestyle",
+    "cat_educación": "Education",
+    "cat_adulto": "Adult",
+    "lbl_bio": "Biography",
+    "ph_bio": "Tell your fans who you are and what content they'll find here...",
+    "lbl_social_links": "Your External Social Networks",
+    "desc_social_links": "Link your other accounts so your fans can follow you everywhere.",
+    "lbl_website": "Website or Linktree",
+    "sec3_title": "3. Monetization & Fans",
+    "sec3_desc": "Set how much you will charge per month and how you'll welcome your new VIPs.",
+    "lbl_subscription_price": "Monthly Subscription (USD)",
+    "desc_subscription_price": "Tip: Set $0 to make your profile free and only charge for PPV in chats or posts.",
+    "lbl_welcome_msg": "Automatic Welcome Message",
+    "ph_welcome_msg": "This message will be sent automatically via chat to each subscribing fan...",
+    "sec4_title": "4. Advanced Privacy",
+    "sec4_desc": "Control who can see your profile and what information you make public.",
+    "lbl_hide_stats": "Hide Statistics",
+    "desc_hide_stats": "If you activate this, no one will be able to see the amount of followers or posts you have on your public profile.",
+    "lbl_geo_block": "Geo-Blocking (Countries)",
+    "desc_geo_block": "Type the country codes you want to block, separated by commas (E.g.: MX, US, CO, ES, AR).",
+    "warning_geo_block": "Users with an IP from these countries will see your profile as 'Unavailable'.",
+    "btn_save_all": "Save All Changes"
   }
 }

@@ -1030,5 +1030,48 @@
 
   "RegisterRedirect": {
     "loading": "Đang chuyển hướng..."
+  },
+
+  "ProfileSettings2": {
+    "alert_success_save": "✅ Đã cập nhật hồ sơ thành công!",
+    "alert_error_save": "Đã xảy ra lỗi khi lưu. Đảm bảo tên người dùng mới chưa được sử dụng.",
+    "nav_title": "Cài đặt Hồ sơ",
+    "btn_back": "Trở lại",
+    "sec1_title": "1. Nhận diện Hình ảnh",
+    "sec1_desc": "Ấn tượng đầu tiên là điều quan trọng. Tải lên hình ảnh chất lượng cao.",
+    "btn_change_cover": "Đổi Ảnh bìa",
+    "sec2_title": "2. Thông tin Công khai",
+    "sec2_desc": "Đây là cách người hâm mộ sẽ nhìn thấy bạn trên trang Khám phá.",
+    "lbl_display_name": "Tên hiển thị",
+    "ph_display_name": "VD: Nguyễn Văn A",
+    "lbl_username": "Liên kết hồ sơ của bạn (Tên người dùng)",
+    "lbl_category": "Danh mục Chính",
+    "cat_general": "Chung",
+    "cat_fitness": "Thể hình",
+    "cat_gaming": "Trò chơi",
+    "cat_música": "Âm nhạc",
+    "cat_arte": "Nghệ thuật",
+    "cat_lifestyle": "Phong cách sống",
+    "cat_educación": "Giáo dục",
+    "cat_adulto": "Người lớn",
+    "lbl_bio": "Tiểu sử",
+    "ph_bio": "Hãy cho người hâm mộ biết bạn là ai và họ sẽ tìm thấy nội dung gì ở đây...",
+    "lbl_social_links": "Mạng xã hội bên ngoài của bạn",
+    "desc_social_links": "Liên kết các tài khoản khác của bạn để người hâm mộ có thể theo dõi bạn ở mọi nơi.",
+    "lbl_website": "Trang web hoặc Linktree",
+    "sec3_title": "3. Kiếm tiền & Người hâm mộ",
+    "sec3_desc": "Thiết lập số tiền bạn sẽ tính mỗi tháng và cách bạn chào đón những VIP mới.",
+    "lbl_subscription_price": "Đăng ký hàng tháng (USD)",
+    "desc_subscription_price": "Mẹo: Đặt $0 để làm cho hồ sơ của bạn miễn phí và chỉ tính phí PPV trong các cuộc trò chuyện hoặc bài đăng.",
+    "lbl_welcome_msg": "Tin nhắn chào mừng tự động",
+    "ph_welcome_msg": "Tin nhắn này sẽ được tự động gửi qua trò chuyện cho mỗi người hâm mộ đăng ký...",
+    "sec4_title": "4. Quyền riêng tư nâng cao",
+    "sec4_desc": "Kiểm soát những ai có thể xem hồ sơ của bạn và thông tin bạn công khai.",
+    "lbl_hide_stats": "Ẩn Số liệu thống kê",
+    "desc_hide_stats": "Nếu bạn kích hoạt tính năng này, sẽ không ai có thể thấy số lượng người theo dõi hoặc bài đăng mà bạn có trên hồ sơ công khai của mình.",
+    "lbl_geo_block": "Chặn địa lý (Quốc gia)",
+    "desc_geo_block": "Nhập mã quốc gia bạn muốn chặn, phân cách bằng dấu phẩy (VD: MX, US, CO, ES, AR).",
+    "warning_geo_block": "Người dùng có IP từ các quốc gia này sẽ thấy hồ sơ của bạn là 'Không khả dụng'.",
+    "btn_save_all": "Lưu tất cả thay đổi"
   }
 }

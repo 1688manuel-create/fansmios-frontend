@@ -1030,5 +1030,48 @@
 
   "RegisterRedirect": {
     "loading": "Redirigiendo..."
+  },
+
+  "ProfileSettings2": {
+    "alert_success_save": "✅ ¡Perfil actualizado con éxito!",
+    "alert_error_save": "Hubo un error al guardar los cambios. Revisa que el nuevo usuario no esté ya en uso.",
+    "nav_title": "Configurar Perfil",
+    "btn_back": "Volver",
+    "sec1_title": "1. Identidad Visual",
+    "sec1_desc": "La primera impresión es la que cuenta. Sube imágenes de alta calidad.",
+    "btn_change_cover": "Cambiar Portada",
+    "sec2_title": "2. Información Pública",
+    "sec2_desc": "Así es como te verán los fans en la página de Explorar.",
+    "lbl_display_name": "Nombre a Mostrar",
+    "ph_display_name": "Ej. Juan Pérez",
+    "lbl_username": "Enlace de tu Perfil (Username)",
+    "lbl_category": "Categoría Principal",
+    "cat_general": "General",
+    "cat_fitness": "Fitness",
+    "cat_gaming": "Gaming",
+    "cat_música": "Música",
+    "cat_arte": "Arte",
+    "cat_lifestyle": "Lifestyle",
+    "cat_educación": "Educación",
+    "cat_adulto": "Adulto",
+    "lbl_bio": "Biografía",
+    "ph_bio": "Cuéntales a tus fans quién eres y qué contenido encontrarán aquí...",
+    "lbl_social_links": "Tus Redes Sociales Externas",
+    "desc_social_links": "Vincula tus otras cuentas para que tus fans puedan seguirte en todos lados.",
+    "lbl_website": "Sitio Web o Linktree",
+    "sec3_title": "3. Monetización & Fans",
+    "sec3_desc": "Configura cuánto cobrarás por mes y cómo recibirás a tus nuevos VIPs.",
+    "lbl_subscription_price": "Suscripción Mensual (USD)",
+    "desc_subscription_price": "Tip: Pon $0 para que tu perfil sea gratuito y solo cobrar por PPV en chats o posts.",
+    "lbl_welcome_msg": "Mensaje Automático de Bienvenida",
+    "ph_welcome_msg": "Este mensaje se enviará automáticamente por chat a cada fan que se suscriba...",
+    "sec4_title": "4. Privacidad Avanzada",
+    "sec4_desc": "Controla quién puede ver tu perfil y qué información haces pública.",
+    "lbl_hide_stats": "Ocultar Estadísticas",
+    "desc_hide_stats": "Si activas esto, nadie podrá ver la cantidad de seguidores o posts que tienes en tu perfil público.",
+    "lbl_geo_block": "Bloqueo Geográfico (Países)",
+    "desc_geo_block": "Escribe las siglas de los países que quieres bloquear, separadas por coma (Ej: MX, US, CO, ES, AR).",
+    "warning_geo_block": "Usuarios con IP de estos países verán tu perfil como 'No disponible'.",
+    "btn_save_all": "Guardar Todos los Cambios"
   }
 }

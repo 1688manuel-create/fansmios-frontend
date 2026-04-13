@@ -1030,5 +1030,48 @@
 
   "RegisterRedirect": {
     "loading": "Doorverwijzen..."
+  },
+
+  "ProfileSettings2": {
+    "alert_success_save": "✅ Profiel succesvol bijgewerkt!",
+    "alert_error_save": "Er is een fout opgetreden bij het opslaan. Controleer of de nieuwe gebruikersnaam niet al in gebruik is.",
+    "nav_title": "Profiel Instellen",
+    "btn_back": "Terug",
+    "sec1_title": "1. Visuele Identiteit",
+    "sec1_desc": "De eerste indruk telt. Upload afbeeldingen van hoge kwaliteit.",
+    "btn_change_cover": "Omslag Wijzigen",
+    "sec2_title": "2. Openbare Informatie",
+    "sec2_desc": "Dit is hoe fans je zullen zien op de Verkennen-pagina.",
+    "lbl_display_name": "Weergavenaam",
+    "ph_display_name": "Bijv. Jan Jansen",
+    "lbl_username": "Uw Profiellink (Gebruikersnaam)",
+    "lbl_category": "Hoofdcategorie",
+    "cat_general": "Algemeen",
+    "cat_fitness": "Fitness",
+    "cat_gaming": "Gaming",
+    "cat_música": "Muziek",
+    "cat_arte": "Kunst",
+    "cat_lifestyle": "Lifestyle",
+    "cat_educación": "Onderwijs",
+    "cat_adulto": "Volwassen",
+    "lbl_bio": "Biografie",
+    "ph_bio": "Vertel je fans wie je bent en welke content ze hier zullen vinden...",
+    "lbl_social_links": "Uw Externe Sociale Netwerken",
+    "desc_social_links": "Koppel je andere accounts zodat je fans je overal kunnen volgen.",
+    "lbl_website": "Website of Linktree",
+    "sec3_title": "3. Inkomsten Genereren & Fans",
+    "sec3_desc": "Stel in hoeveel je per maand in rekening brengt en hoe je je nieuwe VIP's verwelkomt.",
+    "lbl_subscription_price": "Maandelijks Abonnement (USD)",
+    "desc_subscription_price": "Tip: Stel $0 in om je profiel gratis te maken en alleen kosten in rekening te brengen voor PPV in chats of posts.",
+    "lbl_welcome_msg": "Automatisch Welkomstbericht",
+    "ph_welcome_msg": "Dit bericht wordt automatisch via de chat verzonden naar elke fan die zich abonneert...",
+    "sec4_title": "4. Geavanceerde Privacy",
+    "sec4_desc": "Beheer wie uw profiel kan zien en welke informatie u openbaar maakt.",
+    "lbl_hide_stats": "Statistieken Verbergen",
+    "desc_hide_stats": "Als je dit activeert, kan niemand het aantal volgers of berichten in je openbare profiel zien.",
+    "lbl_geo_block": "Geo-Blokkering (Landen)",
+    "desc_geo_block": "Typ de landcodes die u wilt blokkeren, gescheiden door komma's (Bijv: MX, US, CO, ES, AR).",
+    "warning_geo_block": "Gebruikers met een IP-adres uit deze landen zien je profiel als 'Niet beschikbaar'.",
+    "btn_save_all": "Alle Wijzigingen Opslaan"
   }
 }
