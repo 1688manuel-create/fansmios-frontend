@@ -1026,5 +1026,9 @@
     "gift_name_8": "스포츠카",
     "gift_name_9": "VIP 하트",
     "gift_name_10": "우주"
+  },
+
+  "RegisterRedirect": {
+    "loading": "리디렉션 중..."
   }
 }

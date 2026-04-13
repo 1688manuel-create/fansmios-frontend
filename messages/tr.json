@@ -1026,5 +1026,9 @@
     "gift_name_8": "Spor Araba",
     "gift_name_9": "VIP Kalp",
     "gift_name_10": "Evren"
+  },
+
+  "RegisterRedirect": {
+    "loading": "Yönlendiriliyor..."
   }
 }

@@ -1026,5 +1026,9 @@
     "gift_name_8": "スポーツカー",
     "gift_name_9": "VIPハート",
     "gift_name_10": "宇宙"
+  },
+
+  "RegisterRedirect": {
+    "loading": "リダイレクト中..."
   }
 }

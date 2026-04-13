@@ -1026,5 +1026,9 @@
     "gift_name_8": "Mobil Sport",
     "gift_name_9": "Hati VIP",
     "gift_name_10": "Alam Semesta"
+  },
+
+  "RegisterRedirect": {
+    "loading": "Mengarahkan..."
   }
 }

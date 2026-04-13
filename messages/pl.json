@@ -1026,5 +1026,9 @@
     "gift_name_8": "Auto Sportowe",
     "gift_name_9": "Serce VIP",
     "gift_name_10": "Wszechświat"
+  },
+
+  "RegisterRedirect": {
+    "loading": "Przekierowywanie..."
   }
 }

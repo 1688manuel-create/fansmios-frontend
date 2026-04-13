@@ -1026,5 +1026,9 @@
     "gift_name_8": "Xe thể thao",
     "gift_name_9": "Trái tim VIP",
     "gift_name_10": "Vũ trụ"
+  },
+
+  "RegisterRedirect": {
+    "loading": "Đang chuyển hướng..."
   }
 }

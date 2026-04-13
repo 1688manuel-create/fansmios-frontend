@@ -1026,5 +1026,9 @@
     "gift_name_8": "跑车",
     "gift_name_9": "VIP 爱心",
     "gift_name_10": "宇宙"
+  },
+
+  "RegisterRedirect": {
+    "loading": "正在重定向..."
   }
 }

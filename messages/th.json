@@ -1026,5 +1026,9 @@
     "gift_name_8": "รถสปอร์ต",
     "gift_name_9": "หัวใจ VIP",
     "gift_name_10": "จักรวาล"
+  },
+
+  "RegisterRedirect": {
+    "loading": "กำลังเปลี่ยนเส้นทาง..."
   }
 }

@@ -1026,5 +1026,9 @@
     "gift_name_8": "سيارة رياضية",
     "gift_name_9": "قلب VIP",
     "gift_name_10": "كون"
+  },
+
+  "RegisterRedirect": {
+    "loading": "جاري التوجيه..."
   }
 }

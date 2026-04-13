@@ -1026,5 +1026,9 @@
     "gift_name_8": "Sportbil",
     "gift_name_9": "VIP-hjärta",
     "gift_name_10": "Universum"
+  },
+
+  "RegisterRedirect": {
+    "loading": "Omdirigerar..."
   }
 }

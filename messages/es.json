@@ -1026,5 +1026,9 @@
     "gift_name_8": "Deportivo",
     "gift_name_9": "Corazón VIP",
     "gift_name_10": "Universo"
+  },
+
+  "RegisterRedirect": {
+    "loading": "Redirigiendo..."
   }
 }
