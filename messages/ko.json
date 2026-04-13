@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "내 잔액",
     "btn_processing": "처리 중...",
     "btn_pay_promote": "결제 및 프로모션"
+  },
+
+  "PaymentModal": {
+    "btn_close": "닫기",
+    "title": "결제 완료",
+    "subtitle": "독점 콘텐츠를 잠금 해제하기까지 한 걸음 남았습니다.",
+    "lbl_subtotal": "소계",
+    "lbl_bank_fee": "은행 수수료",
+    "lbl_covered": "포함됨",
+    "lbl_discount": "할인",
+    "lbl_total": "결제 금액",
+    "lbl_have_coupon": "프로모션 코드가 있습니까?",
+    "ph_coupon": "예: FANSVIP",
+    "btn_applied": "완료",
+    "btn_apply": "적용",
+    "loading_gateway": "보안 게이트웨이 시작 중...",
+    "btn_simulating": "시뮬레이션 중...",
+    "btn_simulate_success": "[DEV] 결제 성공 시뮬레이션",
+    "lbl_encryption": "Covra Pay AES-256 암호화"
   }
 }

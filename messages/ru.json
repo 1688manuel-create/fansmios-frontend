@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "Мой баланс",
     "btn_processing": "Обработка...",
     "btn_pay_promote": "Оплатить и продвигать"
+  },
+
+  "PaymentModal": {
+    "btn_close": "Закрыть",
+    "title": "Завершить оплату",
+    "subtitle": "Вы в одном шаге от разблокировки эксклюзивного контента.",
+    "lbl_subtotal": "Промежуточный итог",
+    "lbl_bank_fee": "Банковская комиссия",
+    "lbl_covered": "Покрыта",
+    "lbl_discount": "Скидка",
+    "lbl_total": "К оплате",
+    "lbl_have_coupon": "У вас есть промокод?",
+    "ph_coupon": "Напр. FANSVIP",
+    "btn_applied": "Готово",
+    "btn_apply": "Применить",
+    "loading_gateway": "Запуск безопасного шлюза...",
+    "btn_simulating": "Симуляция...",
+    "btn_simulate_success": "[DEV] Симуляция успешного платежа",
+    "lbl_encryption": "Шифрование Covra Pay AES-256"
   }
 }

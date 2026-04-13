@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "ยอดเงินของฉัน",
     "btn_processing": "กำลังประมวลผล...",
     "btn_pay_promote": "ชำระเงินและโปรโมต"
+  },
+
+  "PaymentModal": {
+    "btn_close": "ปิด",
+    "title": "ชำระเงินให้เสร็จสมบูรณ์",
+    "subtitle": "คุณอยู่ห่างเพียงก้าวเดียวจากการปลดล็อคเนื้อหาพิเศษ",
+    "lbl_subtotal": "ยอดรวมย่อย",
+    "lbl_bank_fee": "ค่าธรรมเนียมธนาคาร",
+    "lbl_covered": "ครอบคลุมแล้ว",
+    "lbl_discount": "ส่วนลด",
+    "lbl_total": "ยอดรวมที่ต้องชำระ",
+    "lbl_have_coupon": "คุณมีรหัสโปรโมชั่นหรือไม่?",
+    "ph_coupon": "เช่น FANSVIP",
+    "btn_applied": "เสร็จสิ้น",
+    "btn_apply": "นำไปใช้",
+    "loading_gateway": "กำลังเริ่มต้นเกตเวย์ที่ปลอดภัย...",
+    "btn_simulating": "กำลังจำลอง...",
+    "btn_simulate_success": "[DEV] จำลองการชำระเงินสำเร็จ",
+    "lbl_encryption": "การเข้ารหัส Covra Pay AES-256"
   }
 }

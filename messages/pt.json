@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "Meu Saldo",
     "btn_processing": "Processando...",
     "btn_pay_promote": "Pagar e Promover"
+  },
+
+  "PaymentModal": {
+    "btn_close": "Fechar",
+    "title": "Concluir Pagamento",
+    "subtitle": "Você está a um passo de desbloquear conteúdo exclusivo.",
+    "lbl_subtotal": "Subtotal",
+    "lbl_bank_fee": "Taxa Bancária",
+    "lbl_covered": "Coberta",
+    "lbl_discount": "Desconto",
+    "lbl_total": "Total a Pagar",
+    "lbl_have_coupon": "Tem um código promocional?",
+    "ph_coupon": "Ex: FANSVIP",
+    "btn_applied": "Pronto",
+    "btn_apply": "Aplicar",
+    "loading_gateway": "Iniciando gateway seguro...",
+    "btn_simulating": "Simulando...",
+    "btn_simulate_success": "[DEV] Simular Pagamento Bem-sucedido",
+    "lbl_encryption": "Criptografia Covra Pay AES-256"
   }
 }

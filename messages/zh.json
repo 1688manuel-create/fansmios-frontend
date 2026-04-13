@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "我的余额",
     "btn_processing": "正在处理...",
     "btn_pay_promote": "支付并推广"
+  },
+
+  "PaymentModal": {
+    "btn_close": "关闭",
+    "title": "完成付款",
+    "subtitle": "您距离解锁独家内容仅一步之遥。",
+    "lbl_subtotal": "小计",
+    "lbl_bank_fee": "银行手续费",
+    "lbl_covered": "已涵盖",
+    "lbl_discount": "折扣",
+    "lbl_total": "应付总额",
+    "lbl_have_coupon": "您有促销代码吗？",
+    "ph_coupon": "例：FANSVIP",
+    "btn_applied": "完成",
+    "btn_apply": "应用",
+    "loading_gateway": "正在启动安全网关...",
+    "btn_simulating": "正在模拟...",
+    "btn_simulate_success": "[DEV] 模拟成功付款",
+    "lbl_encryption": "Covra Pay AES-256 加密"
   }
 }

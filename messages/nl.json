@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "Mijn Saldo",
     "btn_processing": "Verwerken...",
     "btn_pay_promote": "Betalen en Promoten"
+  },
+
+  "PaymentModal": {
+    "btn_close": "Sluiten",
+    "title": "Betaling Voltooien",
+    "subtitle": "U bent nog één stap verwijderd van het ontgrendelen van exclusieve content.",
+    "lbl_subtotal": "Subtotaal",
+    "lbl_bank_fee": "Bankkosten",
+    "lbl_covered": "Gedekt",
+    "lbl_discount": "Korting",
+    "lbl_total": "Totaal te Betalen",
+    "lbl_have_coupon": "Heeft u een promotiecode?",
+    "ph_coupon": "Bijv. FANSVIP",
+    "btn_applied": "Klaar",
+    "btn_apply": "Toepassen",
+    "loading_gateway": "Beveiligde gateway starten...",
+    "btn_simulating": "Simuleren...",
+    "btn_simulate_success": "[DEV] Succesvolle Betaling Simuleren",
+    "lbl_encryption": "Covra Pay AES-256 Encryptie"
   }
 }

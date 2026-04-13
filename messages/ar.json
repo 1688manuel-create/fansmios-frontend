@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "رصيدي",
     "btn_processing": "جاري المعالجة...",
     "btn_pay_promote": "الدفع والترويج"
+  },
+
+  "PaymentModal": {
+    "btn_close": "إغلاق",
+    "title": "إكمال الدفع",
+    "subtitle": "أنت على بعد خطوة واحدة من فتح المحتوى الحصري.",
+    "lbl_subtotal": "المجموع الفرعي",
+    "lbl_bank_fee": "رسوم البنك",
+    "lbl_covered": "مغطاة",
+    "lbl_discount": "خصم",
+    "lbl_total": "الإجمالي للدفع",
+    "lbl_have_coupon": "هل لديك رمز ترويجي؟",
+    "ph_coupon": "مثال: FANSVIP",
+    "btn_applied": "تم",
+    "btn_apply": "تطبيق",
+    "loading_gateway": "جاري بدء البوابة الآمنة...",
+    "btn_simulating": "جاري المحاكاة...",
+    "btn_simulate_success": "[DEV] محاكاة دفع ناجح",
+    "lbl_encryption": "تشفير Covra Pay AES-256"
   }
 }

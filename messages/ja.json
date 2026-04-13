@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "マイ残高",
     "btn_processing": "処理中...",
     "btn_pay_promote": "支払ってプロモーション"
+  },
+
+  "PaymentModal": {
+    "btn_close": "閉じる",
+    "title": "支払いを完了する",
+    "subtitle": "限定コンテンツのロックを解除するまであと一歩です。",
+    "lbl_subtotal": "小計",
+    "lbl_bank_fee": "銀行手数料",
+    "lbl_covered": "カバー済み",
+    "lbl_discount": "割引",
+    "lbl_total": "合計金額",
+    "lbl_have_coupon": "プロモーションコードをお持ちですか？",
+    "ph_coupon": "例：FANSVIP",
+    "btn_applied": "適用済み",
+    "btn_apply": "適用する",
+    "loading_gateway": "安全なゲートウェイを起動しています...",
+    "btn_simulating": "シミュレーション中...",
+    "btn_simulate_success": "[DEV] 支払いの成功をシミュレート",
+    "lbl_encryption": "Covra Pay AES-256 暗号化"
   }
 }

@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "Mitt Saldo",
     "btn_processing": "Bearbetar...",
     "btn_pay_promote": "Betala och Marknadsför"
+  },
+
+  "PaymentModal": {
+    "btn_close": "Stäng",
+    "title": "Slutför Betalning",
+    "subtitle": "Du är ett steg ifrån att låsa upp exklusivt innehåll.",
+    "lbl_subtotal": "Delsumma",
+    "lbl_bank_fee": "Bankavgift",
+    "lbl_covered": "Täckt",
+    "lbl_discount": "Rabatt",
+    "lbl_total": "Totalt att Betala",
+    "lbl_have_coupon": "Har du en kampanjkod?",
+    "ph_coupon": "T.ex. FANSVIP",
+    "btn_applied": "Klart",
+    "btn_apply": "Använd",
+    "loading_gateway": "Startar säker gateway...",
+    "btn_simulating": "Simulerar...",
+    "btn_simulate_success": "[DEV] Simulera Lyckad Betalning",
+    "lbl_encryption": "Covra Pay AES-256 Kryptering"
   }
 }

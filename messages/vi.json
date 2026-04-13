@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "Số dư của Tôi",
     "btn_processing": "Đang xử lý...",
     "btn_pay_promote": "Thanh toán và Quảng bá"
+  },
+
+  "PaymentModal": {
+    "btn_close": "Đóng",
+    "title": "Hoàn tất Thanh toán",
+    "subtitle": "Bạn chỉ còn một bước nữa để mở khóa nội dung độc quyền.",
+    "lbl_subtotal": "Tổng phụ",
+    "lbl_bank_fee": "Phí ngân hàng",
+    "lbl_covered": "Đã đài thọ",
+    "lbl_discount": "Giảm giá",
+    "lbl_total": "Tổng số tiền phải trả",
+    "lbl_have_coupon": "Bạn có mã khuyến mãi không?",
+    "ph_coupon": "VD: FANSVIP",
+    "btn_applied": "Xong",
+    "btn_apply": "Áp dụng",
+    "loading_gateway": "Đang bắt đầu cổng an toàn...",
+    "btn_simulating": "Đang mô phỏng...",
+    "btn_simulate_success": "[DEV] Mô phỏng Thanh toán Thành công",
+    "lbl_encryption": "Mã hóa Covra Pay AES-256"
   }
 }

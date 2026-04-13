@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "मेरा बैलेंस",
     "btn_processing": "संसाधित किया जा रहा है...",
     "btn_pay_promote": "भुगतान करें और प्रचार करें"
+  },
+
+  "PaymentModal": {
+    "btn_close": "बंद करें",
+    "title": "भुगतान पूरा करें",
+    "subtitle": "आप विशेष सामग्री को अनलॉक करने से एक कदम दूर हैं।",
+    "lbl_subtotal": "उप-योग",
+    "lbl_bank_fee": "बैंक शुल्क",
+    "lbl_covered": "कवर किया गया",
+    "lbl_discount": "छूट",
+    "lbl_total": "भुगतान करने के लिए कुल",
+    "lbl_have_coupon": "क्या आपके पास प्रोमो कोड है?",
+    "ph_coupon": "उदा. FANSVIP",
+    "btn_applied": "हो गया",
+    "btn_apply": "लागू करें",
+    "loading_gateway": "सुरक्षित गेटवे शुरू किया जा रहा है...",
+    "btn_simulating": "सिमुलेट किया जा रहा है...",
+    "btn_simulate_success": "[DEV] सफल भुगतान का अनुकरण करें",
+    "lbl_encryption": "कोवरा पे एईएस-256 एन्क्रिप्शन"
   }
 }

@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "Saldo Saya",
     "btn_processing": "Memproses...",
     "btn_pay_promote": "Bayar dan Promosikan"
+  },
+
+  "PaymentModal": {
+    "btn_close": "Tutup",
+    "title": "Selesaikan Pembayaran",
+    "subtitle": "Anda selangkah lagi untuk membuka kunci konten eksklusif.",
+    "lbl_subtotal": "Subtotal",
+    "lbl_bank_fee": "Biaya Bank",
+    "lbl_covered": "Ditanggung",
+    "lbl_discount": "Diskon",
+    "lbl_total": "Total untuk Dibayar",
+    "lbl_have_coupon": "Apakah Anda memiliki kode promo?",
+    "ph_coupon": "Cth: FANSVIP",
+    "btn_applied": "Selesai",
+    "btn_apply": "Terapkan",
+    "loading_gateway": "Memulai gateway aman...",
+    "btn_simulating": "Memsimulasikan...",
+    "btn_simulate_success": "[DEV] Simulasikan Pembayaran Berhasil",
+    "lbl_encryption": "Enkripsi Covra Pay AES-256"
   }
 }

@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "Bakiyem",
     "btn_processing": "İşleniyor...",
     "btn_pay_promote": "Öde ve Tanıt"
+  },
+
+  "PaymentModal": {
+    "btn_close": "Kapat",
+    "title": "Ödemeyi Tamamla",
+    "subtitle": "Özel içeriğin kilidini açmaya bir adım uzaklıktasınız.",
+    "lbl_subtotal": "Ara Toplam",
+    "lbl_bank_fee": "Banka Komisyonu",
+    "lbl_covered": "Karşılandı",
+    "lbl_discount": "İndirim",
+    "lbl_total": "Ödenecek Toplam",
+    "lbl_have_coupon": "Promosyon kodunuz var mı?",
+    "ph_coupon": "Örn: FANSVIP",
+    "btn_applied": "Tamam",
+    "btn_apply": "Uygula",
+    "loading_gateway": "Güvenli ağ geçidi başlatılıyor...",
+    "btn_simulating": "Simüle ediliyor...",
+    "btn_simulate_success": "[DEV] Başarılı Ödemeyi Simüle Et",
+    "lbl_encryption": "Covra Pay AES-256 Şifreleme"
   }
 }

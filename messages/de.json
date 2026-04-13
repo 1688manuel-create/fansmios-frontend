@@ -1155,5 +1155,24 @@
     "lbl_my_balance": "Mein Guthaben",
     "btn_processing": "Wird bearbeitet...",
     "btn_pay_promote": "Bezahlen und Bewerben"
+  },
+
+  "PaymentModal": {
+    "btn_close": "Schließen",
+    "title": "Zahlung abschließen",
+    "subtitle": "Sie sind nur einen Schritt davon entfernt, exklusive Inhalte freizuschalten.",
+    "lbl_subtotal": "Zwischensumme",
+    "lbl_bank_fee": "Bankgebühr",
+    "lbl_covered": "Übernommen",
+    "lbl_discount": "Rabatt",
+    "lbl_total": "Zu zahlender Gesamtbetrag",
+    "lbl_have_coupon": "Haben Sie einen Gutscheincode?",
+    "ph_coupon": "Z.B. FANSVIP",
+    "btn_applied": "Fertig",
+    "btn_apply": "Anwenden",
+    "loading_gateway": "Sicheres Gateway wird gestartet...",
+    "btn_simulating": "Simulieren...",
+    "btn_simulate_success": "[DEV] Erfolgreiche Zahlung simulieren",
+    "lbl_encryption": "Covra Pay AES-256 Verschlüsselung"
   }
 }  
