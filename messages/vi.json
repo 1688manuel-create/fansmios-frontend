@@ -1119,5 +1119,18 @@
     "badge_secure": "BẢO MẬT CẤP QUÂN SỰ",
     "badge_privacy": "ĐẢM BẢO QUYỀN RIÊNG TƯ",
     "badge_verified": "NGƯỜI SÁNG TẠO ĐÃ XÁC MINH"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "Bạn sắp mở khóa series này với giá",
+    "confirm_buy_2": "Số tiền sẽ được trừ vào Covra Pay của bạn. Tiếp tục?",
+    "alert_unlocked": "Series đã được Mở khóa! Bạn có thể xem video ngay bây giờ.",
+    "alert_error": "Lỗi khi xử lý giao dịch mua.",
+    "empty_series": "Chưa có series nào.",
+    "lbl_no_cover": "Không có Ảnh bìa",
+    "lbl_episodes": "Tập",
+    "lbl_unlocked": "Đã mở khóa",
+    "btn_processing": "Đang xử lý...",
+    "btn_unlock": "Mở khóa"
   }
 }

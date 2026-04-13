@@ -1119,5 +1119,18 @@
     "badge_secure": "BEZPIECZEŃSTWO KLASY WOJSKOWEJ",
     "badge_privacy": "GWARANCJA PRYWATNOŚCI",
     "badge_verified": "ZWERYFIKOWANI TWÓRCY"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "Zamierzasz odblokować tę serię za",
+    "confirm_buy_2": "Zostanie odliczone od Twojego Covra Pay. Kontynuować?",
+    "alert_unlocked": "Seria Odblokowana! Możesz teraz oglądać filmy.",
+    "alert_error": "Błąd podczas przetwarzania zakupu.",
+    "empty_series": "Brak dostępnych serii.",
+    "lbl_no_cover": "Brak okładki",
+    "lbl_episodes": "Odcinki",
+    "lbl_unlocked": "Odblokowane",
+    "btn_processing": "Przetwarzanie...",
+    "btn_unlock": "Odblokuj"
   }
 }

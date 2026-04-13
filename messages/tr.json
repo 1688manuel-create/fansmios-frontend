@@ -1119,5 +1119,18 @@
     "badge_secure": "ASKERİ DÜZEYDE GÜVENLİK",
     "badge_privacy": "GİZLİLİK GARANTİSİ",
     "badge_verified": "DOĞRULANMIŞ YARATICILAR"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "Bu serinin kilidini şu fiyata açmak üzeresiniz:",
+    "confirm_buy_2": "Covra Pay'inizden düşülecektir. Devam edilsin mi?",
+    "alert_unlocked": "Seri Kilidi Açıldı! Artık videoları izleyebilirsiniz.",
+    "alert_error": "Satın alma işlemi işlenirken hata oluştu.",
+    "empty_series": "Henüz kullanılabilir seri yok.",
+    "lbl_no_cover": "Kapak Yok",
+    "lbl_episodes": "Bölümler",
+    "lbl_unlocked": "Kilidi Açıldı",
+    "btn_processing": "İşleniyor...",
+    "btn_unlock": "Kilidini Aç"
   }
 }

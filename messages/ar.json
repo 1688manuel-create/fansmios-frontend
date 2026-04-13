@@ -1119,5 +1119,18 @@
     "badge_secure": "أمان من الدرجة العسكرية",
     "badge_privacy": "الخصوصية مضمونة",
     "badge_verified": "صناع محتوى موثقون"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "أنت على وشك فتح هذه السلسلة مقابل",
+    "confirm_buy_2": "سيتم خصمها من Covra Pay الخاص بك. استمرار؟",
+    "alert_unlocked": "تم فتح السلسلة! يمكنك الآن مشاهدة مقاطع الفيديو.",
+    "alert_error": "خطأ في معالجة عملية الشراء.",
+    "empty_series": "لا توجد سلاسل متاحة بعد.",
+    "lbl_no_cover": "بدون غلاف",
+    "lbl_episodes": "حلقات",
+    "lbl_unlocked": "مفتوح",
+    "btn_processing": "جاري المعالجة...",
+    "btn_unlock": "فتح"
   }
 }

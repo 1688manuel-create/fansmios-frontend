@@ -1119,5 +1119,18 @@
     "badge_secure": "KEAMANAN TINGKAT MILITER",
     "badge_privacy": "PRIVASI DIJAMIN",
     "badge_verified": "KREATOR TERVERIFIKASI"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "Anda akan membuka kunci seri ini seharga",
+    "confirm_buy_2": "Itu akan dipotong dari Covra Pay Anda. Lanjutkan?",
+    "alert_unlocked": "Seri Terbuka! Anda sekarang dapat menonton videonya.",
+    "alert_error": "Kesalahan saat memproses pembelian.",
+    "empty_series": "Belum ada seri yang tersedia.",
+    "lbl_no_cover": "Tidak Ada Sampul",
+    "lbl_episodes": "Episode",
+    "lbl_unlocked": "Tidak Terkunci",
+    "btn_processing": "Memproses...",
+    "btn_unlock": "Buka Kunci"
   }
 }

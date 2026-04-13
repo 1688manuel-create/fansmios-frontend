@@ -1119,5 +1119,18 @@
     "badge_secure": "军用级安全",
     "badge_privacy": "隐私保证",
     "badge_verified": "经过验证的创作者"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "您将解锁此系列，价格为",
+    "confirm_buy_2": "它将从您的 Covra Pay 中扣除。继续吗？",
+    "alert_unlocked": "系列已解锁！您现在可以观看视频了。",
+    "alert_error": "处理购买时出错。",
+    "empty_series": "暂无可用系列。",
+    "lbl_no_cover": "无封面",
+    "lbl_episodes": "剧集",
+    "lbl_unlocked": "已解锁",
+    "btn_processing": "正在处理...",
+    "btn_unlock": "解锁"
   }
 }

@@ -1,29 +1,33 @@
-// frontend/components/profile/SeriesTab.tsx
+"use client";
+
 import { useState } from 'react';
 import api from '../../lib/api';
 import { Lock, Unlock, PlayCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 INVOCAMOS AL TRADUCTOR
 
 export default function SeriesTab({ series, onPurchaseSuccess }: { series: any[], onPurchaseSuccess: () => void }) {
+  const t = useTranslations('SeriesTab'); // 👈 INICIAMOS EL TRADUCTOR
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   const handleBuy = async (seriesId: string, price: number) => {
-    const confirm = window.confirm(`Vas a desbloquear esta serie por $${price} USD. Se descontará de tu Covra Pay. ¿Continuar?`);
+    // 🔥 ALERTA DINÁMICA
+    const confirm = window.confirm(`${t('confirm_buy_1')} $${price} USD. ${t('confirm_buy_2')}`);
     if (!confirm) return;
 
     setProcessingId(seriesId);
     try {
       await api.post(`/series/${seriesId}/buy`);
-      alert("✅ ¡Serie Desbloqueada! Ya puedes ver los videos.");
-      onPurchaseSuccess(); // Recarga los datos para mostrar los videos
+      alert(`✅ ${t('alert_unlocked')}`);
+      onPurchaseSuccess(); 
     } catch (error: any) {
-      alert(error.response?.data?.error || "Error al procesar la compra.");
+      alert(error.response?.data?.error || t('alert_error'));
     } finally {
       setProcessingId(null);
     }
   };
 
   if (!series || series.length === 0) {
-    return <div className="text-center py-20 text-gray-500 font-bold">No hay series disponibles aún.</div>;
+    return <div className="text-center py-20 text-gray-500 font-bold">{t('empty_series')}</div>;
   }
 
   return (
@@ -36,7 +40,7 @@ export default function SeriesTab({ series, onPurchaseSuccess }: { series: any[]
             {s.thumbnail ? (
               <img src={s.thumbnail} alt={s.title} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-zinc-700">Sin Portada</div>
+              <div className="w-full h-full flex items-center justify-center text-zinc-700">{t('lbl_no_cover')}</div>
             )}
             {!s.isUnlocked && (
               <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
@@ -52,12 +56,12 @@ export default function SeriesTab({ series, onPurchaseSuccess }: { series: any[]
             
             <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
               <span className="text-sm font-bold text-gray-500 flex items-center gap-1">
-                <PlayCircle className="w-4 h-4" /> {s.episodes?.length || 0} Episodios
+                <PlayCircle className="w-4 h-4" /> {s.episodes?.length || 0} {t('lbl_episodes')}
               </span>
               
               {s.isUnlocked ? (
                 <span className="text-green-400 font-bold text-sm flex items-center gap-1 bg-green-500/10 px-3 py-1 rounded-full">
-                  <Unlock className="w-4 h-4" /> Desbloqueado
+                  <Unlock className="w-4 h-4" /> {t('lbl_unlocked')}
                 </span>
               ) : (
                 <button 
@@ -65,7 +69,7 @@ export default function SeriesTab({ series, onPurchaseSuccess }: { series: any[]
                   disabled={processingId === s.id}
                   className="bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-5 rounded-full transition-all text-sm shadow-[0_0_10px_rgba(147,51,234,0.3)] disabled:opacity-50"
                 >
-                  {processingId === s.id ? "Procesando..." : `Desbloquear $${s.price}`}
+                  {processingId === s.id ? t('btn_processing') : `${t('btn_unlock')} $${s.price}`}
                 </button>
               )}
             </div>

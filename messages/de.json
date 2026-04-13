@@ -1119,5 +1119,18 @@
     "badge_secure": "SICHERHEIT AUF MILITÄRNIVEAU",
     "badge_privacy": "DATENSCHUTZ GARANTIERT",
     "badge_verified": "VERIFIZIERTE CREATOR"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "Sie schalten diese Serie frei für",
+    "confirm_buy_2": "Es wird von Ihrem Covra Pay abgezogen. Fortfahren?",
+    "alert_unlocked": "Serie freigeschaltet! Sie können sich die Videos jetzt ansehen.",
+    "alert_error": "Fehler bei der Bearbeitung des Kaufs.",
+    "empty_series": "Noch keine Serien verfügbar.",
+    "lbl_no_cover": "Kein Titelbild",
+    "lbl_episodes": "Episoden",
+    "lbl_unlocked": "Freigeschaltet",
+    "btn_processing": "Wird bearbeitet...",
+    "btn_unlock": "Freischalten"
   }
 }

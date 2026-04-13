@@ -1119,5 +1119,18 @@
     "badge_secure": "SICUREZZA DI LIVELLO MILITARE",
     "badge_privacy": "PRIVACY GARANTITA",
     "badge_verified": "CREATORI VERIFICATI"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "Stai per sbloccare questa serie per",
+    "confirm_buy_2": "Sarà detratto dal tuo Covra Pay. Continuare?",
+    "alert_unlocked": "Serie Sbloccata! Ora puoi guardare i video.",
+    "alert_error": "Errore durante l'elaborazione dell'acquisto.",
+    "empty_series": "Nessuna serie disponibile per ora.",
+    "lbl_no_cover": "Nessuna Copertina",
+    "lbl_episodes": "Episodi",
+    "lbl_unlocked": "Sbloccato",
+    "btn_processing": "Elaborazione...",
+    "btn_unlock": "Sblocca"
   }
 }

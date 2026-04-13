@@ -1119,5 +1119,18 @@
     "badge_secure": "SÄKERHET AV MILITÄR KLASS",
     "badge_privacy": "INTEGRITET GARANTERAD",
     "badge_verified": "VERIFIERADE SKAPARE"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "Du kommer att låsa upp den här serien för",
+    "confirm_buy_2": "Det dras från din Covra Pay. Fortsätta?",
+    "alert_unlocked": "Serien Upplåst! Du kan nu titta på videorna.",
+    "alert_error": "Fel vid bearbetning av köpet.",
+    "empty_series": "Inga serier tillgängliga ännu.",
+    "lbl_no_cover": "Inget Omslag",
+    "lbl_episodes": "Avsnitt",
+    "lbl_unlocked": "Upplåst",
+    "btn_processing": "Bearbetar...",
+    "btn_unlock": "Lås upp"
   }
 }

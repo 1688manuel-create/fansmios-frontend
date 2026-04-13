@@ -1119,5 +1119,18 @@
     "badge_secure": "ミリタリーグレードのセキュリティ",
     "badge_privacy": "プライバシー保証",
     "badge_verified": "検証済みのクリエイター"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "このシリーズのロックを解除しようとしています：",
+    "confirm_buy_2": "Covra Payから差し引かれます。続行しますか？",
+    "alert_unlocked": "シリーズのロックが解除されました！動画を視聴できるようになりました。",
+    "alert_error": "購入の処理中にエラーが発生しました。",
+    "empty_series": "利用可能なシリーズはまだありません。",
+    "lbl_no_cover": "カバーなし",
+    "lbl_episodes": "エピソード",
+    "lbl_unlocked": "ロック解除済み",
+    "btn_processing": "処理中...",
+    "btn_unlock": "ロック解除"
   }
 }

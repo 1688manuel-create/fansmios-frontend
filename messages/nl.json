@@ -1119,5 +1119,18 @@
     "badge_secure": "BEVEILIGING VAN MILITAIR NIVEAU",
     "badge_privacy": "PRIVACY GEGARANDEERD",
     "badge_verified": "GEVERIFIEERDE MAKERS"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "Je gaat deze serie ontgrendelen voor",
+    "confirm_buy_2": "Het wordt afgeschreven van je Covra Pay. Doorgaan?",
+    "alert_unlocked": "Serie Ontgrendeld! Je kunt nu de video's bekijken.",
+    "alert_error": "Fout bij het verwerken van de aankoop.",
+    "empty_series": "Nog geen series beschikbaar.",
+    "lbl_no_cover": "Geen Omslag",
+    "lbl_episodes": "Afleveringen",
+    "lbl_unlocked": "Ontgrendeld",
+    "btn_processing": "Verwerken...",
+    "btn_unlock": "Ontgrendelen"
   }
 }

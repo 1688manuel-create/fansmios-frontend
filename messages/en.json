@@ -1118,5 +1118,18 @@
     "badge_secure": "MILITARY GRADE SECURITY",
     "badge_privacy": "PRIVACY GUARANTEED",
     "badge_verified": "VERIFIED CREATORS"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "You are going to unlock this series for",
+    "confirm_buy_2": "It will be deducted from your Covra Pay. Continue?",
+    "alert_unlocked": "Series Unlocked! You can now watch the videos.",
+    "alert_error": "Error processing the purchase.",
+    "empty_series": "No series available yet.",
+    "lbl_no_cover": "No Cover",
+    "lbl_episodes": "Episodes",
+    "lbl_unlocked": "Unlocked",
+    "btn_processing": "Processing...",
+    "btn_unlock": "Unlock"
   }
 }

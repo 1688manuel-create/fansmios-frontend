@@ -1119,5 +1119,18 @@
     "badge_secure": "군사 등급 보안",
     "badge_privacy": "개인정보 보호 보장",
     "badge_verified": "검증된 크리에이터"
+  },
+
+  "SeriesTab": {
+    "confirm_buy_1": "다음 가격으로 이 시리즈를 잠금 해제하려고 합니다:",
+    "confirm_buy_2": "Covra Pay에서 차감됩니다. 계속하시겠습니까?",
+    "alert_unlocked": "시리즈가 잠금 해제되었습니다! 이제 동영상을 시청할 수 있습니다.",
+    "alert_error": "구매 처리 중 오류 발생.",
+    "empty_series": "아직 사용 가능한 시리즈가 없습니다.",
+    "lbl_no_cover": "커버 없음",
+    "lbl_episodes": "에피소드",
+    "lbl_unlocked": "잠금 해제됨",
+    "btn_processing": "처리 중...",
+    "btn_unlock": "잠금 해제"
   }
 }
