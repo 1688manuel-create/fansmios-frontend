@@ -1086,5 +1086,10 @@
     "btn_login": "Giriş Yap",
     "lbl_no_account": "Hesabınız yok mu?",
     "link_register": "Buradan kayıt olun"
+  },
+
+  "Metadata": {
+    "title": "FansMio VIP",
+    "description": "Elit yaratıcılar için özel platform. Sizin içeriğiniz. Sizin kurallarınız. Sizin hayranlarınız."
   }
 }

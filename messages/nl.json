@@ -1086,5 +1086,10 @@
     "btn_login": "Inloggen",
     "lbl_no_account": "Heb je geen account?",
     "link_register": "Registreer hier"
+  },
+
+  "Metadata": {
+    "title": "FansMio VIP",
+    "description": "Het exclusieve platform voor elite makers. Jouw content. Jouw regels. Jouw fans."
   }
 }

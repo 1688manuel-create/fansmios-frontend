@@ -1086,5 +1086,10 @@
     "btn_login": "Đăng nhập",
     "lbl_no_account": "Chưa có tài khoản?",
     "link_register": "Đăng ký tại đây"
+  },
+
+  "Metadata": {
+    "title": "FansMio VIP",
+    "description": "Nền tảng độc quyền dành cho những người sáng tạo ưu tú. Nội dung của bạn. Quy tắc của bạn. Người hâm mộ của bạn."
   }
 }

@@ -1086,5 +1086,10 @@
     "btn_login": "로그인",
     "lbl_no_account": "계정이 없으신가요?",
     "link_register": "여기에서 등록하세요"
+  },
+
+  "Metadata": {
+    "title": "FansMio VIP",
+    "description": "엘리트 크리에이터를 위한 독점 플랫폼. 당신의 콘텐츠. 당신의 규칙. 당신의 팬."
   }
 }

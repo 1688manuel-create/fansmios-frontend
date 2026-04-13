@@ -1086,5 +1086,10 @@
     "btn_login": "Masuk",
     "lbl_no_account": "Belum punya akun?",
     "link_register": "Daftar di sini"
+  },
+
+  "Metadata": {
+    "title": "FansMio VIP",
+    "description": "Platform eksklusif untuk kreator elit. Konten Anda. Aturan Anda. Penggemar Anda."
   }
 }

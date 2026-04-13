@@ -1086,5 +1086,10 @@
     "btn_login": "Zaloguj się",
     "lbl_no_account": "Nie masz konta?",
     "link_register": "Zarejestruj się tutaj"
+  },
+
+  "Metadata": {
+    "title": "FansMio VIP",
+    "description": "Ekskluzywna platforma dla elitarnych twórców. Twoje treści. Twoje zasady. Twoi fani."
   }
 }

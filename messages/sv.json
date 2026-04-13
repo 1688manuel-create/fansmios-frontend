@@ -1086,5 +1086,10 @@
     "btn_login": "Logga in",
     "lbl_no_account": "Har du inget konto?",
     "link_register": "Registrera dig här"
+  },
+
+  "Metadata": {
+    "title": "FansMio VIP",
+    "description": "Den exklusiva plattformen för elitskapare. Ditt innehåll. Dina regler. Dina fans."
   }
 }

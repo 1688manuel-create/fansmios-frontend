@@ -1086,5 +1086,10 @@
     "btn_login": "ログイン",
     "lbl_no_account": "アカウントを持っていませんか？",
     "link_register": "ここに登録"
+  },
+
+  "Metadata": {
+    "title": "FansMio VIP",
+    "description": "エリートクリエイターのための独占プラットフォーム。あなたのコンテンツ。あなたのルール。あなたのファン。"
   }
 }
