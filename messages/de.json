@@ -1174,5 +1174,31 @@
     "btn_simulating": "Simulieren...",
     "btn_simulate_success": "[DEV] Erfolgreiche Zahlung simulieren",
     "lbl_encryption": "Covra Pay AES-256 Verschlüsselung"
+  },
+
+  "ReportModal": {
+    "reason_1": "Unangemessener / expliziter Inhalt",
+    "reason_2": "Betrug, Scam oder Spam",
+    "reason_3": "Belästigung oder Missbrauch",
+    "reason_4": "Identitätsdiebstahl",
+    "reason_5": "Minderjährig",
+    "reason_6": "Urheberrecht",
+    "reason_7": "Anderer Grund",
+    "alert_no_reason": "Bitte wählen Sie einen Grund aus.",
+    "alert_no_desc": "Bitte geben Sie uns etwas mehr Kontext in der Beschreibung.",
+    "alert_success": "✅ Meldung an den Admin gesendet. Danke, dass Sie helfen, die Community sicher zu halten.",
+    "alert_error": "Beim Senden der Meldung ist ein Fehler aufgetreten.",
+    "title_post": "Beitrag melden",
+    "title_message": "Nachricht melden",
+    "title_user": "Benutzer melden",
+    "sub_post": "Was ist das Problem mit diesem Beitrag?",
+    "sub_message": "Warum melden Sie diese Nachricht?",
+    "sub_user_prefix": "Welches Problem haben Sie mit",
+    "sub_default": "Wie können wir helfen? Ihre Meldung wird vertraulich behandelt.",
+    "btn_close": "Schließen",
+    "lbl_main_reason": "Hauptgrund",
+    "lbl_desc": "Detaillierte Beschreibung",
+    "ph_desc": "Erklären Sie kurz, was passiert ist...",
+    "btn_submit": "Meldung senden"
   }
 }  

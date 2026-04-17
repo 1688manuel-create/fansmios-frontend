@@ -1174,5 +1174,31 @@
     "btn_simulating": "시뮬레이션 중...",
     "btn_simulate_success": "[DEV] 결제 성공 시뮬레이션",
     "lbl_encryption": "Covra Pay AES-256 암호화"
+  },
+
+  "ReportModal": {
+    "reason_1": "부적절/노골적인 콘텐츠",
+    "reason_2": "사기, 스캠 또는 스팸",
+    "reason_3": "괴롭힘 또는 학대",
+    "reason_4": "사칭",
+    "reason_5": "미성년자",
+    "reason_6": "저작권 침해",
+    "reason_7": "기타 이유",
+    "alert_no_reason": "이유를 선택해 주세요.",
+    "alert_no_desc": "설명에 배경 정보를 조금 더 제공해 주세요.",
+    "alert_success": "✅ 관리자에게 신고가 전송되었습니다. 커뮤니티를 안전하게 유지하는 데 도움을 주셔서 감사합니다.",
+    "alert_error": "신고를 보내는 중 오류가 발생했습니다.",
+    "title_post": "게시물 신고",
+    "title_message": "메시지 신고",
+    "title_user": "사용자 신고",
+    "sub_post": "이 게시물의 문제점은 무엇입니까?",
+    "sub_message": "이 메시지를 신고하는 이유는 무엇입니까?",
+    "sub_user_prefix": "다음에 대한 문제가 무엇입니까:",
+    "sub_default": "어떻게 도와드릴까요? 귀하의 신고는 기밀로 유지됩니다.",
+    "btn_close": "닫기",
+    "lbl_main_reason": "주요 이유",
+    "lbl_desc": "상세 설명",
+    "ph_desc": "무슨 일이 있었는지 간단히 설명해 주세요...",
+    "btn_submit": "신고 제출"
   }
 }

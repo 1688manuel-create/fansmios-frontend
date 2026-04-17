@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { Flag, X, Loader2, AlertTriangle, ShieldAlert } from 'lucide-react';
 import api from '../lib/api';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 interface ReportModalProps {
   type?: 'USER' | 'POST' | 'MESSAGE'| 'COMMENT'; 
@@ -13,24 +14,25 @@ interface ReportModalProps {
 }
 
 export default function ReportModal({ type = 'USER', targetId, reportedUsername, onClose }: ReportModalProps) {
+  const t = useTranslations('ReportModal'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [reason, setReason] = useState('');
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const reasons = [
-    'Contenido Inapropiado / Explícito',
-    'Fraude, Estafa o Spam',
-    'Acoso o Abuso',
-    'Suplantación de Identidad',
-    'Menor de Edad',
-    'Derechos de Autor (Copyright)',
-    'Otro Motivo'
+ const reasons = [
+    t('reason_1'),
+    t('reason_2'),
+    t('reason_3'),
+    t('reason_4'),
+    t('reason_5'),
+    t('reason_6'),
+    t('reason_7')
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reason) return alert("Por favor, selecciona un motivo.");
-    if (!description.trim()) return alert("Por favor, danos un poco más de contexto en la descripción.");
+    if (!reason) return alert(t('alert_no_reason'));
+    if (!description.trim()) return alert(t('alert_no_desc'));
 
     setIsSubmitting(true);
     try {
@@ -41,26 +43,26 @@ export default function ReportModal({ type = 'USER', targetId, reportedUsername,
         reason, 
         description 
       });
-      alert("✅ Reporte enviado al Administrador. Gracias por ayudarnos a mantener la comunidad segura.");
+      alert(t('alert_success'));
       onClose();
     } catch (error) {
-      alert("Hubo un error al enviar el reporte.");
+      alert(t('alert_error'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const getTitle = () => {
-    if (type === 'POST') return 'Reportar Publicación';
-    if (type === 'MESSAGE') return 'Reportar Mensaje';
-    return 'Reportar Usuario';
+    if (type === 'POST') return t('title_post');
+    if (type === 'MESSAGE') return t('title_message');
+    return t('title_user');
   };
 
   const getSubtitle = () => {
-    if (type === 'POST') return '¿Qué problema tiene esta publicación?';
-    if (type === 'MESSAGE') return '¿Por qué reportas este mensaje?';
-    if (reportedUsername) return `¿Qué problema tienes con @${reportedUsername}?`;
-    return '¿En qué podemos ayudarte? Tu reporte es confidencial.';
+    if (type === 'POST') return t('sub_post');
+    if (type === 'MESSAGE') return t('sub_message');
+    if (reportedUsername) return `${t('sub_user_prefix')} @${reportedUsername}?`;
+    return t('sub_default');
   };
 
   return (
@@ -76,7 +78,7 @@ export default function ReportModal({ type = 'USER', targetId, reportedUsername,
             <ShieldAlert className="w-6 h-6 text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
             {getTitle()}
           </h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-white nm-btn p-2 rounded-full transition-colors">
+          <button onClick={onClose} className="text-gray-500 hover:text-white nm-btn p-2 rounded-full transition-colors" title={t('btn_close')}>
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -86,7 +88,7 @@ export default function ReportModal({ type = 'USER', targetId, reportedUsername,
           
           <div>
             <p className="text-gray-400 text-sm font-medium mb-4">{getSubtitle()}</p>
-            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 block pl-1">Motivo Principal</label>
+            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 block pl-1">{t('lbl_main_reason')}</label>
             <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
               {reasons.map((r) => (
                 <label key={r} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${reason === r ? 'nm-inset border-red-500/50 text-red-400 shadow-[inset_0_0_10px_rgba(239,68,68,0.1)]' : 'bg-black/50 border-white/5 text-gray-300 hover:bg-white/5'}`}>
@@ -108,13 +110,13 @@ export default function ReportModal({ type = 'USER', targetId, reportedUsername,
           </div>
 
           <div>
-            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block pl-1">Descripción Detallada</label>
+            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block pl-1">{t('lbl_desc')}</label>
             <textarea 
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full bg-black/50 border border-white/5 nm-inset rounded-xl p-4 text-white outline-none focus:border-red-500/50 resize-none text-sm placeholder:text-gray-600 custom-scrollbar" 
               rows={3} 
-              placeholder="Explícanos brevemente qué sucedió..."
+              placeholder={t('ph_desc')}
               required
             />
           </div>
@@ -124,7 +126,7 @@ export default function ReportModal({ type = 'USER', targetId, reportedUsername,
             disabled={isSubmitting || !reason || !description.trim()} 
             className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(239,68,68,0.3)] disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-2"
           >
-            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Flag className="w-5 h-5" /> Enviar Reporte</>}
+            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Flag className="w-5 h-5" /> {t('btn_submit')}</>}
           </button>
         </form>
 

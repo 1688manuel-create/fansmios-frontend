@@ -1174,5 +1174,31 @@
     "btn_simulating": "シミュレーション中...",
     "btn_simulate_success": "[DEV] 支払いの成功をシミュレート",
     "lbl_encryption": "Covra Pay AES-256 暗号化"
+  },
+
+  "ReportModal": {
+    "reason_1": "不適切な/露骨なコンテンツ",
+    "reason_2": "詐欺、詐取、またはスパム",
+    "reason_3": "嫌がらせや虐待",
+    "reason_4": "なりすまし",
+    "reason_5": "未成年",
+    "reason_6": "著作権侵害",
+    "reason_7": "その他の理由",
+    "alert_no_reason": "理由を選択してください。",
+    "alert_no_desc": "説明にもう少し詳細を記入してください。",
+    "alert_success": "✅ 管理者に報告を送信しました。コミュニティの安全維持にご協力いただきありがとうございます。",
+    "alert_error": "報告の送信中にエラーが発生しました。",
+    "title_post": "投稿を報告",
+    "title_message": "メッセージを報告",
+    "title_user": "ユーザーを報告",
+    "sub_post": "この投稿の何が問題ですか？",
+    "sub_message": "なぜこのメッセージを報告するのですか？",
+    "sub_user_prefix": "との間にどのような問題がありますか：",
+    "sub_default": "どのようにお手伝いできますか？あなたの報告は機密として扱われます。",
+    "btn_close": "閉じる",
+    "lbl_main_reason": "主な理由",
+    "lbl_desc": "詳細な説明",
+    "ph_desc": "何が起こったのか簡潔に説明してください...",
+    "btn_submit": "報告を送信"
   }
 }

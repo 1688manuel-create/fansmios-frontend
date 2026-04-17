@@ -1174,5 +1174,31 @@
     "btn_simulating": "Memsimulasikan...",
     "btn_simulate_success": "[DEV] Simulasikan Pembayaran Berhasil",
     "lbl_encryption": "Enkripsi Covra Pay AES-256"
+  },
+
+  "ReportModal": {
+    "reason_1": "Konten Tidak Pantas / Eksplisit",
+    "reason_2": "Penipuan, Penipuan, atau Spam",
+    "reason_3": "Pelecehan atau Penyalahgunaan",
+    "reason_4": "Peniruan Identitas",
+    "reason_5": "Di Bawah Umur",
+    "reason_6": "Pelanggaran Hak Cipta",
+    "reason_7": "Alasan Lain",
+    "alert_no_reason": "Pilih salah satu alasan.",
+    "alert_no_desc": "Harap berikan sedikit lebih banyak konteks dalam deskripsi.",
+    "alert_success": "✅ Laporan dikirim ke Admin. Terima kasih telah membantu menjaga komunitas tetap aman.",
+    "alert_error": "Terjadi kesalahan saat mengirim laporan.",
+    "title_post": "Laporkan Postingan",
+    "title_message": "Laporkan Pesan",
+    "title_user": "Laporkan Pengguna",
+    "sub_post": "Apa masalah dengan postingan ini?",
+    "sub_message": "Mengapa Anda melaporkan pesan ini?",
+    "sub_user_prefix": "Apa masalah Anda dengan",
+    "sub_default": "Bagaimana kami dapat membantu? Laporan Anda bersifat rahasia.",
+    "btn_close": "Tutup",
+    "lbl_main_reason": "Alasan Utama",
+    "lbl_desc": "Deskripsi Lengkap",
+    "ph_desc": "Jelaskan secara singkat apa yang terjadi...",
+    "btn_submit": "Kirim Laporan"
   }
 }

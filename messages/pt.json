@@ -1174,5 +1174,31 @@
     "btn_simulating": "Simulando...",
     "btn_simulate_success": "[DEV] Simular Pagamento Bem-sucedido",
     "lbl_encryption": "Criptografia Covra Pay AES-256"
+  },
+
+  "ReportModal": {
+    "reason_1": "Conteúdo Inapropriado / Explícito",
+    "reason_2": "Fraude, Golpe ou Spam",
+    "reason_3": "Assédio ou Abuso",
+    "reason_4": "Falsa Identidade",
+    "reason_5": "Menor de Idade",
+    "reason_6": "Direitos Autorais (Copyright)",
+    "reason_7": "Outro Motivo",
+    "alert_no_reason": "Por favor, selecione um motivo.",
+    "alert_no_desc": "Por favor, nos dê um pouco mais de contexto na descrição.",
+    "alert_success": "✅ Relatório enviado ao Administrador. Obrigado por ajudar a manter a comunidade segura.",
+    "alert_error": "Houve um erro ao enviar o relatório.",
+    "title_post": "Reportar Publicação",
+    "title_message": "Reportar Mensagem",
+    "title_user": "Reportar Usuário",
+    "sub_post": "Qual é o problema com esta publicação?",
+    "sub_message": "Por que você está relatando esta mensagem?",
+    "sub_user_prefix": "Qual problema você tem com",
+    "sub_default": "Como podemos ajudar? Seu relatório é confidencial.",
+    "btn_close": "Fechar",
+    "lbl_main_reason": "Motivo Principal",
+    "lbl_desc": "Descrição Detalhada",
+    "ph_desc": "Explique brevemente o que aconteceu...",
+    "btn_submit": "Enviar Relatório"
   }
 }

@@ -1174,5 +1174,31 @@
     "btn_simulating": "Đang mô phỏng...",
     "btn_simulate_success": "[DEV] Mô phỏng Thanh toán Thành công",
     "lbl_encryption": "Mã hóa Covra Pay AES-256"
+  },
+
+  "ReportModal": {
+    "reason_1": "Nội dung Không phù hợp / Rõ ràng",
+    "reason_2": "Gian lận, Lừa đảo hoặc Spam",
+    "reason_3": "Quấy rối hoặc Lạm dụng",
+    "reason_4": "Mạo danh",
+    "reason_5": "Trẻ vị thành niên",
+    "reason_6": "Vi phạm Bản quyền",
+    "reason_7": "Lý do khác",
+    "alert_no_reason": "Vui lòng chọn một lý do.",
+    "alert_no_desc": "Vui lòng cung cấp thêm một chút bối cảnh trong phần mô tả.",
+    "alert_success": "✅ Báo cáo đã được gửi tới Quản trị viên. Cảm ơn bạn đã giúp giữ cho cộng đồng an toàn.",
+    "alert_error": "Đã xảy ra lỗi khi gửi báo cáo.",
+    "title_post": "Báo cáo Bài đăng",
+    "title_message": "Báo cáo Tin nhắn",
+    "title_user": "Báo cáo Người dùng",
+    "sub_post": "Vấn đề với bài đăng này là gì?",
+    "sub_message": "Tại sao bạn báo cáo tin nhắn này?",
+    "sub_user_prefix": "Bạn có vấn đề gì với",
+    "sub_default": "Chúng tôi có thể giúp gì? Báo cáo của bạn được bảo mật.",
+    "btn_close": "Đóng",
+    "lbl_main_reason": "Lý do Chính",
+    "lbl_desc": "Mô tả Chi tiết",
+    "ph_desc": "Giải thích ngắn gọn những gì đã xảy ra...",
+    "btn_submit": "Gửi Báo cáo"
   }
 }

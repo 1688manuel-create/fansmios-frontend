@@ -1174,5 +1174,31 @@
     "btn_simulating": "Simulazione...",
     "btn_simulate_success": "[DEV] Simula Pagamento Riuscito",
     "lbl_encryption": "Crittografia Covra Pay AES-256"
+  },
+
+  "ReportModal": {
+    "reason_1": "Contenuto Inappropriato / Esplicito",
+    "reason_2": "Frode, Truffa o Spam",
+    "reason_3": "Molestie o Abusi",
+    "reason_4": "Furto d'identità",
+    "reason_5": "Minorenne",
+    "reason_6": "Diritto d'autore (Copyright)",
+    "reason_7": "Altro Motivo",
+    "alert_no_reason": "Si prega di selezionare un motivo.",
+    "alert_no_desc": "Per favore, forniscici un po' più di contesto nella descrizione.",
+    "alert_success": "✅ Segnalazione inviata all'Amministratore. Grazie per aiutarci a mantenere la comunità sicura.",
+    "alert_error": "Errore durante l'invio della segnalazione.",
+    "title_post": "Segnala Post",
+    "title_message": "Segnala Messaggio",
+    "title_user": "Segnala Utente",
+    "sub_post": "Qual è il problema con questo post?",
+    "sub_message": "Perché segnali questo messaggio?",
+    "sub_user_prefix": "Che problema hai con",
+    "sub_default": "Come possiamo aiutarti? La tua segnalazione è riservata.",
+    "btn_close": "Chiudi",
+    "lbl_main_reason": "Motivo Principale",
+    "lbl_desc": "Descrizione Dettagliata",
+    "ph_desc": "Spiega brevemente cosa è successo...",
+    "btn_submit": "Invia Segnalazione"
   }
 }

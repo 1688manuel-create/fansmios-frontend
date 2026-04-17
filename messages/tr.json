@@ -1174,5 +1174,31 @@
     "btn_simulating": "Simüle ediliyor...",
     "btn_simulate_success": "[DEV] Başarılı Ödemeyi Simüle Et",
     "lbl_encryption": "Covra Pay AES-256 Şifreleme"
+  },
+
+  "ReportModal": {
+    "reason_1": "Uygunsuz / Açık İçerik",
+    "reason_2": "Dolandırıcılık veya Spam",
+    "reason_3": "Taciz veya İstismar",
+    "reason_4": "Kimliğe Bürünme",
+    "reason_5": "Reşit Olmayan",
+    "reason_6": "Telif Hakkı (Copyright)",
+    "reason_7": "Diğer Neden",
+    "alert_no_reason": "Lütfen bir neden seçin.",
+    "alert_no_desc": "Lütfen açıklamada biraz daha fazla bağlam sağlayın.",
+    "alert_success": "✅ Rapor Yöneticiye gönderildi. Topluluğu güvende tutmamıza yardımcı olduğunuz için teşekkür ederiz.",
+    "alert_error": "Rapor gönderilirken bir hata oluştu.",
+    "title_post": "Gönderiyi Bildir",
+    "title_message": "Mesajı Bildir",
+    "title_user": "Kullanıcıyı Bildir",
+    "sub_post": "Bu gönderiyle ilgili sorun nedir?",
+    "sub_message": "Bu mesajı neden bildiriyorsunuz?",
+    "sub_user_prefix": "Şununla ilgili ne sorununuz var:",
+    "sub_default": "Nasıl yardımcı olabiliriz? Raporunuz gizli tutulacaktır.",
+    "btn_close": "Kapat",
+    "lbl_main_reason": "Ana Neden",
+    "lbl_desc": "Detaylı Açıklama",
+    "ph_desc": "Ne olduğunu kısaca açıklayın...",
+    "btn_submit": "Raporu Gönder"
   }
 }

@@ -1174,5 +1174,31 @@
     "btn_simulating": "Simuleren...",
     "btn_simulate_success": "[DEV] Succesvolle Betaling Simuleren",
     "lbl_encryption": "Covra Pay AES-256 Encryptie"
+  },
+
+  "ReportModal": {
+    "reason_1": "Ongepaste / Expliciete Content",
+    "reason_2": "Fraude, Oplichting of Spam",
+    "reason_3": "Intimidatie of Misbruik",
+    "reason_4": "Identiteitsdiefstal",
+    "reason_5": "Minderjarig",
+    "reason_6": "Inbreuk op Auteursrecht",
+    "reason_7": "Andere Reden",
+    "alert_no_reason": "Selecteer een reden.",
+    "alert_no_desc": "Geef iets meer context in de beschrijving.",
+    "alert_success": "✅ Melding verzonden naar Beheerder. Bedankt dat je helpt de community veilig te houden.",
+    "alert_error": "Er is een fout opgetreden bij het verzenden van de melding.",
+    "title_post": "Post Rapporteren",
+    "title_message": "Bericht Rapporteren",
+    "title_user": "Gebruiker Rapporteren",
+    "sub_post": "Wat is het probleem met deze post?",
+    "sub_message": "Waarom rapporteer je dit bericht?",
+    "sub_user_prefix": "Welk probleem heb je met",
+    "sub_default": "Hoe kunnen we helpen? Je melding is vertrouwelijk.",
+    "btn_close": "Sluiten",
+    "lbl_main_reason": "Hoofdreden",
+    "lbl_desc": "Gedetailleerde Beschrijving",
+    "ph_desc": "Leg kort uit wat er is gebeurd...",
+    "btn_submit": "Melding Verzenden"
   }
 }

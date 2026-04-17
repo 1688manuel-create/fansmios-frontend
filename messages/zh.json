@@ -1174,5 +1174,31 @@
     "btn_simulating": "正在模拟...",
     "btn_simulate_success": "[DEV] 模拟成功付款",
     "lbl_encryption": "Covra Pay AES-256 加密"
+  },
+
+  "ReportModal": {
+    "reason_1": "不当/露骨内容",
+    "reason_2": "欺诈、诈骗或垃圾邮件",
+    "reason_3": "骚扰或辱骂",
+    "reason_4": "冒充他人",
+    "reason_5": "未成年人",
+    "reason_6": "侵犯版权",
+    "reason_7": "其他原因",
+    "alert_no_reason": "请选择一个原因。",
+    "alert_no_desc": "请在描述中提供更多背景信息。",
+    "alert_success": "✅ 举报已发送给管理员。感谢您帮助维护社区安全。",
+    "alert_error": "发送举报时出错。",
+    "title_post": "举报帖子",
+    "title_message": "举报消息",
+    "title_user": "举报用户",
+    "sub_post": "这个帖子有什么问题？",
+    "sub_message": "您为什么要举报此消息？",
+    "sub_user_prefix": "您对谁有疑问：",
+    "sub_default": "我们能为您提供什么帮助？您的举报是保密的。",
+    "btn_close": "关闭",
+    "lbl_main_reason": "主要原因",
+    "lbl_desc": "详细描述",
+    "ph_desc": "简要说明发生了什么...",
+    "btn_submit": "提交举报"
   }
 }

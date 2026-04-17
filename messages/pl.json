@@ -1174,5 +1174,31 @@
     "btn_simulating": "Symulacja...",
     "btn_simulate_success": "[DEV] Symuluj Udana Płatność",
     "lbl_encryption": "Szyfrowanie Covra Pay AES-256"
+  },
+
+  "ReportModal": {
+    "reason_1": "Nieodpowiednie / Zastrzeżone Treści",
+    "reason_2": "Oszustwo, Scam lub Spam",
+    "reason_3": "Nękanie lub Nadużycie",
+    "reason_4": "Podszywanie się",
+    "reason_5": "Nieletni",
+    "reason_6": "Naruszenie Praw Autorskich",
+    "reason_7": "Inny Powód",
+    "alert_no_reason": "Wybierz powód.",
+    "alert_no_desc": "Podaj trochę więcej kontekstu w opisie.",
+    "alert_success": "✅ Zgłoszenie wysłane do Administratora. Dziękujemy za pomoc w utrzymaniu bezpieczeństwa społeczności.",
+    "alert_error": "Wystąpił błąd podczas wysyłania zgłoszenia.",
+    "title_post": "Zgłoś Post",
+    "title_message": "Zgłoś Wiadomość",
+    "title_user": "Zgłoś Użytkownika",
+    "sub_post": "Jaki jest problem z tym postem?",
+    "sub_message": "Dlaczego zgłaszasz tę wiadomość?",
+    "sub_user_prefix": "Jaki masz problem z",
+    "sub_default": "Jak możemy pomóc? Twoje zgłoszenie jest poufne.",
+    "btn_close": "Zamknij",
+    "lbl_main_reason": "Główny Powód",
+    "lbl_desc": "Szczegółowy Opis",
+    "ph_desc": "Wyjaśnij krótko, co się stało...",
+    "btn_submit": "Wyślij Zgłoszenie"
   }
 }

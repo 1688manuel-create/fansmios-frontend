@@ -1174,5 +1174,31 @@
     "btn_simulating": "Simulerar...",
     "btn_simulate_success": "[DEV] Simulera Lyckad Betalning",
     "lbl_encryption": "Covra Pay AES-256 Kryptering"
+  },
+
+  "ReportModal": {
+    "reason_1": "Olämpligt / Explicit Innehåll",
+    "reason_2": "Bedrägeri, Bluff eller Spam",
+    "reason_3": "Trakasserier eller Övergrepp",
+    "reason_4": "Identitetsstöld",
+    "reason_5": "Minderårig",
+    "reason_6": "Upphovsrättsintrång",
+    "reason_7": "Annan Anledning",
+    "alert_no_reason": "Vänligen välj en anledning.",
+    "alert_no_desc": "Vänligen ge lite mer kontext i beskrivningen.",
+    "alert_success": "✅ Rapport skickad till Admin. Tack för att du hjälper till att hålla gemenskapen säker.",
+    "alert_error": "Ett fel uppstod när rapporten skickades.",
+    "title_post": "Rapportera Inlägg",
+    "title_message": "Rapportera Meddelande",
+    "title_user": "Rapportera Användare",
+    "sub_post": "Vad är problemet med det här inlägget?",
+    "sub_message": "Varför rapporterar du detta meddelande?",
+    "sub_user_prefix": "Vilket problem har du med",
+    "sub_default": "Hur kan vi hjälpa till? Din rapport är konfidentiell.",
+    "btn_close": "Stäng",
+    "lbl_main_reason": "Huvudanledning",
+    "lbl_desc": "Detaljerad Beskrivning",
+    "ph_desc": "Förklara kort vad som hände...",
+    "btn_submit": "Skicka Rapport"
   }
 }

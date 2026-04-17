@@ -1173,5 +1173,31 @@
     "btn_simulating": "Simulating...",
     "btn_simulate_success": "[DEV] Simulate Successful Payment",
     "lbl_encryption": "Covra Pay AES-256 Encryption"
+  },
+
+  "ReportModal": {
+    "reason_1": "Inappropriate / Explicit Content",
+    "reason_2": "Fraud, Scam, or Spam",
+    "reason_3": "Harassment or Abuse",
+    "reason_4": "Impersonation",
+    "reason_5": "Underage",
+    "reason_6": "Copyright Infringement",
+    "reason_7": "Other Reason",
+    "alert_no_reason": "Please select a reason.",
+    "alert_no_desc": "Please provide a bit more context in the description.",
+    "alert_success": "✅ Report sent to Admin. Thank you for helping keep the community safe.",
+    "alert_error": "There was an error sending the report.",
+    "title_post": "Report Post",
+    "title_message": "Report Message",
+    "title_user": "Report User",
+    "sub_post": "What is the problem with this post?",
+    "sub_message": "Why are you reporting this message?",
+    "sub_user_prefix": "What problem do you have with",
+    "sub_default": "How can we help? Your report is confidential.",
+    "btn_close": "Close",
+    "lbl_main_reason": "Main Reason",
+    "lbl_desc": "Detailed Description",
+    "ph_desc": "Briefly explain what happened...",
+    "btn_submit": "Submit Report"
   }
 }
