@@ -1200,5 +1200,24 @@
     "lbl_desc": "Gedetailleerde Beschrijving",
     "ph_desc": "Leg kort uit wat er is gebeurd...",
     "btn_submit": "Melding Verzenden"
+  },
+
+  "Sidebar": {
+    "nav_feed": "Feed",
+    "nav_explore": "Verkennen",
+    "nav_messages": "Berichten",
+    "nav_live": "Uitzenden",
+    "nav_academy": "VIP Academie",
+    "nav_stats": "Statistieken",
+    "nav_coupons": "Coupons",
+    "nav_wallet": "Mijn Portemonnee",
+    "nav_kyc": "KYC Identiteit",
+    "nav_2fa": "2FA Beveiliging",
+    "nav_profile": "Mijn Profiel",
+    "admin_command_center": "Commandocentrum",
+    "admin_god_mode": "God Modus",
+    "admin_payouts": "Openstaande Uitbetalingen",
+    "admin_settings": "Systeeminstellingen",
+    "btn_logout": "Uitloggen"
   }
 }

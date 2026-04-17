@@ -22,11 +22,13 @@ import {
   Menu, // <-- Icono extra por si en el futuro agregas un menú "Más"
   PlaySquare // 🎬 NUEVO ÍCONO PARA LA ACADEMIA VIP
 } from 'lucide-react';
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function Sidebar() {
   const [user, setUser] = useState<any>(null);
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations('Sidebar'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -59,36 +61,36 @@ export default function Sidebar() {
 
   // 🚀 LISTA MAESTRA DE RUTAS (PARA PC)
   const allLinks = [
-    { name: 'Feed', href: '/feed', icon: Home, roles: ['FAN', 'CREATOR', 'ADMIN'] },
-    { name: 'Explorar', href: '/explore', icon: Compass, roles: ['FAN', 'CREATOR', 'ADMIN'] },
-    { name: 'Mensajes', href: '/dashboard/messages', icon: MessageCircle, roles: ['FAN', 'CREATOR', 'ADMIN'] },
-    { name: 'Transmitir', href: '/dashboard/live', icon: Radio, roles: ['CREATOR', 'ADMIN'] },
+    { name: t('nav_feed'), href: '/feed', icon: Home, roles: ['FAN', 'CREATOR', 'ADMIN'] },
+    { name: t('nav_explore'), href: '/explore', icon: Compass, roles: ['FAN', 'CREATOR', 'ADMIN'] },
+    { name: t('nav_messages'), href: '/dashboard/messages', icon: MessageCircle, roles: ['FAN', 'CREATOR', 'ADMIN'] },
+    { name: t('nav_live'), href: '/dashboard/live', icon: Radio, roles: ['CREATOR', 'ADMIN'] },
     
     // 🎓 NUEVA RUTA TÁCTICA: ACADEMIA VIP
-    { name: 'Academia VIP', href: '/dashboard/series', icon: PlaySquare, roles: ['CREATOR', 'ADMIN'] },
+    { name: t('nav_academy'), href: '/dashboard/series', icon: PlaySquare, roles: ['CREATOR', 'ADMIN'] },
     
     // 🔥 BOTONES FINANCIEROS 
-    { name: 'Estadísticas', href: '/dashboard/analytics', icon: TrendingUp, roles: ['CREATOR', 'ADMIN'] },
-    { name: 'Cupones', href: '/dashboard/coupons', icon: Ticket, roles: ['CREATOR', 'ADMIN'] }, 
+    { name: t('nav_stats'), href: '/dashboard/analytics', icon: TrendingUp, roles: ['CREATOR', 'ADMIN'] },
+    { name: t('nav_coupons'), href: '/dashboard/coupons', icon: Ticket, roles: ['CREATOR', 'ADMIN'] }, 
     
-    { name: 'Mi Billetera', href: '/dashboard/wallet', icon: Wallet, roles: ['CREATOR', 'ADMIN'] },
-    { name: 'Identidad KYC', href: '/dashboard/kyc', icon: ShieldCheck, roles: ['CREATOR', 'ADMIN'] },
-    { name: 'Seguridad 2FA', href: '/dashboard/security', icon: Lock, roles: ['FAN', 'CREATOR', 'ADMIN'] },
-    { name: 'Mi Perfil', href: `/${user.username || 'perfil'}`, icon: User, roles: ['FAN', 'CREATOR', 'ADMIN'] },
+    { name: t('nav_wallet'), href: '/dashboard/wallet', icon: Wallet, roles: ['CREATOR', 'ADMIN'] },
+    { name: t('nav_kyc'), href: '/dashboard/kyc', icon: ShieldCheck, roles: ['CREATOR', 'ADMIN'] },
+    { name: t('nav_2fa'), href: '/dashboard/security', icon: Lock, roles: ['FAN', 'CREATOR', 'ADMIN'] },
+    { name: t('nav_profile'), href: `/${user.username || 'perfil'}`, icon: User, roles: ['FAN', 'CREATOR', 'ADMIN'] },
   ];
 
   const allowedLinks = allLinks.filter(link => link.roles.includes(user.role));
 
   // 📱 LISTA ESPECÍFICA PARA EL MENÚ INFERIOR DE CELULAR (Instagram Style)
   const mobileLinks = [
-    { name: 'Feed', href: '/feed', icon: Home },
-    { name: 'Explorar', href: '/explore', icon: Compass },
+    { name: t('nav_feed'), href: '/feed', icon: Home },
+    { name: t('nav_explore'), href: '/explore', icon: Compass },
     // El botón central cambia si eres creador (Transmitir) o Fan (Mensajes)
     user.role === 'CREATOR' || user.role === 'ADMIN' 
-        ? { name: 'Transmitir', href: '/dashboard/live', icon: Radio, isCenter: true }
-        : { name: 'Mensajes', href: '/dashboard/messages', icon: MessageCircle, isCenter: true },
-    { name: 'Mensajes', href: '/dashboard/messages', icon: MessageCircle }, // (Ocultaremos este en CSS si el de arriba ya es mensajes)
-    { name: 'Perfil', href: `/${user.username || 'perfil'}`, icon: User }
+        ? { name: t('nav_live'), href: '/dashboard/live', icon: Radio, isCenter: true }
+        : { name: t('nav_messages'), href: '/dashboard/messages', icon: MessageCircle, isCenter: true },
+    { name: t('nav_messages'), href: '/dashboard/messages', icon: MessageCircle }, // (Ocultaremos este en CSS si el de arriba ya es mensajes)
+    { name: t('nav_profile'), href: `/${user.username || 'perfil'}`, icon: User }
   ];
 
   // Filtramos para asegurar que no haya duplicados (ej: 2 iconos de mensajes)
@@ -132,7 +134,7 @@ export default function Sidebar() {
           {/* 👑 SECCIÓN MODO DIOS (ADMIN) */}
           {user.role === 'ADMIN' && (
             <div className="mt-8 pt-6 border-t border-white/5 space-y-2">
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 px-4">Centro de Mando</p>
+              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 px-4">{t('admin_command_center')}</p>
               
               {/* Botón Principal Admin (Usuarios/Stats) */}
               <Link 
@@ -142,7 +144,7 @@ export default function Sidebar() {
                 }`}
               >
                 <Crown className="w-5 h-5" />
-                <span className="text-sm">Modo Dios</span>
+                <span className="text-sm">{t('admin_god_mode')}</span>
               </Link>
 
               {/* 💸 Botón de Payouts (Pagos) */}
@@ -153,7 +155,7 @@ export default function Sidebar() {
                 }`}
               >
                 <Wallet className="w-5 h-5" />
-                <span className="text-sm">Pagos Pendientes</span>
+                <span className="text-sm">{t('admin_payouts')}</span>
               </Link>
 
               {/* ⚙️ NUEVO: Botón de Configuración (Mensajes de Bienvenida) */}
@@ -164,7 +166,7 @@ export default function Sidebar() {
                 }`}
               >
                 <Settings className="w-5 h-5" />
-                <span className="text-sm">Mensajes de Bienvenida</span>
+                <span className="text-sm">{t('admin_settings')}</span>
               </Link>
             </div>
           )}
@@ -176,7 +178,7 @@ export default function Sidebar() {
             className="w-full flex items-center justify-center gap-3 px-4 py-3.5 nm-btn font-bold text-gray-500 hover:text-red-500 transition-all group"
           >
             <LogOut className="w-5 h-5 group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.8)] transition-all" strokeWidth={2.5} />
-            <span className="text-sm">Cerrar Sesión</span>
+            <span className="text-sm">{t('btn_logout')}</span>
           </button>
         </div>
       </aside>

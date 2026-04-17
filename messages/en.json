@@ -1199,5 +1199,24 @@
     "lbl_desc": "Detailed Description",
     "ph_desc": "Briefly explain what happened...",
     "btn_submit": "Submit Report"
+  },
+
+  "Sidebar": {
+    "nav_feed": "Feed",
+    "nav_explore": "Explore",
+    "nav_messages": "Messages",
+    "nav_live": "Go Live",
+    "nav_academy": "VIP Academy",
+    "nav_stats": "Statistics",
+    "nav_coupons": "Coupons",
+    "nav_wallet": "My Wallet",
+    "nav_kyc": "KYC Identity",
+    "nav_2fa": "2FA Security",
+    "nav_profile": "My Profile",
+    "admin_command_center": "Command Center",
+    "admin_god_mode": "God Mode",
+    "admin_payouts": "Pending Payouts",
+    "admin_settings": "System Settings",
+    "btn_logout": "Log Out"
   }
 }

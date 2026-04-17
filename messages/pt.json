@@ -1200,5 +1200,24 @@
     "lbl_desc": "Descrição Detalhada",
     "ph_desc": "Explique brevemente o que aconteceu...",
     "btn_submit": "Enviar Relatório"
+  },
+
+  "Sidebar": {
+    "nav_feed": "Feed",
+    "nav_explore": "Explorar",
+    "nav_messages": "Mensagens",
+    "nav_live": "Transmitir",
+    "nav_academy": "Academia VIP",
+    "nav_stats": "Estatísticas",
+    "nav_coupons": "Cupons",
+    "nav_wallet": "Minha Carteira",
+    "nav_kyc": "Identidade KYC",
+    "nav_2fa": "Segurança 2FA",
+    "nav_profile": "Meu Perfil",
+    "admin_command_center": "Centro de Comando",
+    "admin_god_mode": "Modo Deus",
+    "admin_payouts": "Pagamentos Pendentes",
+    "admin_settings": "Ajustes do Sistema",
+    "btn_logout": "Sair"
   }
 }

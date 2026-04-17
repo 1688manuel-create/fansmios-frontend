@@ -1200,5 +1200,24 @@
     "lbl_desc": "详细描述",
     "ph_desc": "简要说明发生了什么...",
     "btn_submit": "提交举报"
+  },
+
+  "Sidebar": {
+    "nav_feed": "动态",
+    "nav_explore": "探索",
+    "nav_messages": "消息",
+    "nav_live": "开播",
+    "nav_academy": "VIP 学院",
+    "nav_stats": "统计",
+    "nav_coupons": "优惠券",
+    "nav_wallet": "我的钱包",
+    "nav_kyc": "KYC 身份认证",
+    "nav_2fa": "2FA 安全",
+    "nav_profile": "我的个人资料",
+    "admin_command_center": "指挥中心",
+    "admin_god_mode": "上帝模式",
+    "admin_payouts": "待处理的付款",
+    "admin_settings": "系统设置",
+    "btn_logout": "登出"
   }
 }

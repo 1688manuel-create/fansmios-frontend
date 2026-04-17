@@ -1200,5 +1200,24 @@
     "lbl_desc": "Mô tả Chi tiết",
     "ph_desc": "Giải thích ngắn gọn những gì đã xảy ra...",
     "btn_submit": "Gửi Báo cáo"
+  },
+
+  "Sidebar": {
+    "nav_feed": "Bảng tin",
+    "nav_explore": "Khám phá",
+    "nav_messages": "Tin nhắn",
+    "nav_live": "Phát trực tiếp",
+    "nav_academy": "Học viện VIP",
+    "nav_stats": "Thống kê",
+    "nav_coupons": "Phiếu giảm giá",
+    "nav_wallet": "Ví của tôi",
+    "nav_kyc": "Danh tính KYC",
+    "nav_2fa": "Bảo mật 2FA",
+    "nav_profile": "Hồ sơ của tôi",
+    "admin_command_center": "Trung tâm Chỉ huy",
+    "admin_god_mode": "Chế độ Thần",
+    "admin_payouts": "Thanh toán Đang chờ",
+    "admin_settings": "Cài đặt Hệ thống",
+    "btn_logout": "Đăng xuất"
   }
 }

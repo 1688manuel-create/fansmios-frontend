@@ -1200,5 +1200,24 @@
     "lbl_desc": "Подробное описание",
     "ph_desc": "Кратко объясните, что произошло...",
     "btn_submit": "Отправить жалобу"
+  },
+
+  "Sidebar": {
+    "nav_feed": "Лента",
+    "nav_explore": "Обзор",
+    "nav_messages": "Сообщения",
+    "nav_live": "В эфир",
+    "nav_academy": "VIP Академия",
+    "nav_stats": "Статистика",
+    "nav_coupons": "Купоны",
+    "nav_wallet": "Мой Кошелек",
+    "nav_kyc": "KYC Личность",
+    "nav_2fa": "Безопасность 2FA",
+    "nav_profile": "Мой Профиль",
+    "admin_command_center": "Командный Центр",
+    "admin_god_mode": "Режим Бога",
+    "admin_payouts": "Ожидающие Выплаты",
+    "admin_settings": "Настройки Системы",
+    "btn_logout": "Выйти"
   }
 }

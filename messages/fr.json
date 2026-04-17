@@ -1200,5 +1200,24 @@
     "lbl_desc": "Description détaillée",
     "ph_desc": "Expliquez brièvement ce qui s'est passé...",
     "btn_submit": "Envoyer le rapport"
+  },
+
+  "Sidebar": {
+    "nav_feed": "Flux",
+    "nav_explore": "Explorer",
+    "nav_messages": "Messages",
+    "nav_live": "Diffuser",
+    "nav_academy": "Académie VIP",
+    "nav_stats": "Statistiques",
+    "nav_coupons": "Coupons",
+    "nav_wallet": "Mon Portefeuille",
+    "nav_kyc": "Identité KYC",
+    "nav_2fa": "Sécurité 2FA",
+    "nav_profile": "Mon Profil",
+    "admin_command_center": "Centre de Commandement",
+    "admin_god_mode": "Mode Dieu",
+    "admin_payouts": "Paiements en attente",
+    "admin_settings": "Paramètres du système",
+    "btn_logout": "Se déconnecter"
   }
 }

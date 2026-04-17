@@ -1200,5 +1200,24 @@
     "lbl_desc": "คำอธิบายโดยละเอียด",
     "ph_desc": "อธิบายสั้นๆ ว่าเกิดอะไรขึ้น...",
     "btn_submit": "ส่งรายงาน"
+  },
+
+  "Sidebar": {
+    "nav_feed": "ฟีด",
+    "nav_explore": "สำรวจ",
+    "nav_messages": "ข้อความ",
+    "nav_live": "ถ่ายทอดสด",
+    "nav_academy": "สถาบัน VIP",
+    "nav_stats": "สถิติ",
+    "nav_coupons": "คูปอง",
+    "nav_wallet": "กระเป๋าเงินของฉัน",
+    "nav_kyc": "ข้อมูลประจำตัว KYC",
+    "nav_2fa": "ความปลอดภัย 2FA",
+    "nav_profile": "โปรไฟล์ของฉัน",
+    "admin_command_center": "ศูนย์บัญชาการ",
+    "admin_god_mode": "โหมดพระเจ้า",
+    "admin_payouts": "การจ่ายเงินที่รอดำเนินการ",
+    "admin_settings": "การตั้งค่าระบบ",
+    "btn_logout": "ออกจากระบบ"
   }
 }

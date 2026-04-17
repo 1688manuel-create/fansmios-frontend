@@ -1200,5 +1200,24 @@
     "lbl_desc": "Szczegółowy Opis",
     "ph_desc": "Wyjaśnij krótko, co się stało...",
     "btn_submit": "Wyślij Zgłoszenie"
+  },
+
+  "Sidebar": {
+    "nav_feed": "Kanał",
+    "nav_explore": "Odkrywaj",
+    "nav_messages": "Wiadomości",
+    "nav_live": "Transmisja",
+    "nav_academy": "Akademia VIP",
+    "nav_stats": "Statystyki",
+    "nav_coupons": "Kupony",
+    "nav_wallet": "Mój Portfel",
+    "nav_kyc": "Tożsamość KYC",
+    "nav_2fa": "Bezpieczeństwo 2FA",
+    "nav_profile": "Mój Profil",
+    "admin_command_center": "Centrum Dowodzenia",
+    "admin_god_mode": "Tryb Boga",
+    "admin_payouts": "Oczekujące Wypłaty",
+    "admin_settings": "Ustawienia Systemu",
+    "btn_logout": "Wyloguj się"
   }
 }

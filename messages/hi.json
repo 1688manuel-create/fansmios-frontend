@@ -1200,5 +1200,24 @@
     "lbl_desc": "विस्तृत विवरण",
     "ph_desc": "संक्षेप में बताएं कि क्या हुआ...",
     "btn_submit": "रिपोर्ट जमा करें"
+  },
+
+  "Sidebar": {
+    "nav_feed": "फ़ीड",
+    "nav_explore": "खोजें",
+    "nav_messages": "संदेश",
+    "nav_live": "लाइव जाएं",
+    "nav_academy": "वीआईपी अकादमी",
+    "nav_stats": "आँकड़े",
+    "nav_coupons": "कूपन",
+    "nav_wallet": "मेरा वॉलेट",
+    "nav_kyc": "KYC पहचान",
+    "nav_2fa": "2FA सुरक्षा",
+    "nav_profile": "मेरी प्रोफ़ाइल",
+    "admin_command_center": "कमांड सेंटर",
+    "admin_god_mode": "गॉड मोड",
+    "admin_payouts": "लंबित भुगतान",
+    "admin_settings": "सिस्टम सेटिंग्स",
+    "btn_logout": "लॉग आउट"
   }
 }

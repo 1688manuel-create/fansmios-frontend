@@ -1200,5 +1200,24 @@
     "lbl_desc": "상세 설명",
     "ph_desc": "무슨 일이 있었는지 간단히 설명해 주세요...",
     "btn_submit": "신고 제출"
+  },
+
+  "Sidebar": {
+    "nav_feed": "피드",
+    "nav_explore": "탐색",
+    "nav_messages": "메시지",
+    "nav_live": "방송 시작",
+    "nav_academy": "VIP 아카데미",
+    "nav_stats": "통계",
+    "nav_coupons": "쿠폰",
+    "nav_wallet": "내 지갑",
+    "nav_kyc": "KYC 아이덴티티",
+    "nav_2fa": "2FA 보안",
+    "nav_profile": "내 프로필",
+    "admin_command_center": "지휘 통제소",
+    "admin_god_mode": "신 모드",
+    "admin_payouts": "대기 중인 지급액",
+    "admin_settings": "시스템 설정",
+    "btn_logout": "로그아웃"
   }
 }

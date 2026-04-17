@@ -1200,5 +1200,24 @@
     "lbl_desc": "Detaylı Açıklama",
     "ph_desc": "Ne olduğunu kısaca açıklayın...",
     "btn_submit": "Raporu Gönder"
+  },
+
+  "Sidebar": {
+    "nav_feed": "Akış",
+    "nav_explore": "Keşfet",
+    "nav_messages": "Mesajlar",
+    "nav_live": "Canlı Yayın",
+    "nav_academy": "VIP Akademi",
+    "nav_stats": "İstatistikler",
+    "nav_coupons": "Kuponlar",
+    "nav_wallet": "Cüzdanım",
+    "nav_kyc": "KYC Kimliği",
+    "nav_2fa": "2FA Güvenliği",
+    "nav_profile": "Profilim",
+    "admin_command_center": "Komuta Merkezi",
+    "admin_god_mode": "Tanrı Modu",
+    "admin_payouts": "Bekleyen Ödemeler",
+    "admin_settings": "Sistem Ayarları",
+    "btn_logout": "Çıkış Yap"
   }
 }

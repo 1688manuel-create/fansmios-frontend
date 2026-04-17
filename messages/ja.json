@@ -1200,5 +1200,24 @@
     "lbl_desc": "詳細な説明",
     "ph_desc": "何が起こったのか簡潔に説明してください...",
     "btn_submit": "報告を送信"
+  },
+
+  "Sidebar": {
+    "nav_feed": "フィード",
+    "nav_explore": "探索",
+    "nav_messages": "メッセージ",
+    "nav_live": "配信する",
+    "nav_academy": "VIPアカデミー",
+    "nav_stats": "統計",
+    "nav_coupons": "クーポン",
+    "nav_wallet": "マイウォレット",
+    "nav_kyc": "KYCアイデンティティ",
+    "nav_2fa": "2FAセキュリティ",
+    "nav_profile": "マイプロフィール",
+    "admin_command_center": "コマンドセンター",
+    "admin_god_mode": "ゴッドモード",
+    "admin_payouts": "保留中の支払い",
+    "admin_settings": "システム設定",
+    "btn_logout": "ログアウト"
   }
 }

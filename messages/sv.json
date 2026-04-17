@@ -1200,5 +1200,24 @@
     "lbl_desc": "Detaljerad Beskrivning",
     "ph_desc": "Förklara kort vad som hände...",
     "btn_submit": "Skicka Rapport"
+  },
+
+  "Sidebar": {
+    "nav_feed": "Flöde",
+    "nav_explore": "Utforska",
+    "nav_messages": "Meddelanden",
+    "nav_live": "Sänd Live",
+    "nav_academy": "VIP-akademi",
+    "nav_stats": "Statistik",
+    "nav_coupons": "Kuponger",
+    "nav_wallet": "Min Plånbok",
+    "nav_kyc": "KYC-identitet",
+    "nav_2fa": "2FA-säkerhet",
+    "nav_profile": "Min Profil",
+    "admin_command_center": "Kommandocentral",
+    "admin_god_mode": "Gud-läge",
+    "admin_payouts": "Väntande Utbetalningar",
+    "admin_settings": "Systeminställningar",
+    "btn_logout": "Logga ut"
   }
 }

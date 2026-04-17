@@ -1200,5 +1200,24 @@
     "lbl_desc": "وصف تفصيلي",
     "ph_desc": "اشرح بإيجاز ما حدث...",
     "btn_submit": "إرسال التقرير"
+  },
+
+  "Sidebar": {
+    "nav_feed": "الموجز",
+    "nav_explore": "استكشاف",
+    "nav_messages": "الرسائل",
+    "nav_live": "بث مباشر",
+    "nav_academy": "أكاديمية VIP",
+    "nav_stats": "إحصائيات",
+    "nav_coupons": "كوبونات",
+    "nav_wallet": "محفظتي",
+    "nav_kyc": "هوية KYC",
+    "nav_2fa": "أمان 2FA",
+    "nav_profile": "ملفي الشخصي",
+    "admin_command_center": "مركز القيادة",
+    "admin_god_mode": "وضع الإله",
+    "admin_payouts": "المدفوعات المعلقة",
+    "admin_settings": "إعدادات النظام",
+    "btn_logout": "تسجيل الخروج"
   }
 }

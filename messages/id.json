@@ -1200,5 +1200,24 @@
     "lbl_desc": "Deskripsi Lengkap",
     "ph_desc": "Jelaskan secara singkat apa yang terjadi...",
     "btn_submit": "Kirim Laporan"
+  },
+
+  "Sidebar": {
+    "nav_feed": "Umpan",
+    "nav_explore": "Jelajahi",
+    "nav_messages": "Pesan",
+    "nav_live": "Siaran Langsung",
+    "nav_academy": "Akademi VIP",
+    "nav_stats": "Statistik",
+    "nav_coupons": "Kupon",
+    "nav_wallet": "Dompet Saya",
+    "nav_kyc": "Identitas KYC",
+    "nav_2fa": "Keamanan 2FA",
+    "nav_profile": "Profil Saya",
+    "admin_command_center": "Pusat Komando",
+    "admin_god_mode": "Mode Dewa",
+    "admin_payouts": "Pembayaran Tertunda",
+    "admin_settings": "Pengaturan Sistem",
+    "btn_logout": "Keluar"
   }
 }
