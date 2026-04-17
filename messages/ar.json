@@ -1219,5 +1219,16 @@
     "admin_payouts": "المدفوعات المعلقة",
     "admin_settings": "إعدادات النظام",
     "btn_logout": "تسجيل الخروج"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "الحد الأدنى للمبلغ هو 1.00 دولار",
+    "btn_close": "إغلاق",
+    "title": "إرسال بقشيش",
+    "subtitle": "ادعم محتوى",
+    "lbl_custom_amount": "مبلغ مخصص ($)",
+    "lbl_message": "رسالة (اختياري)",
+    "ph_message": "مثال: أحببت هذا المنشور! استمر في ذلك 😍",
+    "btn_continue": "الاستمرار في الدفع"
   }
 }

@@ -1219,5 +1219,16 @@
     "admin_payouts": "Paiements en attente",
     "admin_settings": "Paramètres du système",
     "btn_logout": "Se déconnecter"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "Le montant minimum est de 1,00 $",
+    "btn_close": "Fermer",
+    "title": "Envoyer un pourboire",
+    "subtitle": "Soutenez le contenu de",
+    "lbl_custom_amount": "Montant personnalisé ($)",
+    "lbl_message": "Message (Optionnel)",
+    "ph_message": "Ex. J'ai adoré ce post ! Continue comme ça 😍",
+    "btn_continue": "Continuer vers le paiement"
   }
 }

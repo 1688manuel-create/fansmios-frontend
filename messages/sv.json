@@ -1219,5 +1219,16 @@
     "admin_payouts": "Väntande Utbetalningar",
     "admin_settings": "Systeminställningar",
     "btn_logout": "Logga ut"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "Minsta belopp är $1.00",
+    "btn_close": "Stäng",
+    "title": "Skicka Dricks",
+    "subtitle": "Stöd innehållet från",
+    "lbl_custom_amount": "Anpassat Belopp ($)",
+    "lbl_message": "Meddelande (Valfritt)",
+    "ph_message": "T.ex. Jag älskade det här inlägget! Fortsätt så 😍",
+    "btn_continue": "Fortsätt till Betalning"
   }
 }

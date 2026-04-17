@@ -1219,5 +1219,16 @@
     "admin_payouts": "保留中の支払い",
     "admin_settings": "システム設定",
     "btn_logout": "ログアウト"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "最低金額は $1.00 です",
+    "btn_close": "閉じる",
+    "title": "チップを送る",
+    "subtitle": "のコンテンツをサポート：",
+    "lbl_custom_amount": "カスタム金額 ($)",
+    "lbl_message": "メッセージ（任意）",
+    "ph_message": "例：この投稿が大好きです！がんばって 😍",
+    "btn_continue": "支払いに進む"
   }
 }

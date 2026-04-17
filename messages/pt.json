@@ -1219,5 +1219,16 @@
     "admin_payouts": "Pagamentos Pendentes",
     "admin_settings": "Ajustes do Sistema",
     "btn_logout": "Sair"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "O valor mínimo é de $1.00",
+    "btn_close": "Fechar",
+    "title": "Enviar Gorjeta",
+    "subtitle": "Apoie o conteúdo de",
+    "lbl_custom_amount": "Valor Personalizado ($)",
+    "lbl_message": "Mensagem (Opcional)",
+    "ph_message": "Ex. Adorei este post! Continue assim 😍",
+    "btn_continue": "Continuar para Pagamento"
   }
 }

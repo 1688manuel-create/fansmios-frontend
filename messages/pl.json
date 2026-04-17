@@ -1219,5 +1219,16 @@
     "admin_payouts": "Oczekujące Wypłaty",
     "admin_settings": "Ustawienia Systemu",
     "btn_logout": "Wyloguj się"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "Minimalna kwota to 1,00 $",
+    "btn_close": "Zamknij",
+    "title": "Wyślij Napiwek",
+    "subtitle": "Wesprzyj twórczość",
+    "lbl_custom_amount": "Własna Kwota ($)",
+    "lbl_message": "Wiadomość (Opcjonalnie)",
+    "ph_message": "Np. Uwielbiam ten post! Oby tak dalej 😍",
+    "btn_continue": "Przejdź do Płatności"
   }
 }

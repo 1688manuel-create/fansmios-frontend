@@ -1218,5 +1218,16 @@
     "admin_payouts": "Pending Payouts",
     "admin_settings": "System Settings",
     "btn_logout": "Log Out"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "The minimum amount is $1.00",
+    "btn_close": "Close",
+    "title": "Send Tip",
+    "subtitle": "Support the content of",
+    "lbl_custom_amount": "Custom Amount ($)",
+    "lbl_message": "Message (Optional)",
+    "ph_message": "E.g. I loved this post! Keep it up 😍",
+    "btn_continue": "Continue to Payment"
   }
 }

@@ -1219,5 +1219,16 @@
     "admin_payouts": "대기 중인 지급액",
     "admin_settings": "시스템 설정",
     "btn_logout": "로그아웃"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "최소 금액은 $1.00입니다.",
+    "btn_close": "닫기",
+    "title": "팁 보내기",
+    "subtitle": "다음 크리에이터의 콘텐츠를 후원하세요:",
+    "lbl_custom_amount": "사용자 지정 금액 ($)",
+    "lbl_message": "메시지 (선택 사항)",
+    "ph_message": "예: 이 게시물이 정말 마음에 듭니다! 계속 수고해 주세요 😍",
+    "btn_continue": "결제 계속하기"
   }
 }

@@ -1219,5 +1219,16 @@
     "admin_payouts": "Openstaande Uitbetalingen",
     "admin_settings": "Systeeminstellingen",
     "btn_logout": "Uitloggen"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "Het minimumbedrag is $1.00",
+    "btn_close": "Sluiten",
+    "title": "Fooi Sturen",
+    "subtitle": "Steun de content van",
+    "lbl_custom_amount": "Aangepast Bedrag ($)",
+    "lbl_message": "Bericht (Optioneel)",
+    "ph_message": "Bijv. Ik vond deze post geweldig! Ga zo door 😍",
+    "btn_continue": "Doorgaan naar Betaling"
   }
 }

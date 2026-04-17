@@ -1219,5 +1219,16 @@
     "admin_payouts": "Pembayaran Tertunda",
     "admin_settings": "Pengaturan Sistem",
     "btn_logout": "Keluar"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "Jumlah minimum adalah $1.00",
+    "btn_close": "Tutup",
+    "title": "Kirim Tip",
+    "subtitle": "Dukung konten dari",
+    "lbl_custom_amount": "Jumlah Kustom ($)",
+    "lbl_message": "Pesan (Opsional)",
+    "ph_message": "Cth. Saya suka postingan ini! Terus berkarya 😍",
+    "btn_continue": "Lanjutkan ke Pembayaran"
   }
 }

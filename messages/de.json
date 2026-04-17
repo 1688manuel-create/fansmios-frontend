@@ -1219,5 +1219,16 @@
     "admin_payouts": "Ausstehende Auszahlungen",
     "admin_settings": "Systemeinstellungen",
     "btn_logout": "Abmelden"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "Der Mindestbetrag beträgt 1,00 $",
+    "btn_close": "Schließen",
+    "title": "Trinkgeld senden",
+    "subtitle": "Unterstützen Sie die Inhalte von",
+    "lbl_custom_amount": "Benutzerdefinierter Betrag ($)",
+    "lbl_message": "Nachricht (Optional)",
+    "ph_message": "Z.B. Ich fand diesen Beitrag toll! Weiter so 😍",
+    "btn_continue": "Weiter zur Zahlung"
   }
 }  

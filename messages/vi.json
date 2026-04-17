@@ -1219,5 +1219,16 @@
     "admin_payouts": "Thanh toán Đang chờ",
     "admin_settings": "Cài đặt Hệ thống",
     "btn_logout": "Đăng xuất"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "Số tiền tối thiểu là $1.00",
+    "btn_close": "Đóng",
+    "title": "Gửi tiền boa",
+    "subtitle": "Hỗ trợ nội dung của",
+    "lbl_custom_amount": "Số tiền tùy chỉnh ($)",
+    "lbl_message": "Tin nhắn (Tùy chọn)",
+    "ph_message": "VD: Tôi rất thích bài đăng này! Tiếp tục phát huy nhé 😍",
+    "btn_continue": "Tiếp tục Thanh toán"
   }
 }

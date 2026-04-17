@@ -1219,5 +1219,16 @@
     "admin_payouts": "Pagamenti in sospeso",
     "admin_settings": "Impostazioni di sistema",
     "btn_logout": "Esci"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "L'importo minimo è di $1.00",
+    "btn_close": "Chiudi",
+    "title": "Invia Mancia",
+    "subtitle": "Supporta i contenuti di",
+    "lbl_custom_amount": "Importo Personalizzato ($)",
+    "lbl_message": "Messaggio (Opzionale)",
+    "ph_message": "Es. Ho adorato questo post! Continua così 😍",
+    "btn_continue": "Continua al Pagamento"
   }
 }

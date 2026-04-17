@@ -1219,5 +1219,16 @@
     "admin_payouts": "Pagos Pendientes",
     "admin_settings": "Ajustes del Sistema",
     "btn_logout": "Cerrar Sesión"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "El monto mínimo es de $1.00",
+    "btn_close": "Cerrar",
+    "title": "Enviar Propina",
+    "subtitle": "Apoya el contenido de",
+    "lbl_custom_amount": "Monto Personalizado ($)",
+    "lbl_message": "Mensaje (Opcional)",
+    "ph_message": "Ej. ¡Me encantó este post! Sigue así 😍",
+    "btn_continue": "Continuar al Pago"
   }
 }

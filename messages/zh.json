@@ -1219,5 +1219,16 @@
     "admin_payouts": "待处理的付款",
     "admin_settings": "系统设置",
     "btn_logout": "登出"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "最低金额为 $1.00",
+    "btn_close": "关闭",
+    "title": "发送打赏",
+    "subtitle": "支持以下用户的内容：",
+    "lbl_custom_amount": "自定义金额 ($)",
+    "lbl_message": "消息（可选）",
+    "ph_message": "例如：我喜欢这个帖子！继续保持 😍",
+    "btn_continue": "继续付款"
   }
 }

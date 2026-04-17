@@ -1219,5 +1219,16 @@
     "admin_payouts": "Bekleyen Ödemeler",
     "admin_settings": "Sistem Ayarları",
     "btn_logout": "Çıkış Yap"
+  },
+
+  "TipModal": {
+    "alert_min_amount": "Minimum tutar 1.00$'dır",
+    "btn_close": "Kapat",
+    "title": "Bahşiş Gönder",
+    "subtitle": "Şu kişinin içeriğini destekleyin:",
+    "lbl_custom_amount": "Özel Tutar ($)",
+    "lbl_message": "Mesaj (İsteğe Bağlı)",
+    "ph_message": "Örn. Bu gönderiyi çok sevdim! Aynen böyle devam 😍",
+    "btn_continue": "Ödemeye Devam Et"
   }
 }
