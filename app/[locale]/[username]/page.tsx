@@ -38,18 +38,19 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
 
 // 🌳 NODO DE COMENTARIOS PARA EL PERFIL
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
+  const t = useTranslations('Profile'); // 👈 AGREGAMOS EL TRADUCTOR AQUÍ
   const isOwner = currentUser?.id === comment.userId || currentUser?.role === 'ADMIN'; 
 
   return (
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
       <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative">
-        <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
+        <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || t('lbl_user')}:</span>
         <span className="text-gray-400">{comment.content}</span>
         
         <div className="flex items-center gap-4 mt-1.5">
-          <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:underline font-bold">Responder</button>
+          <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:underline font-bold">{t('btn_reply')}</button>
           {isOwner && (
-            <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:underline font-bold hidden group-hover/comment:block">Eliminar</button>
+            <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:underline font-bold hidden group-hover/comment:block">{t('btn_delete')}</button>
           )}
         </div>
       </div>
@@ -198,7 +199,7 @@ export default function CreatorProfile() {
   };
 
   const handleFollowToggle = async () => {
-    if (!currentUser) { alert("Debes iniciar sesión para seguir a este creador."); router.push('/auth'); return; }
+    if (!currentUser) { alert(t('alert_login_follow')); router.push('/auth'); return; }
     const wasFollowing = isFollowing;
     setIsFollowing(!wasFollowing);
     setFollowersCount(prev => wasFollowing ? prev - 1 : prev + 1);
@@ -210,78 +211,78 @@ export default function CreatorProfile() {
   };
 
   const handleSubscribe = async () => {
-    if (!currentUser) { alert("Debes iniciar sesión para suscribirte."); router.push('/auth'); return; }
+    if (!currentUser) { alert(t('alert_login_subscribe')); router.push('/auth'); return; }
     try {
       const data = await paymentService.createPaymentIntent({
         amount: creator?.creatorProfile?.monthlyPrice || 0,
         type: 'SUBSCRIPTION',
         creatorId: creator.id,
-        description: `Suscripción VIP - @${creator.username}`
+        description: `VIP - @${creator.username}`
       });
       
       if (data.success || data.receipt) {
-        alert('✅ ¡Suscripción VIP activada!');
+        alert(t('alert_sub_success'));
         fetchProfileAndPosts(true);
       } else {
         setClientSecret(data.clientSecret);
         setPendingPayment({ price: creator?.creatorProfile?.monthlyPrice || 0 });
         setIsPaymentModalOpen(true);
       }
-    } catch (error: any) { alert('Error al iniciar suscripción'); }
+    } catch (error: any) { alert(t('alert_sub_error')); }
   };
 
   const handleUnlockPPV = async (post: any) => {
-    if (!currentUser) { alert("Debes iniciar sesión para desbloquear contenido."); router.push('/auth'); return; }
+    if (!currentUser) { alert(t('alert_login_unlock')); router.push('/auth'); return; }
     try {
       const data = await paymentService.createPaymentIntent({
         amount: post.price,
         type: 'PPV_POST',
         creatorId: creator.id,
         postId: post.id,
-        description: `Desbloqueo PPV - Post`
+        description: `PPV - Post`
       });
       if (data.success || data.receipt) {
-        alert('✅ ¡Contenido desbloqueado!');
+        alert(t('alert_unlock_success'));
         fetchProfileAndPosts(true);
       } else {
         setClientSecret(data.clientSecret);
         setPendingPayment({ price: post.price });
         setIsPaymentModalOpen(true);
       }
-    } catch (error) { alert('Error al procesar el pago.'); }
+    } catch (error) { alert(t('alert_payment_error')); }
   };
 
   const handleBuyBundle = async (bundle: any) => {
-    if (!currentUser) { alert("Debes iniciar sesión para comprar paquetes."); router.push('/auth'); return; }
+    if (!currentUser) { alert(t('alert_login_bundle')); router.push('/auth'); return; }
     try {
       const payload: any = {
         amount: bundle.price,
         type: 'BUNDLE',
         creatorId: creator.id,
         bundleId: bundle.id,
-        description: `Paquete: ${bundle.title}`
+        description: `Bundle: ${bundle.title}`
       };
       const data = await paymentService.createPaymentIntent(payload);
       
       if (data.success || data.receipt) {
-        alert('✅ ¡Paquete comprado con éxito!');
+        alert(t('alert_bundle_success'));
         fetchProfileAndPosts(true);
       } else {
         setClientSecret(data.clientSecret);
         setPendingPayment({ price: bundle.price, id: bundle.id, isBundle: true });
         setIsPaymentModalOpen(true);
       }
-    } catch (error) { alert('Error al procesar el pago.'); }
+    } catch (error) { alert(t('alert_payment_error')); }
   };
 
   const handleDeletePost = async (postId: string) => {
-    if (!window.confirm("🚨 ¿Estás seguro de que deseas eliminar esta publicación para siempre?")) return;
+    if (!window.confirm(t('confirm_delete_post'))) return;
     try {
       await api.delete(`/posts/${postId}`);
-      alert("✅ Publicación eliminada.");
+      alert(t('alert_post_deleted'));
       fetchProfileAndPosts(true);
     } catch (error) {
-      alert("Error al intentar eliminar la publicación.");
+      alert(t('alert_delete_post_error'));
     }
   };
 
@@ -290,7 +291,7 @@ export default function CreatorProfile() {
     try {
       await api.post(`/posts/${postId}/like`, { emoji });
       fetchProfileAndPosts(true); 
-    } catch (error) { console.error("Error al reaccionar:", error); }
+    } catch (error) { console.error("Error:", error); }
   };
 
   const submitComment = async (postId: string) => {
@@ -310,7 +311,7 @@ export default function CreatorProfile() {
       setCommentText(''); setCommentingPostId(null); setReplyingToCommentId(null);
       setExpandedComments(prev => ({...prev, [postId]: true}));
       fetchProfileAndPosts(true); 
-    } catch (error) { alert("Error al enviar comentario"); } 
+    } catch (error) { alert(t('alert_comment_error')); } 
     finally { setIsSubmittingComment(false); }
   };
 
@@ -319,18 +320,18 @@ export default function CreatorProfile() {
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    if (!window.confirm("🚨 ¿Seguro que deseas eliminar este comentario?")) return;
+    if (!window.confirm(t('confirm_delete_comment'))) return;
     try { await api.delete(`/posts/comments/${commentId}`); fetchProfileAndPosts(true); } 
-    catch (error) { alert("Error al eliminar comentario."); }
+    catch (error) { alert(t('alert_delete_comment_error')); }
   };
 
   const handleMessageClick = async () => {
-    if (!currentUser) { alert("Debes iniciar sesión para enviar mensajes."); router.push('/auth'); return; }
+    if (!currentUser) { alert(t('alert_login_message')); router.push('/auth'); return; }
     router.push(`/dashboard/messages?chatWith=${creator.id}&name=${creator.username}`);
   };
 
   const handleSubmitReport = async () => {
-    if (!reportReason) { alert("⚠️ Debes seleccionar un motivo."); return; }
+    if (!reportReason) { alert(t('alert_report_reason')); return; }
     setIsSubmittingReport(true);
     try {
       await api.post('/reports', {
@@ -339,12 +340,12 @@ export default function CreatorProfile() {
         reason: reportReason,
         description: reportDescription
       });
-      alert("🚩 Reporte enviado con éxito. Nuestro equipo de Moderación lo revisará lo antes posible.");
+      alert(t('alert_report_success'));
       setIsReportModalOpen(false);
       setReportReason('');
       setReportDescription('');
     } catch (error) {
-      alert("Hubo un error al enviar el reporte. Quizás tu servidor aún no tenga configurada la ruta para usuarios.");
+      alert(t('alert_report_error'));
     } finally {
       setIsSubmittingReport(false);
     }
@@ -378,7 +379,7 @@ export default function CreatorProfile() {
   });
 
   if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-10 h-10 border-4 border-teal-500 rounded-full border-t-transparent animate-spin"></div></div>;
-  if (hasError || !creator) return <div className="min-h-screen bg-nm-base text-white flex flex-col items-center justify-center"><Ghost className="w-20 h-20 text-gray-600"/><h2 className="text-3xl font-black">Página no encontrada</h2></div>;
+  if (hasError || !creator) return <div className="min-h-screen bg-nm-base text-white flex flex-col items-center justify-center"><Ghost className="w-20 h-20 text-gray-600"/><h2 className="text-3xl font-black">{t('lbl_not_found')}</h2></div>;
 
   const profile = creator.creatorProfile || {};
   const isOwnerOrAdmin = currentUser && (currentUser.id === creator.id || currentUser.role === 'ADMIN');
@@ -396,7 +397,7 @@ export default function CreatorProfile() {
           {!profile.coverImage && <div className="absolute inset-0 bg-gradient-to-br from-teal-900/20 to-blue-900/20"></div>}
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none"></div> 
           <button onClick={() => router.back()} className="absolute top-4 left-4 bg-black/40 backdrop-blur-md border border-white/10 text-white px-5 py-2.5 rounded-full z-20 flex items-center gap-2 font-bold text-sm hover:bg-white/10 transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Volver
+            <ArrowLeft className="w-4 h-4" /> {t('btn_back')}
           </button>
         </div>
 
@@ -415,8 +416,8 @@ export default function CreatorProfile() {
               <div className="mt-3 px-2">
                 <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-2 drop-shadow-md">
                   {creator.name || creator.username}
-                  {profile.isVerified && <span title="Verificado"><CheckCircle2 className="w-6 h-6 text-teal-400 fill-teal-400/20 drop-shadow-[0_0_5px_rgba(20,184,166,0.8)]" /></span>}
-                  {currentUser?.role === 'ADMIN' && <span title="Visualizando como Administrador"><ShieldAlert className="w-5 h-5 text-red-500" /></span>}
+                  {profile.isVerified && <span title={t('lbl_verified')}><CheckCircle2 className="w-6 h-6 text-teal-400 fill-teal-400/20 drop-shadow-[0_0_5px_rgba(20,184,166,0.8)]" /></span>}
+                  {currentUser?.role === 'ADMIN' && <span title={t('lbl_admin_view')}><ShieldAlert className="w-5 h-5 text-red-500" /></span>}
                 </h1>
                 <p className="text-gray-400 text-sm font-bold mt-0.5">@{creator.username}</p>
               </div>
@@ -432,7 +433,7 @@ export default function CreatorProfile() {
                   </button>
                 ) : (
                   <button onClick={handleSubscribe} className="bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-black py-3.5 px-10 rounded-2xl w-full sm:w-auto flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(20,184,166,0.3)] hover:scale-105 transition-all">
-                    <Crown className="w-5 h-5"/> {t('subscribe')} • ${(profile.monthlyPrice || 0).toFixed(2)}/mes
+                    <Crown className="w-5 h-5"/> {t('subscribe')} • ${(profile.monthlyPrice || 0).toFixed(2)}{t('lbl_month')}
                   </button>
                 )
               ) : (
@@ -449,25 +450,25 @@ export default function CreatorProfile() {
                       className={`font-bold py-3.5 px-5 rounded-2xl transition-all flex items-center justify-center flex-1 sm:w-auto ${
                         isFollowing ? 'nm-inset text-teal-400 border border-teal-500/30' : 'bg-[#151515] border border-white/5 text-gray-300 hover:text-white hover:border-white/20 shadow-md'
                       }`}
-                      title={isFollowing ? "Dejar de seguir" : "Seguir gratis"}
+                      title={isFollowing ? t('btn_unfollow') : t('btn_follow_free')}
                     >
                       {isFollowing ? <CheckCircle2 className="w-5 h-5"/> : <Plus className="w-5 h-5"/>}
                     </button>
                   )}
                   
-                  <button onClick={handleMessageClick} title="Enviar Mensaje" className="bg-[#151515] border border-white/5 text-gray-300 hover:text-teal-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
+                  <button onClick={handleMessageClick} title={t('btn_send_message')} className="bg-[#151515] border border-white/5 text-gray-300 hover:text-teal-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
                     <MessageCircle className="w-5 h-5" />
                   </button>
                   
                   {currentUser?.role !== 'ADMIN' && (
                     <>
-                      <button onClick={() => { setTipRecipient(creator); setIsTipModalOpen(true); }} title="Dar Propina" className="bg-[#151515] border border-white/5 text-gray-300 hover:text-green-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
+                      <button onClick={() => { setTipRecipient(creator); setIsTipModalOpen(true); }} title={t('btn_tip')} className="bg-[#151515] border border-white/5 text-gray-300 hover:text-green-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
                         <Coins className="w-5 h-5" />
                       </button>
                       <button onClick={() => {
-                        if(!currentUser) { alert("Inicia sesión para reportar."); router.push('/auth'); return; }
+                        if(!currentUser) { alert(t('alert_login_report')); router.push('/auth'); return; }
                         setIsReportModalOpen(true);
-                      }} title="Reportar Usuario" className="bg-[#151515] border border-white/5 text-gray-500 hover:text-red-500 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
+                      }} title={t('btn_report_user')} className="bg-[#151515] border border-white/5 text-gray-500 hover:text-red-500 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
                         <Flag className="w-4 h-4" />
                       </button>
                     </>
@@ -483,16 +484,16 @@ export default function CreatorProfile() {
               <div className="flex gap-10 text-sm font-bold text-gray-300 border-b border-white/10 pb-6">
                 <div className="flex flex-col items-center">
                   <span className="text-white text-2xl font-black drop-shadow-md">{followersCount}</span>
-                  <span className="text-teal-500 font-black uppercase tracking-widest text-[10px] mt-1">Fans</span>
+                  <span className="text-teal-500 font-black uppercase tracking-widest text-[10px] mt-1">{t('lbl_fans')}</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <span className="text-white text-2xl font-black drop-shadow-md">{posts.length}</span>
-                  <span className="text-blue-500 font-black uppercase tracking-widest text-[10px] mt-1">Posts</span>
+                  <span className="text-blue-500 font-black uppercase tracking-widest text-[10px] mt-1">{t('lbl_posts')}</span>
                 </div>
               </div>
               
               <p className="text-gray-300 whitespace-pre-wrap text-base leading-relaxed font-medium pt-6">
-                {profile.bio || '✨ Bienvenido a mi espacio VIP. Suscríbete para acceder a todo mi contenido exclusivo.'}
+                {profile.bio || t('lbl_bio_fallback')}
               </p>
 
               {/* 🔥 4. PÍLDORAS SOCIALES */}
@@ -522,7 +523,7 @@ export default function CreatorProfile() {
           {bundles.length > 0 && (
             <div className="mb-12 space-y-6 animate-fade-in">
               <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2">
-                <Package className="w-5 h-5 text-teal-500"/> Paquetes en Oferta
+                <Package className="w-5 h-5 text-teal-500"/> {t('lbl_bundles')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {bundles.map(bundle => {
@@ -571,23 +572,23 @@ export default function CreatorProfile() {
                           </div>
                           {!isPurchased && !isOwnerOrAdmin && (
                             <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest flex items-center gap-1 bg-red-500/10 px-2 py-1 rounded">
-                              <Lock className="w-3 h-3"/> Oculto
+                              <Lock className="w-3 h-3"/> {t('lbl_hidden')}
                             </span>
                           )}
                         </div>
                       )}
 
                       <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
-                        <span className="text-xs font-bold text-teal-400 nm-inset px-3 py-1.5 rounded-md border border-teal-500/20">{bundle.posts?.length} Archivos</span>
+                        <span className="text-xs font-bold text-teal-400 nm-inset px-3 py-1.5 rounded-md border border-teal-500/20">{bundle.posts?.length} {t('lbl_files')}</span>
                         
                         {isOwnerOrAdmin ? (
-                          <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors">Ver Paquete</button>
+                          <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors">{t('btn_view_bundle')}</button>
                         ) : isPurchased ? (
                           <button className="nm-inset border border-green-500/30 text-green-500 py-2.5 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-bold cursor-default" onClick={(e) => e.stopPropagation()}>
-                            <CheckCircle2 className="w-4 h-4" /> Adquirido
+                            <CheckCircle2 className="w-4 h-4" /> {t('btn_acquired')}
                           </button>
                         ) : (
-                          <button className="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors shadow-lg shadow-teal-500/20">Comprar ${(bundle.price || 0).toFixed(2)}</button>
+                          <button className="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors shadow-lg shadow-teal-500/20">{t('btn_buy')} ${(bundle.price || 0).toFixed(2)}</button>
                         )}
                       </div>
                     </div>
@@ -628,7 +629,7 @@ export default function CreatorProfile() {
           {/* EL RESTO DE LOS POSTS EN EL MURO */}
           {activeTab !== 'series' && (
             <div className="space-y-6">
-              {filteredPosts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5 font-medium">No hay publicaciones en esta categoría.</div> : (
+              {filteredPosts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5 font-medium">{t('lbl_empty_category')}</div> : (
                 filteredPosts.map((post) => {
                   const isPostUnlocked = isOwnerOrAdmin || post.hasAccess;
                   const rootComments = buildCommentTree(post.comments || []);
@@ -646,7 +647,7 @@ export default function CreatorProfile() {
                           <div>
                             <h3 className="text-white font-bold text-base">{creator.username}</h3>
                             <p className="text-[10px] text-red-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
-                              <Lock className="w-3 h-3"/> {post.isPPV ? 'PPV Exclusivo' : 'Solo VIPs'}
+                              <Lock className="w-3 h-3"/> {post.isPPV ? t('lbl_ppv_exclusive') : t('lbl_vip_only')}
                             </p>
                           </div>
                         </div>
@@ -683,7 +684,7 @@ export default function CreatorProfile() {
                         <button 
                           onClick={() => handleDeletePost(post.id)}
                           className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
-                          title="Eliminar publicación"
+                          title={t('btn_delete_post')}
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
@@ -698,7 +699,7 @@ export default function CreatorProfile() {
                             <h3 className="text-white font-bold text-base">{creator.username}</h3>
                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
                               {post.isPPV ? (
-                                <><Unlock className="w-3 h-3 text-green-400"/> {isOwnerOrAdmin ? `PPV: $${(post.price || 0).toFixed(2)}` : 'Comprado'}</>
+                                <><Unlock className="w-3 h-3 text-green-400"/> {isOwnerOrAdmin ? `PPV: $${(post.price || 0).toFixed(2)}` : t('lbl_purchased')}</>
                               ) : (
                                 <><Star className="w-3 h-3 text-yellow-500"/> VIP</>
                               )}
@@ -751,7 +752,7 @@ export default function CreatorProfile() {
                           {(!isOwnerOrAdmin) && (
                             <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
                               <Coins className="w-5 h-5" />
-                              <span className="text-sm hidden sm:inline">Propina</span>
+                              <span className="text-sm hidden sm:inline">{t('btn_tip')}</span>
                             </button>
                           )}
                         </div>
@@ -760,7 +761,7 @@ export default function CreatorProfile() {
                           <div className="flex flex-col gap-2 animate-fade-in mt-2">
                             {replyingToCommentId && (
                               <div className="flex justify-between items-center bg-teal-900/20 px-3 py-1 text-xs text-teal-400 rounded-lg">
-                                <span>Respondiendo al comentario...</span>
+                                <span>{t('lbl_replying')}</span>
                                 <button onClick={() => setReplyingToCommentId(null)}><X className="w-3 h-3"/></button>
                               </div>
                             )}
@@ -769,7 +770,7 @@ export default function CreatorProfile() {
                                 type="text" 
                                 value={commentText} 
                                 onChange={(e) => setCommentText(e.target.value)} 
-                                placeholder="Escribe un comentario..." 
+                                placeholder={t('ph_comment')} 
                                 className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-teal-500/50" 
                                 onKeyDown={(e) => e.key === 'Enter' && submitComment(post.id)}
                               />
@@ -803,7 +804,7 @@ export default function CreatorProfile() {
                                  onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
                                  className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left transition-colors"
                                >
-                                 {isExpanded ? 'Ocultar comentarios' : `Ver los ${totalComments} comentarios`}
+                                 {isExpanded ? t('btn_hide_comments') : t('btn_view_comments', { count: totalComments })}
                                </button>
                              )}
                            </div>
@@ -829,11 +830,12 @@ export default function CreatorProfile() {
                   amount: Number(amount),
                   type: 'TIP', 
                   creatorId: tipRecipient.id, 
-                  description: `Propina de $${amount}: ${message}` 
+                  description: `${t('lbl_tip_of')} $${amount}: ${message}` 
                 }); 
 
-                if (res.data.success) { 
-                  alert('✅ ¡Propina enviada con Covra Pay!'); 
+                // 1. Si se pagó exitosamente con el saldo de la billetera
+                if (res.data.success || res.data.receipt) { 
+                  alert(t('alert_tip_success')); 
 
                   const saldoActual = parseFloat(currentUser.walletBalance) || 0;
                   const nuevoSaldo = saldoActual - Number(amount);
@@ -847,10 +849,16 @@ export default function CreatorProfile() {
                   }));
 
                   fetchProfileAndPosts(true); 
+                } 
+                // 2. 🔥 SOLUCIÓN: Si no hay saldo, abrimos la pasarela de pago (PaymentModal)
+                else if (res.data.clientSecret) {
+                  setClientSecret(res.data.clientSecret);
+                  setPendingPayment({ price: amount });
+                  setIsPaymentModalOpen(true);
                 }
               } catch (error) { 
                 console.error("Error al enviar propina:", error);
-                alert('Error al enviar la propina. Revisa tu saldo.'); 
+                alert(t('alert_tip_error')); 
               } 
             }} 
           />
@@ -868,7 +876,7 @@ export default function CreatorProfile() {
               if (pendingPayment?.isBundle) {
                 try { await api.post('/bundles/purchase', { bundleId: pendingPayment.id }); } catch(e){}
               }
-              alert("¡Pago exitoso! 🔓"); 
+              alert(t('alert_payment_success')); 
               fetchProfileAndPosts(true); 
             }} 
           />
@@ -911,34 +919,34 @@ export default function CreatorProfile() {
                   <AlertTriangle className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-white">Reportar Usuario</h3>
+                  <h3 className="text-xl font-black text-white">{t('title_report_user')}</h3>
                   <p className="text-xs text-gray-400">@{creator?.username}</p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Motivo principal</label>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">{t('lbl_main_reason')}</label>
                   <select 
                     value={reportReason} 
                     onChange={(e) => setReportReason(e.target.value)} 
                     className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-red-500 transition-colors"
                   >
-                    <option value="">Selecciona un motivo...</option>
-                    <option value="SPAM">Spam o Perfil Falso</option>
-                    <option value="FRAUD">Estafa o Fraude</option>
-                    <option value="HARASSMENT">Acoso o Comportamiento Molesto</option>
-                    <option value="INAPPROPRIATE">Contenido Inapropiado / Ilegal</option>
-                    <option value="OTHER">Otro (Detallar abajo)</option>
+                    <option value="">{t('ph_select_reason')}</option>
+                    <option value="SPAM">{t('rep_spam')}</option>
+                    <option value="FRAUD">{t('rep_fraud')}</option>
+                    <option value="HARASSMENT">{t('rep_harassment')}</option>
+                    <option value="INAPPROPRIATE">{t('rep_inappropriate')}</option>
+                    <option value="OTHER">{t('rep_other')}</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Detalles adicionales (Opcional)</label>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">{t('lbl_additional_details')}</label>
                   <textarea 
                     value={reportDescription} 
                     onChange={(e) => setReportDescription(e.target.value)} 
-                    placeholder="Explica brevemente qué sucedió..."
+                    placeholder={t('ph_report_desc')}
                     rows={3}
                     className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-red-500 resize-none custom-scrollbar transition-colors"
                   ></textarea>
@@ -950,10 +958,10 @@ export default function CreatorProfile() {
                     disabled={isSubmittingReport || !reportReason}
                     className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {isSubmittingReport ? 'Enviando...' : <><Flag className="w-4 h-4"/> Enviar Reporte</>}
+                    {isSubmittingReport ? t('btn_sending') : <><Flag className="w-4 h-4"/> {t('btn_send_report')}</>}
                   </button>
                   <p className="text-[10px] text-gray-500 text-center mt-3 leading-relaxed">
-                    Tu reporte será anónimo para el creador. Nuestro equipo de moderación tomará acciones si se violan las políticas de la plataforma.
+                    {t('lbl_report_disclaimer')}
                   </p>
                 </div>
               </div>
