@@ -696,10 +696,27 @@ export default function Feed() {
                   
                   <div className="w-full pt-2">
                     <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} className="w-full bg-transparent text-white placeholder-gray-500 outline-none resize-none" placeholder={t('ph_new_post')} rows={2}></textarea>
-                    {imagePreview && (
-                      <div className="relative mt-3 rounded-2xl overflow-hidden border border-white/10 inline-block shadow-lg">
-                        <img src={imagePreview} alt="Preview" draggable="false" onContextMenu={(e) => e.preventDefault()} className="max-h-64 object-cover" />
-                        <button onClick={() => { setImagePreview(null); setSelectedImage(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="absolute top-2 right-2 bg-black/80 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors"><X className="w-4 h-4" /></button>
+                    {/* 🔥 INICIO DEL FIX DE PREVISUALIZACIÓN */}
+                    {imagePreview && selectedImage && (
+                      <div className="relative mt-3 rounded-2xl overflow-hidden border border-white/10 inline-block shadow-lg bg-black">
+                        {selectedImage.type.startsWith('video/') ? (
+                          <video 
+                            src={imagePreview} 
+                            controls 
+                            controlsList="nodownload noplaybackrate" 
+                            disablePictureInPicture 
+                            className="max-h-64 object-cover" 
+                          />
+                        ) : (
+                          <img 
+                            src={imagePreview} 
+                            alt="Preview" 
+                            draggable="false" 
+                            onContextMenu={(e) => e.preventDefault()} 
+                            className="max-h-64 object-cover" 
+                          />
+                        )}
+                        <button onClick={() => { setImagePreview(null); setSelectedImage(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="absolute top-2 right-2 bg-black/80 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors z-10"><X className="w-4 h-4" /></button>
                       </div>
                     )}
                   </div>
