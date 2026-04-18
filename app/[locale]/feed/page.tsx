@@ -848,7 +848,7 @@ export default function Feed() {
                             {post.mediaUrl && (
                               <div className="mt-4 rounded-2xl overflow-hidden nm-inset border border-white/5 relative bg-black/50 flex justify-center">
                                 {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                                  <video onContextMenu={(e) => e.preventDefault()} controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(post.mediaUrl)} className="w-full max-h-[600px] object-cover" />
+                                  <video onContextMenu={(e) => e.preventDefault()} controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(post.mediaUrl)} className="w-full h-auto max-h-[70vh] sm:max-h-[600px] object-contain bg-black" />
                                 ) : (
                                   <img src={getImageUrl(post.mediaUrl, post.user?.username)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
                                 )}
