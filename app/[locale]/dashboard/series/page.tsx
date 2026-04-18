@@ -3,11 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import api from '../../../../lib/api';
-import { PlaySquare, Plus, Upload, Save, Video, ChevronDown } from 'lucide-react';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+// 1. AÑADIMOS EL ICONO TRASH2 PARA EL BOTÓN DE ELIMINAR
+import { PlaySquare, Plus, Upload, Save, Video, ChevronDown, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function CreatorSeries() {
-  const t = useTranslations('CreatorSeries'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('CreatorSeries');
   const [seriesList, setSeriesList] = useState<any[]>([]);
   
   // Estados para crear Serie
@@ -89,6 +90,20 @@ export default function CreatorSeries() {
     }
   };
 
+  // 🔥 NUEVO: 3. FUNCIÓN PARA ELIMINAR UNA SERIE
+  const handleDeleteSeries = async (seriesId: string) => {
+    if (!window.confirm(t('confirm_delete_series'))) return;
+    
+    try {
+      await api.delete(`/series/${seriesId}`);
+      alert(t('alert_delete_success'));
+      fetchMySeries(); // Recargamos la lista tras eliminar
+    } catch (error) {
+      console.error("Error al eliminar la serie:", error);
+      alert(t('alert_delete_error'));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#050505] text-white p-6 md:p-10 pb-20">
       <div className="max-w-4xl mx-auto space-y-10">
@@ -140,15 +155,28 @@ export default function CreatorSeries() {
           ) : (
             <div className="space-y-6">
               {seriesList.map((series) => (
-                <div key={series.id} className="glass-panel border border-white/10 rounded-3xl overflow-hidden bg-black/40 p-6">
-                  <div className="flex justify-between items-center mb-4">
+                <div key={series.id} className="glass-panel border border-white/10 rounded-3xl overflow-hidden bg-black/40 p-6 relative">
+                  
+                  {/* 🔥 BOTÓN DE ELIMINAR SERIE ABSOLUTO ARRIBA A LA DERECHA */}
+                  <button 
+                    onClick={() => handleDeleteSeries(series.id)}
+                    className="absolute top-4 right-4 text-gray-500 hover:text-red-500 bg-white/5 hover:bg-red-500/10 p-2 rounded-full transition-colors z-10"
+                    title={t('btn_delete_series')}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+
+                  <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-4 mt-2 sm:mt-0 gap-4 pr-10">
                     <div>
-                      <h3 className="text-xl font-bold text-white">{series.title} <span className="text-green-400 text-sm ml-2">${series.price}</span></h3>
-                      <p className="text-sm text-gray-400">{series.episodes?.length || 0} {t('lbl_uploaded_videos')}</p>
+                      <h3 className="text-xl font-bold text-white flex items-center flex-wrap gap-2">
+                        {series.title} <span className="text-green-400 text-sm bg-green-500/10 px-2 py-0.5 rounded-md">${series.price}</span>
+                      </h3>
+                      <p className="text-sm text-gray-400 mt-1">{series.episodes?.length || 0} {t('lbl_uploaded_videos')}</p>
                     </div>
+                    
                     <button 
                       onClick={() => setActiveSeriesId(activeSeriesId === series.id ? null : series.id)}
-                      className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all"
+                      className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shrink-0"
                     >
                       <Video className="w-4 h-4" /> {t('btn_add_video')} <ChevronDown className={`w-4 h-4 transition-transform ${activeSeriesId === series.id ? 'rotate-180' : ''}`} />
                     </button>
@@ -156,11 +184,11 @@ export default function CreatorSeries() {
 
                   {/* FORMULARIO DESPLEGABLE PARA SUBIR VIDEO A ESTA SERIE */}
                   {activeSeriesId === series.id && (
-                    <form onSubmit={(e) => handleAddEpisode(e, series.id)} className="bg-purple-900/10 border border-purple-500/20 p-5 rounded-2xl mt-4">
+                    <form onSubmit={(e) => handleAddEpisode(e, series.id)} className="bg-purple-900/10 border border-purple-500/20 p-5 rounded-2xl mt-4 animate-fade-in">
                       <h4 className="text-purple-400 font-bold mb-4 text-sm uppercase tracking-wider">{t('form_upload_video_title')}</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <input type="text" value={epTitle} onChange={(e) => setEpTitle(e.target.value)} placeholder={t('ph_video_title')} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white outline-none" />
-                        <label className="w-full bg-black/50 border border-white/10 rounded-xl p-3 flex items-center gap-3 cursor-pointer">
+                        <input type="text" value={epTitle} onChange={(e) => setEpTitle(e.target.value)} placeholder={t('ph_video_title')} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-purple-500/50 transition-colors" />
+                        <label className="w-full bg-black/50 border border-white/10 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-purple-500/50 transition-colors">
                           <Upload className="w-4 h-4 text-gray-400" />
                           <span className="text-gray-300 text-sm truncate">{videoFile ? videoFile.name : t('btn_select_mp4')}</span>
                           <input type="file" accept="video/*" className="hidden" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} />

@@ -741,13 +741,16 @@
     "btn_cancel": "Cancelar"
   },
 
-  "CreatorSeries": {
-    "alert_validation_series": "El título y el precio son obligatorios.",
-    "alert_success_series": "✅ ¡Serie creada con éxito!",
-    "alert_error_series": "🚨 Error al crear la serie.",
-    "alert_validation_video": "El título y el archivo de video son obligatorios.",
-    "alert_success_video": "🎬 ¡Video subido e inyectado a la serie con éxito!",
-    "alert_error_video": "🚨 Error al subir el video. Asegúrate de que no sea muy pesado.",
+ "CreatorSeries": {
+    "alert_validation_series": "Por favor, ingresa un título y un precio.",
+    "alert_success_series": "✅ Serie creada exitosamente. Ahora puedes agregarle videos.",
+    "alert_error_series": "Error al crear la serie.",
+    "alert_validation_video": "Por favor, ingresa un título y selecciona un video.",
+    "alert_success_video": "✅ Video subido exitosamente a la serie.",
+    "alert_error_video": "Error al subir el video.",
+    "confirm_delete_series": "🚨 ¿Estás seguro de que deseas eliminar esta serie y TODOS sus videos? Esta acción no se puede deshacer.",
+    "alert_delete_success": "✅ Serie eliminada correctamente.",
+    "alert_delete_error": "Error al intentar eliminar la serie.",
     "header_title": "Academia VIP",
     "header_subtitle": "Crea cursos y sube videos exclusivos de alto valor.",
     "form_create_title": "Crear Nueva Serie",
@@ -756,17 +759,18 @@
     "lbl_price": "Precio Total (USD)",
     "lbl_thumbnail": "Portada (Thumbnail)",
     "btn_upload_img": "Subir imagen...",
-    "btn_building": "Construyendo Serie...",
+    "btn_building": "Creando...",
     "btn_create_empty": "Crear Serie Vacía",
     "list_title": "Tus Series Activas",
-    "list_empty": "Aún no tienes cursos creados.",
+    "list_empty": "Aún no has creado ninguna serie.",
+    "btn_delete_series": "Eliminar Serie",
     "lbl_uploaded_videos": "videos subidos",
     "btn_add_video": "Agregar Video",
-    "form_upload_video_title": "Subir nuevo video a este curso",
-    "ph_video_title": "Título del Video (Ej: Clase 1)",
-    "btn_select_mp4": "Seleccionar Archivo MP4...",
-    "btn_uploading_video": "Subiendo video (No cierres la pestaña)...",
-    "btn_save_video": "Subir y Guardar Video"
+    "form_upload_video_title": "Subir Nuevo Video a esta Serie",
+    "ph_video_title": "Título del video (Ej: Clase 1: Introducción)",
+    "btn_select_mp4": "Seleccionar archivo .mp4...",
+    "btn_uploading_video": "Subiendo (Por favor espera)...",
+    "btn_save_video": "Guardar Video"
   },
 
   "Statistics": {
