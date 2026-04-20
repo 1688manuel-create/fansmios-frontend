@@ -12,11 +12,11 @@ import {
   TrendingUp, PiggyBank, Wallet, Sparkles, Image as ImageIcon,
   CheckCircle, XCircle, Eye, UserX, Ghost, ShieldBan, Percent
 } from 'lucide-react';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+import { useTranslations } from 'next-intl';
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const t = useTranslations('AdminDashboard'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('AdminDashboard'); 
   const [activeTab, setActiveTab] = useState<'STATS' | 'USERS' | 'WITHDRAWALS' | 'REPORTS' | 'SETTINGS'>('STATS');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -26,7 +26,10 @@ export default function AdminDashboard() {
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]); 
   
-  // 🔥 ESTADO DEL MODO DIOS: COMISIONES DINÁMICAS
+  // 🔥 ESTADO DE LA BÓVEDA DEL ADMIN
+  const [vaultInfo, setVaultInfo] = useState<any>(null);
+
+  // ESTADO DEL MODO DIOS: COMISIONES DINÁMICAS
   const [fees, setFees] = useState({
     feeSubscription: 20,
     feePPV: 20,
@@ -37,7 +40,6 @@ export default function AdminDashboard() {
   });
   const [isUpdatingFees, setIsUpdatingFees] = useState(false);
   
-  // Nuevo estado para evitar dobles clics al procesar retiros
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -58,22 +60,23 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      // Usamos api.get directamente para las consultas
-      const [statsData, usersData, withData, reportsData, analyticsData, settingsData] = await Promise.all([
+      const [statsData, usersData, withData, reportsData, analyticsData, settingsData, vaultData] = await Promise.all([
         adminService.getStats().catch(() => ({ stats: null })),
         adminService.getAllUsers().catch(() => ({ users: [] })),
         api.get('/admin/payouts/pending').catch(() => ({ data: { withdrawals: [] } })),
         api.get('/admin/reports').catch(() => ({ data: { reports: [] } })),
         api.get('/admin/analytics/dashboard').catch(() => ({ data: null })),
-        api.get('/admin/platform-settings') // 👑 Obtenemos comisiones globales
+        api.get('/admin/platform-settings').catch(() => ({ data: null })),
+        api.get('/admin/vault').catch(() => ({ data: null })) // 🏦 Obtenemos saldo de la bóveda
       ]);
+      
       setStats(statsData?.stats);
       setUsers(usersData?.users || []);
       setWithdrawals(withData?.data?.withdrawals || []);
       setReports(reportsData?.data?.reports || []);
       setAnalytics(analyticsData?.data);
+      setVaultInfo(vaultData?.data);
       
-      // Si el servidor nos devuelve las comisiones reales, las cargamos en la pantalla
       if (settingsData?.data && settingsData.data.id) {
         setFees({
           feeSubscription: settingsData.data.feeSubscription || 20,
@@ -91,7 +94,30 @@ export default function AdminDashboard() {
     }
   };
 
-  // 👑 GUARDAR NUEVAS COMISIONES
+  // 🏦 RETIRAR GANANCIAS DE LA PLATAFORMA
+  const handleVaultWithdraw = async () => {
+    if (!vaultInfo || vaultInfo.saldoDisponible <= 0) return;
+
+    const amountStr = prompt(`¿Cuánto deseas retirar a tu wallet personal?\n\n💰 Saldo Disponible: $${vaultInfo.saldoDisponible.toFixed(2)} USD`);
+    if (!amountStr) return;
+    
+    const amount = parseFloat(amountStr);
+    if (isNaN(amount) || amount <= 0 || amount > vaultInfo.saldoDisponible) {
+      return alert("Monto inválido o superior al saldo disponible.");
+    }
+
+    const cryptoAddress = prompt("Ingresa tu dirección USDT (TRC20) de Binance (Cold Wallet):");
+    if (!cryptoAddress) return;
+
+    try {
+      await api.post('/admin/vault/withdraw', { amount, cryptoAddress, notes: 'Retiro manual del Comandante' });
+      alert(`✅ Retiro exitoso de $${amount} USD. El dinero va en camino a tu wallet.`);
+      fetchData(); // Recargamos para actualizar el saldo verde
+    } catch (error: any) {
+      alert(error.response?.data?.error || 'Error al intentar retirar.');
+    }
+  };
+
   const handleUpdateFees = async () => {
     setIsUpdatingFees(true);
     try {
@@ -119,7 +145,6 @@ export default function AdminDashboard() {
     } catch (error) { alert(t('alert_error_status')); }
   };
 
-  // 🔥 NUEVA LÓGICA DE PAGOS (INTEGRADA AL MODO DIOS)
   const handleApprovePayout = async (id: string, amount: number, address: string) => {
     const confirm = window.confirm(`⚠️ ${t('alert_payout_confirm_1')} $${amount} ${t('alert_payout_confirm_2')}\n${address}?`);
     if (!confirm) return;
@@ -209,7 +234,7 @@ export default function AdminDashboard() {
           {activeTab === 'STATS' && (
             <div className="space-y-8 animate-fade-in">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="nm-btn border border-white/5 p-8 rounded-[2rem]">
+                <div className="nm-btn border border-white/5 p-8 rounded-[2rem] flex flex-col justify-center">
                   <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-blue-500"/> {t('stat_volume')}
                   </h3>
@@ -217,15 +242,31 @@ export default function AdminDashboard() {
                     ${(analytics?.metrics?.finance?.totalVolumeProcessed || 0).toFixed(2)}
                   </p>
                 </div>
-                <div className="nm-btn border border-green-500/30 p-8 rounded-[2rem]">
-                  <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <PiggyBank className="w-4 h-4 text-green-500"/> {t('stat_profit')}
-                  </h3>
-                  <p className="text-4xl font-black text-green-400">
-                    ${(analytics?.metrics?.finance?.platformNetRevenue || 0).toFixed(2)}
-                  </p>
+                
+                {/* 🏦 LA BÓVEDA DEL COMANDANTE */}
+                <div className="nm-btn border border-green-500/30 p-8 rounded-[2rem] flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center justify-between">
+                      <span className="flex items-center gap-2"><PiggyBank className="w-4 h-4 text-green-500"/> GANANCIA DISPONIBLE</span>
+                    </h3>
+                    {/* Muestra el saldo real disponible de la bóveda */}
+                    <p className="text-4xl font-black text-green-400">
+                      ${(vaultInfo?.saldoDisponible || 0).toFixed(2)}
+                    </p>
+                    <p className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-wider">
+                      BRUTO HISTÓRICO: ${(vaultInfo?.ingresosBrutos || 0).toFixed(2)}
+                    </p>
+                  </div>
+                  <button 
+                    onClick={handleVaultWithdraw}
+                    disabled={!vaultInfo || vaultInfo.saldoDisponible <= 0}
+                    className="mt-6 w-full bg-green-500/10 border border-green-500/50 text-green-400 font-bold text-xs py-3 rounded-xl hover:bg-green-600 hover:text-white transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-green-400"
+                  >
+                    Retirar a Binance 🏦
+                  </button>
                 </div>
-                <div className="nm-btn border border-white/5 p-8 rounded-[2rem]">
+
+                <div className="nm-btn border border-white/5 p-8 rounded-[2rem] flex flex-col justify-center">
                   <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
                     <Wallet className="w-4 h-4 text-orange-500"/> {t('stat_pending_withdrawals')}
                   </h3>
@@ -270,7 +311,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* 💸 TAB 2: RETIROS (WITHDRAWALS - AHORA CON PAYRAM) */}
+          {/* 💸 TAB 2: RETIROS */}
           {activeTab === 'WITHDRAWALS' && (
             <div className="space-y-6 animate-fade-in">
               <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Banknote className="text-orange-500"/> {t('tab_withdrawals')}</h2>
@@ -369,7 +410,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* 🚩 TAB 4: MODERACIÓN (REPORTS) */}
+          {/* 🚩 TAB 4: MODERACIÓN */}
           {activeTab === 'REPORTS' && (
             <div className="space-y-6 animate-fade-in">
               <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Flag className="text-red-500"/> {t('tab_moderation')}</h2>
@@ -446,7 +487,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* ⚙️ TAB 5: PLATAFORMA (SETTINGS) - 🔥 MODO DIOS ACTUALIZADO */}
+          {/* ⚙️ TAB 5: PLATAFORMA (SETTINGS) */}
           {activeTab === 'SETTINGS' && (
             <div className="space-y-6 animate-fade-in max-w-4xl">
               <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Settings className="text-gray-400"/> {t('settings_title')}</h2>
