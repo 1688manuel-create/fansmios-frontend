@@ -9,7 +9,7 @@ import AppLayout from '../../../../components/AppLayout';
 // 🔥 ICONOS PREMIUM
 import { 
   Crown, Scale, BarChart3, Users, Banknote, Flag, Settings, 
-  TrendingUp, PiggyBank, Wallet, Sparkles, Image as ImageIcon,
+  TrendingUp, PiggyBank, Wallet, Sparkles, ImageIcon,
   CheckCircle, XCircle, Eye, UserX, Ghost, ShieldBan, Percent
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -28,6 +28,11 @@ export default function AdminDashboard() {
   
   // 🔥 ESTADO DE LA BÓVEDA DEL ADMIN
   const [vaultInfo, setVaultInfo] = useState<any>(null);
+  // 🔥 ESTADOS PARA EL MODAL DE RETIRO
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [withdrawAddress, setWithdrawAddress] = useState('');
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
 
   // ESTADO DEL MODO DIOS: COMISIONES DINÁMICAS
   const [fees, setFees] = useState({
@@ -94,27 +99,34 @@ export default function AdminDashboard() {
     }
   };
 
-  // 🏦 RETIRAR GANANCIAS DE LA PLATAFORMA
-  const handleVaultWithdraw = async () => {
+  // 🏦 ABRIR EL MODAL DE RETIRO
+  const openWithdrawModal = () => {
     if (!vaultInfo || vaultInfo.saldoDisponible <= 0) return;
+    setWithdrawAmount(vaultInfo.saldoDisponible.toString()); // Ponemos el máximo por defecto
+    setWithdrawAddress('');
+    setIsWithdrawModalOpen(true);
+  };
 
-    const amountStr = prompt(`¿Cuánto deseas retirar a tu wallet personal?\n\n💰 Saldo Disponible: $${vaultInfo.saldoDisponible.toFixed(2)} USD`);
-    if (!amountStr) return;
-    
-    const amount = parseFloat(amountStr);
+  // 🚀 PROCESAR EL RETIRO DESDE EL MODAL
+  const handleConfirmWithdraw = async () => {
+    const amount = parseFloat(withdrawAmount);
     if (isNaN(amount) || amount <= 0 || amount > vaultInfo.saldoDisponible) {
-      return alert("Monto inválido o superior al saldo disponible.");
+      return alert("❌ Monto inválido o superior al saldo disponible.");
+    }
+    if (!withdrawAddress.trim()) {
+      return alert("❌ Por favor ingresa una dirección válida de tu wallet.");
     }
 
-    const cryptoAddress = prompt("Ingresa tu dirección de Wallet Privada (MetaMask/TronLink):");
-    if (!cryptoAddress) return;
-
+    setIsWithdrawing(true);
     try {
-      await api.post('/admin/vault/withdraw', { amount, cryptoAddress, notes: 'Retiro manual del Comandante' });
-      alert(`✅ Retiro exitoso de $${amount} USD. El dinero va en camino a tu wallet.`);
-      fetchData(); // Recargamos para actualizar el saldo verde
+      await api.post('/admin/vault/withdraw', { amount, cryptoAddress: withdrawAddress, notes: 'Retiro manual del Comandante' });
+      alert(`✅ Retiro exitoso de $${amount} USD. El dinero va en camino a tu bóveda.`);
+      setIsWithdrawModalOpen(false); // Cerramos el modal
+      fetchData(); // Recargamos el saldo verde
     } catch (error: any) {
       alert(error.response?.data?.error || 'Error al intentar retirar.');
+    } finally {
+      setIsWithdrawing(false);
     }
   };
 
@@ -258,11 +270,11 @@ export default function AdminDashboard() {
                     </p>
                   </div>
                   <button 
-                    onClick={handleVaultWithdraw}
+                    onClick={openWithdrawModal}
                     disabled={!vaultInfo || vaultInfo.saldoDisponible <= 0}
                     className="mt-6 w-full bg-green-500/10 border border-green-500/50 text-green-400 font-bold text-xs py-3 rounded-xl hover:bg-green-600 hover:text-white transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-green-400"
                   >
-                    Retirar a Bóveda Privada 🛡️🏦
+                    Retirar a Bóveda Privada 🛡️
                   </button>
                 </div>
 
@@ -552,6 +564,71 @@ export default function AdminDashboard() {
           )}
 
         </main>
+        
+        {/* 🪟 MODAL PREMIUM DE RETIRO */}
+        {isWithdrawModalOpen && (
+          <div className="fixed inset-0 z- [50] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4 animate-fade-in">
+            <div className="bg-[#0a0a0a] border border-green-500/30 rounded-[2rem] p-8 w-full max-w-md shadow-[0_0_50px_rgba(34,197,94,0.1)]">
+              
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="text-2xl font-black text-white flex items-center gap-2">
+                    <PiggyBank className="w-6 h-6 text-green-500"/> Extraer Fondos
+                  </h3>
+                  <p className="text-sm text-gray-400 mt-1">Saldo Disponible: <span className="text-green-400 font-bold">${vaultInfo?.saldoDisponible.toFixed(2)} USD</span></p>
+                </div>
+                <button onClick={() => setIsWithdrawModalOpen(false)} className="text-gray-500 hover:text-white transition-colors">
+                  <XCircle className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-xs font-bold tracking-widest uppercase text-gray-500 mb-2">Monto a Retirar (USD)</label>
+                  <input
+                    type="number"
+                    value={withdrawAmount}
+                    onChange={(e) => setWithdrawAmount(e.target.value)}
+                    className="w-full bg-[#111] border border-white/10 rounded-xl p-4 text-white font-black text-xl focus:border-green-500 outline-none transition-colors"
+                    placeholder="0.00"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold tracking-widest uppercase text-gray-500 mb-2">Dirección de Bóveda (MetaMask/TronLink)</label>
+                  <input
+                    type="text"
+                    value={withdrawAddress}
+                    onChange={(e) => setWithdrawAddress(e.target.value)}
+                    className="w-full bg-[#111] border border-white/10 rounded-xl p-4 text-green-400 font-mono text-sm focus:border-green-500 outline-none transition-colors placeholder:text-gray-600"
+                    placeholder="0x... o T..."
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <button
+                  onClick={() => setIsWithdrawModalOpen(false)}
+                  className="flex-1 py-4 px-4 rounded-xl border border-white/10 text-gray-400 font-bold text-sm hover:bg-white/5 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirmWithdraw}
+                  disabled={isWithdrawing}
+                  className="flex-1 py-4 px-4 rounded-xl bg-green-600 text-white font-bold text-sm hover:bg-green-500 transition-colors shadow-lg shadow-green-900/20 disabled:opacity-50 flex justify-center items-center gap-2"
+                >
+                  {isWithdrawing ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  ) : (
+                    <>Confirmar Transferencia <CheckCircle className="w-4 h-4"/></>
+                  )}
+                </button>
+              </div>
+
+            </div>
+          </div>
+        )}
+
       </div>
     </AppLayout>
   );
