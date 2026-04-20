@@ -4,18 +4,40 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { Loader2, Mail, Gift, CheckCircle2 } from 'lucide-react';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+import { useTranslations } from 'next-intl'; 
+// 🔥 1. IMPORTAMOS EL CEREBRO DEL MODAL UNIVERSAL (Ajusta la ruta si es necesario)
+import { useModal } from '../../../src/context/ModalContext'; 
+
+// 🛡️ LISTA VIP DE DOMINIOS PERMITIDOS
+const DOMINIOS_PERMITIDOS = [
+  'gmail.com',
+  'outlook.com',
+  'hotmail.com',
+  'yahoo.com',
+  'icloud.com'
+];
+
+/**
+ * Función táctica para validar correos estrictos
+ */
+const validarCorreoEstricto = (email: string) => {
+  const regexBasico = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!regexBasico.test(email)) return false; 
+  const dominio = email.split('@')[1].toLowerCase();
+  return DOMINIOS_PERMITIDOS.includes(dominio);
+};
 
 export default function AuthPortal() {
   const router = useRouter();
+  const { showModal } = useModal(); // 🔥 2. INVOCAMOS EL PODER DEL MODAL
   
   // UX States
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const t = useTranslations('AuthPortal'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('AuthPortal'); 
   
-  // 🔥 NUEVOS ESTADOS PARA REENVIAR CORREO
+  // NUEVOS ESTADOS PARA REENVIAR CORREO
   const [unverifiedEmail, setUnverifiedEmail] = useState('');
   const [isResending, setIsResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState('');
@@ -26,16 +48,16 @@ export default function AuthPortal() {
   const [username, setUsername] = useState('');
   const [role, setRole] = useState<'FAN' | 'CREATOR'>('FAN');
   
-  // 🔥 ESTADO DEL RADAR DE REFERIDOS
+  // ESTADO DEL RADAR DE REFERIDOS
   const [referralCode, setReferralCode] = useState('');
 
-  // 🔥 RADAR DE ENLACES: Atrapa el código de la URL al cargar
+  // RADAR DE ENLACES: Atrapa el código de la URL al cargar
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const ref = params.get('ref');
     if (ref) {
       setReferralCode(ref);
-      setIsLogin(false); // 👈 MAGIA UX: Si trae código, lo pasamos directo a Registrarse
+      setIsLogin(false); 
     }
   }, []);
 
@@ -50,6 +72,18 @@ export default function AuthPortal() {
     setResendSuccess('');
     setUnverifiedEmail('');
 
+    // 🛑 ESCUDO ANTI-BOTS: Validación estricta solo para Registro
+    if (!isLogin && !validarCorreoEstricto(email)) {
+      setIsLoading(false);
+      // Lanzamos el modal premium de error
+      return showModal({
+        title: "Correo no admitido",
+        message: "Por seguridad de grado militar, solo aceptamos correos reales de Gmail, Outlook, Hotmail, Yahoo o iCloud.",
+        type: 'ERROR',
+        confirmText: "Entendido"
+      });
+    }
+
     try {
       if (isLogin) {
         // LÓGICA DE LOGIN
@@ -57,11 +91,10 @@ export default function AuthPortal() {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         
-        // 🔥 REDIRECCIÓN DIRECTA: Todos van al Feed a consumir contenido
         router.push('/feed');
         
       } else {
-        // LÓGICA DE REGISTRO (🔥 Ahora incluye el código de referido)
+        // LÓGICA DE REGISTRO 
         await api.post('/auth/register', { 
           username, 
           email, 
@@ -71,14 +104,21 @@ export default function AuthPortal() {
         });
         
         setIsLogin(true);
-        alert(t('alert_account_created')); // 👈 Reemplazo aquí
+        
+        // Modal premium de éxito al registrarse
+        showModal({
+          title: "¡Cuenta Creada!",
+          message: t('alert_account_created'),
+          type: 'SUCCESS',
+          confirmText: "Iniciar Sesión"
+        });
+        
         setPassword('');
       }
     } catch (err: any) {
       const errorData = err.response?.data;
-      setError(errorData?.error || t('error_connection')); // 👈 Reemplazo aquí
+      setError(errorData?.error || t('error_connection')); 
       
-      // 🔥 SI EL BACKEND DICE QUE FALTA VERIFICAR CORREO, GUARDAMOS EL EMAIL
       if (errorData?.needsVerification && errorData?.email) {
         setUnverifiedEmail(errorData.email);
       }
@@ -87,15 +127,14 @@ export default function AuthPortal() {
     }
   };
 
-  // 🔥 FUNCIÓN PARA REENVIAR EL CORREO
   const handleResendEmail = async () => {
     setIsResending(true);
     setError('');
     try {
       const res = await api.post('/auth/resend-verification', { email: unverifiedEmail });
-      setResendSuccess(res.data.message || t('msg_resend_success')); // 👈 Reemplazo aquí
+      setResendSuccess(res.data.message || t('msg_resend_success')); 
     } catch (err: any) {
-      setError(err.response?.data?.error || t('error_resend')); // 👈 Reemplazo aquí
+      setError(err.response?.data?.error || t('error_resend')); 
     } finally {
       setIsResending(false);
     }
@@ -139,7 +178,7 @@ export default function AuthPortal() {
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center animate-fade-in font-medium">
               {error}
               
-              {/* 🔥 BOTÓN MÁGICO PARA REENVIAR CORREO */}
+              {/* BOTÓN MÁGICO PARA REENVIAR CORREO */}
               {unverifiedEmail && (
                 <button 
                   onClick={handleResendEmail}
