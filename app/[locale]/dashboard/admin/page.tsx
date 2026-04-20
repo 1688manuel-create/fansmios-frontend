@@ -106,7 +106,7 @@ export default function AdminDashboard() {
       return alert("Monto inválido o superior al saldo disponible.");
     }
 
-    const cryptoAddress = prompt("Ingresa tu dirección USDT (TRC20) de Binance (Cold Wallet):");
+    const cryptoAddress = prompt("Ingresa tu dirección de Wallet Privada (MetaMask/TronLink):");
     if (!cryptoAddress) return;
 
     try {
@@ -262,7 +262,7 @@ export default function AdminDashboard() {
                     disabled={!vaultInfo || vaultInfo.saldoDisponible <= 0}
                     className="mt-6 w-full bg-green-500/10 border border-green-500/50 text-green-400 font-bold text-xs py-3 rounded-xl hover:bg-green-600 hover:text-white transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-green-400"
                   >
-                    Retirar a Binance 🏦
+                    Retirar a Bóveda Privada 🛡️🏦
                   </button>
                 </div>
 
