@@ -6,6 +6,9 @@ import { adminService } from '../../../../lib/adminService';
 import api from '../../../../lib/api';
 import AppLayout from '../../../../components/AppLayout';
 
+// 🔥 IMPORTAMOS EL PODER DEL MODAL UNIVERSAL
+import { useModal } from '../../../../src/context/ModalContext';
+
 // 🔥 ICONOS PREMIUM
 import { 
   Crown, Scale, BarChart3, Users, Banknote, Flag, Settings, 
@@ -17,6 +20,8 @@ import { useTranslations } from 'next-intl';
 export default function AdminDashboard() {
   const router = useRouter();
   const t = useTranslations('AdminDashboard'); 
+  const { showModal } = useModal(); // 💥 INVOCAMOS EL CEREBRO DEL MODAL
+
   const [activeTab, setActiveTab] = useState<'STATS' | 'USERS' | 'WITHDRAWALS' | 'REPORTS' | 'SETTINGS'>('STATS');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -26,9 +31,8 @@ export default function AdminDashboard() {
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]); 
   
-  // 🔥 ESTADO DE LA BÓVEDA DEL ADMIN
+  // 🔥 ESTADOS DE LA BÓVEDA ESPECIAL DEL ADMIN
   const [vaultInfo, setVaultInfo] = useState<any>(null);
-  // 🔥 ESTADOS PARA EL MODAL DE RETIRO
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [withdrawAddress, setWithdrawAddress] = useState('');
@@ -44,7 +48,6 @@ export default function AdminDashboard() {
     feeWithdrawalExp: 5,
   });
   const [isUpdatingFees, setIsUpdatingFees] = useState(false);
-  
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -72,7 +75,7 @@ export default function AdminDashboard() {
         api.get('/admin/reports').catch(() => ({ data: { reports: [] } })),
         api.get('/admin/analytics/dashboard').catch(() => ({ data: null })),
         api.get('/admin/platform-settings').catch(() => ({ data: null })),
-        api.get('/admin/vault').catch(() => ({ data: null })) // 🏦 Obtenemos saldo de la bóveda
+        api.get('/admin/vault').catch(() => ({ data: null }))
       ]);
       
       setStats(statsData?.stats);
@@ -99,15 +102,16 @@ export default function AdminDashboard() {
     }
   };
 
-  // 🏦 ABRIR EL MODAL DE RETIRO
+  // =================================================================
+  // 🏦 LÓGICA DE LA BÓVEDA ESPECIAL (Se mantiene el diseño de 2 campos)
+  // =================================================================
   const openWithdrawModal = () => {
     if (!vaultInfo || vaultInfo.saldoDisponible <= 0) return;
-    setWithdrawAmount(vaultInfo.saldoDisponible.toString()); // Ponemos el máximo por defecto
+    setWithdrawAmount(vaultInfo.saldoDisponible.toString()); 
     setWithdrawAddress('');
     setIsWithdrawModalOpen(true);
   };
 
-  // 🚀 PROCESAR EL RETIRO DESDE EL MODAL
   const handleConfirmWithdraw = async () => {
     const amount = parseFloat(withdrawAmount);
     if (isNaN(amount) || amount <= 0 || amount > vaultInfo.saldoDisponible) {
@@ -121,14 +125,18 @@ export default function AdminDashboard() {
     try {
       await api.post('/admin/vault/withdraw', { amount, cryptoAddress: withdrawAddress, notes: 'Retiro manual del Comandante' });
       alert(`✅ Retiro exitoso de $${amount} USD. El dinero va en camino a tu bóveda.`);
-      setIsWithdrawModalOpen(false); // Cerramos el modal
-      fetchData(); // Recargamos el saldo verde
+      setIsWithdrawModalOpen(false); 
+      fetchData(); 
     } catch (error: any) {
       alert(error.response?.data?.error || 'Error al intentar retirar.');
     } finally {
       setIsWithdrawing(false);
     }
   };
+
+  // =================================================================
+  // 🛡️ LÓGICA CON MODAL UNIVERSAL PREMIUM
+  // =================================================================
 
   const handleUpdateFees = async () => {
     setIsUpdatingFees(true);
@@ -147,61 +155,92 @@ export default function AdminDashboard() {
     setFees({ ...fees, [e.target.name]: Number(e.target.value) });
   };
 
-  const handleUserStatus = async (userId: string, status: string) => {
-    const reason = prompt(`${t('prompt_status_reason')} ${status}:`);
-    if (reason === null) return; 
-    try {
-      await adminService.changeUserStatus(userId, status, reason);
-      alert(`✅ ${t('alert_status_changed')} ${status}`);
-      fetchData();
-    } catch (error) { alert(t('alert_error_status')); }
+  // 1. BANEAR O ACTIVAR USUARIO (Usa Modal Universal)
+  const handleUserStatus = (userId: string, status: string) => {
+    showModal({
+      title: status === 'ACTIVE' ? "Activar Usuario" : "Banear Usuario",
+      message: `Escribe el motivo para cambiar el estatus a ${status}:`,
+      type: status === 'ACTIVE' ? 'SUCCESS' : 'ERROR',
+      showInput: true,
+      placeholder: "Motivo...",
+      confirmText: "Aplicar Cambio",
+      onConfirm: async (reason) => {
+        if (!reason) return; 
+        try {
+          await adminService.changeUserStatus(userId, status, reason);
+          fetchData();
+        } catch (error) { alert(t('alert_error_status')); }
+      }
+    });
   };
 
-  const handleApprovePayout = async (id: string, amount: number, address: string) => {
-    const confirm = window.confirm(`⚠️ ${t('alert_payout_confirm_1')} $${amount} ${t('alert_payout_confirm_2')}\n${address}?`);
-    if (!confirm) return;
-
-    const txHash = prompt(t('prompt_tx_hash'));
-
-    setProcessingId(id);
-    try {
-      await api.post(`/admin/payouts/${id}/approve`, { 
-        txHash: txHash || `SIMULATED_TX_${Date.now()}`,
-        adminNotes: 'Pago Cripto Procesado Oficialmente'
-      });
-      alert(t('alert_payout_success'));
-      fetchData();
-    } catch (error: any) {
-      alert(error.response?.data?.error || t('alert_error_approve'));
-    } finally {
-      setProcessingId(null);
-    }
+  // 2. APROBAR PAGO A CREADOR (Usa Modal Universal)
+  const handleApprovePayout = (id: string, amount: number, address: string) => {
+    showModal({
+      title: "Aprobar Retiro",
+      message: `El creador solicitó $${amount}. Pégalo en tu panel de Binance/PayRam y luego pega aquí el TX Hash:`,
+      type: 'SUCCESS',
+      showInput: true,
+      placeholder: "Ej. 0xabc123... o TxyZ98...",
+      confirmText: "Aprobar y Finalizar",
+      onConfirm: async (txHash) => {
+        setProcessingId(id);
+        try {
+          await api.post(`/admin/payouts/${id}/approve`, { 
+            txHash: txHash || `SIMULATED_TX_${Date.now()}`,
+            adminNotes: 'Pago Cripto Procesado Oficialmente'
+          });
+          fetchData();
+        } catch (error: any) {
+          alert(error.response?.data?.error || t('alert_error_approve'));
+        } finally {
+          setProcessingId(null);
+        }
+      }
+    });
   };
 
-  const handleRejectPayout = async (id: string, amount: number) => {
-    const reason = prompt(`❌ ${t('prompt_reject_payout_1')} $${amount} USD.\n${t('prompt_reject_payout_2')}`);
-    if (!reason) return;
-
-    setProcessingId(id);
-    try {
-      await api.post(`/admin/payouts/${id}/reject`, { adminNotes: reason });
-      alert(t('alert_payout_rejected'));
-      fetchData();
-    } catch (error: any) {
-      alert(error.response?.data?.error || t('alert_error_reject'));
-    } finally {
-      setProcessingId(null);
-    }
+  // 3. RECHAZAR PAGO (Usa Modal Universal)
+  const handleRejectPayout = (id: string, amount: number) => {
+    showModal({
+      title: "Rechazar Retiro",
+      message: `Vas a rechazar el retiro de $${amount} y el dinero regresará a la bóveda del creador. Escribe el motivo:`,
+      type: 'ERROR',
+      showInput: true,
+      placeholder: "Ej. Dirección inválida...",
+      confirmText: "Rechazar Retiro",
+      onConfirm: async (reason) => {
+        if (!reason) return;
+        setProcessingId(id);
+        try {
+          await api.post(`/admin/payouts/${id}/reject`, { adminNotes: reason });
+          fetchData();
+        } catch (error: any) {
+          alert(error.response?.data?.error || t('alert_error_reject'));
+        } finally {
+          setProcessingId(null);
+        }
+      }
+    });
   };
 
-  const handleResolveReport = async (reportId: string, status: 'RESOLVED' | 'DISMISSED') => {
-    const adminMessage = prompt(t('prompt_report_msg'));
-    if (adminMessage === null) return;
-    try {
-      await api.put('/admin/reports/resolve', { reportId, newStatus: status, adminMessage });
-      alert(t('alert_report_closed'));
-      fetchData(); 
-    } catch (error) { alert(t('alert_error_report')); }
+  // 4. RESOLVER REPORTES DE MODERACIÓN (Usa Modal Universal)
+  const handleResolveReport = (reportId: string, status: 'RESOLVED' | 'DISMISSED') => {
+    showModal({
+      title: status === 'RESOLVED' ? "Sancionar Reporte" : "Desestimar Reporte",
+      message: "Añade una nota administrativa interna para cerrar este caso:",
+      type: status === 'RESOLVED' ? 'ERROR' : 'INFO',
+      showInput: true,
+      placeholder: "Nota interna...",
+      confirmText: "Cerrar Caso",
+      onConfirm: async (adminMessage) => {
+        if (!adminMessage) return;
+        try {
+          await api.put('/admin/reports/resolve', { reportId, newStatus: status, adminMessage });
+          fetchData(); 
+        } catch (error) { alert(t('alert_error_report')); }
+      }
+    });
   };
 
   if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-16 h-16 border-4 border-red-500 rounded-full animate-spin"></div></div>;
@@ -565,9 +604,11 @@ export default function AdminDashboard() {
 
         </main>
         
-        {/* 🪟 MODAL PREMIUM DE RETIRO */}
+        {/* ========================================================= */}
+        {/* 🪟 MODAL PREMIUM DE LA BÓVEDA (DISEÑO ESPECIAL 2 CAMPOS) */}
+        {/* ========================================================= */}
         {isWithdrawModalOpen && (
-          <div className="fixed inset-0 z- [50] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4 animate-fade-in">
+          <div className="fixed inset-0 z-[50] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4 animate-fade-in">
             <div className="bg-[#0a0a0a] border border-green-500/30 rounded-[2rem] p-8 w-full max-w-md shadow-[0_0_50px_rgba(34,197,94,0.1)]">
               
               <div className="flex justify-between items-start mb-6">

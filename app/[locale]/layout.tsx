@@ -3,7 +3,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css"; // 👈 AQUÍ LLAMAMOS A TUS ESTILOS (TAILWIND)
 
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations } from "next-intl/server"; // 🔥 Importamos getTranslations
+import { getMessages, getTranslations } from "next-intl/server";
+
+// 🔥 1. IMPORTAMOS EL CEREBRO DEL MODAL UNIVERSAL AQUÍ
+// Nota: Revisa que la ruta sea correcta según donde creaste la carpeta 'context'
+import { ModalProvider } from "../../src/context/ModalContext"; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,7 +45,7 @@ export default async function LocaleLayout({
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ locale: string }>; // 👈 Next.js pide que sea una Promesa
+  params: Promise<{ locale: string }>;
 }>) {
   
   // 1. Extraemos el idioma de forma segura
@@ -55,7 +59,12 @@ export default async function LocaleLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {/* 3. Envolvemos la app en el traductor */}
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          
+          {/* 🔥 2. ENVOLVEMOS TODA LA PLATAFORMA CON EL ESCUDO DEL MODAL */}
+          <ModalProvider>
+            {children}
+          </ModalProvider>
+          
         </NextIntlClientProvider>
       </body>
     </html>
