@@ -3,27 +3,51 @@
 import { useState } from 'react';
 import api from '../../lib/api';
 import { Lock, Unlock, PlayCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl'; // 👈 INVOCAMOS AL TRADUCTOR
+import { useTranslations } from 'next-intl'; 
+// 🔥 1. IMPORTAMOS EL CEREBRO DEL MODAL UNIVERSAL
+import { useModal } from "../../src/context/ModalContext"; 
 
 export default function SeriesTab({ series, onPurchaseSuccess }: { series: any[], onPurchaseSuccess: () => void }) {
-  const t = useTranslations('SeriesTab'); // 👈 INICIAMOS EL TRADUCTOR
+  const t = useTranslations('SeriesTab'); 
+  const { showModal } = useModal(); // 🔥 2. INVOCAMOS EL PODER
   const [processingId, setProcessingId] = useState<string | null>(null);
 
-  const handleBuy = async (seriesId: string, price: number) => {
-    // 🔥 ALERTA DINÁMICA
-    const confirm = window.confirm(`${t('confirm_buy_1')} $${price} USD. ${t('confirm_buy_2')}`);
-    if (!confirm) return;
-
-    setProcessingId(seriesId);
-    try {
-      await api.post(`/series/${seriesId}/buy`);
-      alert(`✅ ${t('alert_unlocked')}`);
-      onPurchaseSuccess(); 
-    } catch (error: any) {
-      alert(error.response?.data?.error || t('alert_error'));
-    } finally {
-      setProcessingId(null);
-    }
+  const handleBuy = (seriesId: string, price: number) => {
+    // 🔥 3. REEMPLAZAMOS EL CONFIRM FEO POR EL MODAL PREMIUM
+    showModal({
+      title: "Desbloquear Serie",
+      message: `${t('confirm_buy_1')} $${price} USD. ${t('confirm_buy_2')}`,
+      type: 'CONFIRM',
+      confirmText: "Comprar Ahora",
+      onConfirm: async () => {
+        setProcessingId(seriesId);
+        try {
+          await api.post(`/series/${seriesId}/buy`);
+          
+          // 🔥 4. REEMPLAZAMOS EL ALERT FEO DE ÉXITO POR EL MODAL PREMIUM
+          showModal({
+            title: "¡Compra Exitosa!",
+            message: `✅ ${t('alert_unlocked')}`,
+            type: 'SUCCESS',
+            confirmText: "Ver Serie",
+            onConfirm: () => {
+              onPurchaseSuccess(); 
+            }
+          });
+          
+        } catch (error: any) {
+          // 🔥 5. REEMPLAZAMOS EL ALERT FEO DE ERROR POR EL MODAL PREMIUM
+          showModal({
+            title: "Error de Compra",
+            message: error.response?.data?.error || t('alert_error'),
+            type: 'ERROR',
+            confirmText: "Entendido"
+          });
+        } finally {
+          setProcessingId(null);
+        }
+      }
+    });
   };
 
   if (!series || series.length === 0) {
