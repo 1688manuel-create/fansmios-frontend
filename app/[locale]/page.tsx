@@ -61,13 +61,14 @@ export default function Home() {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         
-        // 🔥 REDIRECCIÓN INTELIGENTE CORREGIDA
+        // 🔥 REDIRECCIÓN INTELIGENTE CORREGIDA (TODOS AL FEED)
         if (res.data.user.role === 'CREATOR') {
-            // El Creador necesita KYC aprobado para ir al panel. Si no, a la bóveda.
-            if (res.data.user.creatorProfile?.kycStatus === 'APPROVED') {
-                router.push('/dashboard');
-            } else {
+            // El Creador necesita KYC aprobado para operar. Si no, a la bóveda.
+            if (res.data.user.creatorProfile?.kycStatus !== 'APPROVED') {
                 router.push('/dashboard/kyc');
+            } else {
+                // Creador verificado = Pase directo al Feed
+                router.push('/feed');
             }
         } else {
             // El FAN (o ADMIN) tiene pase libre directo al Feed
