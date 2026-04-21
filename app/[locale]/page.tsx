@@ -61,12 +61,16 @@ export default function Home() {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         
-        // REDIRECCIÓN INTELIGENTE
+        // 🔥 REDIRECCIÓN INTELIGENTE CORREGIDA
         if (res.data.user.role === 'CREATOR') {
-            router.push('/dashboard');
-        } else if (res.data.user.role === 'FAN' && res.data.user.creatorProfile?.kycStatus !== 'NONE') {
-            router.push('/dashboard/kyc');
+            // El Creador necesita KYC aprobado para ir al panel. Si no, a la bóveda.
+            if (res.data.user.creatorProfile?.kycStatus === 'APPROVED') {
+                router.push('/dashboard');
+            } else {
+                router.push('/dashboard/kyc');
+            }
         } else {
+            // El FAN (o ADMIN) tiene pase libre directo al Feed
             router.push('/feed');
         }
         
