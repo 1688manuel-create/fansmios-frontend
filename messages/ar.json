@@ -1189,7 +1189,8 @@
     "btn_register": "إنشاء حساب",
     "badge_secure": "أمان من الدرجة العسكرية",
     "badge_privacy": "الخصوصية مضمونة",
-    "badge_verified": "صناع محتوى موثقون"
+    "badge_verified": "صناع محتوى موثقون",
+    "legal_checkbox": "أؤكد أن عمري <white>18 عامًا على الأقل</white> وأوافق على <terms>شروط الخدمة</terms> و <privacy>سياسة الخصوصية</privacy>."
   },
 
   "SeriesTab": {

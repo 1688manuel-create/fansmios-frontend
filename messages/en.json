@@ -1188,7 +1188,8 @@
     "btn_register": "Create Account",
     "badge_secure": "MILITARY GRADE SECURITY",
     "badge_privacy": "PRIVACY GUARANTEED",
-    "badge_verified": "VERIFIED CREATORS"
+    "badge_verified": "VERIFIED CREATORS",
+    "legal_checkbox": "I confirm that I am <white>at least 18 years old</white> and accept the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
   },
 
   "SeriesTab": {

@@ -1189,7 +1189,8 @@
     "btn_register": "Utwórz Konto",
     "badge_secure": "BEZPIECZEŃSTWO KLASY WOJSKOWEJ",
     "badge_privacy": "GWARANCJA PRYWATNOŚCI",
-    "badge_verified": "ZWERYFIKOWANI TWÓRCY"
+    "badge_verified": "ZWERYFIKOWANI TWÓRCY",
+    "legal_checkbox": "Potwierdzam, że mam <white>co najmniej 18 lat</white> i akceptuję <terms>Warunki korzystania z usługi</terms> oraz <privacy>Politykę prywatności</privacy>."
   },
 
   "SeriesTab": {

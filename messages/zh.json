@@ -1189,7 +1189,8 @@
     "btn_register": "创建帐户",
     "badge_secure": "军用级安全",
     "badge_privacy": "隐私保证",
-    "badge_verified": "经过验证的创作者"
+    "badge_verified": "经过验证的创作者",
+    "legal_checkbox": "我确认我<white>已满 18 岁</white>，并接受<terms>服务条款</terms>和<privacy>隐私政策</privacy>。"
   },
 
   "SeriesTab": {

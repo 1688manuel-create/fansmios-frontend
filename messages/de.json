@@ -1189,7 +1189,8 @@
     "btn_register": "Konto erstellen",
     "badge_secure": "SICHERHEIT AUF MILITÄRNIVEAU",
     "badge_privacy": "DATENSCHUTZ GARANTIERT",
-    "badge_verified": "VERIFIZIERTE CREATOR"
+    "badge_verified": "VERIFIZIERTE CREATOR",
+    "legal_checkbox": "Ich bestätige, dass ich <white>mindestens 18 Jahre alt bin</white> und die <terms>Nutzungsbedingungen</terms> sowie die <privacy>Datenschutzrichtlinie</privacy> akzeptiere."
   },
 
   "SeriesTab": {

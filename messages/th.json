@@ -1189,7 +1189,8 @@
     "btn_register": "สร้างบัญชี",
     "badge_secure": "ความปลอดภัยระดับทหาร",
     "badge_privacy": "รับประกันความเป็นส่วนตัว",
-    "badge_verified": "ครีเอเตอร์ที่ยืนยันแล้ว"
+    "badge_verified": "ครีเอเตอร์ที่ยืนยันแล้ว",
+    "legal_checkbox": "ฉันยืนยันว่าฉันมี<white>อายุอย่างน้อย 18 ปี</white> และยอมรับ<terms>ข้อกำหนดการให้บริการ</terms>และ<privacy>นโยบายความเป็นส่วนตัว</privacy>"
   },
 
   "SeriesTab": {

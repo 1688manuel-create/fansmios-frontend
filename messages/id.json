@@ -1189,7 +1189,8 @@
     "btn_register": "Buat Akun",
     "badge_secure": "KEAMANAN TINGKAT MILITER",
     "badge_privacy": "PRIVASI DIJAMIN",
-    "badge_verified": "KREATOR TERVERIFIKASI"
+    "badge_verified": "KREATOR TERVERIFIKASI",
+    "legal_checkbox": "Saya mengonfirmasi bahwa saya <white>berusia minimal 18 tahun</white> dan menerima <terms>Ketentuan Layanan</terms> serta <privacy>Kebijakan Privasi</privacy>."
   },
 
   "SeriesTab": {

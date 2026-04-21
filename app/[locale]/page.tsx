@@ -274,7 +274,7 @@ export default function Home() {
               {!isLogin && (
                 <div className="space-y-4 animate-fade-in mt-4">
                   
-                  {/* 🔥 NUEVO: CHECKBOX LEGAL OBLIGATORIO */}
+                  {/* 🔥 NUEVO: CHECKBOX LEGAL OBLIGATORIO (AHORA TRADUCIDO AL 100%) */}
                   <label className="flex items-start gap-3 p-3 border border-white/10 bg-black/40 rounded-xl cursor-pointer hover:border-red-500/50 transition-colors">
                     <div className="relative flex items-center justify-center mt-0.5">
                       <input 
@@ -286,7 +286,11 @@ export default function Home() {
                       <CheckCircle2 className="w-3.5 h-3.5 text-white absolute opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
                     </div>
                     <div className="text-xs text-gray-400 leading-tight">
-                      Confirmo que tengo <strong className="text-white">al menos 18 años de edad</strong> y acepto los <Link href="/legal/terms" className="text-red-400 hover:underline">Términos de Servicio</Link> y la <Link href="/legal/privacy" className="text-red-400 hover:underline">Política de Privacidad</Link>.
+                      {t.rich('legal_checkbox', {
+                        white: (chunks) => <strong className="text-white">{chunks}</strong>,
+                        terms: (chunks) => <Link href="/legal/terms" className="text-red-400 hover:underline">{chunks}</Link>,
+                        privacy: (chunks) => <Link href="/legal/privacy" className="text-red-400 hover:underline">{chunks}</Link>
+                      })}
                     </div>
                   </label>
 

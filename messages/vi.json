@@ -1189,7 +1189,8 @@
     "btn_register": "Tạo tài khoản",
     "badge_secure": "BẢO MẬT CẤP QUÂN SỰ",
     "badge_privacy": "ĐẢM BẢO QUYỀN RIÊNG TƯ",
-    "badge_verified": "NGƯỜI SÁNG TẠO ĐÃ XÁC MINH"
+    "badge_verified": "NGƯỜI SÁNG TẠO ĐÃ XÁC MINH",
+    "legal_checkbox": "Tôi xác nhận rằng tôi <white>ít nhất 18 tuổi</white> và chấp nhận <terms>Điều khoản dịch vụ</terms> cũng như <privacy>Chính sách bảo mật</privacy>."
   },
 
   "SeriesTab": {

@@ -1189,7 +1189,8 @@
     "btn_register": "アカウントを作成",
     "badge_secure": "ミリタリーグレードのセキュリティ",
     "badge_privacy": "プライバシー保証",
-    "badge_verified": "検証済みのクリエイター"
+    "badge_verified": "検証済みのクリエイター",
+    "legal_checkbox": "私は<white>18歳以上</white>であることを確認し、<terms>利用規約</terms>および<privacy>プライバシーポリシー</privacy>に同意します。"
   },
 
   "SeriesTab": {

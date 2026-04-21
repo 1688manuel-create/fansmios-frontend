@@ -1189,7 +1189,8 @@
     "btn_register": "Hesap Oluştur",
     "badge_secure": "ASKERİ DÜZEYDE GÜVENLİK",
     "badge_privacy": "GİZLİLİK GARANTİSİ",
-    "badge_verified": "DOĞRULANMIŞ YARATICILAR"
+    "badge_verified": "DOĞRULANMIŞ YARATICILAR",
+    "legal_checkbox": "<white>En az 18 yaşında</white> olduğumu onaylıyor, <terms>Hizmet Şartları</terms>'nı ve <privacy>Gizlilik Politikası</privacy>'nı kabul ediyorum."
   },
 
   "SeriesTab": {

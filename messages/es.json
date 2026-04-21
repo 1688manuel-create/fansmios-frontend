@@ -1189,7 +1189,8 @@
     "btn_register": "Crear Cuenta",
     "badge_secure": "SEGURIDAD DE GRADO MILITAR",
     "badge_privacy": "PRIVACIDAD GARANTIZADA",
-    "badge_verified": "CREADORES VERIFICADOS"
+    "badge_verified": "CREADORES VERIFICADOS",
+    "legal_checkbox": "Confirmo que tengo <white>al menos 18 años de edad</white> y acepto los <terms>Términos de Servicio</terms> y la <privacy>Política de Privacidad</privacy>."
   },
 
   "SeriesTab": {

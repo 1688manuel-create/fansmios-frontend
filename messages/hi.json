@@ -1189,7 +1189,8 @@
     "btn_register": "खाता बनाएं",
     "badge_secure": "सैन्य ग्रेड सुरक्षा",
     "badge_privacy": "गोपनीयता की गारंटी",
-    "badge_verified": "सत्यापित निर्माता"
+    "badge_verified": "सत्यापित निर्माता",
+    "legal_checkbox": "मैं पुष्टि करता हूँ कि मेरी आयु <white>कम से कम 18 वर्ष है</white> और मैं <terms>सेवा की शर्तों</terms> और <privacy>गोपनीयता नीति</privacy> को स्वीकार करता हूँ।"
   },
 
   "SeriesTab": {

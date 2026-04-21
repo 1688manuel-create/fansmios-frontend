@@ -1189,7 +1189,8 @@
     "btn_register": "Skapa Konto",
     "badge_secure": "SÄKERHET AV MILITÄR KLASS",
     "badge_privacy": "INTEGRITET GARANTERAD",
-    "badge_verified": "VERIFIERADE SKAPARE"
+    "badge_verified": "VERIFIERADE SKAPARE",
+    "legal_checkbox": "Jag bekräftar att jag är <white>minst 18 år gammal</white> och accepterar <terms>Användarvillkoren</terms> och <privacy>Integritetspolicyn</privacy>."
   },
 
   "SeriesTab": {

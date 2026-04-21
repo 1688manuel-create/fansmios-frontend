@@ -1189,7 +1189,8 @@
     "btn_register": "Account Aanmaken",
     "badge_secure": "BEVEILIGING VAN MILITAIR NIVEAU",
     "badge_privacy": "PRIVACY GEGARANDEERD",
-    "badge_verified": "GEVERIFIEERDE MAKERS"
+    "badge_verified": "GEVERIFIEERDE MAKERS",
+    "legal_checkbox": "Ik bevestig dat ik <white>minimaal 18 jaar oud ben</white> en ga akkoord met de <terms>Servicevoorwaarden</terms> en het <privacy>Privacybeleid</privacy>."
   },
 
   "SeriesTab": {

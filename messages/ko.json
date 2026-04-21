@@ -1189,7 +1189,8 @@
     "btn_register": "계정 만들기",
     "badge_secure": "군사 등급 보안",
     "badge_privacy": "개인정보 보호 보장",
-    "badge_verified": "검증된 크리에이터"
+    "badge_verified": "검증된 크리에이터",
+    "legal_checkbox": "본인은 <white>만 18세 이상</white>임을 확인하며 <terms>서비스 약관</terms> 및 <privacy>개인정보 처리방침</privacy>에 동의합니다."
   },
 
   "SeriesTab": {
