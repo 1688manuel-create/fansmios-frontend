@@ -26,6 +26,9 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [role, setRole] = useState<'FAN' | 'CREATOR'>('FAN');
+  
+  // 🔥 NUEVO: Estado para confirmar mayoría de edad (Obligatorio en registro)
+  const [isAdult, setIsAdult] = useState(false);
 
   // ESTADO DEL RADAR DE REFERIDOS
   const [referralCode, setReferralCode] = useState('');
@@ -43,9 +46,10 @@ export default function Home() {
     }
   }, []);
 
+  // 🔥 ACTUALIZADO: isAdult debe ser true si es registro para que el botón se encienda
   const isFormValid = isLogin 
     ? email.includes('@') && password.length >= 6 
-    : email.includes('@') && password.length >= 6 && username.length >= 3;
+    : email.includes('@') && password.length >= 6 && username.length >= 3 && isAdult;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,6 +92,7 @@ export default function Home() {
         setIsLogin(true);
         alert(t('alert_created')); // 🔥 ALERTA MULTI-IDIOMA
         setPassword('');
+        setIsAdult(false); // Reiniciamos el checkbox tras un registro exitoso
       }
     } catch (err: any) {
       const errorData = err.response?.data;
@@ -154,7 +159,7 @@ export default function Home() {
                 {t('tab_login')}
               </button>
               <button 
-                onClick={() => { setIsLogin(false); setError(''); setUnverifiedEmail(''); setResendSuccess(''); }}
+                onClick={() => { setIsLogin(false); setError(''); setUnverifiedEmail(''); setResendSuccess(''); setIsAdult(false); }}
                 className={`flex-1 py-2 rounded-full text-sm font-bold transition-all ${!isLogin ? 'bg-gradient-to-r from-red-600 to-red-800 text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'text-gray-400 hover:text-white'}`}
               >
                 {t('tab_register')}
@@ -267,12 +272,32 @@ export default function Home() {
               </div>
 
               {!isLogin && (
-                <div className="bg-black/40 border border-white/10 rounded-xl p-3 flex items-center justify-between animate-fade-in">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-sm text-gray-300">{t('verifying_conn')}</span>
+                <div className="space-y-4 animate-fade-in mt-4">
+                  
+                  {/* 🔥 NUEVO: CHECKBOX LEGAL OBLIGATORIO */}
+                  <label className="flex items-start gap-3 p-3 border border-white/10 bg-black/40 rounded-xl cursor-pointer hover:border-red-500/50 transition-colors">
+                    <div className="relative flex items-center justify-center mt-0.5">
+                      <input 
+                        type="checkbox" 
+                        checked={isAdult}
+                        onChange={(e) => setIsAdult(e.target.checked)}
+                        className="peer appearance-none w-5 h-5 border-2 border-gray-500 rounded-md checked:bg-red-600 checked:border-red-600 transition-all cursor-pointer"
+                      />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-white absolute opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
+                    </div>
+                    <div className="text-xs text-gray-400 leading-tight">
+                      Confirmo que tengo <strong className="text-white">al menos 18 años de edad</strong> y acepto los <Link href="/legal/terms" className="text-red-400 hover:underline">Términos de Servicio</Link> y la <Link href="/legal/privacy" className="text-red-400 hover:underline">Política de Privacidad</Link>.
+                    </div>
+                  </label>
+
+                  {/* VERIFICADOR DE CONEXIÓN */}
+                  <div className="bg-black/40 border border-white/10 rounded-xl p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                      <span className="text-sm text-gray-300">{t('verifying_conn')}</span>
+                    </div>
+                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Protected</span>
                   </div>
-                  <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Protected</span>
                 </div>
               )}
 
