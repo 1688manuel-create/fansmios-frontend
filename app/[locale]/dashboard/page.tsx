@@ -398,7 +398,12 @@ export default function DashboardIndex() {
                               <p className={`font-black text-lg font-mono tracking-tight ${colorClass}`}>
                                 {sign}${parseFloat(tx.amount || tx.netAmount || 0).toFixed(2)}
                               </p>
-                              <p className="text-[10px] text-gray-500 font-bold uppercase mt-1">{t('lbl_completed')}</p>
+                              
+                              {/* 🔥 AQUÍ ESTÁ EL CAMBIO: El Radar de Estado Real */}
+                              <p className={`text-[10px] font-bold uppercase mt-1 ${tx.status === 'PENDING' ? 'text-yellow-500' : 'text-gray-500'}`}>
+                                {tx.status === 'PENDING' ? '⏳ PENDIENTE' : '✅ COMPLETADO'}
+                              </p>
+
                             </div>
                           </div>
                         );
