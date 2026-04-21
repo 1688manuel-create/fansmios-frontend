@@ -50,6 +50,7 @@ export default function DashboardIndex() {
     setIsProcessingPago(true);
     
     try {
+      // 1. Pedimos la orden al Motor Unicornio (Backend)
       const res = await paymentService.createPaymentIntent({
         amount: amount,
         type: 'CREDIT_TOPUP',
@@ -57,22 +58,21 @@ export default function DashboardIndex() {
         description: `Recarga de Billetera: $${amount} USD`
       });
 
-      if (res.success) {
-        alert(`✅ ${t('alert_topup_success_1')} $${amount} ${t('alert_topup_success_2')}`);
-        const nuevoSaldo = (parseFloat(user.walletBalance) || 0) + amount;
-        const usuarioActualizado = { ...user, walletBalance: nuevoSaldo };
-        
-        setUser(usuarioActualizado);
-        localStorage.setItem('user', JSON.stringify(usuarioActualizado));
-        
-        setShowTopUpModal(false);
-        setCustomAmount(''); 
-      } else {
-        alert(`⚠️ ${t('alert_error_prefix')} ` + (res.error || t('alert_server_error')));
+      // 2. 🔥 EL SALTO HIPERESPACIAL A PAYRAM
+      if (res.checkoutUrl) {
+        // Redirigimos al Fan automáticamente a la pantalla donde pondrá su tarjeta
+        window.location.href = res.checkoutUrl;
+        return; // Detenemos el código aquí porque el usuario ya salió de la página
+      } 
+      
+      // Si por alguna razón no hay URL, mostramos error
+      if (!res.success && !res.checkoutUrl) {
+        alert(`⚠️ ${t('alert_error_prefix')} ` + (res.error || 'No se generó el link de pago.'));
+        setIsProcessingPago(false);
       }
+
     } catch (error) {
       alert(t('alert_critical_error'));
-    } finally {
       setIsProcessingPago(false);
     }
   };
