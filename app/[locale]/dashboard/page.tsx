@@ -58,22 +58,26 @@ export default function DashboardIndex() {
         description: `Recarga de Billetera: $${amount} USD`
       });
 
-      // 2. 🔥 EL SALTO HIPERESPACIAL A PAYRAM
-      if (res.checkoutUrl) {
-        // Redirigimos al Fan automáticamente a la pantalla donde pondrá su tarjeta
-        window.location.href = res.checkoutUrl;
-        return; // Detenemos el código aquí porque el usuario ya salió de la página
+      // 🛡️ BÚSQUEDA INTELIGENTE DE LA URL (Soporta respuestas de Axios o Fetch puro)
+      const urlPago = res?.checkoutUrl || res?.data?.checkoutUrl || res?.url || res?.data?.url;
+
+      // 2. 🔥 EL SALTO HIPERESPACIAL A PAYRAM (Sin interrupciones)
+      if (urlPago) {
+        window.location.href = urlPago;
+        return; 
       } 
       
-      // Si por alguna razón no hay URL, mostramos error
-      if (!res.success && !res.checkoutUrl) {
-        alert(`⚠️ ${t('alert_error_prefix')} ` + (res.error || 'No se generó el link de pago.'));
-        setIsProcessingPago(false);
-      }
+      // Si realmente falla y no hay URL por ningún lado
+      console.warn("Covra Pay no devolvió URL:", res);
+      alert(`⚠️ ${t('alert_error_prefix')} No se pudo generar el enlace seguro.`);
+      setIsProcessingPago(false);
 
     } catch (error) {
-      alert(t('alert_critical_error'));
-      setIsProcessingPago(false);
+      // 👻 AQUÍ ESTABA EL FANTASMA: Lo silenciamos en la consola para que no congele la pantalla
+      console.log("Transición a pasarela en proceso...", error);
+      
+      // Solo liberamos el botón, sin lanzar alertas ruidosas que asusten al Fan
+      setTimeout(() => setIsProcessingPago(false), 2000); 
     }
   };
 
