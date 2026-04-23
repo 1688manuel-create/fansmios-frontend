@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { walletService } from '../../../../lib/walletService';
 import api from '../../../../lib/api';
 import AppLayout from '../../../../components/AppLayout';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+import { useTranslations } from 'next-intl'; 
 
 // 🔥 IMPORTAMOS ICONOS DE ALTA GAMA
 import { 
@@ -37,11 +37,11 @@ import {
 
 export default function WalletDashboard() {
   const router = useRouter();
-  const t = useTranslations('WalletDashboard'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('WalletDashboard'); 
   const [financeData, setFinanceData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<string>('FAN'); 
-  const [localUser, setLocalUser] = useState<any>(null); // 👈 NUEVO: Memoria blindada del usuario
+  const [localUser, setLocalUser] = useState<any>(null); 
   
   // Estados para Retiros
   const [withdrawAmount, setWithdrawAmount] = useState('');
@@ -208,14 +208,21 @@ export default function WalletDashboard() {
               ) : (
                 <div className="space-y-4">
                   {allTransactions.map((tx: any) => {
+                    // 🛡️ LÓGICA DE ESTADOS Y COLORES
                     const isTopUp = tx.type === 'CREDIT_TOPUP';
                     const isIncome = tx.isIncome || isTopUp;
+                    const isPending = tx.status === 'PENDING';
                     
                     const Icon = isIncome ? ArrowDownLeft : ArrowUpRight;
                     const colorClass = isIncome ? 'text-green-400' : 'text-white';
                     const sign = isIncome ? '+' : '-';
-                    const bgClass = isIncome ? 'border-green-500/20 hover:border-green-500/40 bg-green-500/5' : 'border-white/5 hover:border-red-500/20 nm-inset';
+                    
+                    // Fondo dinámico según estado
+                    const bgClass = isPending 
+                      ? 'border-yellow-500/30 hover:border-yellow-500/50 bg-yellow-500/5 opacity-80' 
+                      : (isIncome ? 'border-green-500/20 hover:border-green-500/40 bg-green-500/5' : 'border-white/5 hover:border-red-500/20 nm-inset');
 
+                    // Lógica del concepto
                     let concept = t('tx_default');
                     if (isTopUp) concept = t('tx_topup');
                     else if (tx.type === 'TIP') concept = `${t('tx_tip')} @${tx.receiver?.username || t('anonymous')}`;
@@ -226,7 +233,7 @@ export default function WalletDashboard() {
                     return (
                       <div key={tx.id} className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${bgClass}`}>
                         <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${isIncome ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-black border-white/5 text-gray-400'}`}>
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${isIncome && !isPending ? 'bg-green-500/10 border-green-500/20 text-green-400' : isPending ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-500' : 'bg-black border-white/5 text-gray-400'}`}>
                             {isTopUp ? <Wallet className="w-5 h-5" /> : tx.type === 'TIP' ? <DollarSign className="w-5 h-5" /> : tx.type === 'SUBSCRIPTION' ? <Star className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
                           </div>
                           <div>
@@ -237,10 +244,20 @@ export default function WalletDashboard() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className={`font-black text-lg font-mono tracking-tight ${colorClass}`}>
+                          <p className={`font-black text-lg font-mono tracking-tight ${isPending ? 'text-yellow-500' : colorClass}`}>
                             {sign}${parseFloat(tx.amount || tx.netAmount || 0).toFixed(2)}
                           </p>
-                          <p className="text-[10px] text-gray-500 font-bold uppercase mt-1">{t('lbl_completed')}</p>
+                          <p className={`text-[10px] font-bold uppercase mt-1 flex items-center justify-end gap-1 ${isPending ? 'text-yellow-500' : 'text-gray-500'}`}>
+                            {isPending ? (
+                              <>
+                                <Clock className="w-3 h-3" /> ⏳ PENDIENTE
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle2 className="w-3 h-3" /> {t('lbl_completed')}
+                              </>
+                            )}
+                          </p>
                         </div>
                       </div>
                     );
