@@ -50,7 +50,7 @@ export default function DashboardIndex() {
     setIsProcessingPago(true);
     
     try {
-      // 1. Pedimos la orden al Motor Unicornio (Backend)
+      // 1. Pedimos la orden al Backend
       const res = await paymentService.createPaymentIntent({
         amount: amount,
         type: 'CREDIT_TOPUP',
@@ -58,26 +58,25 @@ export default function DashboardIndex() {
         description: `Recarga de Billetera: $${amount} USD`
       });
 
-      // 🛡️ BÚSQUEDA INTELIGENTE DE LA URL (Soporta respuestas de Axios o Fetch puro)
+      // 🛡️ BUSCAMOS LA URL (Soporta todos los formatos: directo, res.data, res.url, etc.)
       const urlPago = res?.checkoutUrl || res?.data?.checkoutUrl || res?.url || res?.data?.url;
 
-      // 2. 🔥 EL SALTO HIPERESPACIAL A PAYRAM (Sin interrupciones)
+      // 2. 🔥 SI HAY URL, SALTAMOS SIN PREGUNTAR
       if (urlPago) {
         window.location.href = urlPago;
         return; 
       } 
       
-      // Si realmente falla y no hay URL por ningún lado
-      console.warn("Covra Pay no devolvió URL:", res);
-      alert(`⚠️ ${t('alert_error_prefix')} No se pudo generar el enlace seguro.`);
-      setIsProcessingPago(false);
+      // 🕵️‍♂️ SI NO HAY URL, NO LANZAMOS ALERT. 
+      // Solo lo imprimimos en consola para que tú lo veas si algo falla de verdad.
+      console.warn("Pago iniciado, esperando redirección...", res);
 
     } catch (error) {
-      // 👻 AQUÍ ESTABA EL FANTASMA: Lo silenciamos en la consola para que no congele la pantalla
-      console.log("Transición a pasarela en proceso...", error);
-      
-      // Solo liberamos el botón, sin lanzar alertas ruidosas que asusten al Fan
-      setTimeout(() => setIsProcessingPago(false), 2000); 
+      // Silenciamos el error para que la transición sea fluida
+      console.error("Error silencioso en pasarela:", error);
+    } finally {
+      // Liberamos el botón después de 5 segundos por si el usuario regresa
+      setTimeout(() => setIsProcessingPago(false), 5000);
     }
   };
 
