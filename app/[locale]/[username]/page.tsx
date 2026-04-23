@@ -228,7 +228,11 @@ export default function CreatorProfile() {
         setPendingPayment({ price: creator?.creatorProfile?.monthlyPrice || 0 });
         setIsPaymentModalOpen(true);
       }
-    } catch (error: any) { alert(t('alert_sub_error')); }
+    } catch (error: any) { 
+      // 🔥 AHORA LEE EL ERROR REAL DE LA BÓVEDA
+      const mensajeReal = error.response?.data?.error || error.message || t('alert_sub_error');
+      alert(`❌ ${mensajeReal}`);
+    }
   };
 
   const handleUnlockPPV = async (post: any) => {
@@ -249,7 +253,11 @@ export default function CreatorProfile() {
         setPendingPayment({ price: post.price });
         setIsPaymentModalOpen(true);
       }
-    } catch (error) { alert(t('alert_payment_error')); }
+    } catch (error: any) { 
+      // 🔥 AHORA LEE EL ERROR REAL DE LA BÓVEDA
+      const mensajeReal = error.response?.data?.error || error.message || t('alert_payment_error');
+      alert(`❌ ${mensajeReal}`);
+    }
   };
 
   const handleBuyBundle = async (bundle: any) => {
@@ -272,7 +280,11 @@ export default function CreatorProfile() {
         setPendingPayment({ price: bundle.price, id: bundle.id, isBundle: true });
         setIsPaymentModalOpen(true);
       }
-    } catch (error) { alert(t('alert_payment_error')); }
+    } catch (error: any) { 
+      // 🔥 AHORA LEE EL ERROR REAL DE LA BÓVEDA
+      const mensajeReal = error.response?.data?.error || error.message || t('alert_payment_error');
+      alert(`❌ ${mensajeReal}`);
+    }
   };
 
   const handleDeletePost = async (postId: string) => {
