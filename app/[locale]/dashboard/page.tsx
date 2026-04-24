@@ -272,14 +272,14 @@ export default function DashboardIndex() {
                   </div>
                   <input 
                     type="number" 
-                    min="5" 
+                    min="1" 
                     placeholder={t('ph_custom_amount')}
                     value={customAmount}
                     onChange={(e) => setCustomAmount(e.target.value)}
                     disabled={isProcessingPago}
                     className="w-full bg-[#0a0a0a] border border-white/10 focus:border-green-500/50 rounded-xl pl-10 pr-24 py-4 text-white font-bold outline-none transition-colors placeholder:text-gray-600"
                   />
-                  {customAmount && Number(customAmount) >= 5 && (
+                  {customAmount && Number(customAmount) >= 1 && (
                     <button 
                       onClick={() => handleTopUp(Number(customAmount))}
                       disabled={isProcessingPago}
