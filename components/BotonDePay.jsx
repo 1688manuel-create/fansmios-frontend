@@ -21,19 +21,20 @@ export default function BotonDePay({ userId }) {
     try {
       setCargando(true);
 
-      // 🚀 LLAMADA A LA BURBUJA AISLADA DE DEPAY (window.DePayWidgets)
+      // 🚀 MODO TRANSFERENCIA DIRECTA: Cero cálculos, cero rutas, solo enviar.
       await window.DePayWidgets.Payment({
         accept: [
           {
             blockchain: 'base',
-            token: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', // ETH nativo
-            receiver: '0x01DA0aE56760592C384E7c1A0632b753cF51F683' // Tu MetaMask Personal
+            // 🔥 El código exacto con mayúsculas (Checksum) para ETH Nativo
+            token: '0xEeeeeEeeeEeEeeDdEEeEceEeedEEeEeeEeeEeeEe', 
+            receiver: '0x01DA0aE56760592C384E7c1A0632b753cF51F683', // Tu bóveda
+            amount: 0.0003 // El monto va AQUÍ ADENTRO ahora. (Aprox $0.90 USD en ETH)
           }
         ],
-        // 🔥 BYPASS: Cobramos en cripto puro en lugar de USD para evitar errores de conversión
-        amount: {
-          fix: 0.0003 // Esto equivale aproximadamente a $0.90 - $1.00 USD en este momento
-        },
+        // 🗑️ Borramos el bloque "amount: { currency: 'USD' }" de aquí afuera 
+        // para que DePay no intente conectarse a internet a buscar precios.
+        
         title: 'Recargar Billetera Fansmios',
 
         succeeded: async (transaction) => {
