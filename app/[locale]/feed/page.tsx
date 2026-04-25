@@ -55,7 +55,7 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (Plano con Escáner, PODERES DE MODERACIÓN TIMIDOS y FOTO DE PERFIL)
+// 🌳 NODO DE COMENTARIOS (Plano con Escáner Profundo, PODERES DE MODERACIÓN y FOTO DE PERFIL)
 const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDelete, onReport, onBlock, isExpanded }: { comment: any, postId: string, postOwnerId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, onReport: (commentId: string, username: string) => void, onBlock: (userId: string, username: string) => void, isExpanded: boolean }) => {
   const t = useTranslations('Feed'); 
   
@@ -70,21 +70,35 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
-  // 🔥 NUEVA EXTRACCIÓN: Sacamos la foto del perfil si la tiene
+  // 🔥 EXTRACCIÓN DE LA FOTO DEL PERFIL
   const userProfileImage = comment.user?.creatorProfile?.profileImage;
   const initial = comment.user?.username ? comment.user.username.charAt(0).toUpperCase() : 'U';
 
   useEffect(() => {
     let currentHash = window.location.hash;
+    
+    // 🔥 EL NUEVO ESCÁNER PROFUNDO (Busca en hijos, nietos y tataranietos)
+    const hasTargetInDescendants = (replies: any[], target: string): boolean => {
+      if (!replies || replies.length === 0) return false;
+      for (const rep of replies) {
+        if (String(rep.id) === target) return true;
+        if (hasTargetInDescendants(rep.replies, target)) return true;
+      }
+      return false;
+    };
+
     const checkAndOpen = (hashToCheck: string) => {
       if (hashToCheck && hashToCheck.includes('-comment-')) {
         const parts = hashToCheck.split('-comment-');
         const targetId = parts; 
-        if (comment.replies && comment.replies.some((r: any) => String(r.id) === String(targetId))) {
+        
+        // Si el objetivo está en CUALQUIER nivel de profundidad, abrimos las respuestas
+        if (hasTargetInDescendants(comment.replies, String(targetId))) {
           setShowReplies(true);
         }
       }
     };
+    
     checkAndOpen(currentHash);
     const scanner = setInterval(() => {
       if (window.location.hash !== currentHash) {
@@ -99,7 +113,7 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-40 transition-all duration-500">
       <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative transition-all duration-500">
         
-        {/* 🔥 NUEVO: CONTENEDOR DE LA FOTO Y EL NOMBRE */}
+        {/* 🔥 CONTENEDOR DE LA FOTO Y EL NOMBRE */}
         <div className="flex items-center gap-2 mb-1">
           <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center">
             {userProfileImage ? (
@@ -113,7 +127,7 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
           <span className="font-bold text-gray-300">@{comment.user?.username || 'Usuario'}:</span>
         </div>
 
-        {/* 💬 TEXTO DEL COMENTARIO (Con pl-8 para alinear con el nombre, no debajo de la foto) */}
+        {/* 💬 TEXTO DEL COMENTARIO */}
         <div className="text-gray-400 pl-8">{comment.content}</div>
         
         {/* ⚙️ BOTONES DE ACCIÓN Y MODERACIÓN */}
