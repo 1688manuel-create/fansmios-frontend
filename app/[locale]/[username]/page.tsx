@@ -38,16 +38,34 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
 
 // 🌳 NODO DE COMENTARIOS PARA EL PERFIL
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
-  const t = useTranslations('Profile'); // 👈 AGREGAMOS EL TRADUCTOR AQUÍ
+  const t = useTranslations('Profile'); 
   const isOwner = currentUser?.id === comment.userId || currentUser?.role === 'ADMIN'; 
+
+  // 🔥 NUEVO: Extraemos la foto de perfil si la tiene (viene dentro del objeto user)
+  const userProfileImage = comment.user?.creatorProfile?.profileImage;
+  const initial = comment.user?.username ? comment.user.username.charAt(0).toUpperCase() : 'U';
 
   return (
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
       <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative">
-        <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || t('lbl_user')}:</span>
-        <span className="text-gray-400">{comment.content}</span>
         
-        <div className="flex items-center gap-4 mt-1.5">
+        {/* 🔥 NUEVO: El contenedor de la foto y el nombre */}
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center">
+            {userProfileImage ? (
+              <img src={getImageUrl(userProfileImage)} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">
+                {initial}
+              </span>
+            )}
+          </div>
+          <span className="font-bold text-gray-300">@{comment.user?.username || t('lbl_user')}:</span>
+        </div>
+        
+        <div className="text-gray-400 pl-8">{comment.content}</div>
+        
+        <div className="flex items-center gap-4 mt-2 pl-8">
           <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:underline font-bold">{t('btn_reply')}</button>
           {isOwner && (
             <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:underline font-bold hidden group-hover/comment:block">{t('btn_delete')}</button>
