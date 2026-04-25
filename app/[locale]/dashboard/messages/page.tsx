@@ -7,7 +7,7 @@ import { paymentService } from '../../../../lib/paymentService';
 import api from '../../../../lib/api'; 
 import PaymentModal from '../../../../components/PaymentModal'; 
 import ReportModal from '../../../../components/ReportModal';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ 
+import { useTranslations } from 'next-intl';
 
 import { 
   MessageCircle, 
@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
-const QUICK_EMOJIS = ['❤️', '❤️‍🔥', '🫦', '🤤','😋', '😘', '😍','💔','😡','😢', '😏', '😄'];
+const QUICK_EMOJIS = ['❤️', '❤️‍🔥', '🫦', '🤤', '😘', '😍','💔','😡','😢'];
 
 const getImageUrl = (path: string | null) => {
   if (!path || path === 'null') return '';
@@ -44,7 +44,7 @@ const getImageUrl = (path: string | null) => {
 
 function MessagesContent() {
   const router = useRouter();
-  const t = useTranslations('Messages'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('Messages'); 
   const searchParams = useSearchParams(); 
   
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -55,7 +55,6 @@ function MessagesContent() {
   const [conversations, setConversations] = useState<any[]>([]); 
   const [messages, setMessages] = useState<any[]>([]); 
   
-  // 🔥 ESTADOS PARA LA PAGINACIÓN (ESCALABILIDAD)
   const [page, setPage] = useState(1);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -126,13 +125,11 @@ function MessagesContent() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showEmojis]);
 
-  // 🔥 POLLING BLINDADO PARA MENSAJES NUEVOS
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (activeChat && activeChat.id) { 
       interval = setInterval(async () => {
         try {
-          // Solo pedimos la página 1 para ver si hay algo nuevo, protegiendo el servidor
           const data = await chatService.getMessages(activeChat.id, 1);
           const incomingMessages = data.messages || [];
           
@@ -142,7 +139,6 @@ function MessagesContent() {
             const lastPrevMsg = prev[prev.length - 1];
             const lastIncomingMsg = incomingMessages[incomingMessages.length - 1];
 
-            // Si hay un mensaje nuevo que no teníamos, lo añadimos sin borrar el historial
             if (lastPrevMsg && lastIncomingMsg && lastPrevMsg.id !== lastIncomingMsg.id) {
                const newMsgs = incomingMessages.filter((incMsg: any) => !prev.some((pMsg: any) => pMsg.id === incMsg.id));
                if (newMsgs.length > 0) {
@@ -183,7 +179,9 @@ function MessagesContent() {
            id: c.id,
            user: { 
              id: 'admin_view', 
-             username: `${c.creator?.username || 'U1'} 💬 ${c.fan?.username || 'U2'}` 
+             username: `${c.creator?.username || 'U1'} 💬 ${c.fan?.username || 'U2'}`,
+             // Pasamos perfil si existe
+             creatorProfile: c.fan?.creatorProfile || c.creator?.creatorProfile
            },
            lastMsg: c.lastMsg,
            time: c.time, 
@@ -235,7 +233,6 @@ function MessagesContent() {
     if (!isGodMode) localStorage.setItem('lastOpenedChat', chat.id); 
     setIsBlockedByMe(false); 
     
-    // Resetear paginación al abrir chat
     setPage(1);
     setHasMoreMessages(true);
     setMessages([]);
@@ -245,7 +242,6 @@ function MessagesContent() {
       const initialMsgs = data.messages || [];
       setMessages(initialMsgs);
       
-      // Si devolvió muy pocos, asumimos que no hay más historial arriba
       if (initialMsgs.length < 20) setHasMoreMessages(false);
       
       if (!isGodMode) {
@@ -258,11 +254,9 @@ function MessagesContent() {
     } catch (error) {}
   };
 
-  // 🔥 LÓGICA DE INFINITE SCROLL (PAGINACIÓN HACIA ARRIBA)
   const handleScroll = async () => {
     if (!chatScrollRef.current || isLoadingMore || !hasMoreMessages || !activeChat) return;
 
-    // Si el usuario llega al tope superior del chat
     if (chatScrollRef.current.scrollTop === 0) {
       setIsLoadingMore(true);
       const nextPage = page + 1;
@@ -274,7 +268,6 @@ function MessagesContent() {
         if (olderMessages.length === 0) {
           setHasMoreMessages(false);
         } else {
-          // Guardamos altura para no brincar al inicio
           const prevScrollHeight = chatScrollRef.current.scrollHeight;
           
           setMessages(prev => [...olderMessages, ...prev]);
@@ -545,7 +538,12 @@ function MessagesContent() {
                 {searchTerm ? t('empty_search') : t('empty_chats')}
               </p>
             ) : (
-              filteredConversations.map(chat => (
+              filteredConversations.map(chat => {
+                // 🔥 NÚCLEO FOTOGRÁFICO DE LA LISTA
+                const hasImage = chat.user?.creatorProfile?.profileImage;
+                const userInitial = chat.user?.username ? chat.user.username.charAt(0).toUpperCase() : 'U';
+                
+                return (
                 <div 
                   key={chat.id} 
                   onClick={() => handleSelectChat(chat)} 
@@ -555,8 +553,12 @@ function MessagesContent() {
                       : 'nm-btn border border-transparent hover:border-white/5'
                   }`}
                 >
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-lg relative border-2 border-[#0e0e0e] ${isGodMode ? 'bg-gradient-to-br from-gray-800 to-black' : 'bg-gradient-to-br from-blue-500 to-teal-400'}`}>
-                    {chat.user?.username ? chat.user.username.charAt(0).toUpperCase() : 'U'}
+                  <div className={`w-12 h-12 rounded-full overflow-hidden flex items-center justify-center text-white font-bold shrink-0 shadow-lg relative border-2 border-[#0e0e0e] ${isGodMode ? 'bg-gradient-to-br from-gray-800 to-black' : 'bg-gradient-to-br from-blue-500 to-teal-400'}`}>
+                    {hasImage ? (
+                      <img src={getImageUrl(chat.user.creatorProfile.profileImage)} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      userInitial
+                    )}
                     {chat.unread && !isGodMode && (
                       <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-black rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]"></span>
                     )}
@@ -573,7 +575,7 @@ function MessagesContent() {
                     <p className={`text-xs truncate ${chat.unread && !isGodMode ? 'text-teal-300 font-bold' : 'text-gray-500 font-medium'}`}>{chat.lastMsg}</p>
                   </div>
                 </div>
-              ))
+              )})
             )}
           </div>
         </div>
@@ -585,8 +587,13 @@ function MessagesContent() {
                 <button onClick={() => { setActiveChat(null); if(!isGodMode) localStorage.removeItem('lastOpenedChat'); router.replace('/dashboard/messages'); }} className="sm:hidden nm-btn p-2 rounded-full text-gray-400 hover:text-white transition-colors">
                   <ArrowLeft className="w-5 h-5" />
                 </button>
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-md border-2 border-[#0a0a0a] ${isGodMode ? 'bg-gradient-to-br from-gray-800 to-black' : 'bg-gradient-to-br from-blue-500 to-teal-400'}`}>
-                   {activeChat.user?.username ? activeChat.user.username.charAt(0).toUpperCase() : 'U'}
+                <div className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white font-bold shadow-md border-2 border-[#0a0a0a] ${isGodMode ? 'bg-gradient-to-br from-gray-800 to-black' : 'bg-gradient-to-br from-blue-500 to-teal-400'}`}>
+                   {/* 🔥 NÚCLEO FOTOGRÁFICO DE LA CABECERA */}
+                   {activeChat.user?.creatorProfile?.profileImage ? (
+                      <img src={getImageUrl(activeChat.user.creatorProfile.profileImage)} alt="Avatar" className="w-full h-full object-cover" />
+                   ) : (
+                      activeChat.user?.username ? activeChat.user.username.charAt(0).toUpperCase() : 'U'
+                   )}
                 </div>
                 <div>
                   <h3 className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
@@ -651,6 +658,12 @@ function MessagesContent() {
 
                 const alignRight = !isGodMode && msg.senderId === 'me';
 
+                // 🔥 EXTRAEMOS LAS FOTOS DE AMBOS LADOS PARA LAS BURBUJAS
+                const myProfileImage = currentUser?.creatorProfile?.profileImage;
+                const myInitial = currentUser?.username ? currentUser.username.charAt(0).toUpperCase() : 'U';
+                const theirProfileImage = activeChat?.user?.creatorProfile?.profileImage;
+                const theirInitial = activeChat?.user?.username ? activeChat.user.username.charAt(0).toUpperCase() : 'U';
+
                 return (
                   <div key={msg.id} className={`flex flex-col ${alignRight ? 'items-end' : 'items-start'} animate-fade-in group`}>
                     
@@ -658,113 +671,147 @@ function MessagesContent() {
                       <span className="text-[10px] text-gray-500 mb-1 ml-1 font-mono">{t('lbl_sender_id')}: {msg.senderId}</span>
                     )}
 
-                    <div className="flex items-center">
-                      {alignRight ? (
-                        <button 
-                          onClick={() => handleDeleteMessage(msg.id)} 
-                          className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 mr-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full"
-                          title={t('title_delete_msg')}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      ) : (
-                        !isGodMode && (
-                          <button 
-                            onClick={() => { setReportingMessageId(msg.id); setIsReportModalOpen(true); }} 
-                            className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-500 ml-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full order-last"
-                            title={t('title_report_msg')}
-                          >
-                            <Flag className="w-4 h-4" />
-                          </button>
-                        )
+                    {/* 🔥 CONTENEDOR NUEVO: Alinea el Avatar y la Burbuja por debajo */}
+                    <div className="flex items-end gap-2">
+                      
+                      {/* 👤 AVATAR DEL REMITENTE (A la Izquierda) */}
+                      {!alignRight && (
+                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center mb-1">
+                          {theirProfileImage ? (
+                            <img src={getImageUrl(theirProfileImage)} className="w-full h-full object-cover" alt="Avatar" draggable="false" />
+                          ) : (
+                            <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">
+                              {theirInitial}
+                            </span>
+                          )}
+                        </div>
                       )}
 
-                      <div className={`max-w-xs sm:max-w-md rounded-2xl p-1 relative ${
-                          alignRight 
-                          ? 'bg-gradient-to-bl from-teal-700 to-blue-700 rounded-tr-none text-white shadow-lg' 
-                          : `nm-inset rounded-tl-none text-gray-200 border ${isGodMode ? 'border-red-500/20' : 'border-white/5'}`
-                      }`}>
-                        {msg.content && msg.content.trim() !== "" && (
-                           <div className={`px-4 py-2.5 text-sm md:text-base whitespace-pre-wrap ${msg.isPPV && !msg.isUnlocked ? 'text-teal-200 italic border-l-2 border-teal-500 ml-2 pl-2 mb-2 bg-black/40 rounded-r-lg' : ''}`}>
-                              {msg.content}
-                           </div>
+                      <div className="flex items-center">
+                        {/* BOTÓN DE BORRAR (MI LADO) */}
+                        {alignRight ? (
+                          <button 
+                            onClick={() => handleDeleteMessage(msg.id)} 
+                            className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 mr-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full"
+                            title={t('title_delete_msg')}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        ) : (
+                          /* BOTÓN DE REPORTAR (SU LADO) */
+                          !isGodMode && (
+                            <button 
+                              onClick={() => { setReportingMessageId(msg.id); setIsReportModalOpen(true); }} 
+                              className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-500 ml-2 self-center transition-opacity text-sm nm-btn p-2 rounded-full order-last"
+                              title={t('title_report_msg')}
+                            >
+                              <Flag className="w-4 h-4" />
+                            </button>
+                          )
                         )}
 
-                        {msg.isPPV && (
-                          <div className="bg-[#050505] p-4 rounded-xl flex flex-col items-center justify-center min-h-[140px] border border-white/5 m-1 relative overflow-hidden mb-2 shadow-inner">
-                            {hasMedia && !msg.isUnlocked && (
-                              <>
-                                <img src={getImageUrl(msg.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 select-none pointer-events-none" alt="Fondo" />
-                                <div className="absolute inset-0 bg-[#050505]/40"></div>
-                              </>
-                            )}
-                            {!msg.isUnlocked ? (
-                              <>
-                                <div className="absolute inset-0 bg-gradient-to-t from-teal-900/40 to-transparent"></div>
-                                <Lock className="w-10 h-10 text-teal-500 relative z-10 drop-shadow-[0_0_10px_rgba(20,184,166,0.5)] mb-2" />
-                                <p className="font-bold relative z-10 text-sm text-white">{t('lbl_private_content')}</p>
-                                {msg.senderId !== 'me' && !isGodMode ? (
-                                  <button onClick={() => handleUnlockClick(msg)} className="mt-3 bg-teal-500 hover:bg-teal-400 text-black text-xs font-bold py-2 px-6 rounded-full relative z-10 transition-transform hover:scale-105 shadow-[0_0_10px_rgba(20,184,166,0.3)] flex items-center gap-1">
-                                    <Unlock className="w-3 h-3" /> {t('btn_unlock')} ${msg.price?.toFixed(2)}
-                                  </button>
-                                ) : (
-                                   <span className="nm-inset border border-teal-500/50 text-teal-400 font-bold px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest mt-2 relative z-10">{isGodMode ? `${t('lbl_ppv_locked')} ($${msg.price})` : `${t('lbl_you_charged')}: $${msg.price?.toFixed(2)}`}</span>
-                                )}
-                              </>
-                            ) : (
-                              <div className="text-center relative z-10 py-2 flex flex-col items-center">
-                                 <Unlock className="w-8 h-8 text-teal-400 mb-2 drop-shadow-md" />
-                                 <span className="text-[10px] text-teal-300 font-bold nm-inset px-3 py-1 rounded-full border border-teal-500/30 uppercase tracking-widest">{isGodMode ? t('lbl_ppv_audited') : `${t('lbl_unlocked_for')} $${msg.price?.toFixed(2)}!`}</span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                        
-                        {hasMedia && (!msg.isPPV || msg.isUnlocked) && (
-                          <div className="relative z-10 mt-2">
-                            {isAudio ? (
-                               <div className="px-3 pb-2 pt-1">
-                                 <audio controls controlsList="nodownload" src={getImageUrl(msg.mediaUrl)} className="max-w-[200px] sm:max-w-[250px] h-10 outline-none" />
-                               </div>
-                            ) : isVideo ? (
-                               <div className="px-2 pb-2 relative group/media flex justify-center">
-                                 <video 
-                                   controls 
-                                   controlsList="nodownload noplaybackrate" 
-                                   disablePictureInPicture
-                                   src={getImageUrl(msg.mediaUrl)} 
-                                   className="rounded-xl max-h-64 w-full object-cover shadow-md select-none relative z-10" 
-                                   onContextMenu={(e) => e.preventDefault()} 
-                                 />
-                                 <div 
-                                   onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'video' }); }}
-                                   className="absolute top-4 right-4 bg-black/80 hover:bg-teal-500 p-2.5 rounded-full cursor-pointer opacity-100 sm:opacity-0 sm:group-hover/media:opacity-100 transition-all z-30 shadow-lg border border-white/10"
-                                   title={t('title_view_large')}
-                                 >
-                                   <Maximize className="w-5 h-5 text-white" />
+                        {/* 💬 LA BURBUJA DEL MENSAJE */}
+                        <div className={`max-w-xs sm:max-w-md rounded-2xl p-1 relative ${
+                            alignRight 
+                            ? 'bg-gradient-to-bl from-teal-700 to-blue-700 rounded-tr-none text-white shadow-lg' 
+                            : `nm-inset rounded-tl-none text-gray-200 border ${isGodMode ? 'border-red-500/20' : 'border-white/5'}`
+                        }`}>
+                          {msg.content && msg.content.trim() !== "" && (
+                             <div className={`px-4 py-2.5 text-sm md:text-base whitespace-pre-wrap ${msg.isPPV && !msg.isUnlocked ? 'text-teal-200 italic border-l-2 border-teal-500 ml-2 pl-2 mb-2 bg-black/40 rounded-r-lg' : ''}`}>
+                                {msg.content}
+                             </div>
+                          )}
+
+                          {msg.isPPV && (
+                            <div className="bg-[#050505] p-4 rounded-xl flex flex-col items-center justify-center min-h-[140px] border border-white/5 m-1 relative overflow-hidden mb-2 shadow-inner">
+                              {hasMedia && !msg.isUnlocked && (
+                                <>
+                                  <img src={getImageUrl(msg.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 select-none pointer-events-none" alt="Fondo" />
+                                  <div className="absolute inset-0 bg-[#050505]/40"></div>
+                                </>
+                              )}
+                              {!msg.isUnlocked ? (
+                                <>
+                                  <div className="absolute inset-0 bg-gradient-to-t from-teal-900/40 to-transparent"></div>
+                                  <Lock className="w-10 h-10 text-teal-500 relative z-10 drop-shadow-[0_0_10px_rgba(20,184,166,0.5)] mb-2" />
+                                  <p className="font-bold relative z-10 text-sm text-white">{t('lbl_private_content')}</p>
+                                  {msg.senderId !== 'me' && !isGodMode ? (
+                                    <button onClick={() => handleUnlockClick(msg)} className="mt-3 bg-teal-500 hover:bg-teal-400 text-black text-xs font-bold py-2 px-6 rounded-full relative z-10 transition-transform hover:scale-105 shadow-[0_0_10px_rgba(20,184,166,0.3)] flex items-center gap-1">
+                                      <Unlock className="w-3 h-3" /> {t('btn_unlock')} ${msg.price?.toFixed(2)}
+                                    </button>
+                                  ) : (
+                                     <span className="nm-inset border border-teal-500/50 text-teal-400 font-bold px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest mt-2 relative z-10">{isGodMode ? `${t('lbl_ppv_locked')} ($${msg.price})` : `${t('lbl_you_charged')}: $${msg.price?.toFixed(2)}`}</span>
+                                  )}
+                                </>
+                              ) : (
+                                <div className="text-center relative z-10 py-2 flex flex-col items-center">
+                                   <Unlock className="w-8 h-8 text-teal-400 mb-2 drop-shadow-md" />
+                                   <span className="text-[10px] text-teal-300 font-bold nm-inset px-3 py-1 rounded-full border border-teal-500/30 uppercase tracking-widest">{isGodMode ? t('lbl_ppv_audited') : `${t('lbl_unlocked_for')} $${msg.price?.toFixed(2)}!`}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          
+                          {hasMedia && (!msg.isPPV || msg.isUnlocked) && (
+                            <div className="relative z-10 mt-2">
+                              {isAudio ? (
+                                 <div className="px-3 pb-2 pt-1">
+                                   <audio controls controlsList="nodownload" src={getImageUrl(msg.mediaUrl)} className="max-w-[200px] sm:max-w-[250px] h-10 outline-none" />
                                  </div>
-                               </div>
-                            ) : (
-                               <div className="px-2 pb-2 relative flex justify-center group/media">
-                                 <img 
-                                   src={getImageUrl(msg.mediaUrl)} 
-                                   alt="Media" 
-                                   className="rounded-xl max-h-48 object-cover shadow-md border border-white/5 select-none cursor-pointer relative z-10" 
-                                   onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' }); }}
-                                   onContextMenu={(e) => e.preventDefault()} 
-                                   draggable="false"
-                                 />
-                                 <div 
-                                   onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' }); }}
-                                   className="absolute inset-2 flex items-center justify-center bg-black/40 rounded-xl cursor-pointer opacity-0 group-hover/media:opacity-100 transition-all z-20"
-                                 >
-                                   <Maximize className="w-10 h-10 text-white drop-shadow-lg" />
+                              ) : isVideo ? (
+                                 <div className="px-2 pb-2 relative group/media flex justify-center">
+                                   <video 
+                                     controls 
+                                     controlsList="nodownload noplaybackrate" 
+                                     disablePictureInPicture
+                                     src={getImageUrl(msg.mediaUrl)} 
+                                     className="rounded-xl max-h-64 w-full object-cover shadow-md select-none relative z-10" 
+                                     onContextMenu={(e) => e.preventDefault()} 
+                                   />
+                                   <div 
+                                     onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'video' }); }}
+                                     className="absolute top-4 right-4 bg-black/80 hover:bg-teal-500 p-2.5 rounded-full cursor-pointer opacity-100 sm:opacity-0 sm:group-hover/media:opacity-100 transition-all z-30 shadow-lg border border-white/10"
+                                     title={t('title_view_large')}
+                                   >
+                                     <Maximize className="w-5 h-5 text-white" />
+                                   </div>
                                  </div>
-                               </div>
-                            )}
-                          </div>
-                        )}
+                              ) : (
+                                 <div className="px-2 pb-2 relative flex justify-center group/media">
+                                   <img 
+                                     src={getImageUrl(msg.mediaUrl)} 
+                                     alt="Media" 
+                                     className="rounded-xl max-h-48 object-cover shadow-md border border-white/5 select-none cursor-pointer relative z-10" 
+                                     onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' }); }}
+                                     onContextMenu={(e) => e.preventDefault()} 
+                                     draggable="false"
+                                   />
+                                   <div 
+                                     onClick={(e) => { e.stopPropagation(); setExpandedMedia({ url: getImageUrl(msg.mediaUrl), type: 'image' }); }}
+                                     className="absolute inset-2 flex items-center justify-center bg-black/40 rounded-xl cursor-pointer opacity-0 group-hover/media:opacity-100 transition-all z-20"
+                                   >
+                                     <Maximize className="w-10 h-10 text-white drop-shadow-lg" />
+                                   </div>
+                                 </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
+
+                      {/* 👤 MI AVATAR (A la Derecha) */}
+                      {alignRight && (
+                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center mb-1 shadow-[0_0_10px_rgba(20,184,166,0.2)]">
+                          {myProfileImage ? (
+                            <img src={getImageUrl(myProfileImage)} className="w-full h-full object-cover" alt="Mi Avatar" draggable="false" />
+                          ) : (
+                            <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">
+                              {myInitial}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
                     </div>
                   </div>
                 );
