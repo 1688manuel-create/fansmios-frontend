@@ -55,9 +55,9 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   return `${cleanBase}/${cleanPath}`; 
 };
 
-// 🌳 NODO DE COMENTARIOS (Plano con Escáner y PODERES DE MODERACIÓN TIMIDOS)
+// 🌳 NODO DE COMENTARIOS (Plano con Escáner, PODERES DE MODERACIÓN TIMIDOS y FOTO DE PERFIL)
 const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDelete, onReport, onBlock, isExpanded }: { comment: any, postId: string, postOwnerId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, onReport: (commentId: string, username: string) => void, onBlock: (userId: string, username: string) => void, isExpanded: boolean }) => {
-  const t = useTranslations('Feed'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('Feed'); 
   
   // 🛡️ PODERES DE JERARQUÍA
   const isCommentAuthor = currentUser?.id === comment.userId;
@@ -70,12 +70,16 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
+  // 🔥 NUEVA EXTRACCIÓN: Sacamos la foto del perfil si la tiene
+  const userProfileImage = comment.user?.creatorProfile?.profileImage;
+  const initial = comment.user?.username ? comment.user.username.charAt(0).toUpperCase() : 'U';
+
   useEffect(() => {
     let currentHash = window.location.hash;
     const checkAndOpen = (hashToCheck: string) => {
       if (hashToCheck && hashToCheck.includes('-comment-')) {
         const parts = hashToCheck.split('-comment-');
-        const targetId = parts[1]; 
+        const targetId = parts; 
         if (comment.replies && comment.replies.some((r: any) => String(r.id) === String(targetId))) {
           setShowReplies(true);
         }
@@ -94,10 +98,26 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
   return (
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-40 transition-all duration-500">
       <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative transition-all duration-500">
-        <span className="font-bold text-gray-300 mr-2">@{comment.user?.username || 'Usuario'}:</span>
-        <span className="text-gray-400">{comment.content}</span>
         
-        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+        {/* 🔥 NUEVO: CONTENEDOR DE LA FOTO Y EL NOMBRE */}
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center">
+            {userProfileImage ? (
+              <img src={getImageUrl(userProfileImage)} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">
+                {initial}
+              </span>
+            )}
+          </div>
+          <span className="font-bold text-gray-300">@{comment.user?.username || 'Usuario'}:</span>
+        </div>
+
+        {/* 💬 TEXTO DEL COMENTARIO (Con pl-8 para alinear con el nombre, no debajo de la foto) */}
+        <div className="text-gray-400 pl-8">{comment.content}</div>
+        
+        {/* ⚙️ BOTONES DE ACCIÓN Y MODERACIÓN */}
+        <div className="flex items-center gap-3 mt-1.5 flex-wrap pl-8">
           <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:text-blue-300 font-bold transition-colors">{t('btn_reply')}</button>
           
           {/* BOTÓN ELIMINAR (Aparece en Hover) */}
@@ -118,6 +138,7 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
         </div>
       </div>
       
+      {/* 🔄 RESPUESTAS ANIDADAS */}
       {hasReplies && (
         <>
           <button onClick={() => setShowReplies(!showReplies)} className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors">
