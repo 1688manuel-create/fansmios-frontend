@@ -13,7 +13,7 @@ import { PlaySquare } from 'lucide-react';
 import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 import { 
-  ArrowLeft, CheckCircle2, MessageCircle, Star, Lock, 
+  ArrowLeft, CheckCircle2, MessageCircle, Star, Lock, Settings,
   Unlock, Trash2, Coins, Package, Ghost, X, Plus, Crown, Send,
   Instagram, Twitter, Globe, ShieldAlert, Flag, AlertTriangle,
   LayoutGrid, Image as ImageIcon, Video, Eye // 👈 ¡Agrega 'Eye' aquí!
@@ -422,7 +422,7 @@ export default function CreatorProfile() {
                 className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-[6px] border-[#050505] shadow-2xl flex items-center justify-center text-white text-5xl font-black bg-[#0a0a0a] relative overflow-hidden shrink-0 z-10 nm-inset select-none ${profile.isVerified ? 'shadow-[0_0_30px_rgba(20,184,166,0.3)]' : ''}`}
                 onContextMenu={(e) => e.preventDefault()}
               >
-                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase()}</span>}
+                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase().charAt(0)}</span>}
               </div>
               
               <div className="mt-3 px-2">
@@ -438,11 +438,20 @@ export default function CreatorProfile() {
             {/* 🔥 2. BOTONES DE ACCIÓN (CTAs) ADAPTATIVOS */}
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto mt-4 sm:mt-0">
               
-              {/* 🌟 INSIGNIA SI EL PERFIL VISITADO ES DE UN FAN */}
+              {/* 🌟 INSIGNIA Y BOTÓN DE EDITAR SI EL PERFIL VISITADO ES DE UN FAN */}
               {creator.role === 'FAN' && (
-                <div className="nm-inset px-6 py-3.5 rounded-2xl border border-teal-500/30 flex items-center gap-2 bg-teal-500/5 shadow-[0_0_15px_rgba(20,184,166,0.1)]">
-                  <Star className="w-5 h-5 text-teal-400 fill-teal-400/20" /> 
-                  <span className="text-sm font-bold text-teal-400 uppercase tracking-widest">Verified Fan</span>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="nm-inset px-6 py-3.5 rounded-2xl border border-teal-500/30 flex items-center gap-2 bg-teal-500/5 shadow-[0_0_15px_rgba(20,184,166,0.1)]">
+                    <Star className="w-5 h-5 text-teal-400 fill-teal-400/20" /> 
+                    <span className="text-sm font-bold text-teal-400 uppercase tracking-widest">Verified Fan</span>
+                  </div>
+                  
+                  {/* ⚙️ BOTÓN DE EDITAR (Solo lo ve el dueño de la cuenta) */}
+                  {isOwnerOrAdmin && (
+                    <button onClick={() => router.push('/dashboard/profile/settings')} className="nm-inset px-6 py-3.5 rounded-2xl border border-white/5 flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                      <Settings className="w-4 h-4" /> <span className="text-sm font-bold">Editar Foto</span>
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -506,18 +515,22 @@ export default function CreatorProfile() {
           {/* 🔥 3. PANEL DE ESTADÍSTICAS NEUMÓRFICO Y BIO */}
           <div className="mb-10 bg-[#0a0a0a] nm-inset rounded-[2rem] border border-white/5 relative overflow-hidden shadow-2xl p-1">
             <div className="p-6 md:p-8">
-              <div className="flex gap-10 text-sm font-bold text-gray-300 border-b border-white/10 pb-6">
-                <div className="flex flex-col items-center">
-                  <span className="text-white text-2xl font-black drop-shadow-md">{followersCount}</span>
-                  <span className="text-teal-500 font-black uppercase tracking-widest text-[10px] mt-1">{t('lbl_fans')}</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-white text-2xl font-black drop-shadow-md">{posts.length}</span>
-                  <span className="text-blue-500 font-black uppercase tracking-widest text-[10px] mt-1">{t('lbl_posts')}</span>
-                </div>
-              </div>
               
-              <p className="text-gray-300 whitespace-pre-wrap text-base leading-relaxed font-medium pt-6">
+              {/* OCULTAR NÚMEROS DE POSTS/FANS SI ES FAN */}
+              {creator.role !== 'FAN' && (
+                <div className="flex gap-10 text-sm font-bold text-gray-300 border-b border-white/10 pb-6">
+                  <div className="flex flex-col items-center">
+                    <span className="text-white text-2xl font-black drop-shadow-md">{followersCount}</span>
+                    <span className="text-teal-500 font-black uppercase tracking-widest text-[10px] mt-1">{t('lbl_fans')}</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-white text-2xl font-black drop-shadow-md">{posts.length}</span>
+                    <span className="text-blue-500 font-black uppercase tracking-widest text-[10px] mt-1">{t('lbl_posts')}</span>
+                  </div>
+                </div>
+              )}
+              
+              <p className={`text-gray-300 whitespace-pre-wrap text-base leading-relaxed font-medium ${creator.role !== 'FAN' ? 'pt-6' : ''}`}>
                 {profile.bio || t('lbl_bio_fallback')}
               </p>
 
