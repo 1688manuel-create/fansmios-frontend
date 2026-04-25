@@ -180,7 +180,6 @@ function MessagesContent() {
            user: { 
              id: 'admin_view', 
              username: `${c.creator?.username || 'U1'} 💬 ${c.fan?.username || 'U2'}`,
-             // Pasamos perfil si existe
              creatorProfile: c.fan?.creatorProfile || c.creator?.creatorProfile
            },
            lastMsg: c.lastMsg,
@@ -539,7 +538,6 @@ function MessagesContent() {
               </p>
             ) : (
               filteredConversations.map(chat => {
-                // 🔥 NÚCLEO FOTOGRÁFICO DE LA LISTA
                 const hasImage = chat.user?.creatorProfile?.profileImage;
                 const userInitial = chat.user?.username ? chat.user.username.charAt(0).toUpperCase() : 'U';
                 
@@ -588,7 +586,6 @@ function MessagesContent() {
                   <ArrowLeft className="w-5 h-5" />
                 </button>
                 <div className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white font-bold shadow-md border-2 border-[#0a0a0a] ${isGodMode ? 'bg-gradient-to-br from-gray-800 to-black' : 'bg-gradient-to-br from-blue-500 to-teal-400'}`}>
-                   {/* 🔥 NÚCLEO FOTOGRÁFICO DE LA CABECERA */}
                    {activeChat.user?.creatorProfile?.profileImage ? (
                       <img src={getImageUrl(activeChat.user.creatorProfile.profileImage)} alt="Avatar" className="w-full h-full object-cover" />
                    ) : (
@@ -658,11 +655,10 @@ function MessagesContent() {
 
                 const alignRight = !isGodMode && msg.senderId === 'me';
 
-                // 🔥 EXTRAEMOS LAS FOTOS DE AMBOS LADOS PARA LAS BURBUJAS
-                const myProfileImage = currentUser?.creatorProfile?.profileImage;
-                const myInitial = currentUser?.username ? currentUser.username.charAt(0).toUpperCase() : 'U';
-                const theirProfileImage = activeChat?.user?.creatorProfile?.profileImage;
-                const theirInitial = activeChat?.user?.username ? activeChat.user.username.charAt(0).toUpperCase() : 'U';
+                const profileImage = alignRight ? (currentUser?.creatorProfile?.profileImage || null) : (msg.profileImage || activeChat?.user?.creatorProfile?.profileImage);
+                const initial = alignRight 
+                    ? (currentUser?.username ? currentUser.username.charAt(0).toUpperCase() : 'U')
+                    : (activeChat?.user?.username ? activeChat.user.username.charAt(0).toUpperCase() : 'U');
 
                 return (
                   <div key={msg.id} className={`flex flex-col ${alignRight ? 'items-end' : 'items-start'} animate-fade-in group`}>
@@ -671,24 +667,21 @@ function MessagesContent() {
                       <span className="text-[10px] text-gray-500 mb-1 ml-1 font-mono">{t('lbl_sender_id')}: {msg.senderId}</span>
                     )}
 
-                    {/* 🔥 CONTENEDOR NUEVO: Alinea el Avatar y la Burbuja por debajo */}
                     <div className="flex items-end gap-2">
                       
-                      {/* 👤 AVATAR DEL REMITENTE (A la Izquierda) */}
                       {!alignRight && (
-                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center mb-1">
-                          {theirProfileImage ? (
-                            <img src={getImageUrl(theirProfileImage)} className="w-full h-full object-cover" alt="Avatar" draggable="false" />
+                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center mb-1 shadow-[0_0_10px_rgba(20,184,166,0.1)]">
+                          {profileImage ? (
+                            <img src={getImageUrl(profileImage)} className="w-full h-full object-cover" alt="Avatar" draggable="false" />
                           ) : (
                             <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">
-                              {theirInitial}
+                              {initial}
                             </span>
                           )}
                         </div>
                       )}
 
                       <div className="flex items-center">
-                        {/* BOTÓN DE BORRAR (MI LADO) */}
                         {alignRight ? (
                           <button 
                             onClick={() => handleDeleteMessage(msg.id)} 
@@ -698,7 +691,6 @@ function MessagesContent() {
                             <Trash2 className="w-4 h-4" />
                           </button>
                         ) : (
-                          /* BOTÓN DE REPORTAR (SU LADO) */
                           !isGodMode && (
                             <button 
                               onClick={() => { setReportingMessageId(msg.id); setIsReportModalOpen(true); }} 
@@ -710,7 +702,6 @@ function MessagesContent() {
                           )
                         )}
 
-                        {/* 💬 LA BURBUJA DEL MENSAJE */}
                         <div className={`max-w-xs sm:max-w-md rounded-2xl p-1 relative ${
                             alignRight 
                             ? 'bg-gradient-to-bl from-teal-700 to-blue-700 rounded-tr-none text-white shadow-lg' 
@@ -799,14 +790,13 @@ function MessagesContent() {
                         </div>
                       </div>
 
-                      {/* 👤 MI AVATAR (A la Derecha) */}
                       {alignRight && (
                         <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center mb-1 shadow-[0_0_10px_rgba(20,184,166,0.2)]">
-                          {myProfileImage ? (
-                            <img src={getImageUrl(myProfileImage)} className="w-full h-full object-cover" alt="Mi Avatar" draggable="false" />
+                          {profileImage ? (
+                            <img src={getImageUrl(profileImage)} className="w-full h-full object-cover" alt="Mi Avatar" draggable="false" />
                           ) : (
                             <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">
-                              {myInitial}
+                              {initial}
                             </span>
                           )}
                         </div>
