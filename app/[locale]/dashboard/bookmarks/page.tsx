@@ -4,19 +4,35 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../../lib/api';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+import { useTranslations } from 'next-intl'; 
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-const getImageUrl = (path: string | null) => {
+// 🔥 MOTOR AVANZADO DE IMÁGENES INYECTADO (Optimización Cloudinary)
+const getImageUrl = (path: string | null, usernameForWatermark: string | null = null) => {
   if (!path) return '';
-  if (path.startsWith('http')) return path; 
-  return `${BACKEND_URL}${path}`; 
+  
+  if (path.startsWith('http')) {
+    if (path.includes('cloudinary.com')) {
+      const cleanPath = path.replace(/upload\/.*\/(v\d+)/, 'upload/$1');
+      if (usernameForWatermark) {
+        const cleanUsername = usernameForWatermark.replace('@', '');
+        const wm = `upload/f_auto,q_auto/l_text:Arial_40_bold:fansmio%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
+        return cleanPath.replace('upload/', wm);
+      }
+      return cleanPath.replace('upload/', 'upload/f_auto,q_auto/');
+    }
+    return path; 
+  }
+
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
+  return `${cleanBase}/${cleanPath}`; 
 };
 
 export default function BookmarksPage() {
   const router = useRouter();
-  const t = useTranslations('BookmarksPage'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('BookmarksPage'); 
   const [bookmarks, setBookmarks] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -86,7 +102,7 @@ export default function BookmarksPage() {
                   </div>
 
                   {/* 🔥 CONTENIDO DEL POST (CON ESCUDO DE SEGURIDAD) */}
-                  <div className="p-4 bg-[#111] cursor-pointer" onClick={() => router.push(`/${post.user?.username}#${post.id}`)}>
+                  <div className="p-4 bg-[#111] cursor-pointer" onClick={() => router.push(`/${post.user?.username}#post-${post.id}`)}>
                     
                     {!post.hasAccess ? (
                       /* 🔒 VISTA BLOQUEADA (Si no ha pagado) */
@@ -108,10 +124,10 @@ export default function BookmarksPage() {
                         {post.content && <p className="text-sm text-gray-300 mb-3 line-clamp-3">{post.content}</p>}
                         {post.mediaUrl && (
                           <div className="w-full h-48 rounded-xl overflow-hidden bg-black relative border border-white/5">
-                            {post.mediaUrl.endsWith('.mp4') || post.mediaUrl.endsWith('.mov') ? (
-                              <video src={getImageUrl(post.mediaUrl)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"/>
+                            {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                              <video src={getImageUrl(post.mediaUrl, post.user?.username)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"/>
                             ) : (
-                              <img src={getImageUrl(post.mediaUrl)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"/>
+                              <img src={getImageUrl(post.mediaUrl, post.user?.username)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"/>
                             )}
                           </div>
                         )}

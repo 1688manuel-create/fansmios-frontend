@@ -19,11 +19,12 @@ import BoostModal from '../../../components/BoostModal';
 import { 
   Image as ImageIcon, Lock, Radio, Bell, MessageCircle, LogOut, 
   Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, X, User,
-  TrendingUp, Zap, Star, ChevronRight, Send, Flag, Wallet
+  TrendingUp, Zap, Star, ChevronRight, Send, Flag, Wallet,
+  Bookmark // 👈 ICONO DE FAVORITOS INYECTADO
 } from 'lucide-react';
 
 import { requestPushPermission } from '../../../lib/firebase';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+import { useTranslations } from 'next-intl';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -31,25 +32,20 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
   if (!path) return '';
   
   if (path.startsWith('http')) {
-    // Si es Cloudinary, aplicamos optimización inteligente
     if (path.includes('cloudinary.com')) {
-      // 1. Limpiamos cualquier transformación previa para no duplicar
       const cleanPath = path.replace(/upload\/.*\/(v\d+)/, 'upload/$1');
       
       if (usernameForWatermark) {
         const cleanUsername = usernameForWatermark.replace('@', '');
-        // Marca de agua + Optimización (sin el /v1/ extra)
         const wm = `upload/f_auto,q_auto/l_text:Arial_40_bold:fansmio%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
         return cleanPath.replace('upload/', wm);
       }
       
-      // Optimización simple para fotos de perfil y trending
       return cleanPath.replace('upload/', 'upload/f_auto,q_auto/');
     }
     return path; 
   }
 
-  // Para imágenes locales del servidor
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
   return `${cleanBase}/${cleanPath}`; 
@@ -59,25 +55,21 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
 const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDelete, onReport, onBlock, isExpanded }: { comment: any, postId: string, postOwnerId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, onReport: (commentId: string, username: string) => void, onBlock: (userId: string, username: string) => void, isExpanded: boolean }) => {
   const t = useTranslations('Feed'); 
   
-  // 🛡️ PODERES DE JERARQUÍA
   const isCommentAuthor = currentUser?.id === comment.userId;
   const isPostOwner = currentUser?.id === postOwnerId;
   const isAdmin = currentUser?.role === 'ADMIN';
   
-  // Puedes borrar si: lo escribiste tú, o es tu post, o eres el CEO (Admin).
   const canDelete = isCommentAuthor || isPostOwner || isAdmin;
   
   const [showReplies, setShowReplies] = useState(false);
   const hasReplies = comment.replies && comment.replies.length > 0;
 
-  // 🔥 EXTRACCIÓN DE LA FOTO DEL PERFIL
   const userProfileImage = comment.user?.creatorProfile?.profileImage;
   const initial = comment.user?.username ? comment.user.username.charAt(0).toUpperCase() : 'U';
 
   useEffect(() => {
     let currentHash = window.location.hash;
     
-    // 🔥 EL NUEVO ESCÁNER PROFUNDO (Busca en hijos, nietos y tataranietos)
     const hasTargetInDescendants = (replies: any[], target: string): boolean => {
       if (!replies || replies.length === 0) return false;
       for (const rep of replies) {
@@ -90,11 +82,8 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
     const checkAndOpen = (hashToCheck: string) => {
       if (hashToCheck && hashToCheck.includes('-comment-')) {
         const parts = hashToCheck.split('-comment-');
-        
-        // ✅ CORRECCIÓN CLAVE + DEFENSA TÁCTICA DEL COMANDANTE
         const targetId = parts[1].split('&')[0];
         
-        // Si el objetivo está en CUALQUIER nivel de profundidad, abrimos las respuestas
         if (targetId && hasTargetInDescendants(comment.replies, String(targetId))) {
           setShowReplies(true);
         }
@@ -115,7 +104,6 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-40 transition-all duration-500">
       <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative transition-all duration-500">
         
-        {/* 🔥 CONTENEDOR DE LA FOTO Y EL NOMBRE */}
         <div className="flex items-center gap-2 mb-1">
           <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center">
             {userProfileImage ? (
@@ -129,19 +117,15 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
           <span className="font-bold text-gray-300">@{comment.user?.username || 'Usuario'}:</span>
         </div>
 
-        {/* 💬 TEXTO DEL COMENTARIO */}
         <div className="text-gray-400 pl-8">{comment.content}</div>
         
-        {/* ⚙️ BOTONES DE ACCIÓN Y MODERACIÓN */}
         <div className="flex items-center gap-3 mt-1.5 flex-wrap pl-8">
           <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:text-blue-300 font-bold transition-colors">{t('btn_reply')}</button>
           
-          {/* BOTÓN ELIMINAR (Aparece en Hover) */}
           {canDelete && (
             <button onClick={() => onDelete(comment.id)} className="text-[11px] text-red-500 hover:text-red-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">{t('btn_delete')}</button>
           )}
           
-          {/* BOTONES DE MODERACIÓN (Aparecen en Hover) */}
           {!isCommentAuthor && (
             <>
               <button onClick={() => onReport(comment.id, comment.user?.username)} className="text-[11px] text-yellow-500 hover:text-yellow-400 font-bold opacity-100 lg:opacity-0 lg:group-hover/comment:opacity-100 transition-opacity duration-300">{t('btn_report')}</button>
@@ -154,7 +138,6 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
         </div>
       </div>
       
-      {/* 🔄 RESPUESTAS ANIDADAS */}
       {hasReplies && (
         <>
           <button onClick={() => setShowReplies(!showReplies)} className="text-[11px] text-gray-500 font-bold mt-2 ml-4 flex items-center gap-2 hover:text-gray-300 transition-colors">
@@ -177,7 +160,7 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
 
 export default function Feed() {
   const router = useRouter();
-  const t = useTranslations('Feed'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('Feed'); 
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -222,7 +205,6 @@ export default function Feed() {
   const [vipCreator, setVipCreator] = useState<any>(null);
   const [walletBalance, setWalletBalance] = useState(0);
 
-  // 1. LA FUNCIÓN DE CARGA (Guarda TODO en memoria)
   const fetchData = useCallback(async () => {
     try {
       const [
@@ -245,7 +227,6 @@ export default function Feed() {
         index === self.findIndex((t) => t.id === post.id)
       );
       
-      // 🔥 IMPORTANTE: Guardamos TODAS las historias en la memoria para el temporizador
       setStories(storyData.stories || []); 
       
       setPosts(feedPosts); 
@@ -263,21 +244,17 @@ export default function Feed() {
     }
   }, []);
 
-  // 2. EL TEMPORIZADOR (5 Segundos)
   useEffect(() => {
     let timer: any;
     if (activeStory) {
-      // Buscamos todas las historias de este usuario en la memoria
       const userStories = stories.filter((s: any) => s.creator?.id === activeStory.creator?.id);
       
       timer = setTimeout(() => {
         if (currentStoryIndex < userStories.length - 1) {
-          // Hay más historias: pasamos a la siguiente
           const nextIndex = currentStoryIndex + 1;
           setCurrentStoryIndex(nextIndex);
           setActiveStory(userStories[nextIndex]);
         } else {
-          // Se acabaron: cerramos el modal
           setActiveStory(null);
           setCurrentStoryIndex(0);
         }
@@ -286,7 +263,6 @@ export default function Feed() {
     return () => clearTimeout(timer);
   }, [activeStory, currentStoryIndex, stories]);
 
-  // 3. LOS EFECTOS DE CARGA INICIAL
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
@@ -305,7 +281,6 @@ export default function Feed() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🧭 BUSCADOR DE OBJETIVOS VIP (Sincronización Total)
   useEffect(() => {
     if (isLoading || posts.length === 0) return;
 
@@ -318,10 +293,8 @@ export default function Feed() {
         const postId = postPart.replace('post-', '');
         const targetId = commentPart ? `comment-${commentPart}` : `post-${postId}`;
 
-        // 1. Forzamos la apertura del post principal
         setExpandedComments(prev => ({ ...prev, [postId]: true }));
 
-        // 2. Iniciamos el perro de caza (Check cada 200ms)
         let attempts = 0;
         const findAndScroll = setInterval(() => {
           const element = document.getElementById(targetId);
@@ -330,11 +303,9 @@ export default function Feed() {
           if (element) {
             clearInterval(findAndScroll);
             
-            // 🎯 Esperamos un poco más para que el scroll sea fluido después de que el DOM se estire
             setTimeout(() => {
               element.scrollIntoView({ behavior: 'smooth', block: 'center' });
               
-              // ✨ EFECTO BRILLO IMPERIAL (Red Highlight)
               element.classList.add('ring-4', 'ring-red-600', 'shadow-[0_0_50px_rgba(220,38,38,0.5)]', 'bg-red-600/10', 'z-50');
               
               setTimeout(() => {
@@ -345,7 +316,7 @@ export default function Feed() {
             }, 500); 
           }
 
-          if (attempts > 50) clearInterval(findAndScroll); // 10 segundos límite
+          if (attempts > 50) clearInterval(findAndScroll); 
         }, 200);
       }
     };
@@ -368,6 +339,17 @@ export default function Feed() {
       await api.post(`/posts/${postId}/like`, { emoji });
       fetchData(); 
     } catch (error) { console.error("Error al reaccionar:", error); }
+  };
+
+  // 🔥 FUNCIÓN PARA GUARDAR EN FAVORITOS INYECTADA
+  const handleToggleBookmark = async (postId: string) => {
+    try {
+      await api.post(`/bookmarks/${postId}/toggle`);
+      alert('🔖 Post actualizado en tu Bóveda de Favoritos');
+    } catch (error) {
+      console.error("Error al guardar:", error);
+      alert('Error al procesar la Bóveda');
+    }
   };
 
   const submitComment = async (postId: string) => {
@@ -546,14 +528,12 @@ export default function Feed() {
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
 
-  // 🌳 CONSTRUCTOR DE COMENTARIOS (ESTILO FACEBOOK/INSTAGRAM - 1 SOLO NIVEL)
   const buildCommentTree = (comments: any[]) => {
     if (!comments) return [];
     
     const roots: any[] = [];
     const rootMap = new Map();
 
-    // 1. Identificar los Comentarios Principales (Abuelos)
     comments.forEach(c => {
       if (!c.parentId) {
         const rootNode = { ...c, replies: [] };
@@ -562,19 +542,16 @@ export default function Feed() {
       }
     });
 
-    // 2. Función para encontrar al "Abuelo" de cualquier comentario
     const getRootId = (parentId: string): string | null => {
       if (rootMap.has(parentId)) return parentId;
       const parent = comments.find(c => c.id === parentId);
       return parent ? getRootId(parent.parentId) : null;
     };
 
-    // 3. Agrupar TODOS (hijos, nietos, bisnietos) directamente bajo el Abuelo
     comments.forEach(c => {
       if (c.parentId) {
         const rootId = getRootId(c.parentId);
         if (rootId && rootMap.has(rootId)) {
-          // Los agregamos como "texto plano" sin sub-respuestas para evitar escaleras
           rootMap.get(rootId).replies.push({ ...c, replies: [] });
         }
       }
@@ -591,15 +568,12 @@ export default function Feed() {
         
         <nav className="sticky top-0 z-50 bg-[#0e0e0e]/90 border-b border-white/5 px-4 sm:px-6 py-3 flex justify-between items-center backdrop-blur-xl shadow-md">
           
-          {/* 🔥 LOGO INTELIGENTE (ADAPTATIVO) */}
           <div className="flex items-center">
-            {/* 📱 MÓVIL: Mostramos el logo completo porque el menú lateral está oculto */}
             <h1 onClick={() => router.push('/feed')} className="md:hidden text-[26px] font-black tracking-tighter cursor-pointer flex items-center gap-2 hover:scale-[1.02] transition-transform">
               <span className="text-2xl drop-shadow-[0_0_15px_rgba(249,115,22,0.9)]">⚡</span> 
               <span className="text-white">FansMio</span>
             </h1>
             
-            {/* 💻 ESCRITORIO: Como el logo ya está a la izquierda, aquí mostramos la sección actual */}
             <h1 className="hidden md:block text-xl font-bold text-gray-200 tracking-wide">
               Feed
             </h1>
@@ -621,7 +595,6 @@ export default function Feed() {
               )}
             </button>
 
-            {/* 🔥 NUEVO BOTÓN BILLETERA COVRA PAY 🔥 */}
             <button onClick={() => router.push('/dashboard/wallet')} className={`relative text-xs px-3 sm:px-4 py-2 rounded-full transition-all font-bold flex items-center gap-1.5 ${walletBalance > 0 ? 'nm-inset border border-green-500/30 text-green-400 shadow-[inset_0_0_10px_rgba(34,197,94,0.1)]' : 'nm-btn text-gray-300 hover:text-white'}`}>
               <Wallet className={`w-4 h-4 ${walletBalance > 0 ? 'drop-shadow-[0_0_5px_rgba(34,197,94,0.8)]' : ''}`} /> 
               <span className="hidden sm:inline">{walletBalance > 0 ? `$${walletBalance.toFixed(2)}` : t('nav_wallet')}</span>
@@ -733,7 +706,6 @@ export default function Feed() {
                   
                   <div className="w-full pt-2">
                     <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} className="w-full bg-transparent text-white placeholder-gray-500 outline-none resize-none" placeholder={t('ph_new_post')} rows={2}></textarea>
-                    {/* 🔥 INICIO DEL FIX DE PREVISUALIZACIÓN */}
                     {imagePreview && selectedImage && (
                       <div className="relative mt-3 rounded-2xl overflow-hidden border border-white/10 inline-block shadow-lg bg-black">
                         {selectedImage.type.startsWith('video/') ? (
@@ -788,6 +760,8 @@ export default function Feed() {
               ) : (
                 posts.map((post, index) => {
                   const isOwner = user && post.user && user.id === post.user.id;
+                  const isAdmin = user?.role === 'ADMIN';
+                  const isOwnerOrAdmin = isOwner || isAdmin;
                   
                   const rootComments = buildCommentTree(post.comments || []);
                   const totalComments = post._count?.comments || 0; 
@@ -854,7 +828,6 @@ export default function Feed() {
 
                         {!post.hasAccess ? (
                           <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 overflow-hidden group nm-inset mt-4">
-                            {/* 🔥 FONDO BORROSO PREMIUM (FIX APLICADO) */}
                             {post.mediaUrl && (
                               post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
                                 <video src={getImageUrl(post.mediaUrl)} className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-50 scale-110 select-none pointer-events-none" />
@@ -863,10 +836,8 @@ export default function Feed() {
                               )
                             )}
 
-                            {/* 🧊 CAPA GLASS SUAVE */}
                             <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
                             
-                            {/* 🔒 CONTENIDO CENTRAL */}
                             <div className="relative z-10 flex flex-col items-center bg-black/60 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
                               <Lock className={`w-14 h-14 mb-4 ${post.isPromoted ? 'text-yellow-500' : 'text-red-500'}`} />
                               {isOwner ? (
@@ -925,12 +896,26 @@ export default function Feed() {
                                   </button>
                                 </div>
                                 
-                                {!isOwner && (
-                                  <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
-                                    <Coins className="w-5 h-5" />
-                                    <span className="text-sm hidden sm:inline">{t('btn_tip')}</span>
+                                {/* 🔥 ZONA DERECHA: BOTÓN DE GUARDAR Y PROPINAS */}
+                                <div className="flex items-center gap-4">
+                                  {/* BOOKMARK (Guardar en Bóveda) */}
+                                  <button 
+                                    onClick={() => handleToggleBookmark(post.id)} 
+                                    className="flex items-center gap-1.5 text-gray-400 hover:text-blue-400 font-bold transition-colors"
+                                    title="Guardar en Favoritos"
+                                  >
+                                    <Bookmark className="w-5 h-5" />
                                   </button>
-                                )}
+
+                                  {/* PROPINAS (Coins) */}
+                                  {(!isOwnerOrAdmin) && (
+                                    <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors" title={t('btn_tip')}>
+                                      <Coins className="w-5 h-5" />
+                                      <span className="text-sm hidden sm:inline">{t('btn_tip')}</span>
+                                    </button>
+                                  )}
+                                </div>
+
                               </div>
 
                               {commentingPostId === post.id && (
