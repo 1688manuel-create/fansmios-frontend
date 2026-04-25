@@ -90,10 +90,12 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
     const checkAndOpen = (hashToCheck: string) => {
       if (hashToCheck && hashToCheck.includes('-comment-')) {
         const parts = hashToCheck.split('-comment-');
-        const targetId = parts; 
+        
+        // ✅ CORRECCIÓN CLAVE + DEFENSA TÁCTICA DEL COMANDANTE
+        const targetId = parts[1].split('&')[0];
         
         // Si el objetivo está en CUALQUIER nivel de profundidad, abrimos las respuestas
-        if (hasTargetInDescendants(comment.replies, String(targetId))) {
+        if (targetId && hasTargetInDescendants(comment.replies, String(targetId))) {
           setShowReplies(true);
         }
       }
