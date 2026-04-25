@@ -30,9 +30,9 @@ export default function BotonDePay({ userId }) {
             receiver: '0x01DA0aE56760592C384E7c1A0632b753cF51F683' // Tu MetaMask Personal
           }
         ],
+        // 🔥 BYPASS: Cobramos en cripto puro en lugar de USD para evitar errores de conversión
         amount: {
-          currency: 'USD',
-          fix: 1.00 // Monto de prueba seguro
+          fix: 0.0003 // Esto equivale aproximadamente a $0.90 - $1.00 USD en este momento
         },
         title: 'Recargar Billetera Fansmios',
 
