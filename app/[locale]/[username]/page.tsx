@@ -435,57 +435,70 @@ export default function CreatorProfile() {
               </div>
             </div>
             
-            {/* 🔥 2. BOTONES DE ACCIÓN (CTAs) AGRESIVOS */}
+            {/* 🔥 2. BOTONES DE ACCIÓN (CTAs) ADAPTATIVOS */}
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto mt-4 sm:mt-0">
               
-              {(!isOwnerOrAdmin) ? (
-                isSubscribed ? (
-                  <button disabled className="nm-inset text-yellow-500 border border-yellow-500/30 font-bold py-3.5 px-8 rounded-2xl cursor-default w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-widest text-sm shadow-inner">
-                    <Star className="w-5 h-5 fill-yellow-500/20"/> {t('vip_active')}
-                  </button>
-                ) : (
-                  <button onClick={handleSubscribe} className="bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-black py-3.5 px-10 rounded-2xl w-full sm:w-auto flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(20,184,166,0.3)] hover:scale-105 transition-all">
-                    <Crown className="w-5 h-5"/> {t('subscribe')} • ${(profile.monthlyPrice || 0).toFixed(2)}{t('lbl_month')}
-                  </button>
-                )
-              ) : (
-                <div className="nm-inset px-6 py-3.5 rounded-2xl border border-white/5 flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-teal-500" /> <span className="text-sm font-bold text-gray-300">{t('public_profile')}</span>
+              {/* 🌟 INSIGNIA SI EL PERFIL VISITADO ES DE UN FAN */}
+              {creator.role === 'FAN' && (
+                <div className="nm-inset px-6 py-3.5 rounded-2xl border border-teal-500/30 flex items-center gap-2 bg-teal-500/5 shadow-[0_0_15px_rgba(20,184,166,0.1)]">
+                  <Star className="w-5 h-5 text-teal-400 fill-teal-400/20" /> 
+                  <span className="text-sm font-bold text-teal-400 uppercase tracking-widest">Verified Fan</span>
                 </div>
               )}
 
-              {currentUser?.id !== creator.id && (
-                <div className="flex gap-2 w-full sm:w-auto">
-                  {currentUser?.role !== 'ADMIN' && (
-                    <button 
-                      onClick={handleFollowToggle}
-                      className={`font-bold py-3.5 px-5 rounded-2xl transition-all flex items-center justify-center flex-1 sm:w-auto ${
-                        isFollowing ? 'nm-inset text-teal-400 border border-teal-500/30' : 'bg-[#151515] border border-white/5 text-gray-300 hover:text-white hover:border-white/20 shadow-md'
-                      }`}
-                      title={isFollowing ? t('btn_unfollow') : t('btn_follow_free')}
-                    >
-                      {isFollowing ? <CheckCircle2 className="w-5 h-5"/> : <Plus className="w-5 h-5"/>}
-                    </button>
-                  )}
-                  
-                  <button onClick={handleMessageClick} title={t('btn_send_message')} className="bg-[#151515] border border-white/5 text-gray-300 hover:text-teal-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
-                    <MessageCircle className="w-5 h-5" />
-                  </button>
-                  
-                  {currentUser?.role !== 'ADMIN' && (
-                    <>
-                      <button onClick={() => { setTipRecipient(creator); setIsTipModalOpen(true); }} title={t('btn_tip')} className="bg-[#151515] border border-white/5 text-gray-300 hover:text-green-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
-                        <Coins className="w-5 h-5" />
+              {/* 💰 BOTONES DE MONETIZACIÓN (Solo si es Creador o Admin) */}
+              {(creator.role === 'CREATOR' || creator.role === 'ADMIN') && (
+                <>
+                  {(!isOwnerOrAdmin) ? (
+                    isSubscribed ? (
+                      <button disabled className="nm-inset text-yellow-500 border border-yellow-500/30 font-bold py-3.5 px-8 rounded-2xl cursor-default w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-widest text-sm shadow-inner">
+                        <Star className="w-5 h-5 fill-yellow-500/20"/> {t('vip_active')}
                       </button>
-                      <button onClick={() => {
-                        if(!currentUser) { alert(t('alert_login_report')); router.push('/auth'); return; }
-                        setIsReportModalOpen(true);
-                      }} title={t('btn_report_user')} className="bg-[#151515] border border-white/5 text-gray-500 hover:text-red-500 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
-                        <Flag className="w-4 h-4" />
+                    ) : (
+                      <button onClick={handleSubscribe} className="bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3.5 px-10 rounded-2xl w-full sm:w-auto flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(20,184,166,0.3)] hover:scale-105 transition-all">
+                        <Crown className="w-5 h-5"/> {t('subscribe')} • ${(profile.monthlyPrice || 0).toFixed(2)}{t('lbl_month')}
                       </button>
-                    </>
+                    )
+                  ) : (
+                    <div className="nm-inset px-6 py-3.5 rounded-2xl border border-white/5 flex items-center gap-2">
+                      <Eye className="w-5 h-5 text-teal-500" /> <span className="text-sm font-bold text-gray-300">{t('public_profile')}</span>
+                    </div>
                   )}
-                </div>
+
+                  {currentUser?.id !== creator.id && (
+                    <div className="flex gap-2 w-full sm:w-auto mt-3 sm:mt-0">
+                      {currentUser?.role !== 'ADMIN' && (
+                        <button 
+                          onClick={handleFollowToggle}
+                          className={`font-bold py-3.5 px-5 rounded-2xl transition-all flex items-center justify-center flex-1 sm:w-auto ${
+                            isFollowing ? 'nm-inset text-teal-400 border border-teal-500/30' : 'bg-[#151515] border border-white/5 text-gray-300 hover:text-white hover:border-white/20 shadow-md'
+                          }`}
+                          title={isFollowing ? t('btn_unfollow') : t('btn_follow_free')}
+                        >
+                          {isFollowing ? <CheckCircle2 className="w-5 h-5"/> : <Plus className="w-5 h-5"/>}
+                        </button>
+                      )}
+                      
+                      <button onClick={handleMessageClick} title={t('btn_send_message')} className="bg-[#151515] border border-white/5 text-gray-300 hover:text-teal-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
+                        <MessageCircle className="w-5 h-5" />
+                      </button>
+                      
+                      {currentUser?.role !== 'ADMIN' && (
+                        <>
+                          <button onClick={() => { setTipRecipient(creator); setIsTipModalOpen(true); }} title={t('btn_tip')} className="bg-[#151515] border border-white/5 text-gray-300 hover:text-green-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
+                            <Coins className="w-5 h-5" />
+                          </button>
+                          <button onClick={() => {
+                            if(!currentUser) { alert(t('alert_login_report')); router.push('/auth'); return; }
+                            setIsReportModalOpen(true);
+                          }} title={t('btn_report_user')} className="bg-[#151515] border border-white/5 text-gray-500 hover:text-red-500 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
+                            <Flag className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -531,303 +544,309 @@ export default function CreatorProfile() {
             </div>
           </div>
 
-          {/* PAQUETES EN OFERTA CON MINI GALERÍA INTERACTIVA */}
-          {bundles.length > 0 && (
-            <div className="mb-12 space-y-6 animate-fade-in">
-              <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2">
-                <Package className="w-5 h-5 text-teal-500"/> {t('lbl_bundles')}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {bundles.map(bundle => {
-                  const isPurchased = bundle.hasAccess || bundle.isPurchased; 
+          {/* 🛡️ SECCIÓN EXCLUSIVA PARA CREADORES (Oculta para fans) */}
+          {(creator.role === 'CREATOR' || creator.role === 'ADMIN') && (
+            <>
+              {/* PAQUETES EN OFERTA CON MINI GALERÍA INTERACTIVA */}
+              {bundles.length > 0 && (
+                <div className="mb-12 space-y-6 animate-fade-in">
+                  <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2">
+                    <Package className="w-5 h-5 text-teal-500"/> {t('lbl_bundles')}
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {bundles.map(bundle => {
+                      const isPurchased = bundle.hasAccess || bundle.isPurchased; 
 
-                  return (
-                    <div 
-                      key={bundle.id} 
-                      onClick={() => { if (!isOwnerOrAdmin && !isPurchased) handleBuyBundle(bundle); }} 
-                      className={`bg-[#0a0a0a] p-6 rounded-3xl border border-white/5 group flex flex-col h-full transition-colors shadow-lg ${
-                        isPurchased ? 'cursor-default border-green-500/20 shadow-[inset_0_0_20px_rgba(34,197,94,0.05)] nm-inset' : 'cursor-pointer hover:border-teal-500/30 hover:shadow-[0_10px_30px_rgba(20,184,166,0.1)]'
-                      }`}
-                    >
-                      <h3 className="text-xl font-bold text-white">{bundle.title}</h3>
-                      <p className="text-sm text-gray-500 mt-2 mb-4 line-clamp-2">{bundle.description}</p>
-                      
-                      {bundle.posts && bundle.posts.length > 0 && (
-                        <div className="flex items-center gap-3 mb-6">
-                          <div className="flex -space-x-3">
-                            {bundle.posts.slice(0, 3).map((p: any, i: number) => (
-                              <div key={i} className="w-12 h-12 rounded-lg nm-inset border border-white/10 overflow-hidden relative" style={{ zIndex: 3 - i }}>
-                                {p.mediaUrl ? (
-                                  <img 
-                                    src={getImageUrl(p.mediaUrl)} 
-                                    className={`w-full h-full object-cover transition-all ${!isPurchased && !isOwnerOrAdmin ? 'blur-md opacity-60 scale-125' : 'blur-0 opacity-100 cursor-pointer hover:scale-110'}`} 
-                                    alt="Media" 
-                                    draggable="false"
-                                    onContextMenu={(e) => e.preventDefault()}
-                                    onClick={(e) => {
-                                      if (isPurchased || isOwnerOrAdmin) {
-                                        e.stopPropagation();
-                                        setExpandedImage({ url: getImageUrl(p.mediaUrl, creator?.username), username: creator?.username });
-                                      }
-                                    }}
-                                  />
-                                ) : (
-                                  <div className="w-full h-full bg-teal-900/20"></div>
+                      return (
+                        <div 
+                          key={bundle.id} 
+                          onClick={() => { if (!isOwnerOrAdmin && !isPurchased) handleBuyBundle(bundle); }} 
+                          className={`bg-[#0a0a0a] p-6 rounded-3xl border border-white/5 group flex flex-col h-full transition-colors shadow-lg ${
+                            isPurchased ? 'cursor-default border-green-500/20 shadow-[inset_0_0_20px_rgba(34,197,94,0.05)] nm-inset' : 'cursor-pointer hover:border-teal-500/30 hover:shadow-[0_10px_30px_rgba(20,184,166,0.1)]'
+                          }`}
+                        >
+                          <h3 className="text-xl font-bold text-white">{bundle.title}</h3>
+                          <p className="text-sm text-gray-500 mt-2 mb-4 line-clamp-2">{bundle.description}</p>
+                          
+                          {bundle.posts && bundle.posts.length > 0 && (
+                            <div className="flex items-center gap-3 mb-6">
+                              <div className="flex -space-x-3">
+                                {bundle.posts.slice(0, 3).map((p: any, i: number) => (
+                                  <div key={i} className="w-12 h-12 rounded-lg nm-inset border border-white/10 overflow-hidden relative" style={{ zIndex: 3 - i }}>
+                                    {p.mediaUrl ? (
+                                      <img 
+                                        src={getImageUrl(p.mediaUrl)} 
+                                        className={`w-full h-full object-cover transition-all ${!isPurchased && !isOwnerOrAdmin ? 'blur-md opacity-60 scale-125' : 'blur-0 opacity-100 cursor-pointer hover:scale-110'}`} 
+                                        alt="Media" 
+                                        draggable="false"
+                                        onContextMenu={(e) => e.preventDefault()}
+                                        onClick={(e) => {
+                                          if (isPurchased || isOwnerOrAdmin) {
+                                            e.stopPropagation();
+                                            setExpandedImage({ url: getImageUrl(p.mediaUrl, creator?.username), username: creator?.username });
+                                          }
+                                        }}
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full bg-teal-900/20"></div>
+                                    )}
+                                  </div>
+                                ))}
+                                {bundle.posts.length > 3 && (
+                                  <div className="w-12 h-12 rounded-lg nm-inset border border-white/10 bg-black/80 flex items-center justify-center text-xs font-bold text-white z-0">
+                                    +{bundle.posts.length - 3}
+                                  </div>
                                 )}
                               </div>
-                            ))}
-                            {bundle.posts.length > 3 && (
-                              <div className="w-12 h-12 rounded-lg nm-inset border border-white/10 bg-black/80 flex items-center justify-center text-xs font-bold text-white z-0">
-                                +{bundle.posts.length - 3}
-                              </div>
+                              {!isPurchased && !isOwnerOrAdmin && (
+                                <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest flex items-center gap-1 bg-red-500/10 px-2 py-1 rounded">
+                                  <Lock className="w-3 h-3"/> {t('lbl_hidden')}
+                                </span>
+                              )}
+                            </div>
+                          )}
+
+                          <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
+                            <span className="text-xs font-bold text-teal-400 nm-inset px-3 py-1.5 rounded-md border border-teal-500/20">{bundle.posts?.length} {t('lbl_files')}</span>
+                            
+                            {isOwnerOrAdmin ? (
+                              <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors">{t('btn_view_bundle')}</button>
+                            ) : isPurchased ? (
+                              <button className="nm-inset border border-green-500/30 text-green-500 py-2.5 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-bold cursor-default" onClick={(e) => e.stopPropagation()}>
+                                <CheckCircle2 className="w-4 h-4" /> {t('btn_acquired')}
+                              </button>
+                            ) : (
+                              <button className="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors shadow-lg shadow-teal-500/20">{t('btn_buy')} ${(bundle.price || 0).toFixed(2)}</button>
                             )}
                           </div>
-                          {!isPurchased && !isOwnerOrAdmin && (
-                            <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest flex items-center gap-1 bg-red-500/10 px-2 py-1 rounded">
-                              <Lock className="w-3 h-3"/> {t('lbl_hidden')}
-                            </span>
-                          )}
                         </div>
-                      )}
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-                      <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
-                        <span className="text-xs font-bold text-teal-400 nm-inset px-3 py-1.5 rounded-md border border-teal-500/20">{bundle.posts?.length} {t('lbl_files')}</span>
-                        
-                        {isOwnerOrAdmin ? (
-                          <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors">{t('btn_view_bundle')}</button>
-                        ) : isPurchased ? (
-                          <button className="nm-inset border border-green-500/30 text-green-500 py-2.5 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-bold cursor-default" onClick={(e) => e.stopPropagation()}>
-                            <CheckCircle2 className="w-4 h-4" /> {t('btn_acquired')}
-                          </button>
-                        ) : (
-                          <button className="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors shadow-lg shadow-teal-500/20">{t('btn_buy')} ${(bundle.price || 0).toFixed(2)}</button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+              {/* 🔥 5. TABS DE FILTRO CON LA ACADEMIA INCLUIDA */}
+              {(posts.length > 0 || series?.length > 0) && (
+                <div className="flex overflow-x-auto custom-scrollbar gap-2 mb-6 pb-2">
+                  <button onClick={() => setActiveTab('series')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'series' ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.4)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
+                    <PlaySquare className="w-4 h-4" /> {t('tab_academy')}
+                  </button>
+                  <button onClick={() => setActiveTab('all')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'all' ? 'bg-white text-black shadow-md' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
+                    <LayoutGrid className="w-4 h-4" /> {t('tab_all')}
+                  </button>
+                  <button onClick={() => setActiveTab('photos')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'photos' ? 'bg-teal-500 text-white shadow-[0_0_15px_rgba(20,184,166,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
+                    <ImageIcon className="w-4 h-4" /> {t('tab_photos')}
+                  </button>
+                  <button onClick={() => setActiveTab('videos')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'videos' ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
+                    <Video className="w-4 h-4" /> {t('tab_videos')}
+                  </button>
+                  <button onClick={() => setActiveTab('locked')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'locked' ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
+                    <Lock className="w-4 h-4" /> {t('tab_locked')}
+                  </button>
+                </div>
+              )}
 
-          {/* 🔥 5. TABS DE FILTRO CON LA ACADEMIA INCLUIDA */}
-          {(posts.length > 0 || series?.length > 0) && (
-            <div className="flex overflow-x-auto custom-scrollbar gap-2 mb-6 pb-2">
-              <button onClick={() => setActiveTab('series')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'series' ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.4)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
-                <PlaySquare className="w-4 h-4" /> {t('tab_academy')}
-              </button>
-              <button onClick={() => setActiveTab('all')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'all' ? 'bg-white text-black shadow-md' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
-                <LayoutGrid className="w-4 h-4" /> {t('tab_all')}
-              </button>
-              <button onClick={() => setActiveTab('photos')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'photos' ? 'bg-teal-500 text-white shadow-[0_0_15px_rgba(20,184,166,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
-                <ImageIcon className="w-4 h-4" /> {t('tab_photos')}
-              </button>
-              <button onClick={() => setActiveTab('videos')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'videos' ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
-                <Video className="w-4 h-4" /> {t('tab_videos')}
-              </button>
-              <button onClick={() => setActiveTab('locked')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'locked' ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
-                <Lock className="w-4 h-4" /> {t('tab_locked')}
-              </button>
-            </div>
-          )}
+              {/* 🔥 6. VITRINA DE LA ACADEMIA VIP */}
+              {activeTab === 'series' && (
+                <div className="mb-10 animate-fade-in">
+                  <SeriesTab series={series} onPurchaseSuccess={fetchSeries} />
+                </div>
+              )}
 
-          {/* 🔥 6. VITRINA DE LA ACADEMIA VIP */}
-          {activeTab === 'series' && (
-            <div className="mb-10 animate-fade-in">
-              <SeriesTab series={series} onPurchaseSuccess={fetchSeries} />
-            </div>
-          )}
+              {/* EL RESTO DE LOS POSTS EN EL MURO */}
+              {activeTab !== 'series' && (
+                <div className="space-y-6">
+                  {filteredPosts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5 font-medium">{t('lbl_empty_category')}</div> : (
+                    filteredPosts.map((post) => {
+                      const isPostUnlocked = isOwnerOrAdmin || post.hasAccess;
+                      const rootComments = buildCommentTree(post.comments || []);
+                      const totalComments = post._count?.comments || 0;
+                      const isExpanded = expandedComments[post.id] || false;
+                      const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
 
-          {/* EL RESTO DE LOS POSTS EN EL MURO */}
-          {activeTab !== 'series' && (
-            <div className="space-y-6">
-              {filteredPosts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5 font-medium">{t('lbl_empty_category')}</div> : (
-                filteredPosts.map((post) => {
-                  const isPostUnlocked = isOwnerOrAdmin || post.hasAccess;
-                  const rootComments = buildCommentTree(post.comments || []);
-                  const totalComments = post._count?.comments || 0;
-                  const isExpanded = expandedComments[post.id] || false;
-                  const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
-
-                  return !isPostUnlocked ? (
-                    <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
-                      <div className="flex justify-between items-center relative z-10">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border-2 border-teal-500/30">
-                            {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-teal-500 to-blue-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
-                          </div>
-                          <div>
-                            <h3 className="text-white font-bold text-base">{creator.username}</h3>
-                            <p className="text-[10px] text-red-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
-                              <Lock className="w-3 h-3"/> {post.isPPV ? t('lbl_ppv_exclusive') : t('lbl_vip_only')}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 mt-4 overflow-hidden group nm-inset">
-                        {post.mediaUrl && (
-                          post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                            <video src={getImageUrl(post.mediaUrl)} onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
-                          ) : (
-                            <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" draggable="false" onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
-                          )
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
-                        
-                        <div className="relative z-10 flex flex-col items-center space-y-4 bg-black/40 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
-                          <Lock className="w-14 h-14 text-red-500 drop-shadow-md" />
-                          {!isSubscribed && !post.isPPV ? (
-                            <button onClick={(e) => { e.stopPropagation(); handleSubscribe(); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
-                              <Crown className="w-4 h-4"/> {t('subscribe_to_view')}
-                            </button>
-                          ) : (
-                            <button onClick={(e) => { e.stopPropagation(); handleUnlockPPV(post); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
-                              <Unlock className="w-4 h-4"/> {t('unlock_for')} ${(post.price || 0).toFixed(2)}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
-                      
-                      {isOwnerOrAdmin && (
-                        <button 
-                          onClick={() => handleDeletePost(post.id)}
-                          className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
-                          title={t('btn_delete_post')}
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      )}
-
-                      <div className="flex justify-between items-center pr-12">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border-2 border-teal-500/30">
-                            {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-teal-500 to-blue-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
-                          </div>
-                          <div>
-                            <h3 className="text-white font-bold text-base">{creator.username}</h3>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
-                              {post.isPPV ? (
-                                <><Unlock className="w-3 h-3 text-green-400"/> {isOwnerOrAdmin ? `PPV: $${(post.price || 0).toFixed(2)}` : t('lbl_purchased')}</>
-                              ) : (
-                                <><Star className="w-3 h-3 text-yellow-500"/> VIP</>
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      {post.content && <p className="text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{post.content}</p>}
-                      
-                      {post.mediaUrl && (
-                        <div className="mt-4 rounded-2xl overflow-hidden border border-white/5 nm-inset relative bg-black/50 flex justify-center">
-                          {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                            <video controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(post.mediaUrl)} className="w-full h-auto object-cover max-h-[600px] shadow-md select-none" onContextMenu={(e) => e.preventDefault()} />
-                          ) : post.mediaUrl.match(/\.(mp3|wav|ogg)$/i) ? (
-                            <div className="w-full p-6 flex justify-center bg-white/5">
-                              <audio controls src={getImageUrl(post.mediaUrl)} className="w-full max-w-md outline-none" />
+                      return !isPostUnlocked ? (
+                        <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
+                          <div className="flex justify-between items-center relative z-10">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border-2 border-teal-500/30">
+                                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-teal-500 to-blue-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
+                              </div>
+                              <div>
+                                <h3 className="text-white font-bold text-base">{creator.username}</h3>
+                                <p className="text-[10px] text-red-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
+                                  <Lock className="w-3 h-3"/> {post.isPPV ? t('lbl_ppv_exclusive') : t('lbl_vip_only')}
+                                </p>
+                              </div>
                             </div>
-                          ) : (
-                            <img src={getImageUrl(post.mediaUrl)} alt="Exclusivo" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
-                          )}
-                        </div>
-                      )}
-
-                      <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-white/5">
-                        <div className="flex items-center justify-between relative">
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
-                              {['❤️', '❤️‍🔥', '🫦', '🤤'].map((emoji) => {
-                                const isSelected = post.myReaction === emoji;
-                                const count = post.reactionCounts ? (post.reactionCounts[emoji] || 0) : 0;
-                                return (
-                                  <button 
-                                    key={emoji}
-                                    onClick={() => handleReact(post.id, emoji)}
-                                    className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}
-                                  >
-                                    <span className="text-xl">{emoji}</span>
-                                    {count > 0 && <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-400'}`}>{count}</span>}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                            
-                            <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-4 py-2.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-teal-500 border-teal-500/30' : 'text-gray-400 hover:text-teal-400 hover:border-white/20'}`}>
-                              <MessageCircle className="w-4 h-4" />
-                              <span className="text-sm">{totalComments}</span>
-                            </button>
                           </div>
                           
-                          {(!isOwnerOrAdmin) && (
-                            <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
-                              <Coins className="w-5 h-5" />
-                              <span className="text-sm hidden sm:inline">{t('btn_tip')}</span>
-                            </button>
-                          )}
-                        </div>
-
-                        {commentingPostId === post.id && (
-                          <div className="flex flex-col gap-2 animate-fade-in mt-2">
-                            {replyingToCommentId && (
-                              <div className="flex justify-between items-center bg-teal-900/20 px-3 py-1 text-xs text-teal-400 rounded-lg">
-                                <span>{t('lbl_replying')}</span>
-                                <button onClick={() => setReplyingToCommentId(null)}><X className="w-3 h-3"/></button>
-                              </div>
+                          <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 mt-4 overflow-hidden group nm-inset">
+                            {post.mediaUrl && (
+                              post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                                <video src={getImageUrl(post.mediaUrl)} onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                              ) : (
+                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" draggable="false" onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                              )
                             )}
-                            <div className="flex gap-2">
-                              <input 
-                                type="text" 
-                                value={commentText} 
-                                onChange={(e) => setCommentText(e.target.value)} 
-                                placeholder={t('ph_comment')} 
-                                className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-teal-500/50" 
-                                onKeyDown={(e) => e.key === 'Enter' && submitComment(post.id)}
-                              />
-                              <button 
-                                onClick={() => submitComment(post.id)} 
-                                disabled={isSubmittingComment || !commentText.trim()} 
-                                className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white hover:bg-teal-500 transition-colors shrink-0 disabled:opacity-50"
-                              >
-                                <Send className="w-4 h-4" />
-                              </button>
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
+                            
+                            <div className="relative z-10 flex flex-col items-center space-y-4 bg-black/40 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
+                              <Lock className="w-14 h-14 text-red-500 drop-shadow-md" />
+                              {!isSubscribed && !post.isPPV ? (
+                                <button onClick={(e) => { e.stopPropagation(); handleSubscribe(); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
+                                  <Crown className="w-4 h-4"/> {t('subscribe_to_view')}
+                                </button>
+                              ) : (
+                                <button onClick={(e) => { e.stopPropagation(); handleUnlockPPV(post); }} className="mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-bold py-3 px-8 rounded-xl text-sm flex items-center gap-2 shadow-lg transition-transform hover:scale-105">
+                                  <Unlock className="w-4 h-4"/> {t('unlock_for')} ${(post.price || 0).toFixed(2)}
+                                </button>
+                              )}
                             </div>
                           </div>
-                        )}
+                        </div>
+                      ) : (
+                        <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
+                          
+                          {isOwnerOrAdmin && (
+                            <button 
+                              onClick={() => handleDeletePost(post.id)}
+                              className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
+                              title={t('btn_delete_post')}
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          )}
 
-                        {totalComments > 0 && (
-                           <div className="space-y-1 mt-4">
-                             {visibleComments.map((comment: any) => (
-                                <CommentNode 
-                                  key={comment.id} 
-                                  comment={comment} 
-                                  postId={post.id} 
-                                  currentUser={currentUser}
-                                  onReply={handleReplyClick} 
-                                  onDelete={handleDeleteComment}
-                                  isExpanded={isExpanded}
-                                />
-                             ))}
+                          <div className="flex justify-between items-center pr-12">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shrink-0 border-2 border-teal-500/30">
+                                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" onContextMenu={(e) => e.preventDefault()} /> : <div className="w-full h-full bg-gradient-to-tr from-teal-500 to-blue-500 flex items-center justify-center">{creator.username.toUpperCase()}</div>}
+                              </div>
+                              <div>
+                                <h3 className="text-white font-bold text-base">{creator.username}</h3>
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
+                                  {post.isPPV ? (
+                                    <><Unlock className="w-3 h-3 text-green-400"/> {isOwnerOrAdmin ? `PPV: $${(post.price || 0).toFixed(2)}` : t('lbl_purchased')}</>
+                                  ) : (
+                                    <><Star className="w-3 h-3 text-yellow-500"/> VIP</>
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          {post.content && <p className="text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{post.content}</p>}
+                          
+                          {post.mediaUrl && (
+                            <div className="mt-4 rounded-2xl overflow-hidden border border-white/5 nm-inset relative bg-black/50 flex justify-center">
+                              {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                                <video controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(post.mediaUrl)} className="w-full h-auto object-cover max-h-[600px] shadow-md select-none" onContextMenu={(e) => e.preventDefault()} />
+                              ) : post.mediaUrl.match(/\.(mp3|wav|ogg)$/i) ? (
+                                <div className="w-full p-6 flex justify-center bg-white/5">
+                                  <audio controls src={getImageUrl(post.mediaUrl)} className="w-full max-w-md outline-none" />
+                                </div>
+                              ) : (
+                                <img src={getImageUrl(post.mediaUrl)} alt="Exclusivo" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
+                              )}
+                            </div>
+                          )}
 
-                             {totalComments > 3 && (
-                               <button 
-                                 onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
-                                 className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left transition-colors"
-                               >
-                                 {isExpanded ? t('btn_hide_comments') : t('btn_view_comments', { count: totalComments })}
-                               </button>
-                             )}
-                           </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })
+                          <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-white/5">
+                            <div className="flex items-center justify-between relative">
+                              <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
+                                  {['❤️', '❤️‍🔥', '🫦', '🤤'].map((emoji) => {
+                                    const isSelected = post.myReaction === emoji;
+                                    const count = post.reactionCounts ? (post.reactionCounts[emoji] || 0) : 0;
+                                    return (
+                                      <button 
+                                        key={emoji}
+                                        onClick={() => handleReact(post.id, emoji)}
+                                        className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}
+                                      >
+                                        <span className="text-xl">{emoji}</span>
+                                        {count > 0 && <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-400'}`}>{count}</span>}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                                
+                                <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-4 py-2.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-teal-500 border-teal-500/30' : 'text-gray-400 hover:text-teal-400 hover:border-white/20'}`}>
+                                  <MessageCircle className="w-4 h-4" />
+                                  <span className="text-sm">{totalComments}</span>
+                                </button>
+                              </div>
+                              
+                              {(!isOwnerOrAdmin) && (
+                                <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
+                                  <Coins className="w-5 h-5" />
+                                  <span className="text-sm hidden sm:inline">{t('btn_tip')}</span>
+                                </button>
+                              )}
+                            </div>
+
+                            {commentingPostId === post.id && (
+                              <div className="flex flex-col gap-2 animate-fade-in mt-2">
+                                {replyingToCommentId && (
+                                  <div className="flex justify-between items-center bg-teal-900/20 px-3 py-1 text-xs text-teal-400 rounded-lg">
+                                    <span>{t('lbl_replying')}</span>
+                                    <button onClick={() => setReplyingToCommentId(null)}><X className="w-3 h-3"/></button>
+                                  </div>
+                                )}
+                                <div className="flex gap-2">
+                                  <input 
+                                    type="text" 
+                                    value={commentText} 
+                                    onChange={(e) => setCommentText(e.target.value)} 
+                                    placeholder={t('ph_comment')} 
+                                    className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-teal-500/50" 
+                                    onKeyDown={(e) => e.key === 'Enter' && submitComment(post.id)}
+                                  />
+                                  <button 
+                                    onClick={() => submitComment(post.id)} 
+                                    disabled={isSubmittingComment || !commentText.trim()} 
+                                    className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white hover:bg-teal-500 transition-colors shrink-0 disabled:opacity-50"
+                                  >
+                                    <Send className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {totalComments > 0 && (
+                               <div className="space-y-1 mt-4">
+                                 {visibleComments.map((comment: any) => (
+                                    <CommentNode 
+                                      key={comment.id} 
+                                      comment={comment} 
+                                      postId={post.id} 
+                                      currentUser={currentUser}
+                                      onReply={handleReplyClick} 
+                                      onDelete={handleDeleteComment}
+                                      isExpanded={isExpanded}
+                                    />
+                                 ))}
+
+                                 {totalComments > 3 && (
+                                   <button 
+                                     onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
+                                     className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left transition-colors"
+                                   >
+                                     {isExpanded ? t('btn_hide_comments') : t('btn_view_comments', { count: totalComments })}
+                                   </button>
+                                 )}
+                               </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               )}
-            </div>
+            </>
           )}
+
         </main>
 
         {/* MODAL DE PROPINAS */}
