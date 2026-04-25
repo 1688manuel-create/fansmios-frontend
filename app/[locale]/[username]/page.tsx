@@ -739,7 +739,7 @@ export default function CreatorProfile() {
                         <div className="flex items-center justify-between relative">
                           <div className="flex items-center gap-3">
                             <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
-                              {['❤️', '❤️‍🔥', '🫦', '🤤','😍','💔'].map((emoji) => {
+                              {['❤️', '❤️‍🔥', '🫦', '🤤'].map((emoji) => {
                                 const isSelected = post.myReaction === emoji;
                                 const count = post.reactionCounts ? (post.reactionCounts[emoji] || 0) : 0;
                                 return (

@@ -12,10 +12,10 @@ interface TipModalProps {
 
 export default function TipModal({ creatorName, onClose, onContinue }: TipModalProps) {
   const t = useTranslations('TipModal'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
-  const [amount, setAmount] = useState<number | ''>(10); // $10 por defecto
+  const [amount, setAmount] = useState<number | ''>(1); // $1 por defecto
   const [message, setMessage] = useState('');
   
-  const presetAmounts = [5, 10, 20, 50, 100];
+  const presetAmounts = [1, 2, 3, 4, 5];
 
   const handleContinue = () => {
     if (!amount || amount < 1) {
