@@ -448,7 +448,7 @@ export default function CreatorProfile() {
                   
                   {/* ⚙️ BOTÓN DE EDITAR (Solo lo ve el dueño de la cuenta) */}
                   {isOwnerOrAdmin && (
-                    <button onClick={() => router.push('/dashboard/profile/settings')} className="nm-inset px-6 py-3.5 rounded-2xl border border-white/5 flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                    <button onClick={() => router.push('/dashboard/profile')} className="nm-inset px-6 py-3.5 rounded-2xl border border-white/5 flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
                       <Settings className="w-4 h-4" /> <span className="text-sm font-bold">Editar Foto</span>
                     </button>
                   )}
