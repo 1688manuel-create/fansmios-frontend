@@ -2,31 +2,83 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import dynamic from 'next/dynamic'; // 🔥 NUEVO: Para cargar Web3 de forma segura
-
-// 🔥 ICONOS PREMIUM DE LUCIDE
+// 🔥 ICONOS PREMIUM DE LUCIDE (Nuevos Iconos Agregados)
 import { 
-  UserCircle, Settings, Wallet, PackageSearch, TicketPercent, TrendingUp, 
-  Star, MessageCircle, Compass, Bookmark, ArrowLeft, Sparkles, Crown, 
-  Zap, CreditCard, History, ArrowUpRight, ArrowDownLeft, Lock, Users, 
-  DollarSign, PlaySquare, ShieldCheck 
+  UserCircle, 
+  Settings, 
+  Wallet, 
+  PackageSearch, 
+  TicketPercent, 
+  TrendingUp, 
+  Star, 
+  MessageCircle, 
+  Compass, 
+  Bookmark, 
+  ArrowLeft,
+  Sparkles,
+  Crown,
+  Zap,
+  CreditCard,
+  History,         
+  ArrowUpRight,    
+  ArrowDownLeft,   
+  Lock,
+  Users,
+  DollarSign,
+  PlaySquare, // 👈 NUEVO: Icono de Academia VIP
+  ShieldCheck // 👈 NUEVO: Icono de KYC             
 } from 'lucide-react';
-
 import AppLayout from '../../../components/AppLayout';
+import { paymentService } from '../../../lib/paymentService';
 import api from '../../../lib/api';
-import { useTranslations } from 'next-intl';
-
-// 🚀 IMPORTAMOS TU NUEVO MOTOR WEB3 (Asegúrate de que la ruta sea correcta)
-const BotonDePay = dynamic(() => import('../../../components/BotonDePay'), { ssr: false });
+import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
 
 export default function DashboardIndex() {
   const router = useRouter();
-  const pathname = usePathname();
-  const t = useTranslations('DashboardIndex');
+  const pathname = usePathname(); // 👈 El nuevo radar de rutas
+  const t = useTranslations('DashboardIndex'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
   const [user, setUser] = useState<any>(null);
   
-  // 💰 ESTADO FINANCIERO (Limpio, sin variables viejas de PayRam)
-  const [transactions, setTransactions] = useState<any[]>([]);
+  // 💰 ESTADOS FINANCIEROS
+  const [showTopUpModal, setShowTopUpModal] = useState(false);
+  const [isProcessingPago, setIsProcessingPago] = useState(false);
+  const [customAmount, setCustomAmount] = useState('');
+  const [transactions, setTransactions] = useState<any[]>([]); // 👈 Estado del Historial
+
+  const handleTopUp = async (amount: number) => {
+    if (isProcessingPago) return;
+    setIsProcessingPago(true);
+    
+    try {
+      // 1. Pedimos la orden al Backend
+      const res = await paymentService.createPaymentIntent({
+        amount: amount,
+        type: 'CREDIT_TOPUP',
+        creatorId: user.id, 
+        description: `Recarga de Billetera: $${amount} USD`
+      });
+
+      // 🛡️ BUSCAMOS LA URL (Soporta todos los formatos: directo, res.data, res.url, etc.)
+      const urlPago = res?.checkoutUrl || res?.data?.checkoutUrl || res?.url || res?.data?.url;
+
+      // 2. 🔥 SI HAY URL, SALTAMOS SIN PREGUNTAR
+      if (urlPago) {
+        window.location.href = urlPago;
+        return; 
+      } 
+      
+      // 🕵️‍♂️ SI NO HAY URL, NO LANZAMOS ALERT. 
+      // Solo lo imprimimos en consola para que tú lo veas si algo falla de verdad.
+      console.warn("Pago iniciado, esperando redirección...", res);
+
+    } catch (error) {
+      // Silenciamos el error para que la transición sea fluida
+      console.error("Error silencioso en pasarela:", error);
+    } finally {
+      // Liberamos el botón después de 5 segundos por si el usuario regresa
+      setTimeout(() => setIsProcessingPago(false), 5000);
+    }
+  };
 
   useEffect(() => {
     const fetchRealBalance = async () => {
@@ -64,7 +116,7 @@ export default function DashboardIndex() {
 
   if (!user) return <div className="min-h-screen bg-nm-base flex items-center justify-center text-gray-500 font-bold uppercase tracking-widest animate-pulse">{t('syncing_empire')}</div>;
 
-  // 👑 HERRAMIENTAS EXCLUSIVAS DEL CREADOR
+  // 👑 HERRAMIENTAS EXCLUSIVAS DEL CREADOR (Motor PayRam Integrado)
   const creatorTools = [
     { title: t('tool_my_profile'), icon: UserCircle, path: user?.username ? `/${user.username}` : 'CONFIG_FIRST', color: 'text-orange-500' },
     { title: t('tool_settings'), icon: Settings, path: '/dashboard/profile', color: 'text-gray-400' },
@@ -117,6 +169,7 @@ export default function DashboardIndex() {
     <AppLayout>
       <div className="min-h-screen bg-nm-base pb-24 sm:pb-10 relative">
         
+        {/* Luces de ambiente sutiles */}
         <div className="absolute top-0 left-1/2 w-[600px] h-[300px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
 
         {/* NAVBAR SUPERIOR */}
@@ -150,9 +203,10 @@ export default function DashboardIndex() {
           </div>
 
           {/* =========================================
-              💰 BILLETERA VIRTUAL DEL FAN
+              💰 BILLETERA VIRTUAL DEL FAN (CON ACCESO PROFESIONAL)
           ========================================= */}
           <div className="bg-[#111] border border-green-500/20 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_0_40px_rgba(34,197,94,0.1)] mb-10">
+            {/* Contenedor Izquierdo: Saldo + Botón Historial */}
             <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 w-full md:w-auto text-center sm:text-left">
               <div>
                 <h3 className="text-gray-400 text-xs uppercase tracking-[0.2em] font-bold mb-1 flex items-center justify-center sm:justify-start gap-2">
@@ -166,6 +220,7 @@ export default function DashboardIndex() {
                 </div>
               </div>
               
+              {/* 👈 BOTÓN PROFESIONAL DE ESTADO DE CUENTA */}
               <button 
                 onClick={() => router.push('/dashboard/wallet')}
                 className="nm-btn border border-white/5 px-4 py-2 rounded-xl text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-white hover:border-green-500/30 transition-all flex items-center gap-2 mb-1 sm:mb-2 mx-auto sm:mx-0"
@@ -174,15 +229,81 @@ export default function DashboardIndex() {
               </button>
             </div>
 
-            {/* 🚀 BOTÓN DEPAY DIRECTO: Reemplaza al viejo modal */}
-            <div className="w-full md:w-auto shrink-0">
-               <BotonDePay userId={user.id} />
-            </div>
+            {/* Contenedor Derecho: Botón Recargar */}
+            <button 
+              onClick={() => setShowTopUpModal(true)}
+              className="w-full md:w-auto bg-green-500 hover:bg-green-400 text-black font-black px-8 py-4 rounded-2xl flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-[0_0_20px_rgba(34,197,94,0.3)] shrink-0"
+            >
+              <Zap className="w-5 h-5 fill-current" /> {t('btn_topup')}
+            </button>
           </div>
 
-          {/* CREADOR O FAN TOOLS... */}
+          {/* 🔥 MODAL DE RECARGA CON MONTO LIBRE */}
+          {showTopUpModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+              <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] p-8 text-center relative">
+                
+                <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
+                  <CreditCard className="w-8 h-8 text-green-500" />
+                </div>
+                
+                <h2 className="text-2xl font-black text-white mb-2">{t('modal_add_credits')}</h2>
+                <p className="text-gray-400 text-sm mb-6">{t('modal_desc')}</p>
+
+                {/* Botones Rápidos (CORREGIDO EL ARRAY AQUÍ) */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  {[ 10, 20, 50, 100, 200, 500, 1000 ].map((amount) => (
+                    <button 
+                      key={amount}
+                      onClick={() => handleTopUp(amount)}
+                      disabled={isProcessingPago}
+                      className="nm-btn border border-white/5 hover:border-green-500/50 py-3 rounded-xl text-xl font-black text-white transition-all disabled:opacity-50 group flex flex-col items-center justify-center"
+                    >
+                      <span className="text-green-400 text-[10px] uppercase tracking-widest font-bold opacity-0 group-hover:opacity-100 transition-opacity">{t('lbl_add_balance')}</span>
+                      ${amount}
+                    </button>
+                  ))}
+                </div>
+
+                {/* 🎯 Input de Monto Libre */}
+                <div className="mb-6 relative">
+                  <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                    <span className="text-gray-500 font-black text-xl">$</span>
+                  </div>
+                  <input 
+                    type="number" 
+                    min="1" 
+                    placeholder={t('ph_custom_amount')}
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    disabled={isProcessingPago}
+                    className="w-full bg-[#0a0a0a] border border-white/10 focus:border-green-500/50 rounded-xl pl-10 pr-24 py-4 text-white font-bold outline-none transition-colors placeholder:text-gray-600"
+                  />
+                  {customAmount && Number(customAmount) >= 1 && (
+                    <button 
+                      onClick={() => handleTopUp(Number(customAmount))}
+                      disabled={isProcessingPago}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-green-500 hover:bg-green-400 text-black px-4 py-2 rounded-lg font-black text-xs transition-colors shadow-[0_0_10px_rgba(34,197,94,0.3)] animate-fade-in"
+                    >
+                      {t('btn_charge')}
+                    </button>
+                  )}
+                </div>
+
+                <button 
+                  onClick={() => setShowTopUpModal(false)} 
+                  disabled={isProcessingPago}
+                  className="w-full text-gray-500 font-bold hover:text-white transition-colors"
+                >
+                  {t('btn_cancel')}
+                </button>
+              </div>
+            </div>
+          )}
+
           {(user?.role === 'CREATOR' || user?.role === 'ADMIN') ? (
             <div className="space-y-12 animate-fade-in">
+              {/* HERRAMIENTAS CREADOR */}
               <div>
                 <h3 className="text-[10px] font-black text-gray-600 mb-6 border-b border-white/5 pb-3 uppercase tracking-[0.2em] flex items-center gap-2">
                   <Crown className="w-3 h-3" /> {t('section_creator')}
@@ -191,6 +312,8 @@ export default function DashboardIndex() {
                   {creatorTools.map((tool, index) => <ToolCard key={index} tool={tool} />)}
                 </div>
               </div>
+
+              {/* HERRAMIENTAS FAN */}
               <div>
                 <h3 className="text-[10px] font-black text-gray-600 mb-6 border-b border-white/5 pb-3 uppercase tracking-[0.2em] flex items-center gap-2">
                   <Star className="w-3 h-3" /> {t('section_fan')}
@@ -202,12 +325,94 @@ export default function DashboardIndex() {
             </div>
           ) : (
             <div className="space-y-12 animate-fade-in">
+              {/* SECCIÓN FAN SOLAMENTE */}
               <div>
                 <h3 className="text-[10px] font-black text-gray-600 mb-6 border-b border-white/5 pb-3 uppercase tracking-[0.2em] flex items-center gap-2">
                   <Star className="w-3 h-3" /> {t('section_fan_tools')}
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                   {fanTools.map((tool, index) => <ToolCard key={`fan-${index}`} tool={tool} />)}
+                </div>
+              </div>
+
+              {/* BANNER KYC */}
+              <div className="nm-inset p-10 rounded-[2rem] text-center border border-red-500/20 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-tr from-red-600/5 to-transparent pointer-events-none"></div>
+                <div className="relative z-10 max-w-2xl mx-auto space-y-6">
+                  <Sparkles className="w-12 h-12 text-red-500 mx-auto animate-pulse" />
+                  <h2 className="text-3xl font-black text-white">{t('kyc_banner_title')}</h2>
+                  <p className="text-gray-500 font-medium leading-relaxed">
+                    {t('kyc_banner_desc')}
+                  </p>
+                  <button 
+                    onClick={() => router.push('/dashboard/kyc')}
+                    className="nm-btn-primary px-10 py-4 text-lg mt-4 inline-flex items-center gap-2 font-black transition-transform active:scale-95"
+                  >
+                    {t('btn_verify_id')}
+                  </button>
+                </div>
+              </div>
+              
+              {/* =========================================
+                  📜 HISTORIAL DE MOVIMIENTOS INCRUSTADO (SOLO PARA EL FAN)
+              ========================================= */}
+              <div className="mt-16 animate-fade-in">
+                <h3 className="text-[10px] font-black text-gray-600 mb-6 border-b border-white/5 pb-3 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <History className="w-3 h-3 text-green-500" /> {t('history_recent')}
+                </h3>
+                
+                <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default">
+                  {transactions.length === 0 ? (
+                    <div className="text-center text-gray-600 py-12 font-medium">
+                      {t('history_empty')}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {transactions.map((tx: any) => {
+                        const isTopUp = tx.type === 'CREDIT_TOPUP';
+                        const isIncome = tx.isIncome || isTopUp;
+                        
+                        const Icon = isIncome ? ArrowDownLeft : ArrowUpRight;
+                        const colorClass = isIncome ? 'text-green-400' : 'text-white';
+                        const sign = isIncome ? '+' : '-';
+                        const bgClass = isIncome ? 'border-green-500/20 hover:border-green-500/40 bg-green-500/5' : 'border-white/5 hover:border-red-500/20 nm-inset';
+
+                        let concept = t('tx_default');
+                        if (isTopUp) concept = t('tx_topup');
+                        else if (tx.type === 'TIP') concept = `${t('tx_tip')} @${tx.receiver?.username || t('anonymous')}`;
+                        else if (tx.type === 'SUBSCRIPTION') concept = `${t('tx_sub')} @${tx.receiver?.username || t('anonymous')}`;
+                        else if (tx.type === 'PPV_MESSAGE') concept = `${t('tx_ppv')} @${tx.receiver?.username || t('anonymous')}`;
+                        else concept = `${t('tx_payment')} @${tx.receiver?.username || t('anonymous')}`;
+
+                        return (
+                          <div key={tx.id} className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${bgClass}`}>
+                            <div className="flex items-center gap-4">
+                              <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${isIncome ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-black border-white/5 text-gray-400'}`}>
+                                {isTopUp ? <Wallet className="w-5 h-5" /> : tx.type === 'TIP' ? <DollarSign className="w-5 h-5" /> : tx.type === 'SUBSCRIPTION' ? <Star className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+                              </div>
+                              <div>
+                                <p className="text-sm text-white font-black tracking-wide">{concept}</p>
+                                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mt-1">
+                                  {new Date(tx.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className={`font-black text-lg font-mono tracking-tight ${colorClass}`}>
+                                {sign}${parseFloat(tx.amount || tx.netAmount || 0).toFixed(2)}
+                              </p>
+                              
+                              {/* 🔥 AQUÍ ESTÁ EL CAMBIO: El Radar de Estado Real */}
+                              <p className={`text-[10px] font-bold uppercase mt-1 ${tx.status === 'PENDING' ? 'text-yellow-500' : 'text-gray-500'}`}>
+                                {tx.status === 'PENDING' ? '⏳ PENDIENTE' : '✅ COMPLETADO'}
+                              </p>
+
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
