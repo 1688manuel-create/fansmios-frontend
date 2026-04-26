@@ -677,7 +677,7 @@ export default function CreatorProfile() {
                           </div>
                           {post.content && <p className="text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{post.content}</p>}
                           
-                          {/* 🔥 SMART GRID INYECTADO */}
+                          {/* 🔥 SMART GRID PARA POSTS DESBLOQUEADOS */}
                           {mediaUrls.length > 0 && (
                             <div className={`mt-4 rounded-2xl overflow-hidden nm-inset border border-white/5 relative bg-black/50 grid gap-1 ${
                               mediaUrls.length === 1 ? 'grid-cols-1' : 
