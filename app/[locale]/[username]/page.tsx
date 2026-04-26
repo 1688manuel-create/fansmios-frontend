@@ -10,13 +10,13 @@ import AppLayout from '../../../components/AppLayout';
 import { paymentService } from '../../../lib/paymentService';
 import SeriesTab from '../../../components/profile/SeriesTab';
 import { PlaySquare } from 'lucide-react';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+import { useTranslations } from 'next-intl';
 
 import { 
   ArrowLeft, CheckCircle2, MessageCircle, Star, Lock, Settings,
   Unlock, Trash2, Coins, Package, Ghost, X, Plus, Crown, Send,
   Instagram, Twitter, Globe, ShieldAlert, Flag, AlertTriangle,
-  LayoutGrid, Image as ImageIcon, Video, Eye // 👈 ¡Agrega 'Eye' aquí!
+  LayoutGrid, Image as ImageIcon, Video, Eye, ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -40,31 +40,23 @@ const getImageUrl = (path: string | null, usernameForWatermark: string | null = 
 const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpanded }: { comment: any, postId: string, currentUser: any, onReply: (postId: string, commentId: string) => void, onDelete: (commentId: string) => void, isExpanded: boolean }) => {
   const t = useTranslations('Profile'); 
   const isOwner = currentUser?.id === comment.userId || currentUser?.role === 'ADMIN'; 
-
-  // 🔥 NUEVO: Extraemos la foto de perfil si la tiene (viene dentro del objeto user)
   const userProfileImage = comment.user?.creatorProfile?.profileImage;
   const initial = comment.user?.username ? comment.user.username.charAt(0).toUpperCase() : 'U';
 
   return (
     <div id={`comment-${comment.id}`} className="flex flex-col mt-2 group/comment scroll-mt-32 transition-all duration-500 rounded-xl">
       <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative">
-        
-        {/* 🔥 NUEVO: El contenedor de la foto y el nombre */}
         <div className="flex items-center gap-2 mb-1">
           <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center">
             {userProfileImage ? (
               <img src={getImageUrl(userProfileImage)} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">
-                {initial}
-              </span>
+              <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">{initial}</span>
             )}
           </div>
           <span className="font-bold text-gray-300">@{comment.user?.username || t('lbl_user')}:</span>
         </div>
-        
         <div className="text-gray-400 pl-8">{comment.content}</div>
-        
         <div className="flex items-center gap-4 mt-2 pl-8">
           <button onClick={() => onReply(postId, comment.id)} className="text-[11px] text-blue-400 hover:underline font-bold">{t('btn_reply')}</button>
           {isOwner && (
@@ -72,7 +64,6 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
           )}
         </div>
       </div>
-      
       {(isExpanded === true) && comment.replies && comment.replies.length > 0 && (
         <div className="pl-4 sm:pl-6 border-l-2 border-white/10 ml-3 sm:ml-4 mt-2 space-y-1">
           {comment.replies.map((reply: any) => (
@@ -87,8 +78,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
 export default function CreatorProfile() {
   const params = useParams(); 
   const router = useRouter();
-
-  const t = useTranslations('Profile'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('Profile'); 
   
   const rawUsername = params?.username;
   const username = Array.isArray(rawUsername) ? rawUsername : rawUsername;
@@ -103,15 +93,11 @@ export default function CreatorProfile() {
 
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [posts, setPosts] = useState<any[]>([]);
-  
-  // 🔥 ESTADO PARA LOS TABS DEL PERFIL
   const [activeTab, setActiveTab] = useState<'all' | 'photos' | 'videos' | 'locked' | 'series'>('all');
-
   const [bundles, setBundles] = useState<any[]>([]);
 
   const [clientSecret, setClientSecret] = useState('');
   const [pendingPayment, setPendingPayment] = useState<any>(null);
-  
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   
   const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null);
@@ -122,12 +108,26 @@ export default function CreatorProfile() {
   
   const [isTipModalOpen, setIsTipModalOpen] = useState(false);
   const [tipRecipient, setTipRecipient] = useState<any>(null);
-  const [expandedImage, setExpandedImage] = useState<{url: string, username: string} | null>(null);
+
+  // 🔥 NUEVOS ESTADOS PARA GALERÍA COMPLETA TIPO SWIPE
+  const [expandedGallery, setExpandedGallery] = useState<{urls: string[], currentIndex: number, username: string} | null>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [reportDescription, setReportDescription] = useState('');
   const [isSubmittingReport, setIsSubmittingReport] = useState(false);
+  const [series, setSeries] = useState<any[]>([]);
+
+  const fetchSeries = async () => {
+    try {
+      if(username) {
+        const res = await api.get(`/series/creator/${username}`);
+        setSeries(res.data.series || []);
+      }
+    } catch (error) {}
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -137,27 +137,8 @@ export default function CreatorProfile() {
     if (!username || username === 'undefined') return; 
     
     fetchProfileAndPosts(false);
-  }, [username]);
-
-  // Estado para guardar las series
-  const [series, setSeries] = useState<any[]>([]);
-
-  // Función para extraer los cursos del backend
-  const fetchSeries = async () => {
-    try {
-      // Reemplaza params.username por como sea que estés obteniendo el nombre de la URL
-      const res = await api.get(`/series/creator/${params.username}`);
-      setSeries(res.data.series || []);
-    } catch (error) {
-      console.error("Error cargando la academia:", error);
-    }
-  };
-
-  // Inyecta fetchSeries() adentro de tu useEffect principal para que cargue al entrar a la página
-  useEffect(() => {
-    // ... tus otras cargas (fetchProfile, etc.)
     fetchSeries();
-  }, [params.username]);
+  }, [username]);
 
   useEffect(() => {
     if (!isLoading && posts.length > 0) {
@@ -165,17 +146,14 @@ export default function CreatorProfile() {
       if (hash && hash.startsWith('#post-')) {
         const hashWithoutHash = hash.substring(1); 
         const parts = hashWithoutHash.split('-comment-');
-        
         const firstPart = parts[0] || '';
         const postIdRaw = firstPart.replace('post-', '');
         const commentIdRaw = parts[1] || null; 
         
         setExpandedComments(prev => ({ ...prev, [postIdRaw]: true }));
-
         setTimeout(() => {
           const targetId = commentIdRaw ? `comment-${commentIdRaw}` : `post-${postIdRaw}`;
           const element = document.getElementById(targetId);
-          
           if (element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             element.classList.add('ring-4', 'ring-red-500', 'shadow-[0_0_40px_rgba(239,68,68,0.8)]', 'bg-red-500/10');
@@ -202,6 +180,7 @@ export default function CreatorProfile() {
       
       const postsData = await postService.getCreatorPosts(username as string);
       setPosts(postsData.posts || []);
+      // 🔥 FORZAMOS LA ACTUALIZACIÓN INMEDIATA DEL ESTADO SUSCRITO
       setIsSubscribed(postsData.isSubscribed); 
 
       try {
@@ -240,14 +219,14 @@ export default function CreatorProfile() {
       
       if (data.success || data.receipt) {
         alert(t('alert_sub_success'));
+        setIsSubscribed(true); // 🔥 ACTUALIZACIÓN OPTIMISTA INMEDIATA
         fetchProfileAndPosts(true);
       } else {
         setClientSecret(data.clientSecret);
-        setPendingPayment({ price: creator?.creatorProfile?.monthlyPrice || 0 });
+        setPendingPayment({ price: creator?.creatorProfile?.monthlyPrice || 0, isSubscription: true });
         setIsPaymentModalOpen(true);
       }
     } catch (error: any) { 
-      // 🔥 AHORA LEE EL ERROR REAL DE LA BÓVEDA
       const mensajeReal = error.response?.data?.error || error.message || t('alert_sub_error');
       alert(`❌ ${mensajeReal}`);
     }
@@ -272,7 +251,6 @@ export default function CreatorProfile() {
         setIsPaymentModalOpen(true);
       }
     } catch (error: any) { 
-      // 🔥 AHORA LEE EL ERROR REAL DE LA BÓVEDA
       const mensajeReal = error.response?.data?.error || error.message || t('alert_payment_error');
       alert(`❌ ${mensajeReal}`);
     }
@@ -299,7 +277,6 @@ export default function CreatorProfile() {
         setIsPaymentModalOpen(true);
       }
     } catch (error: any) { 
-      // 🔥 AHORA LEE EL ERROR REAL DE LA BÓVEDA
       const mensajeReal = error.response?.data?.error || error.message || t('alert_payment_error');
       alert(`❌ ${mensajeReal}`);
     }
@@ -311,17 +288,12 @@ export default function CreatorProfile() {
       await api.delete(`/posts/${postId}`);
       alert(t('alert_post_deleted'));
       fetchProfileAndPosts(true);
-    } catch (error) {
-      alert(t('alert_delete_post_error'));
-    }
+    } catch (error) { alert(t('alert_delete_post_error')); }
   };
 
   const handleReact = async (postId: string, emoji: string) => {
     if (!currentUser) return;
-    try {
-      await api.post(`/posts/${postId}/like`, { emoji });
-      fetchProfileAndPosts(true); 
-    } catch (error) { console.error("Error:", error); }
+    try { await api.post(`/posts/${postId}/like`, { emoji }); fetchProfileAndPosts(true); } catch (error) {}
   };
 
   const submitComment = async (postId: string) => {
@@ -336,7 +308,6 @@ export default function CreatorProfile() {
           finalContent = `@${parentComment.user.username} ${commentText}`;
         }
       }
-
       await api.post(`/posts/${postId}/comment`, { content: finalContent, parentId: replyingToCommentId });
       setCommentText(''); setCommentingPostId(null); setReplyingToCommentId(null);
       setExpandedComments(prev => ({...prev, [postId]: true}));
@@ -364,21 +335,11 @@ export default function CreatorProfile() {
     if (!reportReason) { alert(t('alert_report_reason')); return; }
     setIsSubmittingReport(true);
     try {
-      await api.post('/reports', {
-        type: 'USER',
-        reportedUserId: creator.id,
-        reason: reportReason,
-        description: reportDescription
-      });
+      await api.post('/reports', { type: 'USER', reportedUserId: creator.id, reason: reportReason, description: reportDescription });
       alert(t('alert_report_success'));
-      setIsReportModalOpen(false);
-      setReportReason('');
-      setReportDescription('');
-    } catch (error) {
-      alert(t('alert_report_error'));
-    } finally {
-      setIsSubmittingReport(false);
-    }
+      setIsReportModalOpen(false); setReportReason(''); setReportDescription('');
+    } catch (error) { alert(t('alert_report_error')); } 
+    finally { setIsSubmittingReport(false); }
   };
 
   const buildCommentTree = (comments: any[]) => {
@@ -395,7 +356,6 @@ export default function CreatorProfile() {
     return roots;
   };
 
-  // 🔥 LÓGICA DE FILTRADO DE TABS
   const filteredPosts = posts.filter(post => {
     if (activeTab === 'all') return true;
     const hasMedia = post.mediaUrl && post.mediaUrl !== 'null';
@@ -417,13 +377,7 @@ export default function CreatorProfile() {
   return (
     <AppLayout>
       <div className="min-h-screen pb-20 bg-nm-base relative">
-        
-        {/* CABECERA (PORTADA) */}
-        <div 
-          className="h-48 sm:h-72 w-full relative bg-[#0a0a0a] select-none" 
-          style={profile.coverImage ? { backgroundImage: `url(${getImageUrl(profile.coverImage)})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
-          onContextMenu={(e) => e.preventDefault()}
-        >
+        <div className="h-48 sm:h-72 w-full relative bg-[#0a0a0a] select-none" style={profile.coverImage ? { backgroundImage: `url(${getImageUrl(profile.coverImage)})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}} onContextMenu={(e) => e.preventDefault()}>
           {!profile.coverImage && <div className="absolute inset-0 bg-gradient-to-br from-teal-900/20 to-blue-900/20"></div>}
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none"></div> 
           <button onClick={() => router.back()} className="absolute top-4 left-4 bg-black/40 backdrop-blur-md border border-white/10 text-white px-5 py-2.5 rounded-full z-20 flex items-center gap-2 font-bold text-sm hover:bg-white/10 transition-colors">
@@ -432,17 +386,11 @@ export default function CreatorProfile() {
         </div>
 
         <main className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 -mt-16 sm:-mt-20">
-          
-          {/* 🔥 1. AVATAR FLOTANTE Y CABECERA REDISEÑADA */}
           <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-end mb-8 gap-4">
             <div className="flex flex-col items-start relative">
-              <div 
-                className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-[6px] border-[#050505] shadow-2xl flex items-center justify-center text-white text-5xl font-black bg-[#0a0a0a] relative overflow-hidden shrink-0 z-10 nm-inset select-none ${profile.isVerified ? 'shadow-[0_0_30px_rgba(20,184,166,0.3)]' : ''}`}
-                onContextMenu={(e) => e.preventDefault()}
-              >
+              <div className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-[6px] border-[#050505] shadow-2xl flex items-center justify-center text-white text-5xl font-black bg-[#0a0a0a] relative overflow-hidden shrink-0 z-10 nm-inset select-none ${profile.isVerified ? 'shadow-[0_0_30px_rgba(20,184,166,0.3)]' : ''}`} onContextMenu={(e) => e.preventDefault()}>
                 {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase().charAt(0)}</span>}
               </div>
-              
               <div className="mt-3 px-2">
                 <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-2 drop-shadow-md">
                   {creator.name || creator.username}
@@ -453,18 +401,13 @@ export default function CreatorProfile() {
               </div>
             </div>
             
-            {/* 🔥 2. BOTONES DE ACCIÓN (CTAs) ADAPTATIVOS */}
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-              
-              {/* 🌟 INSIGNIA Y BOTÓN DE EDITAR SI EL PERFIL VISITADO ES DE UN FAN */}
               {creator.role === 'FAN' && (
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="nm-inset px-6 py-3.5 rounded-2xl border border-teal-500/30 flex items-center gap-2 bg-teal-500/5 shadow-[0_0_15px_rgba(20,184,166,0.1)]">
                     <Star className="w-5 h-5 text-teal-400 fill-teal-400/20" /> 
                     <span className="text-sm font-bold text-teal-400 uppercase tracking-widest">Verified Fan</span>
                   </div>
-                  
-                  {/* ⚙️ BOTÓN DE EDITAR (Solo lo ve el dueño de la cuenta) */}
                   {isOwnerOrAdmin && (
                     <button onClick={() => router.push('/dashboard/profile')} className="nm-inset px-6 py-3.5 rounded-2xl border border-white/5 flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
                       <Settings className="w-4 h-4" /> <span className="text-sm font-bold">Editar Foto</span>
@@ -473,7 +416,6 @@ export default function CreatorProfile() {
                 </div>
               )}
 
-              {/* 💰 BOTONES DE MONETIZACIÓN (Solo si es Creador o Admin) */}
               {(creator.role === 'CREATOR' || creator.role === 'ADMIN') && (
                 <>
                   {(!isOwnerOrAdmin) ? (
@@ -497,28 +439,21 @@ export default function CreatorProfile() {
                       {currentUser?.role !== 'ADMIN' && (
                         <button 
                           onClick={handleFollowToggle}
-                          className={`font-bold py-3.5 px-5 rounded-2xl transition-all flex items-center justify-center flex-1 sm:w-auto ${
-                            isFollowing ? 'nm-inset text-teal-400 border border-teal-500/30' : 'bg-[#151515] border border-white/5 text-gray-300 hover:text-white hover:border-white/20 shadow-md'
-                          }`}
+                          className={`font-bold py-3.5 px-5 rounded-2xl transition-all flex items-center justify-center flex-1 sm:w-auto ${isFollowing ? 'nm-inset text-teal-400 border border-teal-500/30' : 'bg-[#151515] border border-white/5 text-gray-300 hover:text-white hover:border-white/20 shadow-md'}`}
                           title={isFollowing ? t('btn_unfollow') : t('btn_follow_free')}
                         >
                           {isFollowing ? <CheckCircle2 className="w-5 h-5"/> : <Plus className="w-5 h-5"/>}
                         </button>
                       )}
-                      
                       <button onClick={handleMessageClick} title={t('btn_send_message')} className="bg-[#151515] border border-white/5 text-gray-300 hover:text-teal-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
                         <MessageCircle className="w-5 h-5" />
                       </button>
-                      
                       {currentUser?.role !== 'ADMIN' && (
                         <>
                           <button onClick={() => { setTipRecipient(creator); setIsTipModalOpen(true); }} title={t('btn_tip')} className="bg-[#151515] border border-white/5 text-gray-300 hover:text-green-400 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
                             <Coins className="w-5 h-5" />
                           </button>
-                          <button onClick={() => {
-                            if(!currentUser) { alert(t('alert_login_report')); router.push('/auth'); return; }
-                            setIsReportModalOpen(true);
-                          }} title={t('btn_report_user')} className="bg-[#151515] border border-white/5 text-gray-500 hover:text-red-500 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
+                          <button onClick={() => { if(!currentUser) { alert(t('alert_login_report')); router.push('/auth'); return; } setIsReportModalOpen(true); }} title={t('btn_report_user')} className="bg-[#151515] border border-white/5 text-gray-500 hover:text-red-500 font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-md">
                             <Flag className="w-4 h-4" />
                           </button>
                         </>
@@ -530,11 +465,8 @@ export default function CreatorProfile() {
             </div>
           </div>
 
-          {/* 🔥 3. PANEL DE ESTADÍSTICAS NEUMÓRFICO Y BIO */}
           <div className="mb-10 bg-[#0a0a0a] nm-inset rounded-[2rem] border border-white/5 relative overflow-hidden shadow-2xl p-1">
             <div className="p-6 md:p-8">
-              
-              {/* OCULTAR NÚMEROS DE POSTS/FANS SI ES FAN */}
               {creator.role !== 'FAN' && (
                 <div className="flex gap-10 text-sm font-bold text-gray-300 border-b border-white/10 pb-6">
                   <div className="flex flex-col items-center">
@@ -547,12 +479,9 @@ export default function CreatorProfile() {
                   </div>
                 </div>
               )}
-              
               <p className={`text-gray-300 whitespace-pre-wrap text-base leading-relaxed font-medium ${creator.role !== 'FAN' ? 'pt-6' : ''}`}>
                 {profile.bio || t('lbl_bio_fallback')}
               </p>
-
-              {/* 🔥 4. PÍLDORAS SOCIALES */}
               {(profile.instagram || profile.twitter || profile.website) && (
                 <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-white/10">
                   {profile.instagram && (
@@ -575,10 +504,8 @@ export default function CreatorProfile() {
             </div>
           </div>
 
-          {/* 🛡️ SECCIÓN EXCLUSIVA PARA CREADORES (Oculta para fans) */}
           {(creator.role === 'CREATOR' || creator.role === 'ADMIN') && (
             <>
-              {/* PAQUETES EN OFERTA CON MINI GALERÍA INTERACTIVA */}
               {bundles.length > 0 && (
                 <div className="mb-12 space-y-6 animate-fade-in">
                   <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2">
@@ -587,65 +514,46 @@ export default function CreatorProfile() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {bundles.map(bundle => {
                       const isPurchased = bundle.hasAccess || bundle.isPurchased; 
-
                       return (
-                        <div 
-                          key={bundle.id} 
-                          onClick={() => { if (!isOwnerOrAdmin && !isPurchased) handleBuyBundle(bundle); }} 
-                          className={`bg-[#0a0a0a] p-6 rounded-3xl border border-white/5 group flex flex-col h-full transition-colors shadow-lg ${
-                            isPurchased ? 'cursor-default border-green-500/20 shadow-[inset_0_0_20px_rgba(34,197,94,0.05)] nm-inset' : 'cursor-pointer hover:border-teal-500/30 hover:shadow-[0_10px_30px_rgba(20,184,166,0.1)]'
-                          }`}
-                        >
+                        <div key={bundle.id} onClick={() => { if (!isOwnerOrAdmin && !isPurchased) handleBuyBundle(bundle); }} className={`bg-[#0a0a0a] p-6 rounded-3xl border border-white/5 group flex flex-col h-full transition-colors shadow-lg ${isPurchased ? 'cursor-default border-green-500/20 shadow-[inset_0_0_20px_rgba(34,197,94,0.05)] nm-inset' : 'cursor-pointer hover:border-teal-500/30 hover:shadow-[0_10px_30px_rgba(20,184,166,0.1)]'}`}>
                           <h3 className="text-xl font-bold text-white">{bundle.title}</h3>
                           <p className="text-sm text-gray-500 mt-2 mb-4 line-clamp-2">{bundle.description}</p>
-                          
                           {bundle.posts && bundle.posts.length > 0 && (
                             <div className="flex items-center gap-3 mb-6">
                               <div className="flex -space-x-3">
-                                {bundle.posts.slice(0, 3).map((p: any, i: number) => (
+                                {bundle.posts.slice(0, 3).map((p: any, i: number) => {
+                                  // 🔥 PARSEO SEGURO PARA BUNDLES (Pueden venir de JSON)
+                                  let firstMediaUrl = null;
+                                  if (p.mediaUrl) {
+                                    try {
+                                      const parsed = JSON.parse(p.mediaUrl);
+                                      firstMediaUrl = Array.isArray(parsed) ? parsed : parsed;
+                                    } catch(e) { firstMediaUrl = p.mediaUrl; }
+                                  }
+
+                                  return (
                                   <div key={i} className="w-12 h-12 rounded-lg nm-inset border border-white/10 overflow-hidden relative" style={{ zIndex: 3 - i }}>
-                                    {p.mediaUrl ? (
-                                      <img 
-                                        src={getImageUrl(p.mediaUrl)} 
-                                        className={`w-full h-full object-cover transition-all ${!isPurchased && !isOwnerOrAdmin ? 'blur-md opacity-60 scale-125' : 'blur-0 opacity-100 cursor-pointer hover:scale-110'}`} 
-                                        alt="Media" 
-                                        draggable="false"
-                                        onContextMenu={(e) => e.preventDefault()}
-                                        onClick={(e) => {
-                                          if (isPurchased || isOwnerOrAdmin) {
-                                            e.stopPropagation();
-                                            setExpandedImage({ url: getImageUrl(p.mediaUrl, creator?.username), username: creator?.username });
-                                          }
-                                        }}
-                                      />
-                                    ) : (
-                                      <div className="w-full h-full bg-teal-900/20"></div>
-                                    )}
+                                    {firstMediaUrl ? (
+                                      <img src={getImageUrl(firstMediaUrl)} className={`w-full h-full object-cover transition-all ${!isPurchased && !isOwnerOrAdmin ? 'blur-md opacity-60 scale-125' : 'blur-0 opacity-100 cursor-pointer hover:scale-110'}`} alt="Media" draggable="false" onContextMenu={(e) => e.preventDefault()} onClick={(e) => { if (isPurchased || isOwnerOrAdmin) { e.stopPropagation(); setExpandedGallery({ urls: [firstMediaUrl], currentIndex: 0, username: creator?.username }); } }} />
+                                    ) : ( <div className="w-full h-full bg-teal-900/20"></div> )}
                                   </div>
-                                ))}
+                                  );
+                                })}
                                 {bundle.posts.length > 3 && (
-                                  <div className="w-12 h-12 rounded-lg nm-inset border border-white/10 bg-black/80 flex items-center justify-center text-xs font-bold text-white z-0">
-                                    +{bundle.posts.length - 3}
-                                  </div>
+                                  <div className="w-12 h-12 rounded-lg nm-inset border border-white/10 bg-black/80 flex items-center justify-center text-xs font-bold text-white z-0">+{bundle.posts.length - 3}</div>
                                 )}
                               </div>
                               {!isPurchased && !isOwnerOrAdmin && (
-                                <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest flex items-center gap-1 bg-red-500/10 px-2 py-1 rounded">
-                                  <Lock className="w-3 h-3"/> {t('lbl_hidden')}
-                                </span>
+                                <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest flex items-center gap-1 bg-red-500/10 px-2 py-1 rounded"><Lock className="w-3 h-3"/> {t('lbl_hidden')}</span>
                               )}
                             </div>
                           )}
-
                           <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
                             <span className="text-xs font-bold text-teal-400 nm-inset px-3 py-1.5 rounded-md border border-teal-500/20">{bundle.posts?.length} {t('lbl_files')}</span>
-                            
                             {isOwnerOrAdmin ? (
                               <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors">{t('btn_view_bundle')}</button>
                             ) : isPurchased ? (
-                              <button className="nm-inset border border-green-500/30 text-green-500 py-2.5 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-bold cursor-default" onClick={(e) => e.stopPropagation()}>
-                                <CheckCircle2 className="w-4 h-4" /> {t('btn_acquired')}
-                              </button>
+                              <button className="nm-inset border border-green-500/30 text-green-500 py-2.5 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-bold cursor-default" onClick={(e) => e.stopPropagation()}><CheckCircle2 className="w-4 h-4" /> {t('btn_acquired')}</button>
                             ) : (
                               <button className="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors shadow-lg shadow-teal-500/20">{t('btn_buy')} ${(bundle.price || 0).toFixed(2)}</button>
                             )}
@@ -657,7 +565,6 @@ export default function CreatorProfile() {
                 </div>
               )}
 
-              {/* 🔥 5. TABS DE FILTRO CON LA ACADEMIA INCLUIDA */}
               {(posts.length > 0 || series?.length > 0) && (
                 <div className="flex overflow-x-auto custom-scrollbar gap-2 mb-6 pb-2">
                   <button onClick={() => setActiveTab('series')} className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${activeTab === 'series' ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.4)]' : 'bg-[#151515] text-gray-400 hover:text-white border border-white/5'}`}>
@@ -678,14 +585,10 @@ export default function CreatorProfile() {
                 </div>
               )}
 
-              {/* 🔥 6. VITRINA DE LA ACADEMIA VIP */}
               {activeTab === 'series' && (
-                <div className="mb-10 animate-fade-in">
-                  <SeriesTab series={series} onPurchaseSuccess={fetchSeries} />
-                </div>
+                <div className="mb-10 animate-fade-in"><SeriesTab series={series} onPurchaseSuccess={fetchSeries} /></div>
               )}
 
-              {/* EL RESTO DE LOS POSTS EN EL MURO */}
               {activeTab !== 'series' && (
                 <div className="space-y-6">
                   {filteredPosts.length === 0 ? <div className="text-center text-gray-500 py-16 nm-inset rounded-[2rem] border border-white/5 font-medium">{t('lbl_empty_category')}</div> : (
@@ -695,6 +598,18 @@ export default function CreatorProfile() {
                       const totalComments = post._count?.comments || 0;
                       const isExpanded = expandedComments[post.id] || false;
                       const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
+
+                      // 🔥 EL PARSEO DE IMÁGENES SALVA-VIDAS
+                      let mediaUrls: string[] = [];
+                      if (post.mediaUrl) {
+                        try {
+                          const parsed = JSON.parse(post.mediaUrl);
+                          if (Array.isArray(parsed)) mediaUrls = parsed;
+                          else mediaUrls = [post.mediaUrl];
+                        } catch (e) {
+                          mediaUrls = [post.mediaUrl];
+                        }
+                      }
 
                       return !isPostUnlocked ? (
                         <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 relative overflow-hidden border border-white/5 shadow-xl">
@@ -713,11 +628,11 @@ export default function CreatorProfile() {
                           </div>
                           
                           <div className="w-full h-80 rounded-2xl flex flex-col items-center justify-center relative border border-white/5 mt-4 overflow-hidden group nm-inset">
-                            {post.mediaUrl && (
-                              post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                                <video src={getImageUrl(post.mediaUrl)} onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                            {mediaUrls.length > 0 && (
+                              mediaUrls[0].match(/\.(mp4|mov|webm)$/i) ? (
+                                <video src={getImageUrl(mediaUrls[0])} onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
                               ) : (
-                                <img src={getImageUrl(post.mediaUrl)} alt="Contenido Oculto" draggable="false" onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
+                                <img src={getImageUrl(mediaUrls[0])} alt="Contenido Oculto" draggable="false" onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 select-none pointer-events-none" />
                               )
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
@@ -740,13 +655,7 @@ export default function CreatorProfile() {
                         <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 transition-all duration-500 bg-[#0a0a0a] p-6 rounded-[2rem] space-y-5 border border-white/5 shadow-xl relative">
                           
                           {isOwnerOrAdmin && (
-                            <button 
-                              onClick={() => handleDeletePost(post.id)}
-                              className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20"
-                              title={t('btn_delete_post')}
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
+                            <button onClick={() => handleDeletePost(post.id)} className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20" title={t('btn_delete_post')}><Trash2 className="w-5 h-5" /></button>
                           )}
 
                           <div className="flex justify-between items-center pr-12">
@@ -768,17 +677,42 @@ export default function CreatorProfile() {
                           </div>
                           {post.content && <p className="text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{post.content}</p>}
                           
-                          {post.mediaUrl && (
-                            <div className="mt-4 rounded-2xl overflow-hidden border border-white/5 nm-inset relative bg-black/50 flex justify-center">
-                              {post.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
-                                <video controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(post.mediaUrl)} className="w-full h-auto object-cover max-h-[600px] shadow-md select-none" onContextMenu={(e) => e.preventDefault()} />
-                              ) : post.mediaUrl.match(/\.(mp3|wav|ogg)$/i) ? (
-                                <div className="w-full p-6 flex justify-center bg-white/5">
-                                  <audio controls src={getImageUrl(post.mediaUrl)} className="w-full max-w-md outline-none" />
-                                </div>
-                              ) : (
-                                <img src={getImageUrl(post.mediaUrl)} alt="Exclusivo" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-auto object-cover max-h-[600px] cursor-pointer" onClick={() => setExpandedImage({ url: getImageUrl(post.mediaUrl, post.user?.username), username: post.user?.username })} />
-                              )}
+                          {/* 🔥 SMART GRID INYECTADO */}
+                          {mediaUrls.length > 0 && (
+                            <div className={`mt-4 rounded-2xl overflow-hidden nm-inset border border-white/5 relative bg-black/50 grid gap-1 ${
+                              mediaUrls.length === 1 ? 'grid-cols-1' : 
+                              mediaUrls.length === 2 ? 'grid-cols-2' : 
+                              mediaUrls.length === 3 ? 'grid-cols-2' : 
+                              mediaUrls.length === 4 ? 'grid-cols-2' : 
+                              'grid-cols-6'
+                            }`}>
+                              {mediaUrls.map((url, idx) => {
+                                const isVideo = url.match(/\.(mp4|mov|webm)$/i);
+                                
+                                let itemStyle = 'w-full h-full object-cover bg-black ';
+                                if (mediaUrls.length === 1) itemStyle += 'max-h-[70vh] sm:max-h-[600px] object-contain';
+                                else if (mediaUrls.length === 2) itemStyle += 'aspect-[3/4] sm:aspect-square';
+                                else if (mediaUrls.length === 3) itemStyle += idx === 0 ? 'col-span-2 aspect-[2/1] sm:aspect-[21/9]' : 'col-span-1 aspect-square';
+                                else if (mediaUrls.length === 4) itemStyle += 'col-span-1 aspect-square';
+                                else if (mediaUrls.length === 5) itemStyle += idx < 2 ? 'col-span-3 aspect-[4/3]' : 'col-span-2 aspect-square';
+
+                                return isVideo ? (
+                                  <video key={idx} onContextMenu={(e) => e.preventDefault()} controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(url)} className={itemStyle} />
+                                ) : url.match(/\.(mp3|wav|ogg)$/i) ? (
+                                  <div key={idx} className="w-full p-6 flex justify-center bg-white/5 col-span-full">
+                                    <audio controls src={getImageUrl(url)} className="w-full max-w-md outline-none" />
+                                  </div>
+                                ) : (
+                                  <img 
+                                    key={idx} 
+                                    src={getImageUrl(url, post.user?.username)} 
+                                    draggable="false" 
+                                    onContextMenu={(e) => e.preventDefault()} 
+                                    className={`${itemStyle} cursor-pointer hover:opacity-90 transition-opacity`} 
+                                    onClick={() => setExpandedGallery({ urls: mediaUrls, currentIndex: idx, username: post.user?.username })} 
+                                  />
+                                );
+                              })}
                             </div>
                           )}
 
@@ -790,28 +724,20 @@ export default function CreatorProfile() {
                                     const isSelected = post.myReaction === emoji;
                                     const count = post.reactionCounts ? (post.reactionCounts[emoji] || 0) : 0;
                                     return (
-                                      <button 
-                                        key={emoji}
-                                        onClick={() => handleReact(post.id, emoji)}
-                                        className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}
-                                      >
+                                      <button key={emoji} onClick={() => handleReact(post.id, emoji)} className={`flex items-center gap-1 transition-all duration-300 hover:scale-110 ${isSelected ? 'scale-110 opacity-100 grayscale-0 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}>
                                         <span className="text-xl">{emoji}</span>
                                         {count > 0 && <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-400'}`}>{count}</span>}
                                       </button>
                                     );
                                   })}
                                 </div>
-                                
                                 <button onClick={() => setCommentingPostId(commentingPostId === post.id ? null : post.id)} className={`flex items-center gap-1.5 font-bold transition-all px-4 py-2.5 rounded-full bg-white/5 border border-white/10 ${commentingPostId === post.id ? 'text-teal-500 border-teal-500/30' : 'text-gray-400 hover:text-teal-400 hover:border-white/20'}`}>
-                                  <MessageCircle className="w-4 h-4" />
-                                  <span className="text-sm">{totalComments}</span>
+                                  <MessageCircle className="w-4 h-4" /> <span className="text-sm">{totalComments}</span>
                                 </button>
                               </div>
-                              
                               {(!isOwnerOrAdmin) && (
                                 <button onClick={() => { setTipRecipient(post.user); setIsTipModalOpen(true); }} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 font-bold transition-colors">
-                                  <Coins className="w-5 h-5" />
-                                  <span className="text-sm hidden sm:inline">{t('btn_tip')}</span>
+                                  <Coins className="w-5 h-5" /> <span className="text-sm hidden sm:inline">{t('btn_tip')}</span>
                                 </button>
                               )}
                             </div>
@@ -825,21 +751,8 @@ export default function CreatorProfile() {
                                   </div>
                                 )}
                                 <div className="flex gap-2">
-                                  <input 
-                                    type="text" 
-                                    value={commentText} 
-                                    onChange={(e) => setCommentText(e.target.value)} 
-                                    placeholder={t('ph_comment')} 
-                                    className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-teal-500/50" 
-                                    onKeyDown={(e) => e.key === 'Enter' && submitComment(post.id)}
-                                  />
-                                  <button 
-                                    onClick={() => submitComment(post.id)} 
-                                    disabled={isSubmittingComment || !commentText.trim()} 
-                                    className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white hover:bg-teal-500 transition-colors shrink-0 disabled:opacity-50"
-                                  >
-                                    <Send className="w-4 h-4" />
-                                  </button>
+                                  <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ph_comment')} className="flex-1 bg-black/50 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white outline-none focus:border-teal-500/50" onKeyDown={(e) => e.key === 'Enter' && submitComment(post.id)}/>
+                                  <button onClick={() => submitComment(post.id)} disabled={isSubmittingComment || !commentText.trim()} className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white hover:bg-teal-500 transition-colors shrink-0 disabled:opacity-50"><Send className="w-4 h-4" /></button>
                                 </div>
                               </div>
                             )}
@@ -847,22 +760,10 @@ export default function CreatorProfile() {
                             {totalComments > 0 && (
                                <div className="space-y-1 mt-4">
                                  {visibleComments.map((comment: any) => (
-                                    <CommentNode 
-                                      key={comment.id} 
-                                      comment={comment} 
-                                      postId={post.id} 
-                                      currentUser={currentUser}
-                                      onReply={handleReplyClick} 
-                                      onDelete={handleDeleteComment}
-                                      isExpanded={isExpanded}
-                                    />
+                                    <CommentNode key={comment.id} comment={comment} postId={post.id} currentUser={currentUser} onReply={handleReplyClick} onDelete={handleDeleteComment} isExpanded={isExpanded}/>
                                  ))}
-
                                  {totalComments > 3 && (
-                                   <button 
-                                     onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))}
-                                     className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left transition-colors"
-                                   >
+                                   <button onClick={() => setExpandedComments(prev => ({...prev, [post.id]: !prev[post.id]}))} className="text-xs text-gray-500 font-bold mt-2 hover:text-white pt-2 w-full text-left transition-colors">
                                      {isExpanded ? t('btn_hide_comments') : t('btn_view_comments', { count: totalComments })}
                                    </button>
                                  )}
@@ -877,160 +778,123 @@ export default function CreatorProfile() {
               )}
             </>
           )}
-
         </main>
 
         {/* MODAL DE PROPINAS */}
         {isTipModalOpen && tipRecipient && (
-          <TipModal 
-            creatorName={tipRecipient.username} 
-            onClose={() => setIsTipModalOpen(false)} 
-            onContinue={async (amount, message) => { 
-              setIsTipModalOpen(false); 
-              try { 
-                const res = await api.post('/payments/create-intent', { 
-                  amount: Number(amount),
-                  type: 'TIP', 
-                  creatorId: tipRecipient.id, 
-                  description: `${t('lbl_tip_of')} $${amount}: ${message}` 
-                }); 
-
-                // 1. Si se pagó exitosamente con el saldo de la billetera
-                if (res.data.success || res.data.receipt) { 
-                  alert(t('alert_tip_success')); 
-
-                  const saldoActual = parseFloat(currentUser.walletBalance) || 0;
-                  const nuevoSaldo = saldoActual - Number(amount);
-                  
-                  const usuarioActualizado = { ...currentUser, walletBalance: nuevoSaldo };
-                  setCurrentUser(usuarioActualizado);
-                  localStorage.setItem('user', JSON.stringify(usuarioActualizado));
-                  
-                  window.dispatchEvent(new CustomEvent('covraPayBalanceUpdate', { 
-                    detail: nuevoSaldo 
-                  }));
-
-                  fetchProfileAndPosts(true); 
-                } 
-                // 2. 🔥 SOLUCIÓN: Si no hay saldo, abrimos la pasarela de pago (PaymentModal)
-                else if (res.data.clientSecret) {
-                  setClientSecret(res.data.clientSecret);
-                  setPendingPayment({ price: amount });
-                  setIsPaymentModalOpen(true);
-                }
-              } catch (error) { 
-                console.error("Error al enviar propina:", error);
-                alert(t('alert_tip_error')); 
-              } 
-            }} 
-          />
+          <TipModal creatorName={tipRecipient.username} onClose={() => setIsTipModalOpen(false)} onContinue={async (amount, message) => { setIsTipModalOpen(false); try { const res = await api.post('/payments/create-intent', { amount: Number(amount), type: 'TIP', creatorId: tipRecipient.id, description: `${t('lbl_tip_of')} $${amount}: ${message}` }); if (res.data.success || res.data.receipt) { alert(t('alert_tip_success')); const saldoActual = parseFloat(currentUser.walletBalance) || 0; const nuevoSaldo = saldoActual - Number(amount); const usuarioActualizado = { ...currentUser, walletBalance: nuevoSaldo }; setCurrentUser(usuarioActualizado); localStorage.setItem('user', JSON.stringify(usuarioActualizado)); window.dispatchEvent(new CustomEvent('covraPayBalanceUpdate', { detail: nuevoSaldo })); fetchProfileAndPosts(true); } else if (res.data.clientSecret) { setClientSecret(res.data.clientSecret); setPendingPayment({ price: amount }); setIsPaymentModalOpen(true); } } catch (error) { alert(t('alert_tip_error')); } }} />
         )}
         
         {/* MODAL DE PAGOS */}
         {isPaymentModalOpen && clientSecret && (
-          <PaymentModal 
-            clientSecret={clientSecret} 
-            price={pendingPayment?.price || 0} 
-            creatorId={creator.id} 
-            onClose={() => setIsPaymentModalOpen(false)} 
-            onSuccess={async () => { 
-              setIsPaymentModalOpen(false); 
-              if (pendingPayment?.isBundle) {
-                try { await api.post('/bundles/purchase', { bundleId: pendingPayment.id }); } catch(e){}
-              }
-              alert(t('alert_payment_success')); 
-              fetchProfileAndPosts(true); 
-            }} 
-          />
+          <PaymentModal clientSecret={clientSecret} price={pendingPayment?.price || 0} creatorId={creator.id} onClose={() => setIsPaymentModalOpen(false)} onSuccess={async () => { setIsPaymentModalOpen(false); if (pendingPayment?.isBundle) { try { await api.post('/bundles/purchase', { bundleId: pendingPayment.id }); } catch(e){} } alert(t('alert_payment_success')); if (pendingPayment?.isSubscription) setIsSubscribed(true); fetchProfileAndPosts(true); }} />
         )}
 
-        {/* MODAL DE IMAGEN EXPANDIDA */}
-        {expandedImage && (
-          <div 
-            className="fixed inset-0 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" 
-            style={{ zIndex: 99999 }}
-            onClick={() => setExpandedImage(null)} 
-            onContextMenu={(e) => e.preventDefault()}
-          >
-            <button 
-              onClick={() => setExpandedImage(null)} 
-              className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all border border-white/10" 
-              style={{ zIndex: 100000 }} 
-              title="Cerrar"
-            >
+        {/* 🔥 MODAL DE GALERÍA DESLIZABLE (SWIPE Y FLECHAS) */}
+        {expandedGallery && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in select-none" style={{ zIndex: 99999 }}>
+            
+            {/* BOTÓN CERRAR */}
+            <button onClick={() => setExpandedGallery(null)} className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all border border-white/10" style={{ zIndex: 100000 }} title="Cerrar">
               <X className="w-6 h-6" />
             </button>
             
-            <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-              <img src={expandedImage.url} alt="Exclusivo" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" onContextMenu={(e) => e.preventDefault()} />
-              <div className="absolute inset-0 w-full h-full cursor-default" onContextMenu={(e) => e.preventDefault()} style={{ zIndex: 10 }}></div>
+            {/* CONTADOR DE FOTOS */}
+            {expandedGallery.urls.length > 1 && (
+              <div className="absolute top-6 left-1/2 -translate-x-1/2 text-white font-bold bg-black/50 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10 text-sm tracking-widest" style={{ zIndex: 100000 }}>
+                {expandedGallery.currentIndex + 1} / {expandedGallery.urls.length}
+              </div>
+            )}
+            
+            {/* FLECHA IZQUIERDA (Solo en PC) */}
+            {expandedGallery.urls.length > 1 && (
+              <button onClick={(e) => { e.stopPropagation(); setExpandedGallery(prev => prev ? {...prev, currentIndex: (prev.currentIndex - 1 + prev.urls.length) % prev.urls.length} : null); }} className="absolute left-4 sm:left-10 z-50 p-4 bg-black/50 hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-all hidden sm:block border border-white/10">
+                <ChevronLeft className="w-8 h-8" />
+              </button>
+            )}
+
+            {/* CONTENEDOR CENTRAL TÁCTIL (¡Aquí va tu lógica perfecta!) */}
+            <div 
+              className="relative flex items-center justify-center w-full h-full p-2 sm:p-12" 
+              onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)} 
+              onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)} 
+              onTouchEnd={() => { 
+                if (!touchStart || !touchEnd) return; 
+                const distance = touchStart - touchEnd; 
+                const isLeftSwipe = distance > 50; 
+                const isRightSwipe = distance < -50; 
+                if (isLeftSwipe && expandedGallery.urls.length > 1) { 
+                  setExpandedGallery(prev => prev ? {...prev, currentIndex: (prev.currentIndex + 1) % prev.urls.length} : null); 
+                } 
+                if (isRightSwipe && expandedGallery.urls.length > 1) { 
+                  setExpandedGallery(prev => prev ? {...prev, currentIndex: (prev.currentIndex - 1 + prev.urls.length) % prev.urls.length} : null); 
+                } 
+                setTouchStart(null); 
+                setTouchEnd(null); 
+              }}
+            >
+              {expandedGallery.urls[expandedGallery.currentIndex].match(/\.(mp4|mov|webm)$/i) ? (
+                <video 
+                  src={getImageUrl(expandedGallery.urls[expandedGallery.currentIndex])} 
+                  autoPlay 
+                  controls 
+                  controlsList="nodownload noplaybackrate" 
+                  disablePictureInPicture 
+                  className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] pointer-events-auto transition-transform duration-300" 
+                  onContextMenu={(e) => e.preventDefault()} 
+                />
+              ) : (
+                <img 
+                  src={getImageUrl(expandedGallery.urls[expandedGallery.currentIndex], expandedGallery.username)} 
+                  alt="Imagen" 
+                  className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] pointer-events-auto transition-transform duration-300" 
+                  draggable="false" 
+                  onContextMenu={(e) => e.preventDefault()} 
+                />
+              )}
             </div>
+
+            {/* FLECHA DERECHA (Solo en PC) */}
+            {expandedGallery.urls.length > 1 && (
+              <button onClick={(e) => { e.stopPropagation(); setExpandedGallery(prev => prev ? {...prev, currentIndex: (prev.currentIndex + 1) % prev.urls.length} : null); }} className="absolute right-4 sm:right-10 z-50 p-4 bg-black/50 hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-all hidden sm:block border border-white/10">
+                <ChevronRight className="w-8 h-8" />
+              </button>
+            )}
           </div>
         )}
 
-        {/* NUEVO MODAL DE REPORTES */}
+        {/* MODAL DE REPORTES */}
         {isReportModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
             <div className="bg-[#111] p-6 sm:p-8 rounded-3xl border border-white/10 w-full max-w-md shadow-2xl relative">
-              <button onClick={() => setIsReportModalOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
-                <X className="w-5 h-5" />
-              </button>
-              
+              <button onClick={() => setIsReportModalOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><X className="w-5 h-5" /></button>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 shrink-0">
-                  <AlertTriangle className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-black text-white">{t('title_report_user')}</h3>
-                  <p className="text-xs text-gray-400">@{creator?.username}</p>
-                </div>
+                <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 shrink-0"><AlertTriangle className="w-6 h-6" /></div>
+                <div><h3 className="text-xl font-black text-white">{t('title_report_user')}</h3><p className="text-xs text-gray-400">@{creator?.username}</p></div>
               </div>
-
               <div className="space-y-4">
                 <div>
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">{t('lbl_main_reason')}</label>
-                  <select 
-                    value={reportReason} 
-                    onChange={(e) => setReportReason(e.target.value)} 
-                    className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-red-500 transition-colors"
-                  >
+                  <select value={reportReason} onChange={(e) => setReportReason(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-red-500 transition-colors">
                     <option value="">{t('ph_select_reason')}</option>
-                    <option value="SPAM">{t('rep_spam')}</option>
-                    <option value="FRAUD">{t('rep_fraud')}</option>
-                    <option value="HARASSMENT">{t('rep_harassment')}</option>
-                    <option value="INAPPROPRIATE">{t('rep_inappropriate')}</option>
-                    <option value="OTHER">{t('rep_other')}</option>
+                    <option value="SPAM">{t('rep_spam')}</option><option value="FRAUD">{t('rep_fraud')}</option>
+                    <option value="HARASSMENT">{t('rep_harassment')}</option><option value="INAPPROPRIATE">{t('rep_inappropriate')}</option><option value="OTHER">{t('rep_other')}</option>
                   </select>
                 </div>
-
                 <div>
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">{t('lbl_additional_details')}</label>
-                  <textarea 
-                    value={reportDescription} 
-                    onChange={(e) => setReportDescription(e.target.value)} 
-                    placeholder={t('ph_report_desc')}
-                    rows={3}
-                    className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-red-500 resize-none custom-scrollbar transition-colors"
-                  ></textarea>
+                  <textarea value={reportDescription} onChange={(e) => setReportDescription(e.target.value)} placeholder={t('ph_report_desc')} rows={3} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-red-500 resize-none custom-scrollbar transition-colors"></textarea>
                 </div>
-
                 <div className="pt-2">
-                  <button 
-                    onClick={handleSubmitReport}
-                    disabled={isSubmittingReport || !reportReason}
-                    className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
+                  <button onClick={handleSubmitReport} disabled={isSubmittingReport || !reportReason} className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2">
                     {isSubmittingReport ? t('btn_sending') : <><Flag className="w-4 h-4"/> {t('btn_send_report')}</>}
                   </button>
-                  <p className="text-[10px] text-gray-500 text-center mt-3 leading-relaxed">
-                    {t('lbl_report_disclaimer')}
-                  </p>
+                  <p className="text-[10px] text-gray-500 text-center mt-3 leading-relaxed">{t('lbl_report_disclaimer')}</p>
                 </div>
               </div>
             </div>
           </div>
         )}
-
       </div>
     </AppLayout>
   );
