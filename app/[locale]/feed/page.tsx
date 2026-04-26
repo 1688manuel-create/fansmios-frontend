@@ -827,16 +827,28 @@ export default function Feed() {
                 </div>
                 <div className="p-2">
                   {trendingCreators.map((creator, idx) => (
-                    <div key={creator.id} onClick={() => router.push(`/${creator.username}`)} className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 cursor-pointer group">
+                    <div key={creator.id} onClick={() => router.push(`/${creator.username}`)} className={`flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 cursor-pointer group transition-all ${creator.isPromoted ? 'bg-yellow-500/5 border border-yellow-500/20' : ''}`}>
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-yellow-400 to-yellow-600 flex items-center justify-center text-black font-bold border border-yellow-500/50 overflow-hidden shadow-lg">
-                          {creator.creatorProfile?.profileImage ? <img src={getImageUrl(creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" /> : (creator.username || 'U').toUpperCase()}
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-black font-bold overflow-hidden shadow-lg border ${creator.isPromoted ? 'bg-gradient-to-tr from-yellow-400 to-yellow-600 border-yellow-500/50' : 'bg-white/10 border-white/20 text-white'}`}>
+                          {creator.creatorProfile?.profileImage ? (
+                            <img src={getImageUrl(creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
+                          ) : (
+                            (creator.username || 'U').toUpperCase()
+                          )}
                         </div>
                         <div>
-                          <p className="text-white font-bold text-sm flex items-center gap-1">{creator.username || 'Usuario'} {idx === 0 && <Star className="w-3 h-3 text-yellow-500 fill-yellow-500"/>}</p>
+                          <p className="text-white font-bold text-sm flex items-center gap-1.5">
+                            {creator.username || 'Usuario'} 
+                            {/* 🔥 LA MAGIA: Si pagó promoción, le damos su estrella y texto VIP */}
+                            {creator.isPromoted && (
+                              <span className="flex items-center gap-0.5 bg-yellow-500/20 text-yellow-500 text-[9px] px-1.5 py-0.5 rounded-full uppercase tracking-widest border border-yellow-500/30">
+                                <Star className="w-2.5 h-2.5 fill-yellow-500"/> VIP
+                              </span>
+                            )}
+                          </p>
                         </div>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-yellow-500 transition-transform group-hover:translate-x-1" />
+                      <ChevronRight className={`w-4 h-4 transition-transform group-hover:translate-x-1 ${creator.isPromoted ? 'text-yellow-500' : 'text-gray-600 group-hover:text-white'}`} />
                     </div>
                   ))}
                 </div>
