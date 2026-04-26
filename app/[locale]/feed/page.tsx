@@ -570,19 +570,34 @@ export default function Feed() {
                   <div className="w-full pt-2">
                     <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} className="w-full bg-transparent text-white placeholder-gray-500 outline-none resize-none" placeholder={t('ph_new_post')} rows={2}></textarea>
                     
-                    {/* 🔥 LA NUEVA GALERÍA DE PREVISUALIZACIÓN MÚLTIPLE */}
+                    {/* 🔥 LA NUEVA GALERÍA DE PREVISUALIZACIÓN MÚLTIPLE (Grid Inteligente) */}
                     {imagePreviews.length > 0 && (
-                      <div className={`mt-3 grid gap-2 rounded-2xl overflow-hidden border border-white/10 p-2 shadow-lg bg-black ${imagePreviews.length === 1 ? 'grid-cols-1' : imagePreviews.length === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'}`}>
-                        {imagePreviews.map((preview, idx) => (
-                          <div key={idx} className={`relative rounded-xl overflow-hidden border border-white/5 ${imagePreviews.length > 1 ? 'aspect-square' : ''}`}>
-                            {selectedFiles[idx].type.startsWith('video/') ? (
-                              <video src={preview} controls controlsList="nodownload noplaybackrate" disablePictureInPicture className="w-full h-full object-cover max-h-64" />
-                            ) : (
-                              <img src={preview} alt="Preview" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover max-h-64" />
-                            )}
-                            <button onClick={() => removeFile(idx)} className="absolute top-2 right-2 bg-black/80 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors z-10"><X className="w-4 h-4" /></button>
-                          </div>
-                        ))}
+                      <div className={`mt-3 grid gap-1 rounded-2xl overflow-hidden border border-white/10 bg-black ${
+                        imagePreviews.length === 1 ? 'grid-cols-1' : 
+                        imagePreviews.length === 2 ? 'grid-cols-2' : 
+                        imagePreviews.length === 3 ? 'grid-cols-2' : 
+                        imagePreviews.length === 4 ? 'grid-cols-2' : 
+                        'grid-cols-6'
+                      }`}>
+                        {imagePreviews.map((preview, idx) => {
+                          let itemStyle = 'relative overflow-hidden border border-white/5 bg-black w-full h-full ';
+                          if (imagePreviews.length === 1) itemStyle += 'max-h-64';
+                          else if (imagePreviews.length === 2) itemStyle += 'aspect-[3/4] sm:aspect-square';
+                          else if (imagePreviews.length === 3) itemStyle += idx === 0 ? 'col-span-2 aspect-[2/1] sm:aspect-[21/9]' : 'col-span-1 aspect-square';
+                          else if (imagePreviews.length === 4) itemStyle += 'col-span-1 aspect-square';
+                          else if (imagePreviews.length === 5) itemStyle += idx < 2 ? 'col-span-3 aspect-[4/3]' : 'col-span-2 aspect-square';
+
+                          return (
+                            <div key={idx} className={itemStyle}>
+                              {selectedFiles[idx].type.startsWith('video/') ? (
+                                <video src={preview} controls controlsList="nodownload noplaybackrate" disablePictureInPicture className="w-full h-full object-cover" />
+                              ) : (
+                                <img src={preview} alt="Preview" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
+                              )}
+                              <button onClick={() => removeFile(idx)} className="absolute top-2 right-2 bg-black/80 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors z-10"><X className="w-4 h-4" /></button>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -600,7 +615,6 @@ export default function Feed() {
 
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-white/5">
                   <div className="flex flex-wrap gap-2 text-sm font-bold items-center w-full sm:w-auto">
-                    {/* 🔥 INPUT MULTIPLE */}
                     <input type="file" multiple accept="image/*,video/*" ref={fileInputRef} onChange={handleMediaChange} className="hidden" />
                     <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-4 py-2.5 nm-btn text-gray-400 hover:text-white transition-colors"><ImageIcon className="w-4 h-4" /><span className="hidden sm:inline">{t('btn_media')}</span></button>
                     <button onClick={() => setIsPPV(!isPPV)} className={`flex items-center gap-2 px-4 py-2.5 nm-btn transition-colors ${isPPV ? 'text-green-400 border border-green-500/30' : 'text-yellow-500'}`}><Lock className="w-4 h-4" /> <span className="hidden sm:inline">PPV</span></button>
@@ -626,7 +640,6 @@ export default function Feed() {
                   const isExpanded = expandedComments[post.id] || false;
                   const visibleComments = isExpanded ? rootComments : rootComments.slice(0, 3);
 
-                  // 🔥 PARSEO SEGURO DE MEDIA URLS (Soporta posts viejos con 1 string, o nuevos con Array JSON)
                   let mediaUrls: string[] = [];
                   if (post.mediaUrl) {
                     try {
@@ -693,15 +706,36 @@ export default function Feed() {
                           </div>
                         ) : (
                           <>
-                            {/* 🔥 RENDERIZADO DE GALERÍA MÚLTIPLE EN EL FEED */}
+                            {/* 🔥 RENDERIZADO DE GALERÍA MÚLTIPLE INTELIGENTE EN EL FEED */}
                             {mediaUrls.length > 0 && (
-                              <div className={`mt-4 rounded-2xl overflow-hidden nm-inset border border-white/5 relative bg-black/50 grid gap-1 ${mediaUrls.length === 1 ? 'grid-cols-1' : mediaUrls.length === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'}`}>
+                              <div className={`mt-4 rounded-2xl overflow-hidden nm-inset border border-white/5 relative bg-black/50 grid gap-1 ${
+                                mediaUrls.length === 1 ? 'grid-cols-1' : 
+                                mediaUrls.length === 2 ? 'grid-cols-2' : 
+                                mediaUrls.length === 3 ? 'grid-cols-2' : 
+                                mediaUrls.length === 4 ? 'grid-cols-2' : 
+                                'grid-cols-6'
+                              }`}>
                                 {mediaUrls.map((url, idx) => {
                                   const isVideo = url.match(/\.(mp4|mov|webm)$/i);
+                                  
+                                  let itemStyle = 'w-full h-full object-cover bg-black ';
+                                  if (mediaUrls.length === 1) itemStyle += 'max-h-[70vh] sm:max-h-[600px] object-contain';
+                                  else if (mediaUrls.length === 2) itemStyle += 'aspect-[3/4] sm:aspect-square';
+                                  else if (mediaUrls.length === 3) itemStyle += idx === 0 ? 'col-span-2 aspect-[2/1] sm:aspect-[21/9]' : 'col-span-1 aspect-square';
+                                  else if (mediaUrls.length === 4) itemStyle += 'col-span-1 aspect-square';
+                                  else if (mediaUrls.length === 5) itemStyle += idx < 2 ? 'col-span-3 aspect-[4/3]' : 'col-span-2 aspect-square';
+
                                   return isVideo ? (
-                                    <video key={idx} onContextMenu={(e) => e.preventDefault()} controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(url)} className={`w-full h-full object-cover bg-black ${mediaUrls.length === 1 ? 'max-h-[70vh] sm:max-h-[600px] object-contain' : 'aspect-square'}`} />
+                                    <video key={idx} onContextMenu={(e) => e.preventDefault()} controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(url)} className={itemStyle} />
                                   ) : (
-                                    <img key={idx} src={getImageUrl(url, post.user?.username)} draggable="false" onContextMenu={(e) => e.preventDefault()} className={`w-full h-full object-cover cursor-pointer ${mediaUrls.length === 1 ? 'max-h-[600px]' : 'aspect-square'}`} onClick={() => setExpandedImage({ url: getImageUrl(url, post.user?.username), username: post.user?.username })} />
+                                    <img 
+                                      key={idx} 
+                                      src={getImageUrl(url, post.user?.username)} 
+                                      draggable="false" 
+                                      onContextMenu={(e) => e.preventDefault()} 
+                                      className={`${itemStyle} cursor-pointer hover:opacity-90 transition-opacity`} 
+                                      onClick={() => setExpandedImage({ url: getImageUrl(url, post.user?.username), username: post.user?.username })} 
+                                    />
                                   );
                                 })}
                               </div>
@@ -918,7 +952,7 @@ export default function Feed() {
             </div>
 
             {activeStory.caption && (
-              <div className="fixed bottom-10 left-0 w-full text-center px-4 z-[100000]">
+              <div className="fixed bottom-10 left-0 w-full text-center px-4 [100000]">
                 <span className="bg-black/70 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl text-white font-medium shadow-2xl inline-block max-w-xl">{activeStory.caption}</span>
               </div>
             )}
