@@ -158,7 +158,7 @@ export default function ExplorePage() {
             </div>
           )}
 
-          {/* 🔥 EL GRID MAESTRO */}
+          {/* 🔥 EL GRID MAESTRO: DISEÑO DE ÉLITE (Foto de Perfil + Nombre) */}
           <div className="space-y-6">
             <h2 className="text-white font-black text-sm uppercase tracking-[0.2em] pl-2 flex items-center gap-2">
               <Users className="w-4 h-4 text-blue-500" /> {searchQuery ? t('creators_search') : t('creators_recommended')}
@@ -170,65 +170,66 @@ export default function ExplorePage() {
                 <p className="text-gray-600 font-bold text-xs uppercase tracking-[0.3em]">{t('creators_empty_title')}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1.5 sm:gap-4">
                 {creators.map((creator) => (
                   <div 
                     key={creator.id} 
                     onClick={() => router.push(`/${creator.username}`)}
-                    className="relative aspect-[3/4] sm:aspect-square group cursor-pointer overflow-hidden bg-[#111] sm:rounded-[2rem] border border-white/5 hover:border-blue-500/50 transition-all"
+                    className="relative aspect-[3/4] sm:aspect-square group cursor-pointer overflow-hidden bg-[#111] rounded-xl sm:rounded-[2rem] border border-white/5 hover:border-blue-500/50 transition-all shadow-2xl"
                   >
-                    {/* IMAGEN DE FONDO (PORTADA O AVATAR) SEGURA */}
-                    {(creator.creatorProfile?.coverImage || creator.creatorProfile?.profileImage) ? (
+                    {/* 🔥 LA FOTO DE PERFIL ES AHORA EL FONDO PRINCIPAL */}
+                    {creator.creatorProfile?.profileImage ? (
                       <img 
-                        src={getImageUrl(creator.creatorProfile?.coverImage || creator.creatorProfile?.profileImage)} 
-                        className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" 
-                        alt="Creator"
+                        src={getImageUrl(creator.creatorProfile.profileImage)} 
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-700" 
+                        alt={creator.username}
                       />
                     ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black opacity-50 group-hover:opacity-100 transition-all duration-700"></div>
+                      <div className="absolute inset-0 bg-gradient-to-tr from-blue-900 to-black flex items-center justify-center">
+                        <span className="text-white font-black text-3xl opacity-20">
+                          {creator.username?.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
                     )}
                     
-                    {/* OVERLAY GRADIENTE */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-40 transition-opacity"></div>
+                    {/* DEGRADADO INFERIOR PARA LECTURA (Más oscuro y alto) */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-90"></div>
 
-                    {/* CONTENIDO DE LA TARJETA */}
-                    <div className="absolute inset-x-0 bottom-0 p-2 sm:p-4 text-center flex flex-col items-center">
+                    {/* INFORMACIÓN DEL CREADOR */}
+                    <div className="absolute inset-x-0 bottom-0 p-2 sm:p-4 flex flex-col items-center text-center">
                       
-                      {/* MINI AVATAR FLOTANTE SEGURO (Solo en PC) */}
-                      <div className="hidden sm:flex w-12 h-12 rounded-full border-2 border-white/20 mb-2 overflow-hidden shadow-2xl transition-transform group-hover:scale-110 bg-[#1a1a1a]">
-                        {creator.creatorProfile?.profileImage ? (
-                          <img src={getImageUrl(creator.creatorProfile.profileImage)} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="w-full h-full flex items-center justify-center text-white font-black text-lg bg-gradient-to-tr from-blue-600 to-purple-600">
-                            {creator.username ? creator.username.toUpperCase().charAt(0) : 'U'}
-                          </span>
-                        )}
-                      </div>
-                      
-                      <h3 className="text-white font-black text-[10px] sm:text-sm truncate w-full uppercase tracking-tighter group-hover:text-blue-400 transition-colors">
-                        {creator.username}
-                      </h3>
-                      
-                      {/* PRECIO / FREE BADGE */}
-                      <div className="mt-1 flex items-center justify-center">
+                      {/* PRECIO (Badge flotante estilo premium) */}
+                      <div className="mb-1">
                         {creator.creatorProfile?.monthlyPrice > 0 ? (
-                          <span className="text-[8px] sm:text-[10px] font-black text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20 shadow-lg">
+                          <span className="text-[7px] sm:text-[9px] font-black text-white bg-blue-600 px-1.5 py-0.5 rounded shadow-lg uppercase tracking-tighter">
                             ${creator.creatorProfile.monthlyPrice.toFixed(0)}
                           </span>
                         ) : (
-                          <span className="text-[8px] sm:text-[10px] font-black text-green-400 bg-green-500/10 px-2 py-0.5 rounded-md border border-green-500/20">
+                          <span className="text-[7px] sm:text-[9px] font-black text-white bg-green-600 px-1.5 py-0.5 rounded shadow-lg uppercase tracking-tighter">
                             FREE
                           </span>
                         )}
                       </div>
 
+                      {/* NOMBRE DEL CREADOR (Más grande y claro) */}
+                      <h3 className="text-white font-black text-[10px] sm:text-sm truncate w-full uppercase tracking-tight drop-shadow-md">
+                        {creator.name || creator.username}
+                      </h3>
+                      
+                      <p className="text-blue-400 text-[8px] sm:text-[10px] font-bold lowercase opacity-80 truncate w-full">
+                        @{creator.username}
+                      </p>
+
                       {/* BADGE DE ADMIN */}
                       {creator.role === 'ADMIN' && (
-                        <div className="absolute top-2 right-2">
-                          <Crown className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                        <div className="absolute top-2 right-2 bg-black/40 backdrop-blur-md p-1 rounded-full border border-yellow-500/30">
+                          <Crown className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
                         </div>
                       )}
                     </div>
+
+                    {/* EFECTO DE SELECCIÓN AL PASAR EL MOUSE (Solo PC) */}
+                    <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-500/50 rounded-xl sm:rounded-[2rem] transition-all"></div>
                   </div>
                 ))}
               </div>
