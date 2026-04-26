@@ -18,7 +18,8 @@ const getImageUrl = (path: string | null) => {
   return `${cleanBase}/${finalPath}`;
 };
 
-const CATEGORIES = ['General', 'Fitness', 'Gaming', 'Music', 'Art', 'Lifestyle', 'Education', 'Adult'];
+// 🔥 TÁCTICA APLICADA: Sincronizado con la página Explorar
+const CATEGORIES = ['General', 'Adulto', 'Cosplay', 'ASMR', 'Parejas', 'Fitness', 'Gaming', 'Lifestyle'];
 
 export default function ProfileSettings() {
   const router = useRouter();
@@ -290,8 +291,20 @@ export default function ProfileSettings() {
                   <div>
                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">{t('lbl_category')}</label>
                     <div className="relative">
-                      <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full nm-inset border border-white/5 rounded-xl px-4 py-3.5 text-white outline-none focus:border-teal-500/50 transition-colors appearance-none text-sm">
-                        {CATEGORIES.map(cat => <option key={cat} value={cat} className="bg-[#0e0e0e]">{t(`cat_${cat.toLowerCase()}`) || cat}</option>)}
+                      <select 
+                        value={category} 
+                        onChange={(e) => setCategory(e.target.value)} 
+                        className="w-full nm-inset border border-white/5 rounded-xl px-4 py-3.5 text-white outline-none focus:border-teal-500/50 transition-colors appearance-none text-sm"
+                      >
+                        {/* 🔥 MENÚ DESPLEGABLE BLINDADO CON TRADUCCIONES */}
+                        {CATEGORIES.map(cat => {
+                          const safeKey = `cat_${cat.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+                          return (
+                            <option key={cat} value={cat} className="bg-[#0e0e0e]">
+                              {t.has(safeKey) ? t(safeKey) : cat}
+                            </option>
+                          );
+                        })}
                       </select>
                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
                         ▼
