@@ -983,7 +983,10 @@
     "creators_empty_desc": "다른 검색 필터나 이름을 시도해 보세요.",
     "default_bio": "이 크리에이터의 독점 콘텐츠를 찾아보세요.",
     "lbl_month": "월",
-    "lbl_free": "무료"
+    "lbl_free": "무료",
+    "cat_cosplay": "코스프레",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "커플"
   },
 
   "Feed": {

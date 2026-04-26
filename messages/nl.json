@@ -983,7 +983,10 @@
     "creators_empty_desc": "Probeer andere zoekfilters of namen.",
     "default_bio": "Ontdek exclusieve content van deze maker.",
     "lbl_month": "maand",
-    "lbl_free": "Gratis"
+    "lbl_free": "Gratis",
+    "cat_cosplay": "Cosplay",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "Koppels"
   },
 
   "Feed": {

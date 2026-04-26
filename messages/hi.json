@@ -983,7 +983,10 @@
     "creators_empty_desc": "विभिन्न खोज फ़िल्टर या नाम आज़माएँ।",
     "default_bio": "इस निर्माता से विशेष सामग्री खोजें।",
     "lbl_month": "महीना",
-    "lbl_free": "मुफ़्त"
+    "lbl_free": "मुफ़्त",
+    "cat_cosplay": "कॉसप्ले",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "जोड़े"
   },
 
   "Feed": {

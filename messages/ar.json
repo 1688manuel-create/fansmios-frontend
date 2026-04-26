@@ -983,7 +983,10 @@
     "creators_empty_desc": "جرب عوامل تصفية بحث أو أسماء مختلفة.",
     "default_bio": "اكتشف المحتوى الحصري من صانع المحتوى هذا.",
     "lbl_month": "شهر",
-    "lbl_free": "مجاني"
+    "lbl_free": "مجاني",
+    "cat_cosplay": "كوزبلاي",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "أزواج"
   },
 
   "Feed": {

@@ -983,7 +983,10 @@
     "creators_empty_desc": "Coba filter pencarian atau nama lain.",
     "default_bio": "Temukan konten eksklusif dari kreator ini.",
     "lbl_month": "bln",
-    "lbl_free": "Gratis"
+    "lbl_free": "Gratis",
+    "cat_cosplay": "Cosplay",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "Pasangan"
   },
 
   "Feed": {

@@ -983,7 +983,10 @@
     "creators_empty_desc": "ลองใช้ตัวกรองการค้นหาหรือชื่ออื่น",
     "default_bio": "ค้นพบเนื้อหาพิเศษจากครีเอเตอร์คนนี้",
     "lbl_month": "เดือน",
-    "lbl_free": "ฟรี"
+    "lbl_free": "ฟรี",
+    "cat_cosplay": "คอสเพลย์",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "คู่รัก"
   },
 
   "Feed": {

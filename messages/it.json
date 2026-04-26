@@ -983,7 +983,10 @@
     "creators_empty_desc": "Prova altri filtri di ricerca o nomi.",
     "default_bio": "Scopri i contenuti esclusivi di questo creatore.",
     "lbl_month": "mese",
-    "lbl_free": "Gratis"
+    "lbl_free": "Gratis",
+    "cat_cosplay": "Cosplay",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "Coppie"
   },
 
   "Feed": {

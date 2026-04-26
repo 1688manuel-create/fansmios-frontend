@@ -983,7 +983,10 @@
     "creators_empty_desc": "Prova olika sökfilter eller namn.",
     "default_bio": "Upptäck exklusivt innehåll från denna skapare.",
     "lbl_month": "månad",
-    "lbl_free": "Gratis"
+    "lbl_free": "Gratis",
+    "cat_cosplay": "Cosplay",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "Par"
   },
 
   "Feed": {

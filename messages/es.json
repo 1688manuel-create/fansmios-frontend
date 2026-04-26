@@ -957,6 +957,9 @@
   },
 
   "Explore": {
+    "cat_cosplay": "Cosplay",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "Parejas",
     "nav_title": "Descubrir",
     "search_placeholder": "Busca creadores, categorías o eventos en vivo...",
     "lbl_searching": "Buscando",

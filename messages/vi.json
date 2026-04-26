@@ -983,7 +983,10 @@
     "creators_empty_desc": "Hãy thử các bộ lọc tìm kiếm hoặc tên khác.",
     "default_bio": "Khám phá nội dung độc quyền từ người sáng tạo này.",
     "lbl_month": "tháng",
-    "lbl_free": "Miễn phí"
+    "lbl_free": "Miễn phí",
+    "cat_cosplay": "Cosplay",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "Cặp đôi"
   },
 
   "Feed": {

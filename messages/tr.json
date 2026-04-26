@@ -983,7 +983,10 @@
     "creators_empty_desc": "Farklı arama filtreleri veya isimleri deneyin.",
     "default_bio": "Bu yaratıcının özel içeriklerini keşfedin.",
     "lbl_month": "ay",
-    "lbl_free": "Ücretsiz"
+    "lbl_free": "Ücretsiz",
+    "cat_cosplay": "Cosplay",
+    "cat_asmr": "ASMR",
+    "cat_parejas": "Çiftler"
   },
 
   "Feed": {
