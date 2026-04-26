@@ -19,7 +19,7 @@ import BoostModal from '../../../components/BoostModal';
 import { 
   Image as ImageIcon, Lock, Radio, Bell, MessageCircle, LogOut, 
   Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, X, User,
-  TrendingUp, Zap, Star, ChevronRight, Send, Flag, Wallet, Bookmark
+  TrendingUp, Zap, Star, ChevronRight, ChevronLeft, Send, Flag, Wallet, Bookmark
 } from 'lucide-react';
 
 import { useTranslations } from 'next-intl';
@@ -166,7 +166,10 @@ export default function Feed() {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0); 
   
-  const [expandedImage, setExpandedImage] = useState<{url: string, username: string} | null>(null);
+  // 🔥 NUEVOS ESTADOS PARA LA GALERÍA DESLIZABLE
+  const [expandedGallery, setExpandedGallery] = useState<{urls: string[], currentIndex: number, username: string} | null>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isBoostModalOpen, setIsBoostModalOpen] = useState(false);
   const [trendingCreators, setTrendingCreators] = useState<any[]>([]);
   const [featuredBundle, setFeaturedBundle] = useState<any>(null);
@@ -734,7 +737,8 @@ export default function Feed() {
                                       draggable="false" 
                                       onContextMenu={(e) => e.preventDefault()} 
                                       className={`${itemStyle} cursor-pointer hover:opacity-90 transition-opacity`} 
-                                      onClick={() => setExpandedImage({ url: getImageUrl(url, post.user?.username), username: post.user?.username })} 
+                                      // 🔥 CORRECCIÓN: Ahora enviamos toda la galería y el índice de la foto tocada
+                                      onClick={() => setExpandedGallery({ urls: mediaUrls, currentIndex: idx, username: post.user?.username })} 
                                     />
                                   );
                                 })}
@@ -975,13 +979,79 @@ export default function Feed() {
           <ReportModal type={reportData.type} targetId={reportData.targetId} reportedUsername={reportData.reportedUsername} onClose={() => setReportData(null)} />
         )}
 
-        {expandedImage && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in cursor-zoom-out select-none" style={{ zIndex: 99999 }} onClick={() => setExpandedImage(null)} onContextMenu={(e) => e.preventDefault()}>
-            <button onClick={(e) => { e.stopPropagation(); setExpandedImage(null); }} className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all border border-white/10" style={{ zIndex: 100000 }} title={t('btn_cancel')}><X className="w-6 h-6" /></button>
-            <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-              <img src={expandedImage.url} alt={t('lbl_exclusive')} className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] cursor-default select-none pointer-events-none" draggable="false" onContextMenu={(e) => e.preventDefault()} />
-              <div className="absolute inset-0 w-full h-full cursor-default" onContextMenu={(e) => e.preventDefault()} style={{ zIndex: 10 }}></div>
+        {/* 🔥 MODAL DE GALERÍA DESLIZABLE (SWIPE EN MÓVIL Y FLECHAS EN PC) */}
+        {expandedGallery && (
+          <div 
+            className="fixed inset-0 flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in select-none" 
+            style={{ zIndex: 99999 }}
+          >
+            {/* BOTÓN CERRAR */}
+            <button onClick={() => setExpandedGallery(null)} className="absolute top-6 right-6 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 p-3 rounded-full transition-all border border-white/10" style={{ zIndex: 100000 }} title={t('btn_cancel')}>
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* CONTADOR DE FOTOS (Ej. 1 / 5) */}
+            {expandedGallery.urls.length > 1 && (
+              <div className="absolute top-6 left-1/2 -translate-x-1/2 text-white font-bold bg-black/50 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10 text-sm tracking-widest" style={{ zIndex: 100000 }}>
+                {expandedGallery.currentIndex + 1} / {expandedGallery.urls.length}
+              </div>
+            )}
+
+            {/* FLECHA IZQUIERDA (Solo en PC) */}
+            {expandedGallery.urls.length > 1 && (
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpandedGallery(prev => prev ? {...prev, currentIndex: (prev.currentIndex - 1 + prev.urls.length) % prev.urls.length} : null);
+                }}
+                className="absolute left-4 sm:left-10 z-50 p-4 bg-black/50 hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-all hidden sm:block border border-white/10"
+              >
+                <ChevronLeft className="w-8 h-8" />
+              </button>
+            )}
+
+            {/* CONTENEDOR CENTRAL TÁCTIL (Detecta el dedo deslizando en celulares) */}
+            <div 
+              className="relative flex items-center justify-center w-full h-full p-2 sm:p-12"
+              onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
+              onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
+              onTouchEnd={() => {
+                if (!touchStart || !touchEnd) return;
+                const distance = touchStart - touchEnd;
+                const isLeftSwipe = distance > 50; // Deslizó a la izquierda (Siguiente foto)
+                const isRightSwipe = distance < -50; // Deslizó a la derecha (Foto anterior)
+                
+                if (isLeftSwipe && expandedGallery.urls.length > 1) {
+                  setExpandedGallery(prev => prev ? {...prev, currentIndex: (prev.currentIndex + 1) % prev.urls.length} : null);
+                }
+                if (isRightSwipe && expandedGallery.urls.length > 1) {
+                  setExpandedGallery(prev => prev ? {...prev, currentIndex: (prev.currentIndex - 1 + prev.urls.length) % prev.urls.length} : null);
+                }
+                setTouchStart(null);
+                setTouchEnd(null);
+              }}
+            >
+              <img 
+                src={getImageUrl(expandedGallery.urls[expandedGallery.currentIndex], expandedGallery.username)} 
+                alt="Imagen en pantalla completa"
+                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] pointer-events-auto transition-transform duration-300" 
+                draggable="false" 
+                onContextMenu={(e) => e.preventDefault()} 
+              />
             </div>
+
+            {/* FLECHA DERECHA (Solo en PC) */}
+            {expandedGallery.urls.length > 1 && (
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpandedGallery(prev => prev ? {...prev, currentIndex: (prev.currentIndex + 1) % prev.urls.length} : null);
+                }}
+                className="absolute right-4 sm:right-10 z-50 p-4 bg-black/50 hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-all hidden sm:block border border-white/10"
+              >
+                <ChevronRight className="w-8 h-8" />
+              </button>
+            )}
           </div>
         )}
 
