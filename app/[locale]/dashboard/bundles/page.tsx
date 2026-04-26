@@ -1,33 +1,43 @@
-// frontend/app/dashboard/bundles/page.tsx
 "use client";
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../../../lib/api'; // 🔥 Añadido para poder eliminar
+import api from '../../../../lib/api'; 
 import { bundleService } from '../../../../lib/bundleService';
 import AppLayout from '../../../../components/AppLayout';
 import { Package, Plus, Tag, DollarSign, Image as ImageIcon, CheckCircle2, Trash2 } from 'lucide-react';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+import { useTranslations } from 'next-intl';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-// 🚀 🔥 ESTA ES LA FUNCIÓN QUE FALTABA PARA LEER LAS IMÁGENES
 const getImageUrl = (path: string | null) => {
   if (!path) return '';
   if (path.startsWith('http')) return path; 
-  return `${BACKEND_URL}${path}`; 
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  return `${BACKEND_URL}/${cleanPath}`; 
+};
+
+// 🔥 FUNCIÓN TÁCTICA PARA EXTRAER LA PRIMERA IMAGEN SI ES UN ARRAY JSON
+const getFirstMedia = (mediaUrl: string | null) => {
+  if (!mediaUrl) return null;
+  try {
+    const parsed = JSON.parse(mediaUrl);
+    // 👇 CORRECCIÓN APLICADA: parsed
+    return Array.isArray(parsed) ? parsed[0]: parsed;
+  } catch (e) {
+    return mediaUrl; // Si no es JSON, es una URL vieja (soporte legacy)
+  }
 };
 
 export default function ContentBundlesPage() {
   const router = useRouter();
-  const t = useTranslations('ContentBundles'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('ContentBundles');
   
   const [isCreating, setIsCreating] = useState(false);
   const [bundles, setBundles] = useState<any[]>([]);
   const [eligiblePosts, setEligiblePosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Estados del Formulario
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -102,7 +112,6 @@ export default function ContentBundlesPage() {
     <AppLayout>
       <div className="min-h-screen bg-nm-base text-white pb-20">
         
-        {/* NAVBAR SUPERIOR NEUMÓRFICA */}
         <nav className="sticky top-0 z-50 bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-5 backdrop-blur-xl shadow-md">
           <h1 className="text-xl font-black flex items-center gap-2">
             <Package className="w-6 h-6 text-blue-500" strokeWidth={2.5}/> {t('nav_title')}
@@ -111,7 +120,7 @@ export default function ContentBundlesPage() {
 
         <main className="max-w-6xl mx-auto mt-8 px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
           
-          {/* ================= COLUMNA 1: FORMULARIO DE CREACIÓN ================= */}
+          {/* COLUMNA 1: FORMULARIO */}
           <div className="nm-inset rounded-[2rem] border border-white/5 p-6 sm:p-8 h-fit">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
@@ -125,6 +134,7 @@ export default function ContentBundlesPage() {
             
             {isCreating ? (
               <form onSubmit={handleCreateBundle} className="space-y-6 animate-fade-in border-t border-white/5 pt-6">
+                {/* Inputs de Título, Precio, Descripción... */}
                 <div>
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">{t('lbl_title')}</label>
                   <div className="relative">
@@ -133,20 +143,21 @@ export default function ContentBundlesPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">{t('lbl_price')}</label>
-                  <div className="relative w-1/2">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-green-500 font-bold"><DollarSign className="w-4 h-4"/></span>
-                    <input type="number" min="1" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="19.99" className="w-full nm-inset border border-green-500/20 rounded-xl pl-10 pr-4 py-3 text-white outline-none focus:border-green-500/50 font-bold" />
-                  </div>
+                <div className="flex gap-4">
+                    <div className="flex-1">
+                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">{t('lbl_price')}</label>
+                        <div className="relative">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-green-500 font-bold"><DollarSign className="w-4 h-4"/></span>
+                            <input type="number" min="1" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="19.99" className="w-full nm-inset border border-green-500/20 rounded-xl pl-10 pr-4 py-3 text-white outline-none focus:border-green-500/50 font-bold" />
+                        </div>
+                    </div>
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1 mb-1 block">{t('lbl_desc')}</label>
-                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} required placeholder={t('ph_desc')} rows={3} className="w-full nm-inset border border-white/5 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500/50 text-sm resize-none custom-scrollbar" />
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1 mb-1 block">{t('lbl_desc')}</label>
+                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} required placeholder={t('ph_desc')} rows={3} className="w-full nm-inset border border-white/5 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500/50 text-sm resize-none" />
                 </div>
 
-                {/* SELECCIÓN DE POSTS PPV */}
                 <div className="pt-2 border-t border-white/5">
                   <label className="text-[10px] font-bold text-white uppercase tracking-widest bg-blue-500/20 px-3 py-1.5 rounded-lg mb-4 inline-block border border-blue-500/30">{t('lbl_step_2')}</label>
                   
@@ -159,13 +170,16 @@ export default function ContentBundlesPage() {
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-64 overflow-y-auto custom-scrollbar p-1">
                       {eligiblePosts.map(post => {
                         const isSelected = selectedPostIds.includes(post.id);
+                        // 🔥 PARSEO DE MINIATURA SEGURO
+                        const thumb = getFirstMedia(post.mediaUrl);
+
                         return (
                           <div 
                             key={post.id} 
                             onClick={() => togglePostSelection(post.id)}
                             className={`relative rounded-xl overflow-hidden cursor-pointer border-2 transition-all h-28 group nm-inset ${isSelected ? 'border-blue-500 scale-105 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'border-transparent hover:border-white/20'}`}
                           >
-                            <img src={getImageUrl(post.mediaUrl)} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" alt="Post" />
+                            <img src={getImageUrl(thumb)} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" alt="Post" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-2 pointer-events-none">
                                 <span className="text-white text-[10px] font-bold truncate">{post.content || t('no_text')}</span>
                                 <span className="text-green-400 text-xs font-bold">${post.price}</span>
@@ -194,7 +208,7 @@ export default function ContentBundlesPage() {
             )}
           </div>
 
-          {/* ================= COLUMNA 2: LISTA DE PAQUETES ACTIVOS ================= */}
+          {/* COLUMNA 2: LISTA DE PAQUETES ACTIVOS */}
           <div className="space-y-6">
             <h2 className="text-lg font-bold text-white mb-2 flex items-center gap-2 pl-2"><Package className="w-5 h-5 text-gray-400"/> {t('title_active_bundles')}</h2>
             
@@ -206,10 +220,6 @@ export default function ContentBundlesPage() {
             ) : (
               bundles.map(bundle => (
                 <div key={bundle.id} className="nm-inset border border-white/5 rounded-[2rem] p-5 flex flex-col sm:flex-row gap-5 relative overflow-hidden group">
-                  
-                  {/* Destello sutil de fondo */}
-                  <div className="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/5 rounded-full blur-[30px] pointer-events-none"></div>
-
                   <div className="flex-1 space-y-3 z-10">
                     <div className="flex justify-between items-start">
                       <h3 className="text-xl font-black text-white">{bundle.title}</h3>
@@ -217,14 +227,17 @@ export default function ContentBundlesPage() {
                     </div>
                     <p className="text-sm text-gray-400 line-clamp-2 font-medium">{bundle.description}</p>
                     
-                    {/* Mini-galería neumórfica */}
                     <div className="flex items-center gap-4 pt-2">
                       <div className="flex -space-x-3">
-                          {bundle.posts?.slice(0, 3).map((p: any, i: number) => (
-                              <div key={i} className="w-10 h-10 rounded-lg nm-inset border border-white/10 overflow-hidden z-[3-i]">
-                                <img src={getImageUrl(p.mediaUrl)} className="w-full h-full object-cover" alt="Media" />
-                              </div>
-                          ))}
+                          {bundle.posts?.slice(0, 3).map((p: any, i: number) => {
+                              // 🔥 PARSEO DE MINIATURA SEGURO PARA EL LISTADO
+                              const thumb = getFirstMedia(p.mediaUrl);
+                              return (
+                                <div key={i} className="w-10 h-10 rounded-lg nm-inset border border-white/10 overflow-hidden" style={{ zIndex: 3 - i }}>
+                                  <img src={getImageUrl(thumb)} className="w-full h-full object-cover" alt="Media" />
+                                </div>
+                              );
+                          })}
                           {bundle.posts?.length > 3 && (
                               <div className="w-10 h-10 rounded-lg nm-inset border border-white/10 bg-black/80 flex items-center justify-center text-[10px] font-bold text-white z-0">
                                   +{bundle.posts.length - 3}
@@ -235,7 +248,6 @@ export default function ContentBundlesPage() {
                     </div>
                   </div>
 
-                  {/* Acciones */}
                   <div className="flex flex-row sm:flex-col justify-end gap-2 border-t sm:border-t-0 sm:border-l border-white/5 pt-4 sm:pt-0 sm:pl-4 z-10 w-full sm:w-auto">
                     <div className="flex-1 sm:flex-none text-center bg-white/5 rounded-xl p-2 border border-white/5">
                       <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">{t('lbl_sales')}</p>
