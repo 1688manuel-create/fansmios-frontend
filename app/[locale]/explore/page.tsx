@@ -15,7 +15,8 @@ const getImageUrl = (path: string | null) => {
   return `${BACKEND_URL}${path}`; 
 };
 
-const CATEGORIES = ['All', 'Live 🔴', 'Fitness', 'Gaming', 'Música', 'Arte', 'Lifestyle', 'Educación', 'Adulto'];
+// 🔥 LA NUEVA LÍNEA FRONTAL DE CATEGORÍAS (Estratégicamente ordenadas)
+const CATEGORIES = ['All', 'Live 🔴', 'Adulto', 'Cosplay', 'ASMR', 'Parejas', 'Fitness', 'Gaming', 'Lifestyle'];
 
 export default function ExplorePage() {
   const router = useRouter();
@@ -120,7 +121,7 @@ export default function ExplorePage() {
 
         <main className="max-w-6xl mx-auto mt-6 px-2 sm:px-6 space-y-10 relative z-10">
           
-          {/* TRANSMISIONES: SE QUEDAN EN 1 O 2 COLUMNAS PARA QUE SE VEA EL CONTENIDO */}
+          {/* TRANSMISIONES */}
           {(selectedCategory === 'Live 🔴' || selectedCategory === 'All') && !searchQuery && (
             <div className="space-y-4 animate-fade-in">
               <h2 className="text-white font-black text-sm uppercase tracking-[0.2em] pl-2 flex items-center gap-2">
@@ -157,7 +158,7 @@ export default function ExplorePage() {
             </div>
           )}
 
-          {/* 🔥 EL GRID MAESTRO: 3 COLUMNAS EN MÓVIL (grid-cols-3) */}
+          {/* 🔥 EL GRID MAESTRO */}
           <div className="space-y-6">
             <h2 className="text-white font-black text-sm uppercase tracking-[0.2em] pl-2 flex items-center gap-2">
               <Users className="w-4 h-4 text-blue-500" /> {searchQuery ? t('creators_search') : t('creators_recommended')}
@@ -176,7 +177,7 @@ export default function ExplorePage() {
                     onClick={() => router.push(`/${creator.username}`)}
                     className="relative aspect-[3/4] sm:aspect-square group cursor-pointer overflow-hidden bg-[#111] sm:rounded-[2rem] border border-white/5 hover:border-blue-500/50 transition-all"
                   >
-                    {/* 🔥 CORRECCIÓN 1: IMAGEN DE FONDO (PORTADA O AVATAR) SEGURA */}
+                    {/* IMAGEN DE FONDO (PORTADA O AVATAR) SEGURA */}
                     {(creator.creatorProfile?.coverImage || creator.creatorProfile?.profileImage) ? (
                       <img 
                         src={getImageUrl(creator.creatorProfile?.coverImage || creator.creatorProfile?.profileImage)} 
@@ -193,7 +194,7 @@ export default function ExplorePage() {
                     {/* CONTENIDO DE LA TARJETA */}
                     <div className="absolute inset-x-0 bottom-0 p-2 sm:p-4 text-center flex flex-col items-center">
                       
-                      {/* 🔥 CORRECCIÓN 2: MINI AVATAR FLOTANTE SEGURO (Solo en PC) */}
+                      {/* MINI AVATAR FLOTANTE SEGURO (Solo en PC) */}
                       <div className="hidden sm:flex w-12 h-12 rounded-full border-2 border-white/20 mb-2 overflow-hidden shadow-2xl transition-transform group-hover:scale-110 bg-[#1a1a1a]">
                         {creator.creatorProfile?.profileImage ? (
                           <img src={getImageUrl(creator.creatorProfile.profileImage)} className="w-full h-full object-cover" />
