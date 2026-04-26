@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api'; 
-import { Search, Users, Compass, User, Ghost, Radio, Eye, Clock, Tv, Star, Crown } from 'lucide-react';
+import { Search, Users, Compass, User, Ghost, Radio, Eye, Clock, Tv, Star, Crown, ChevronRight } from 'lucide-react';
 import AppLayout from '../../../components/AppLayout';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+import { useTranslations } from 'next-intl';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -19,22 +19,18 @@ const CATEGORIES = ['All', 'Live 🔴', 'Fitness', 'Gaming', 'Música', 'Arte', 
 
 export default function ExplorePage() {
   const router = useRouter();
-  const t = useTranslations('Explore'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('Explore');
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Live 🔴'); 
   const [creators, setCreators] = useState<any[]>([]);
   const [activeStreams, setActiveStreams] = useState<any[]>([]); 
-  
   const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/auth');
-      return;
-    }
+    if (!token) { router.push('/auth'); return; }
 
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
@@ -70,139 +66,89 @@ export default function ExplorePage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-nm-base pb-24 sm:pb-10 relative">
+      <div className="min-h-screen bg-[#050505] pb-24 sm:pb-10 relative overflow-hidden">
         
-        <div className="absolute top-0 left-1/2 w-[800px] h-[300px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
+        {/* LUCES DE AMBIENTE PREMIUM */}
+        <div className="absolute top-[-100px] left-1/2 w-[600px] h-[400px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[150px] pointer-events-none"></div>
 
-        <nav className="sticky top-0 z-50 bg-[#0a0a0a]/90 border-b border-white/5 px-4 sm:px-6 py-4 flex flex-col gap-4 backdrop-blur-xl shadow-md">
-          <div className="flex justify-between items-center max-w-4xl mx-auto w-full">
-            <h1 className="text-2xl font-black text-white flex items-center gap-2 tracking-tight">
-              <div className="w-8 h-8 nm-inset bg-black rounded-lg flex items-center justify-center border border-white/5">
-                <Compass className="w-4 h-4 text-blue-500" strokeWidth={2.5} />
-              </div>
-              {t('nav_title')}
-            </h1>
-          </div>
-          
-          <div className="relative w-full max-w-4xl mx-auto">
-            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500">
-              <Search className="w-5 h-5" />
-            </span>
-            <input 
-              type="text" 
-              placeholder={t('search_placeholder')} 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#111111] border border-white/10 rounded-2xl pl-14 pr-4 py-4 text-white outline-none focus:border-blue-500/50 transition-colors shadow-inner font-medium placeholder:text-gray-600"
-            />
-            {isSearching && (
-               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500 animate-pulse text-[10px] font-black uppercase tracking-widest bg-blue-500/10 px-2 py-1 rounded-md">
-                 {t('lbl_searching')}
-               </span>
-            )}
-          </div>
+        <nav className="sticky top-0 z-50 bg-black/60 border-b border-white/5 px-4 py-4 backdrop-blur-2xl">
+          <div className="max-w-6xl mx-auto space-y-4">
+            <div className="flex justify-between items-center">
+              <h1 className="text-xl font-black text-white flex items-center gap-2 uppercase tracking-tighter">
+                <Compass className="w-5 h-5 text-blue-500" /> {t('nav_title')}
+              </h1>
+            </div>
+            
+            <div className="relative group">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors w-5 h-5" />
+              <input 
+                type="text" 
+                placeholder={t('search_placeholder')} 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-4 py-4 text-white outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all font-medium placeholder:text-gray-600 shadow-2xl"
+              />
+              {isSearching && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
 
-          <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar max-w-4xl mx-auto w-full px-2">
-            {CATEGORIES.map(category => {
-              // Limpiamos el nombre para la clave de traducción
-              const safeCatKey = category.replace(' 🔴', '').toLowerCase().replace(/[^a-z0-9]/g, '');
-              return (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`shrink-0 px-6 py-3 rounded-xl font-bold text-xs transition-all flex items-center gap-2 ${
-                    selectedCategory === category 
-                      ? category === 'Live 🔴' 
-                        ? 'nm-btn border border-red-500/50 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.2)]'
-                        : 'nm-btn-active bg-blue-600 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' 
-                      : 'nm-btn text-gray-400 hover:text-white border border-transparent'
-                  }`}
-                >
-                  {category === 'Live 🔴' ? <Radio className="w-4 h-4 animate-pulse"/> : category === 'All' ? <Star className="w-4 h-4"/> : null}
-                  {t(`cat_${safeCatKey}`) || category}
-                </button>
-              )
-            })}
+            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+              {CATEGORIES.map(category => {
+                const safeCatKey = category.replace(' 🔴', '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                const isActive = selectedCategory === category;
+                return (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`shrink-0 px-5 py-2.5 rounded-full font-bold text-[11px] uppercase tracking-widest transition-all border ${
+                      isActive 
+                        ? 'bg-blue-600 border-blue-400 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)]' 
+                        : 'bg-white/5 border-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t(`cat_${safeCatKey}`) || category}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </nav>
 
-        <main className="max-w-5xl mx-auto mt-8 px-4 space-y-12 relative z-10">
+        <main className="max-w-6xl mx-auto mt-6 px-2 sm:px-6 space-y-10 relative z-10">
           
+          {/* TRANSMISIONES: SE QUEDAN EN 1 O 2 COLUMNAS PARA QUE SE VEA EL CONTENIDO */}
           {(selectedCategory === 'Live 🔴' || selectedCategory === 'All') && !searchQuery && (
-            <div className="space-y-6 animate-fade-in border-b border-white/5 pb-10">
-              <div className="flex justify-between items-end px-2">
-                <div>
-                  <h2 className="text-white font-black text-xl flex items-center gap-2 tracking-tight">
-                    <Radio className="w-5 h-5 text-red-500" /> {t('streams_title')}
-                  </h2>
-                  <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">{t('streams_subtitle')}</p>
-                </div>
-              </div>
+            <div className="space-y-4 animate-fade-in">
+              <h2 className="text-white font-black text-sm uppercase tracking-[0.2em] pl-2 flex items-center gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-ping"></div> {t('streams_title')}
+              </h2>
 
               {activeStreams.length === 0 ? (
-                <div className="text-center py-16 nm-inset rounded-[2rem] border border-white/5">
-                  <Tv className="w-12 h-12 text-gray-700 mx-auto mb-4" strokeWidth={1.5} />
-                  <h3 className="text-lg font-black text-gray-400">{t('streams_empty_title')}</h3>
-                  <p className="text-gray-600 mt-1 font-medium text-sm">{t('streams_empty_desc')}</p>
+                <div className="text-center py-12 bg-white/5 rounded-[2rem] border border-white/5">
+                  <Tv className="w-10 h-10 text-gray-700 mx-auto mb-3" strokeWidth={1} />
+                  <p className="text-gray-500 font-bold text-xs uppercase tracking-widest">{t('streams_empty_title')}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {activeStreams.map((stream) => (
-                    <div 
-                      key={stream.id}
-                      onClick={() => router.push(`/live/${stream.id}`)}
-                      className="nm-btn border border-white/5 rounded-[2rem] overflow-hidden cursor-pointer group hover:border-red-500/30 transition-all shadow-xl"
-                    >
-                      <div className="relative h-48 w-full bg-[#050505] overflow-hidden">
-                        <div className="absolute inset-0 bg-black z-0">
-                          {stream.creator?.creatorProfile?.coverImage || stream.creator?.creatorProfile?.profileImage ? (
-                            <img 
-                              src={getImageUrl(stream.creator.creatorProfile.coverImage || stream.creator.creatorProfile.profileImage)} 
-                              alt="Stream Thumbnail" 
-                              draggable="false"
-                              onContextMenu={(e) => e.preventDefault()}
-                              className="w-full h-full object-cover object-center opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-red-900/40 to-black"></div>
-                          )}
-                        </div>
-                        
-                        <div className="absolute top-3 left-3 z-10 flex gap-2">
-                          <div className="bg-red-600 text-white px-2.5 py-1 rounded-md font-black text-[10px] uppercase tracking-widest flex items-center gap-1.5 shadow-lg">
-                            <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div> {t('lbl_live')}
-                          </div>
-                          <div className="bg-black/60 backdrop-blur-md border border-white/10 text-white px-2.5 py-1 rounded-md font-bold text-[10px] flex items-center gap-1.5">
-                            <Eye className="w-3 h-3 text-gray-300"/> {stream._count?.messages || 12}
-                          </div>
-                        </div>
-
-                        <div className="absolute bottom-3 right-3 z-10">
-                          <div className="bg-black/60 backdrop-blur-md border border-white/10 text-white px-2 py-1 rounded-md font-bold text-[10px] font-mono">
-                            {getUptime(stream.createdAt)}
-                          </div>
-                        </div>
+                    <div key={stream.id} onClick={() => router.push(`/live/${stream.id}`)} className="relative aspect-video rounded-[2rem] overflow-hidden cursor-pointer group border border-white/5 shadow-2xl">
+                      {stream.creator?.creatorProfile?.coverImage || stream.creator?.creatorProfile?.profileImage ? (
+                         <img src={getImageUrl(stream.creator?.creatorProfile?.coverImage || stream.creator?.creatorProfile?.profileImage)} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-1000" />
+                      ) : (
+                         <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-red-900/40 to-black"></div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
+                      <div className="absolute top-4 left-4 flex gap-2">
+                        <span className="bg-red-600 text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase tracking-tighter flex items-center gap-1 shadow-xl">LIVE</span>
+                        <span className="bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg text-white font-bold text-[9px] flex items-center gap-1"><Eye className="w-3 h-3"/> {stream._count?.messages || 0}</span>
                       </div>
-
-                      <div className="p-5 flex gap-4">
-                        <div className="w-12 h-12 rounded-xl nm-inset bg-black flex items-center justify-center overflow-hidden shrink-0 border border-white/10 relative">
-                           {stream.creator?.creatorProfile?.profileImage ? (
-                             <img src={getImageUrl(stream.creator.creatorProfile.profileImage)} alt="Avatar" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover object-center" />
-                           ) : (
-                             <span className="text-white font-black text-lg">{stream.creator?.username?.toUpperCase()}</span>
-                           )}
-                           <div className="absolute inset-0 border-2 border-red-500 rounded-xl rounded-bl-none pointer-events-none"></div>
-                        </div>
-                        <div className="overflow-hidden">
-                          <h3 className="text-white font-bold text-sm truncate group-hover:text-red-400 transition-colors leading-tight">
-                            {stream.title}
-                          </h3>
-                          <p className="text-gray-400 text-xs font-medium mt-1 truncate">@{stream.creator?.username}</p>
-                          <div className="flex gap-2 mt-2">
-                            {stream.isPPV && <span className="text-[9px] font-black bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded uppercase tracking-widest border border-purple-500/30">{t('lbl_ppv_access')}</span>}
-                            {stream.creator?.creatorProfile?.category && <span className="text-[9px] font-bold text-gray-500 px-2 py-0.5 rounded border border-white/10 bg-white/5 truncate">{t(`cat_${stream.creator.creatorProfile.category.toLowerCase().replace(/[^a-z0-9]/g, '')}`) || stream.creator.creatorProfile.category}</span>}
-                          </div>
-                        </div>
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <h3 className="text-white font-black text-sm truncate uppercase italic">{stream.title}</h3>
+                        <p className="text-blue-400 text-[10px] font-bold">@{stream.creator?.username}</p>
                       </div>
                     </div>
                   ))}
@@ -211,67 +157,76 @@ export default function ExplorePage() {
             </div>
           )}
 
-          <div className="space-y-6 animate-fade-in">
-            <h2 className="text-gray-500 font-bold text-sm uppercase tracking-widest flex items-center gap-2 pl-2">
-              <Users className="w-4 h-4" />
-              {searchQuery ? `${t('creators_search')} "${searchQuery}"` : selectedCategory !== 'All' && selectedCategory !== 'Live 🔴' ? `${t('creators_category')} ${t(`cat_${selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '')}`) || selectedCategory}` : t('creators_recommended')}
+          {/* 🔥 EL GRID MAESTRO: 3 COLUMNAS EN MÓVIL (grid-cols-3) */}
+          <div className="space-y-6">
+            <h2 className="text-white font-black text-sm uppercase tracking-[0.2em] pl-2 flex items-center gap-2">
+              <Users className="w-4 h-4 text-blue-500" /> {searchQuery ? t('creators_search') : t('creators_recommended')}
             </h2>
             
             {creators.length === 0 && !isSearching ? (
-              <div className="text-center py-20 nm-inset rounded-[2rem] border border-white/5 max-w-2xl mx-auto">
-                <Ghost className="w-16 h-16 text-gray-700 mx-auto mb-4" strokeWidth={1} />
-                <h3 className="text-xl font-bold text-gray-400">{t('creators_empty_title')}</h3>
-                <p className="text-gray-600 mt-2 font-medium">{t('creators_empty_desc')}</p>
+              <div className="text-center py-20">
+                <Ghost className="w-12 h-12 text-gray-800 mx-auto mb-4" />
+                <p className="text-gray-600 font-bold text-xs uppercase tracking-[0.3em]">{t('creators_empty_title')}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-4">
                 {creators.map((creator) => (
                   <div 
                     key={creator.id} 
                     onClick={() => router.push(`/${creator.username}`)}
-                    className="nm-btn flex flex-col overflow-hidden border border-white/5 hover:border-blue-500/30 transition-all cursor-pointer group rounded-[2rem]"
+                    className="relative aspect-[3/4] sm:aspect-square group cursor-pointer overflow-hidden bg-[#111] sm:rounded-[2rem] border border-white/5 hover:border-blue-500/50 transition-all"
                   >
-                    <div className="h-28 w-full bg-[#050505] relative overflow-hidden">
-                      {creator.creatorProfile?.coverImage ? (
-                        <img src={getImageUrl(creator.creatorProfile.coverImage)} alt="Cover" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover object-center opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-black group-hover:opacity-80 transition-opacity"></div>
-                      )}
-                    </div>
+                    {/* 🔥 CORRECCIÓN 1: IMAGEN DE FONDO (PORTADA O AVATAR) SEGURA */}
+                    {(creator.creatorProfile?.coverImage || creator.creatorProfile?.profileImage) ? (
+                      <img 
+                        src={getImageUrl(creator.creatorProfile?.coverImage || creator.creatorProfile?.profileImage)} 
+                        className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" 
+                        alt="Creator"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black opacity-50 group-hover:opacity-100 transition-all duration-700"></div>
+                    )}
+                    
+                    {/* OVERLAY GRADIENTE */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-40 transition-opacity"></div>
 
-                    <div className="p-5 relative flex-1 flex flex-col pt-12">
-                      <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-20 h-20 rounded-full border-4 border-[#0a0a0a] bg-black overflow-hidden shadow-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                    {/* CONTENIDO DE LA TARJETA */}
+                    <div className="absolute inset-x-0 bottom-0 p-2 sm:p-4 text-center flex flex-col items-center">
+                      
+                      {/* 🔥 CORRECCIÓN 2: MINI AVATAR FLOTANTE SEGURO (Solo en PC) */}
+                      <div className="hidden sm:flex w-12 h-12 rounded-full border-2 border-white/20 mb-2 overflow-hidden shadow-2xl transition-transform group-hover:scale-110 bg-[#1a1a1a]">
                         {creator.creatorProfile?.profileImage ? (
-                          <img src={getImageUrl(creator.creatorProfile.profileImage)} alt="Avatar" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover object-center" />
+                          <img src={getImageUrl(creator.creatorProfile.profileImage)} className="w-full h-full object-cover" />
                         ) : (
-                          <span className="w-full h-full bg-gradient-to-tr from-gray-800 to-gray-600 flex items-center justify-center text-white font-black text-2xl">
-                            {creator.username ? creator.username.toUpperCase() : 'U'}
+                          <span className="w-full h-full flex items-center justify-center text-white font-black text-lg bg-gradient-to-tr from-blue-600 to-purple-600">
+                            {creator.username ? creator.username.toUpperCase().charAt(0) : 'U'}
                           </span>
                         )}
-                        {creator.role === 'ADMIN' && <div className="absolute bottom-0 right-0 w-5 h-5 bg-red-500 rounded-full border-2 border-black flex items-center justify-center"><Crown className="w-3 h-3 text-white"/></div>}
+                      </div>
+                      
+                      <h3 className="text-white font-black text-[10px] sm:text-sm truncate w-full uppercase tracking-tighter group-hover:text-blue-400 transition-colors">
+                        {creator.username}
+                      </h3>
+                      
+                      {/* PRECIO / FREE BADGE */}
+                      <div className="mt-1 flex items-center justify-center">
+                        {creator.creatorProfile?.monthlyPrice > 0 ? (
+                          <span className="text-[8px] sm:text-[10px] font-black text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20 shadow-lg">
+                            ${creator.creatorProfile.monthlyPrice.toFixed(0)}
+                          </span>
+                        ) : (
+                          <span className="text-[8px] sm:text-[10px] font-black text-green-400 bg-green-500/10 px-2 py-0.5 rounded-md border border-green-500/20">
+                            FREE
+                          </span>
+                        )}
                       </div>
 
-                      <div className="text-center flex-1 flex flex-col">
-                        <h3 className="text-lg font-black text-white group-hover:text-blue-400 transition-colors truncate">
-                          {creator.name || creator.username}
-                        </h3>
-                        <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">@{creator.username}</p>
-                        
-                        <p className="text-[11px] text-gray-400 mt-3 line-clamp-2 leading-relaxed font-medium">
-                          {creator.creatorProfile?.bio || t('default_bio')}
-                        </p>
-
-                        <div className="mt-auto pt-5">
-                          <div className="flex justify-between items-center bg-white/5 border border-white/5 rounded-xl p-2 px-4">
-                            <span className="text-[10px] font-black text-gray-400 flex items-center gap-1.5 uppercase tracking-widest">
-                              <Users className="w-3.5 h-3.5 text-blue-500" /> {creator._count?.followers || 0}
-                            </span>
-                            <span className="text-[10px] font-black text-white bg-blue-600/20 px-2 py-1 rounded-md uppercase tracking-wider text-blue-400 border border-blue-500/20">
-                              {creator.creatorProfile?.monthlyPrice > 0 ? `$${creator.creatorProfile.monthlyPrice.toFixed(0)}/${t('lbl_month')}` : t('lbl_free')}
-                            </span>
-                          </div>
+                      {/* BADGE DE ADMIN */}
+                      {creator.role === 'ADMIN' && (
+                        <div className="absolute top-2 right-2">
+                          <Crown className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -280,6 +235,11 @@ export default function ExplorePage() {
           </div>
         </main>
       </div>
+
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </AppLayout>
   );
 }
