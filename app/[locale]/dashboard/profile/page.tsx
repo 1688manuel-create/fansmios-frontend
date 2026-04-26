@@ -9,10 +9,34 @@ import { useTranslations } from 'next-intl';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-const getImageUrl = (path: string | null) => {
+// 🔥 FUNCIÓN BLINDADA ANTI-CRASH PARA CONFIGURACIÓN DE PERFIL
+const getImageUrl = (path: any) => {
   if (!path) return '';
-  const cleanPath = path.trim(); 
+
+  let safePath = path;
+
+  // 1. Desempaquetar si es un JSON
+  if (typeof safePath === 'string' && safePath.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(safePath);
+      safePath = Array.isArray(parsed) ? parsed[0]: parsed;
+    } catch (e) {}
+  }
+
+  // 2. Extraer la primera foto si ya es un Array
+  if (Array.isArray(safePath)) {
+    safePath = safePath[0] || '';
+  }
+
+  // 3. Abortar si sigue sin ser texto
+  if (typeof safePath !== 'string') return '';
+
+  const cleanPath = safePath.trim();
+
+  // 4. Si ya es una URL completa
   if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) return cleanPath;
+
+  // 5. Construir la URL con el Backend local
   const finalPath = cleanPath.startsWith('/') ? cleanPath.substring(1) : cleanPath;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
   return `${cleanBase}/${finalPath}`;

@@ -10,11 +10,35 @@ import { useTranslations } from 'next-intl';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-const getImageUrl = (path: string | null) => {
+// 🔥 FUNCIÓN BLINDADA ANTI-CRASH PARA IMÁGENES
+const getImageUrl = (path: any) => {
   if (!path) return '';
-  if (path.startsWith('http')) return path; 
-  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-  return `${BACKEND_URL}/${cleanPath}`; 
+
+  let safePath = path;
+
+  // 1. Si viene como un texto JSON (ej: '["foto.png"]')
+  if (typeof safePath === 'string' && safePath.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(safePath);
+      // 👇 Usamos safePath = en lugar de return
+      safePath = Array.isArray(parsed) ? parsed[0]: parsed;
+    } catch (e) {
+      // Ignorar si no se puede parsear
+    }
+  }
+
+  // 2. Si ya es una lista/Array real (Agregamos el aquí)
+  if (Array.isArray(safePath)) {
+    safePath = safePath[0] || '';
+  }
+
+  // 3. Si después de todo sigue sin ser un texto, abortamos para no romper React
+  if (typeof safePath !== 'string') return '';
+
+  // 4. El flujo normal de URLs (Aquí es donde se le pega la URL de tu servidor)
+  if (safePath.startsWith('http')) return safePath;
+  const cleanPath = safePath.startsWith('/') ? safePath.substring(1) : safePath;
+  return `${BACKEND_URL}/${cleanPath}`;
 };
 
 // 🔥 FUNCIÓN TÁCTICA PARA EXTRAER LA PRIMERA IMAGEN SI ES UN ARRAY JSON

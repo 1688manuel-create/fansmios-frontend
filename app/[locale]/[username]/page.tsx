@@ -21,19 +21,42 @@ import {
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
-const getImageUrl = (path: string | null, usernameForWatermark: string | null = null) => {
+// 🔥 FUNCIÓN BLINDADA ANTI-CRASH (CON SOPORTE PARA MARCAS DE AGUA CLOUDINARY)
+const getImageUrl = (path: any, usernameForWatermark: string | null = null) => {
   if (!path) return '';
-  if (path.startsWith('http')) {
-    if (usernameForWatermark && path.includes('cloudinary.com')) {
+
+  let safePath = path;
+
+  // 1. Desempaquetar si es un JSON con varias fotos
+  if (typeof safePath === 'string' && safePath.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(safePath);
+      safePath = Array.isArray(parsed) ? parsed[0]: parsed;
+    } catch (e) {}
+  }
+
+  // 2. Extraer la primera foto si ya es un Array
+  if (Array.isArray(safePath)) {
+    safePath = safePath[0] || '';
+  }
+
+  // 3. Abortar si sigue sin ser texto para no romper React
+  if (typeof safePath !== 'string') return '';
+
+  // 4. Lógica original de HTTP y Marcas de Agua (Cloudinary)
+  if (safePath.startsWith('http')) {
+    if (usernameForWatermark && safePath.includes('cloudinary.com')) {
       const cleanUsername = usernameForWatermark.replace('@', '');
       const watermarkTransform = `upload/l_text:Arial_40_bold:fansmio%20%40${cleanUsername},co_white,o_30/fl_layer_apply,g_south,y_40/`;
-      return path.replace('upload/', watermarkTransform);
+      return safePath.replace('upload/', watermarkTransform);
     }
-    return path; 
+    return safePath;
   }
-  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+
+  // 5. Flujo normal para archivos locales (¡ESTO ERA LO QUE TE FALTABA!)
+  const cleanPath = safePath.startsWith('/') ? safePath.substring(1) : safePath;
   const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
-  return `${cleanBase}/${cleanPath}`; 
+  return `${cleanBase}/${cleanPath}`;
 };
 
 // 🌳 NODO DE COMENTARIOS PARA EL PERFIL
