@@ -22,9 +22,9 @@ import '@livekit/components-styles';
 
 // 🔥 ICONOS PREMIUM
 import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart } from 'lucide-react';
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+import { useTranslations } from 'next-intl';
 
-const SOCKET_URL = 'https://api.fansmio.com';
+const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
 // 🏆 ECONOMÍA DE LUJO FANSMIO
 export interface Gift { id: number; name: string; amount: number; emoji: string; style: string; }
@@ -44,13 +44,10 @@ export const GIFTS: Gift[] = [
 
 export interface Donator { userId: string; username: string; amount: number; }
 
-// ============================================================================
-// 👑 ORQUESTADOR TIKTOK-LEVEL
-// ============================================================================
 export default function LiveRoom() {
   const { id } = useParams();
   const router = useRouter();
-  const t = useTranslations('LiveRoom'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('LiveRoom');
 
   const [user, setUser] = useState<any>(null);
   const [streamData, setStreamData] = useState<any>(null);
@@ -157,8 +154,29 @@ export default function LiveRoom() {
       }
     },
     onViewerCount: setViewersCount,
-    onStreamKilled: () => { alert(t('alert_stream_ended')); router.push('/explore'); }
+    onStreamKilled: () => { alert(t('alert_stream_ended')); router.push('/explore'); },
+    // 🚀 NUEVO: Escuchamos si el creador bloquea la sala
+    onPaywallActivated: (newPrice: number) => {
+      const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || user?.role === 'ADMIN';
+      if (!isCreatorOrAdmin) {
+        setStreamData((prev: any) => ({ ...prev, price: newPrice }));
+        setHasAccess(false); // 💥 ¡PUM! Le bloqueamos la pantalla
+      }
+    }
   });
+
+  // 🚀 NUEVO: Botón para el creador que activa el Paywall
+  const handleLockRoomVIP = () => {
+    const priceStr = prompt("¿Cuánto costará la entrada VIP en USD? (Ej: 5)", "5");
+    const newPrice = Number(priceStr);
+    
+    if (newPrice && newPrice > 0) {
+      if (window.confirm(`¿Seguro que quieres cerrar la sala y cobrar $${newPrice} a los que están gratis?`)) {
+        socketRef.current?.emit('activatePaywall', { streamId: id, price: newPrice });
+        alert("¡Sala Bloqueada! Los fans gratis están viendo la pantalla de pago.");
+      }
+    }
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -257,22 +275,21 @@ export default function LiveRoom() {
         .custom-mask { -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 100%); }
       `}</style>
 
-      {/* 🎬 VIDEO LAYER Y UI INMERSIVA */}
+      {/* 🎬 VIDEO LAYER */}
       <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full" onContextMenu={(e) => e.preventDefault()}>
         {hasAccess && liveKitToken ? (
-          <LiveKitRoom video={isCreatorOrAdmin ? isLiveActive : false} audio={isCreatorOrAdmin ? isLiveActive : false} token={liveKitToken} serverUrl="wss://live.fansmio.com" className="w-full h-full relative">
+          <LiveKitRoom video={isCreatorOrAdmin ? isLiveActive : false} audio={isCreatorOrAdmin ? isLiveActive : false} token={liveKitToken} serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.fansmio.com"} className="w-full h-full relative">
             <ParticipantsTracker onUpdate={setConnectedUsers} />
             <StreamStage />
             <RoomAudioRenderer />
 
-            {/* 💎 UI INMERSIVA (DENTRO DEL ROOM) */}
+            {/* 💎 UI INMERSIVA */}
             <div className="absolute inset-0 z-10 flex flex-col justify-between pointer-events-none pb-safe">
               
-              {/* DEGRADADOS (Fondo oscuro arriba y abajo para que se lean las letras) */}
               <div className="absolute top-0 w-full h-32 bg-gradient-to-b from-black/80 to-transparent pointer-events-none -z-10"></div>
               <div className="absolute bottom-0 w-full h-64 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none -z-10"></div>
               
-              {/* 🔝 TOP HUD (Píldora) */}
+              {/* 🔝 TOP HUD */}
               <div className="pt-4 px-4 flex justify-between items-start pointer-events-auto">
                 <div className="flex items-center bg-black/40 backdrop-blur-md rounded-full p-1 pr-3 border border-white/10 shadow-lg cursor-pointer hover:bg-black/50 transition-colors">
                   <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center font-black text-white shadow-inner overflow-hidden border border-white/20 mr-2">
@@ -289,6 +306,14 @@ export default function LiveRoom() {
 
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center gap-2">
+                    
+                    {/* 🚀 BOTÓN SALTO VIP (SOLO CREADOR) */}
+                    {isCreatorOrAdmin && (
+                      <button onClick={handleLockRoomVIP} className="w-9 h-9 rounded-full bg-red-600/80 backdrop-blur-md flex items-center justify-center border border-red-500/50 text-white hover:bg-red-500 transition-colors shadow-[0_0_15px_rgba(220,38,38,0.5)]" title="Pasar a Privado">
+                        <Lock className="w-4 h-4" />
+                      </button>
+                    )}
+
                     <button onClick={() => setShowViewersModal(true)} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg">
                       <Eye className="w-4 h-4" />
                     </button>
@@ -300,7 +325,7 @@ export default function LiveRoom() {
                 </div>
               </div>
 
-              {/* 🏆 TOP DONATORS (Derecha Medio) */}
+              {/* 🏆 TOP DONATORS */}
               <div className="absolute right-4 top-28 flex flex-col items-end gap-2 pointer-events-auto">
                 {topDonators.length > 0 && (
                   <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-yellow-500/20 shadow-lg min-w-[100px]">
@@ -323,7 +348,6 @@ export default function LiveRoom() {
                 )}
               </div>
 
-              {/* 🌌 EFECTO DE REGALO GIGANTE */}
               {giftEffect && <GiftEffectOverlay giftEffect={giftEffect} />}
 
               {/* 💬 ÁREA INFERIOR (Chat y Controles) */}
@@ -331,7 +355,6 @@ export default function LiveRoom() {
                 
                 <div ref={heartsContainerRef} className="absolute bottom-16 right-4 w-16 h-64 pointer-events-none overflow-visible z-0" />
 
-                {/* Chat Flotante */}
                 <div className="max-h-[50vh] overflow-y-auto flex flex-col gap-2 custom-scrollbar pb-2 custom-mask pr-14 relative z-10">
                   {messages.map((msg: any, i: number) => {
                     if (msg.isSystem) return <div key={i} className="text-[11px] text-teal-400/90 font-bold px-3 py-1 bg-black/30 backdrop-blur-md rounded-xl w-fit border border-teal-500/20">{msg.content}</div>;
@@ -362,7 +385,6 @@ export default function LiveRoom() {
                   <div ref={chatEndRef} />
                 </div>
 
-                {/* 🔥 Input Bar Estilo TikTok y CONTROLES CREADOR */}
                 <div className="flex gap-2 items-center mt-2 relative z-30">
                   <div className="flex-1 bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center px-4 py-2 shadow-lg focus-within:border-teal-500/50 transition-colors">
                     <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} placeholder={t('ph_chat')} className="bg-transparent text-white text-sm w-full outline-none placeholder-gray-300 font-medium" />
@@ -371,7 +393,6 @@ export default function LiveRoom() {
                     )}
                   </div>
                   
-                  {/* SI ES FAN: Ve Diamante y Corazón */}
                   {!isCreatorOrAdmin && (
                     <button onClick={() => setShowGiftMenu(true)} className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.5)] hover:scale-105 transition-transform shrink-0">
                       <Diamond className="w-5 h-5 text-white fill-white" />
@@ -384,7 +405,6 @@ export default function LiveRoom() {
                     </button>
                   )}
 
-                  {/* 🔥 SI ES CREADOR: Ve su Micrófono y Cámara alineados aquí */}
                   {isCreatorOrAdmin && isLiveActive && (
                     <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center shadow-lg px-1 py-0.5">
                       <ControlBar 
@@ -405,12 +425,12 @@ export default function LiveRoom() {
       </div>
 
       {/* 🛑 PAYWALL LAYER */}
-      {!hasAccess && <PaywallLayer price={streamData.price} isProcessing={isProcessing} onBuy={handleBuyTicket} />}
+      {!hasAccess && <PaywallLayer price={streamData?.price || 0} isProcessing={isProcessing} onBuy={handleBuyTicket} />}
 
       {/* 📺 PREPARATION LAYER (Solo Creador) */}
       {isCreatorOrAdmin && !isLiveActive && hasAccess && <PreparationLayer onStart={() => setIsLiveActive(true)} />}
 
-      {/* 🎁 DRAWER DE REGALOS (Desliza desde abajo) */}
+      {/* 🎁 DRAWER DE REGALOS */}
       {showGiftMenu && (
         <>
           <div className="absolute inset-0 bg-black/40 z-40 pointer-events-auto" onClick={() => setShowGiftMenu(false)}></div>
@@ -443,7 +463,7 @@ export default function LiveRoom() {
 // 🧩 SUB-COMPONENTES TÁCTICOS
 // ============================================================================
 
-function useLiveSocket({ id, user, streamData, hasAccess, onLike, onMessage, onViewerCount, onStreamKilled }: any) {
+function useLiveSocket({ id, user, streamData, hasAccess, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated }: any) {
   const socketRef = useRef<Socket | null>(null);
   const router = useRouter();
 
@@ -468,6 +488,11 @@ function useLiveSocket({ id, user, streamData, hasAccess, onLike, onMessage, onV
     
     socketInstance.on('streamKilled', () => {
       if (String(user.id) !== String(streamData?.creatorId)) onStreamKilled();
+    });
+
+    // 🚀 NUEVO: Escuchamos si se cierra la puerta
+    socketInstance.on('paywallActivated', ({ price }: { price: number }) => {
+      if (onPaywallActivated) onPaywallActivated(price);
     });
 
     return () => { socketInstance.disconnect(); };
@@ -530,7 +555,7 @@ function GiftEffectOverlay({ giftEffect }: { giftEffect: Gift }) {
 function ViewersModal({ connectedUsers, onClose }: { connectedUsers: any[], onClose: () => void }) {
   const t = useTranslations('LiveRoom'); 
   return (
-    <div className="absolute inset-0 z-[200000] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-auto">
+    <div className="absolute inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-auto">
       <div className="bg-[#111] border border-white/10 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-sm overflow-hidden shadow-2xl animate-drawer sm:animate-fade-in pb-safe">
         <div className="flex items-center justify-between p-5 border-b border-white/5">
           <h3 className="text-white font-black text-base flex items-center gap-2"><Eye className="w-4 h-4 text-teal-400" /> {t('modal_viewers_title')} ({connectedUsers.length})</h3>
