@@ -529,7 +529,7 @@ export default function CreatorProfile() {
 
           {(creator.role === 'CREATOR' || creator.role === 'ADMIN') && (
             <>
-              {bundles.length > 0 && (
+             {bundles.length > 0 && (
                 <div className="mb-12 space-y-6 animate-fade-in">
                   <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2 drop-shadow-md">
                     <Package className="w-5 h-5 text-teal-500"/> {t('lbl_bundles')}
@@ -538,6 +538,25 @@ export default function CreatorProfile() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {bundles.map(bundle => {
                       const isPurchased = bundle.hasAccess || bundle.isPurchased; 
+                      
+                      // 🚀 FUNCIÓN TÁCTICA PARA ABRIR TODA LA GALERÍA DEL PAQUETE
+                      const handleOpenGallery = (e: any) => {
+                        e.stopPropagation();
+                        let allUrls: string[] = [];
+                        bundle.posts?.forEach((p: any) => {
+                          if (p.mediaUrl) {
+                            try {
+                              const parsed = JSON.parse(p.mediaUrl);
+                              if (Array.isArray(parsed)) allUrls.push(...parsed);
+                              else allUrls.push(parsed);
+                            } catch(err) { allUrls.push(p.mediaUrl); }
+                          }
+                        });
+                        if (allUrls.length > 0) {
+                          setExpandedGallery({ urls: allUrls, currentIndex: 0, username: creator?.username });
+                        }
+                      };
+
                       return (
                         <div 
                           key={bundle.id} 
@@ -548,10 +567,11 @@ export default function CreatorProfile() {
                               : 'cursor-pointer hover:-translate-y-2 hover:border-teal-500/50 hover:shadow-[0_15px_40px_rgba(20,184,166,0.15)]'
                           }`}
                         >
-                          {/* 👁️ MEJORA 1: IMAGEN DE PORTADA GIGANTE (EFECTO INTRIGA) */}
                           <div className="w-full h-48 sm:h-56 bg-black relative overflow-hidden">
                             {bundle.posts && bundle.posts.length > 0 ? (() => {
                               let firstMediaUrl = null;
+                              
+                              // 👇 CORRECCIÓN DEFINITIVA APLICADA: Agregamos a posts y a parsed
                               if (bundle.posts[0]?.mediaUrl) {
                                 try {
                                   const parsed = JSON.parse(bundle.posts[0].mediaUrl);
@@ -563,12 +583,13 @@ export default function CreatorProfile() {
                                 <>
                                   <img 
                                     src={getImageUrl(firstMediaUrl)} 
-                                    className={`w-full h-full object-cover transition-all duration-700 ${!isPurchased && !isOwnerOrAdmin ? 'blur-xl scale-125 opacity-50 group-hover:scale-[1.15]' : 'blur-0 opacity-100 group-hover:scale-105'}`} 
+                                    className={`w-full h-full object-cover transition-all duration-700 ${!isPurchased && !isOwnerOrAdmin ? 'blur-xl scale-125 opacity-50 group-hover:scale-[1.15]' : 'blur-0 opacity-100 group-hover:scale-105 cursor-pointer'}`} 
                                     alt="Bundle Cover" 
                                     draggable="false" 
                                     onContextMenu={(e) => e.preventDefault()} 
+                                    // 👇 AQUÍ CONECTAMOS LA IMAGEN A LA GALERÍA
+                                    onClick={(e) => { if (isPurchased || isOwnerOrAdmin) handleOpenGallery(e); }}
                                   />
-                                  {/* Candado Flotante Central */}
                                   {!isPurchased && !isOwnerOrAdmin && (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-[2px]">
                                       <div className="bg-black/60 p-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md group-hover:scale-110 transition-transform duration-300">
@@ -583,7 +604,6 @@ export default function CreatorProfile() {
                               ) : <div className="w-full h-full bg-teal-900/20"></div>;
                             })() : <div className="w-full h-full bg-teal-900/20"></div>}
 
-                            {/* 📝 MEJORA 2: GRAMÁTICA DINÁMICA DE ARCHIVOS */}
                             <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-lg">
                               <ImageIcon className="w-4 h-4 text-teal-400" />
                               <span className="text-xs font-bold text-white tracking-wide">
@@ -592,19 +612,19 @@ export default function CreatorProfile() {
                             </div>
                           </div>
 
-                          {/* CONTENIDO Y TEXTOS */}
                           <div className="p-6 flex flex-col flex-1 relative z-10">
                             <h3 className="text-xl font-black text-white group-hover:text-teal-400 transition-colors drop-shadow-sm">{bundle.title}</h3>
                             <p className="text-sm text-gray-400 mt-2 mb-6 line-clamp-2 leading-relaxed font-medium">{bundle.description}</p>
                             
                             <div className="mt-auto pt-5 border-t border-white/5 flex items-center justify-between">
-                              {/* 🔓 MEJORA 3: PSICOLOGÍA DEL BOTÓN (DESBLOQUEAR) */}
                               {isOwnerOrAdmin ? (
-                                <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors flex items-center gap-2 w-full justify-center">
+                                // 👇 TAMBIÉN CONECTAMOS EL BOTÓN DEL DUEÑO
+                                <button onClick={handleOpenGallery} className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors flex items-center gap-2 w-full justify-center">
                                   <Eye className="w-4 h-4"/> Ver Paquete
                                 </button>
                               ) : isPurchased ? (
-                                <button className="nm-inset border border-green-500/30 text-green-500 py-3 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-black cursor-default w-full" onClick={(e) => e.stopPropagation()}>
+                                // 👇 TAMBIÉN CONECTAMOS EL BOTÓN DEL CLIENTE
+                                <button onClick={handleOpenGallery} className="nm-inset border border-green-500/30 hover:bg-green-500/10 text-green-500 py-3 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-black cursor-pointer transition-colors w-full">
                                   <CheckCircle2 className="w-5 h-5" /> DESBLOQUEADO
                                 </button>
                               ) : (
