@@ -112,8 +112,21 @@ export default function LiveRoom() {
     });
   };
 
+  // 🔊 ARMA 2: EL MOTOR DE SONIDO VIP
   const triggerGiftEffect = (gift: Gift) => {
     setGiftEffect(gift);
+    
+    // Si el regalo tiene una 'action' (ej. 'galaxy'), disparamos el cañón de sonido
+    if (gift.action) {
+      try {
+        const audio = new Audio(`/sounds/${gift.action}.mp3`);
+        audio.volume = 0.8; // Volumen al 80% para que se escuche fuerte pero no sature
+        audio.play().catch(e => console.log("El navegador bloqueó el auto-play del sonido", e));
+      } catch (err) {
+        console.error("Error al cargar la munición de audio:", err);
+      }
+    }
+
     setTimeout(() => setGiftEffect(null), 4000);
   };
 
