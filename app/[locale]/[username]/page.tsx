@@ -531,55 +531,88 @@ export default function CreatorProfile() {
             <>
               {bundles.length > 0 && (
                 <div className="mb-12 space-y-6 animate-fade-in">
-                  <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2">
+                  <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase tracking-widest pl-2 drop-shadow-md">
                     <Package className="w-5 h-5 text-teal-500"/> {t('lbl_bundles')}
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {bundles.map(bundle => {
                       const isPurchased = bundle.hasAccess || bundle.isPurchased; 
                       return (
-                        <div key={bundle.id} onClick={() => { if (!isOwnerOrAdmin && !isPurchased) handleBuyBundle(bundle); }} className={`bg-[#0a0a0a] p-6 rounded-3xl border border-white/5 group flex flex-col h-full transition-colors shadow-lg ${isPurchased ? 'cursor-default border-green-500/20 shadow-[inset_0_0_20px_rgba(34,197,94,0.05)] nm-inset' : 'cursor-pointer hover:border-teal-500/30 hover:shadow-[0_10px_30px_rgba(20,184,166,0.1)]'}`}>
-                          <h3 className="text-xl font-bold text-white">{bundle.title}</h3>
-                          <p className="text-sm text-gray-500 mt-2 mb-4 line-clamp-2">{bundle.description}</p>
-                          {bundle.posts && bundle.posts.length > 0 && (
-                            <div className="flex items-center gap-3 mb-6">
-                              <div className="flex -space-x-3">
-                                {bundle.posts.slice(0, 3).map((p: any, i: number) => {
-                                  // 🔥 PARSEO SEGURO PARA BUNDLES (Pueden venir de JSON)
-                                  let firstMediaUrl = null;
-                                  if (p.mediaUrl) {
-                                    try {
-                                      const parsed = JSON.parse(p.mediaUrl);
-                                      firstMediaUrl = Array.isArray(parsed) ? parsed : parsed;
-                                    } catch(e) { firstMediaUrl = p.mediaUrl; }
-                                  }
+                        <div 
+                          key={bundle.id} 
+                          onClick={() => { if (!isOwnerOrAdmin && !isPurchased) handleBuyBundle(bundle); }} 
+                          className={`bg-[#0a0a0a] rounded-[2rem] border border-white/5 group flex flex-col h-full overflow-hidden shadow-lg transition-all duration-300 relative ${
+                            isPurchased 
+                              ? 'cursor-default border-green-500/20 shadow-[inset_0_0_30px_rgba(34,197,94,0.05)] nm-inset' 
+                              : 'cursor-pointer hover:-translate-y-2 hover:border-teal-500/50 hover:shadow-[0_15px_40px_rgba(20,184,166,0.15)]'
+                          }`}
+                        >
+                          {/* 👁️ MEJORA 1: IMAGEN DE PORTADA GIGANTE (EFECTO INTRIGA) */}
+                          <div className="w-full h-48 sm:h-56 bg-black relative overflow-hidden">
+                            {bundle.posts && bundle.posts.length > 0 ? (() => {
+                              let firstMediaUrl = null;
+                              if (bundle.posts[0]?.mediaUrl) {
+                                try {
+                                  const parsed = JSON.parse(bundle.posts[0].mediaUrl);
+                                  firstMediaUrl = Array.isArray(parsed) ? parsed[0]: parsed;
+                                } catch(e) { firstMediaUrl = bundle.posts[0].mediaUrl; }
+                              }
+                              
+                              return firstMediaUrl ? (
+                                <>
+                                  <img 
+                                    src={getImageUrl(firstMediaUrl)} 
+                                    className={`w-full h-full object-cover transition-all duration-700 ${!isPurchased && !isOwnerOrAdmin ? 'blur-xl scale-125 opacity-50 group-hover:scale-[1.15]' : 'blur-0 opacity-100 group-hover:scale-105'}`} 
+                                    alt="Bundle Cover" 
+                                    draggable="false" 
+                                    onContextMenu={(e) => e.preventDefault()} 
+                                  />
+                                  {/* Candado Flotante Central */}
+                                  {!isPurchased && !isOwnerOrAdmin && (
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-[2px]">
+                                      <div className="bg-black/60 p-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md group-hover:scale-110 transition-transform duration-300">
+                                        <Lock className="w-8 h-8 text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
+                                      </div>
+                                      <span className="text-white font-black tracking-widest uppercase text-[10px] mt-4 bg-black/60 px-4 py-1.5 rounded-full border border-white/5 backdrop-blur-md">
+                                        Contenido Oculto
+                                      </span>
+                                    </div>
+                                  )}
+                                </>
+                              ) : <div className="w-full h-full bg-teal-900/20"></div>;
+                            })() : <div className="w-full h-full bg-teal-900/20"></div>}
 
-                                  return (
-                                  <div key={i} className="w-12 h-12 rounded-lg nm-inset border border-white/10 overflow-hidden relative" style={{ zIndex: 3 - i }}>
-                                    {firstMediaUrl ? (
-                                      <img src={getImageUrl(firstMediaUrl)} className={`w-full h-full object-cover transition-all ${!isPurchased && !isOwnerOrAdmin ? 'blur-md opacity-60 scale-125' : 'blur-0 opacity-100 cursor-pointer hover:scale-110'}`} alt="Media" draggable="false" onContextMenu={(e) => e.preventDefault()} onClick={(e) => { if (isPurchased || isOwnerOrAdmin) { e.stopPropagation(); setExpandedGallery({ urls: [firstMediaUrl], currentIndex: 0, username: creator?.username }); } }} />
-                                    ) : ( <div className="w-full h-full bg-teal-900/20"></div> )}
-                                  </div>
-                                  );
-                                })}
-                                {bundle.posts.length > 3 && (
-                                  <div className="w-12 h-12 rounded-lg nm-inset border border-white/10 bg-black/80 flex items-center justify-center text-xs font-bold text-white z-0">+{bundle.posts.length - 3}</div>
-                                )}
-                              </div>
-                              {!isPurchased && !isOwnerOrAdmin && (
-                                <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest flex items-center gap-1 bg-red-500/10 px-2 py-1 rounded"><Lock className="w-3 h-3"/> {t('lbl_hidden')}</span>
+                            {/* 📝 MEJORA 2: GRAMÁTICA DINÁMICA DE ARCHIVOS */}
+                            <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-lg">
+                              <ImageIcon className="w-4 h-4 text-teal-400" />
+                              <span className="text-xs font-bold text-white tracking-wide">
+                                {bundle.posts?.length === 1 ? '1 Archivo' : `${bundle.posts?.length || 0} Archivos`}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* CONTENIDO Y TEXTOS */}
+                          <div className="p-6 flex flex-col flex-1 relative z-10">
+                            <h3 className="text-xl font-black text-white group-hover:text-teal-400 transition-colors drop-shadow-sm">{bundle.title}</h3>
+                            <p className="text-sm text-gray-400 mt-2 mb-6 line-clamp-2 leading-relaxed font-medium">{bundle.description}</p>
+                            
+                            <div className="mt-auto pt-5 border-t border-white/5 flex items-center justify-between">
+                              {/* 🔓 MEJORA 3: PSICOLOGÍA DEL BOTÓN (DESBLOQUEAR) */}
+                              {isOwnerOrAdmin ? (
+                                <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors flex items-center gap-2 w-full justify-center">
+                                  <Eye className="w-4 h-4"/> Ver Paquete
+                                </button>
+                              ) : isPurchased ? (
+                                <button className="nm-inset border border-green-500/30 text-green-500 py-3 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-black cursor-default w-full" onClick={(e) => e.stopPropagation()}>
+                                  <CheckCircle2 className="w-5 h-5" /> DESBLOQUEADO
+                                </button>
+                              ) : (
+                                <button className="bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-black py-3 px-6 rounded-xl text-sm transition-all shadow-[0_5px_20px_rgba(20,184,166,0.3)] group-hover:shadow-[0_5px_25px_rgba(20,184,166,0.5)] flex items-center justify-center gap-2 w-full uppercase tracking-wider group-hover:scale-[1.02]">
+                                  <Unlock className="w-5 h-5"/> Desbloquear ${(bundle.price || 0).toFixed(2)}
+                                </button>
                               )}
                             </div>
-                          )}
-                          <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
-                            <span className="text-xs font-bold text-teal-400 nm-inset px-3 py-1.5 rounded-md border border-teal-500/20">{bundle.posts?.length} {t('lbl_files')}</span>
-                            {isOwnerOrAdmin ? (
-                              <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors">{t('btn_view_bundle')}</button>
-                            ) : isPurchased ? (
-                              <button className="nm-inset border border-green-500/30 text-green-500 py-2.5 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-bold cursor-default" onClick={(e) => e.stopPropagation()}><CheckCircle2 className="w-4 h-4" /> {t('btn_acquired')}</button>
-                            ) : (
-                              <button className="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors shadow-lg shadow-teal-500/20">{t('btn_buy')} ${(bundle.price || 0).toFixed(2)}</button>
-                            )}
                           </div>
                         </div>
                       );
