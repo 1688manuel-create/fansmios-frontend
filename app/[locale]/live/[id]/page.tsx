@@ -119,7 +119,7 @@ export default function LiveRoom() {
     // Si el regalo tiene una 'action' (ej. 'galaxy'), disparamos el cañón de sonido
     if (gift.action) {
       try {
-        const audio = new Audio(`/sounds/${gift.action}.mp3`);
+        const audio = new Audio(`/sounds/${gift.action}.wav`);
         audio.volume = 0.8; // Volumen al 80% para que se escuche fuerte pero no sature
         audio.play().catch(e => console.log("El navegador bloqueó el auto-play del sonido", e));
       } catch (err) {
