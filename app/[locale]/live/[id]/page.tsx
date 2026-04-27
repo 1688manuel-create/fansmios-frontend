@@ -266,14 +266,26 @@ export default function LiveRoom() {
     }
   };
 
+  // 💸 ARMA 3: COBRO ONE-CLICK AL INSTANTE
   const handleBuyTicket = async () => {
     if (!streamData || isProcessing) return;
     setIsProcessing(true);
     try {
-      const res = await paymentService.createPaymentIntent({ amount: streamData.price, type: 'LIVE_TICKET', creatorId: streamData.creatorId, postId: id as string, description: `Ticket VIP: ${streamData.title}` });
-      if (res.success) { setHasAccess(true); loadStreamData(); }
-    } catch { alert(t('alert_payment_failed')); } 
-    finally { setIsProcessing(false); }
+      // Disparamos directo a la nueva ruta rápida del servidor
+      const res = await api.post('/live/buy-ticket', { streamId: id, amount: streamData.price });
+      
+      if (res.data.success) {
+        setHasAccess(true); // 💥 ¡Tiramos el muro de pago al instante!
+        alert("¡PAGO EXITOSO! Bienvenido a la zona VIP 🤫");
+        loadStreamData(); // Recargamos los mensajes secretos
+      }
+    } catch (error: any) { 
+      // Si no tiene dinero, le avisamos
+      alert(error.response?.data?.error || "Error al procesar el pago. Intenta de nuevo."); 
+    } 
+    finally { 
+      setIsProcessing(false); 
+    }
   };
 
   if (!streamData) return <div className="min-h-[100dvh] bg-black flex items-center justify-center text-white font-mono animate-pulse">{t('lbl_connecting_gateway')}</div>;
