@@ -24,9 +24,16 @@ import '@livekit/components-styles';
 import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart, Target, TrendingUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-// 🔥 CORRECCIÓN DEL RADAR: Limpiamos la URL para evitar el error de doble protocolo
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.fansmios.com';
-const SOCKET_URL = rawApiUrl.replace('/api', '').replace('wss://', '').replace('ws://', '');
+// 🔥 BLINDAJE DE CONEXIÓN: Extraemos solo el dominio limpio sin romper nada
+let SOCKET_URL = 'https://api.fansmio.com'; // Ojo: Pon aquí tu dominio real si es otro
+if (process.env.NEXT_PUBLIC_API_URL) {
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_API_URL);
+    SOCKET_URL = `${url.protocol}//${url.host}`;
+  } catch (e) {
+    console.error("URL en .env mal escrita, usando fallback");
+  }
+}
 
 // 🏆 ECONOMÍA DE LUJO FANSMIO
 export interface Gift { id: number; name: string; amount: number; emoji: string; style: string; action?: string; }
