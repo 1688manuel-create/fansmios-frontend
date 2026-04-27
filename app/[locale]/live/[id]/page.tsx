@@ -21,25 +21,25 @@ import { Track } from 'livekit-client';
 import '@livekit/components-styles';
 
 // 🔥 ICONOS PREMIUM
-import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart } from 'lucide-react';
+import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart, Target, TrendingUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://api.fansmio.com';
 
 // 🏆 ECONOMÍA DE LUJO FANSMIO
-export interface Gift { id: number; name: string; amount: number; emoji: string; style: string; }
+export interface Gift { id: number; name: string; amount: number; emoji: string; style: string; action?: string; }
 
 export const GIFTS: Gift[] = [
   { id: 1, name: "Rosa", amount: 1, emoji: "🌹", style: "text-rose-400 font-bold" },
   { id: 2, name: "Brindis", amount: 2, emoji: "🥂", style: "text-yellow-200 font-bold" },
   { id: 3, name: "Beso", amount: 5, emoji: "💋", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
   { id: 4, name: "Carta", amount: 10, emoji: "💌", style: "text-fuchsia-400 font-bold" },
-  { id: 5, name: "Corona", amount: 15, emoji: "👑", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]" },
+  { id: 5, name: "Corona", amount: 15, emoji: "👑", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
   { id: 6, name: "Llave", amount: 20, emoji: "🗝️", style: "text-amber-200 font-black" },
-  { id: 7, name: "Diamante", amount: 30, emoji: "💎", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]" },
+  { id: 7, name: "Diamante", amount: 30, emoji: "💎", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]", action: 'explosion' },
   { id: 8, name: "Deportivo", amount: 50, emoji: "🏎️", style: "text-green-400 font-black italic" },
-  { id: 9, name: "Corazón VIP", amount: 100, emoji: "❤️‍🔥", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase" },
-  { id: 10, name: "Universo", amount: 200, emoji: "🌌", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase" },
+  { id: 9, name: "Corazón VIP", amount: 100, emoji: "❤️‍🔥", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase", action: 'fireworks' },
+  { id: 10, name: "Universo", amount: 200, emoji: "🌌", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase", action: 'galaxy' },
 ];
 
 export interface Donator { userId: string; username: string; amount: number; }
@@ -67,6 +67,10 @@ export default function LiveRoom() {
   
   const [showViewersModal, setShowViewersModal] = useState(false);
   const [connectedUsers, setConnectedUsers] = useState<any[]>([]);
+
+  // 🎯 ARMA 3: ESTADO DE LA META
+  const [currentGoal, setCurrentGoal] = useState(0);
+  const [targetGoal, setTargetGoal] = useState(500);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const streakTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -143,7 +147,7 @@ export default function LiveRoom() {
   };
 
   const socketRef = useLiveSocket({
-    id: id as string, user, streamData, hasAccess, onLike: triggerHeart,
+    id: id as string, user, streamData, onLike: triggerHeart,
     onMessage: (msg: any) => {
       setMessages((prev) => [...prev.slice(-99), msg]); 
       if (msg.isDonation) {
@@ -155,17 +159,21 @@ export default function LiveRoom() {
     },
     onViewerCount: setViewersCount,
     onStreamKilled: () => { alert(t('alert_stream_ended')); router.push('/explore'); },
-    // 🚀 NUEVO: Escuchamos si el creador bloquea la sala
+    // 🚀 ARMA 1: Escuchar bloqueo
     onPaywallActivated: (newPrice: number) => {
       const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || user?.role === 'ADMIN';
       if (!isCreatorOrAdmin) {
         setStreamData((prev: any) => ({ ...prev, price: newPrice }));
         setHasAccess(false); // 💥 ¡PUM! Le bloqueamos la pantalla
       }
+    },
+    // 🎯 ARMA 3: Recibir Meta
+    onUpdateGoal: (amount: number) => {
+      setCurrentGoal(prev => prev + amount);
     }
   });
 
-  // 🚀 NUEVO: Botón para el creador que activa el Paywall
+  // 🚀 ARMA 1: Botón para el creador que activa el Paywall
   const handleLockRoomVIP = () => {
     const priceStr = prompt("¿Cuánto costará la entrada VIP en USD? (Ej: 5)", "5");
     const newPrice = Number(priceStr);
@@ -219,6 +227,7 @@ export default function LiveRoom() {
       triggerGiftEffect(gift);
       updateTopDonators(res.chatMessage);
       handleStreak();
+      setCurrentGoal(prev => prev + gift.amount); // Sumo a mi propia meta
     } catch (error) {
       alert(t('alert_error_gift'));
     }
@@ -275,6 +284,17 @@ export default function LiveRoom() {
         .custom-mask { -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 100%); }
       `}</style>
 
+      {/* 🎯 ARMA 3: BARRA DE META (Estilo TikTok Superior) */}
+      <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 w-64">
+        <div className="bg-black/40 backdrop-blur-md rounded-full border border-white/10 p-1 px-3 flex items-center gap-2 shadow-lg pointer-events-auto cursor-pointer" onClick={() => isCreatorOrAdmin && setTargetGoal(Number(prompt("Nueva meta:", String(targetGoal))) || targetGoal)}>
+          <TrendingUp className="w-3 h-3 text-teal-400" />
+          <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden relative">
+            <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-teal-400 to-blue-500 transition-all duration-500" style={{ width: `${Math.min((currentGoal/targetGoal)*100, 100)}%` }}></div>
+          </div>
+          <span className="text-[9px] font-black font-mono text-white">${currentGoal}/${targetGoal}</span>
+        </div>
+      </div>
+
       {/* 🎬 VIDEO LAYER */}
       <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full" onContextMenu={(e) => e.preventDefault()}>
         {hasAccess && liveKitToken ? (
@@ -325,7 +345,7 @@ export default function LiveRoom() {
                 </div>
               </div>
 
-              {/* 🏆 TOP DONATORS */}
+              {/* 🏆 TOP DONATORS Y STREAK */}
               <div className="absolute right-4 top-28 flex flex-col items-end gap-2 pointer-events-auto">
                 {topDonators.length > 0 && (
                   <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-yellow-500/20 shadow-lg min-w-[100px]">
@@ -348,6 +368,7 @@ export default function LiveRoom() {
                 )}
               </div>
 
+              {/* 🎁 EFECTO ANIMADO DEL REGALO */}
               {giftEffect && <GiftEffectOverlay giftEffect={giftEffect} />}
 
               {/* 💬 ÁREA INFERIOR (Chat y Controles) */}
@@ -463,12 +484,14 @@ export default function LiveRoom() {
 // 🧩 SUB-COMPONENTES TÁCTICOS
 // ============================================================================
 
-function useLiveSocket({ id, user, streamData, hasAccess, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated }: any) {
+function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal }: any) {
   const socketRef = useRef<Socket | null>(null);
-  const router = useRouter();
-
+  
   useEffect(() => {
-    if (!user?.id || !id || !hasAccess) return;
+    // 🔥 EL ARREGLO ESTÁ AQUÍ: Ya no le pasamos 'hasAccess' como dependencia
+    // El socket no se desconectará aunque el usuario sea bloqueado por el Paywall.
+    if (!user?.id || !id) return;
+    
     socketRef.current?.disconnect();
     const socketInstance = io(SOCKET_URL, { transports: ['websocket'] });
     socketRef.current = socketInstance;
@@ -490,13 +513,18 @@ function useLiveSocket({ id, user, streamData, hasAccess, onLike, onMessage, onV
       if (String(user.id) !== String(streamData?.creatorId)) onStreamKilled();
     });
 
-    // 🚀 NUEVO: Escuchamos si se cierra la puerta
+    // 🚀 ESCUCHAR BLOQUEO VIP
     socketInstance.on('paywallActivated', ({ price }: { price: number }) => {
       if (onPaywallActivated) onPaywallActivated(price);
     });
 
+    // 🎯 ESCUCHAR ACTUALIZACIÓN DE META
+    socketInstance.on('updateLiveGoal', ({ amount }: { amount: number }) => {
+      if (onUpdateGoal) onUpdateGoal(amount);
+    });
+
     return () => { socketInstance.disconnect(); };
-  }, [user?.id, id, hasAccess]);
+  }, [user?.id, id]); 
 
   return socketRef;
 }
