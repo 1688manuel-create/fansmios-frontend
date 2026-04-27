@@ -550,21 +550,43 @@ function PreparationLayer({ onStart }: { onStart: () => void }) {
 
 function PaywallLayer({ price, isProcessing, onBuy }: { price: number, isProcessing: boolean, onBuy: () => void }) {
   const t = useTranslations('LiveRoom'); 
+  const router = useRouter();
+  const [timeLeft, setTimeLeft] = useState(15); // ⏳ 15 segundos para pagar o irse
+
+  useEffect(() => {
+    // Si el tiempo llega a cero, lo expulsamos sin piedad
+    if (timeLeft <= 0) {
+      router.push('/explore');
+      return;
+    }
+    // El reloj descontando cada segundo
+    const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, router]);
+
   return (
-    <div className="absolute inset-0 z-50 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 pointer-events-auto">
-      <div className="text-center p-8 bg-[#0a0a0a] rounded-[2rem] border border-white/5 shadow-[0_0_80px_rgba(0,0,0,1)] max-w-sm w-full relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 to-blue-500"></div>
-        <Lock className="w-14 h-14 text-teal-500 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(20,184,166,0.4)]" />
-        <h2 className="text-white font-black text-2xl mb-2 tracking-tight">{t('paywall_title')}</h2>
-        <p className="text-gray-400 text-sm mb-8 font-medium">{t('paywall_desc')}</p>
+    <div className="absolute inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 pointer-events-auto">
+      <div className="text-center p-8 bg-[#0a0a0a] rounded-[2rem] border border-red-500/30 shadow-[0_0_80px_rgba(220,38,38,0.2)] max-w-sm w-full relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-orange-500"></div>
         
-        <div className="bg-white/5 p-5 rounded-2xl mb-8 border border-white/5 nm-inset">
+        <Lock className="w-12 h-12 text-red-500 mx-auto mb-2 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
+        <h2 className="text-white font-black text-2xl tracking-tight uppercase">¡SALA PRIVADA!</h2>
+        <p className="text-gray-400 text-xs mt-2 font-medium">El creador activó el modo VIP. Paga para quedarte o serás expulsado en:</p>
+
+        {/* ⏰ RELOJ DE EXPULSIÓN GIGANTE */}
+        <div className="my-6">
+          <span className={`text-6xl font-black font-mono tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse scale-110 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]' : 'text-white'}`}>
+            00:{timeLeft.toString().padStart(2, '0')}
+          </span>
+        </div>
+        
+        <div className="bg-white/5 p-4 rounded-2xl mb-6 border border-white/5 nm-inset">
           <div className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">{t('lbl_ticket_cost')}</div>
           <div className="text-4xl font-black text-teal-400 font-mono tracking-tight">${price} <span className="text-sm text-gray-500 font-sans">USD</span></div>
         </div>
         
-        <button onClick={onBuy} disabled={isProcessing} className="w-full bg-white text-black font-black py-4 rounded-xl text-sm hover:scale-105 transition-transform disabled:opacity-50 flex items-center justify-center gap-2 shadow-xl">
-          {isProcessing ? t('btn_processing') : <><Star className="w-4 h-4 fill-black"/> {t('btn_buy_ticket')}</>}
+        <button onClick={onBuy} disabled={isProcessing} className="w-full bg-gradient-to-r from-teal-500 to-blue-500 text-white font-black py-4 rounded-xl text-sm hover:scale-105 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(20,184,166,0.3)]">
+          {isProcessing ? t('btn_processing') : <><Star className="w-4 h-4 fill-white"/> DESBLOQUEAR AHORA</>}
         </button>
       </div>
     </div>
