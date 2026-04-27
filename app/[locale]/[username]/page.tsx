@@ -535,11 +535,11 @@ export default function CreatorProfile() {
                     <Package className="w-5 h-5 text-teal-500"/> {t('lbl_bundles')}
                   </h2>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* 🚀 MEJORA MÓVIL: Contenedor tipo Carrusel en celulares, Cuadrícula en PC */}
+                  <div className="flex sm:grid sm:grid-cols-2 gap-5 sm:gap-8 overflow-x-auto snap-x snap-mandatory pb-6 pt-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                     {bundles.map(bundle => {
                       const isPurchased = bundle.hasAccess || bundle.isPurchased; 
                       
-                      // 🚀 FUNCIÓN TÁCTICA PARA ABRIR TODA LA GALERÍA DEL PAQUETE
                       const handleOpenGallery = (e: any) => {
                         e.stopPropagation();
                         let allUrls: string[] = [];
@@ -561,7 +561,8 @@ export default function CreatorProfile() {
                         <div 
                           key={bundle.id} 
                           onClick={() => { if (!isOwnerOrAdmin && !isPurchased) handleBuyBundle(bundle); }} 
-                          className={`bg-[#0a0a0a] rounded-[2rem] border border-white/5 group flex flex-col h-full overflow-hidden shadow-lg transition-all duration-300 relative ${
+                          // 🚀 MEJORA MÓVIL: Añadimos min-w-[85%] shrink-0 snap-center para que funcione el deslizamiento
+                          className={`min-w-[85%] sm:min-w-0 shrink-0 snap-center bg-[#0a0a0a] rounded-[2rem] border border-white/5 group flex flex-col h-full overflow-hidden shadow-lg transition-all duration-300 relative ${
                             isPurchased 
                               ? 'cursor-default border-green-500/20 shadow-[inset_0_0_30px_rgba(34,197,94,0.05)] nm-inset' 
                               : 'cursor-pointer hover:-translate-y-2 hover:border-teal-500/50 hover:shadow-[0_15px_40px_rgba(20,184,166,0.15)]'
@@ -570,8 +571,6 @@ export default function CreatorProfile() {
                           <div className="w-full h-48 sm:h-56 bg-black relative overflow-hidden">
                             {bundle.posts && bundle.posts.length > 0 ? (() => {
                               let firstMediaUrl = null;
-                              
-                              // 👇 CORRECCIÓN DEFINITIVA APLICADA: Agregamos a posts y a parsed
                               if (bundle.posts[0]?.mediaUrl) {
                                 try {
                                   const parsed = JSON.parse(bundle.posts[0].mediaUrl);
@@ -587,7 +586,6 @@ export default function CreatorProfile() {
                                     alt="Bundle Cover" 
                                     draggable="false" 
                                     onContextMenu={(e) => e.preventDefault()} 
-                                    // 👇 AQUÍ CONECTAMOS LA IMAGEN A LA GALERÍA
                                     onClick={(e) => { if (isPurchased || isOwnerOrAdmin) handleOpenGallery(e); }}
                                   />
                                   {!isPurchased && !isOwnerOrAdmin && (
@@ -618,12 +616,10 @@ export default function CreatorProfile() {
                             
                             <div className="mt-auto pt-5 border-t border-white/5 flex items-center justify-between">
                               {isOwnerOrAdmin ? (
-                                // 👇 TAMBIÉN CONECTAMOS EL BOTÓN DEL DUEÑO
                                 <button onClick={handleOpenGallery} className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-colors flex items-center gap-2 w-full justify-center">
                                   <Eye className="w-4 h-4"/> Ver Paquete
                                 </button>
                               ) : isPurchased ? (
-                                // 👇 TAMBIÉN CONECTAMOS EL BOTÓN DEL CLIENTE
                                 <button onClick={handleOpenGallery} className="nm-inset border border-green-500/30 hover:bg-green-500/10 text-green-500 py-3 px-6 rounded-xl text-sm flex items-center justify-center gap-2 font-black cursor-pointer transition-colors w-full">
                                   <CheckCircle2 className="w-5 h-5" /> DESBLOQUEADO
                                 </button>
