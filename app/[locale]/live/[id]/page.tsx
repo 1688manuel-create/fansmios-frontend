@@ -24,7 +24,9 @@ import '@livekit/components-styles';
 import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart, Target, TrendingUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://api.fansmio.com';
+// 🔥 CORRECCIÓN DEL RADAR: Limpiamos la URL para evitar el error de doble protocolo
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.fansmios.com';
+const SOCKET_URL = rawApiUrl.replace('/api', '').replace('wss://', '').replace('ws://', '');
 
 // 🏆 ECONOMÍA DE LUJO FANSMIO
 export interface Gift { id: number; name: string; amount: number; emoji: string; style: string; action?: string; }
