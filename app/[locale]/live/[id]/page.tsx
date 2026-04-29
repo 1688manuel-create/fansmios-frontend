@@ -35,21 +35,21 @@ if (process.env.NEXT_PUBLIC_API_URL) {
   }
 }
 
-// 🏆 ECONOMÍA DE LUJO FANSMIO (AHORA EN MONEDAS 🪙)
+// 🏆 ECONOMÍA DE LUJO FANSMIO (AHORA CON IMÁGENES PREMIUM 💎)
 // Tasa: 100 Monedas = $1 USD
-export interface Gift { id: number; name: string; amount: number; emoji: string; style: string; action?: string; }
+export interface Gift { id: number; name: string; amount: number; image: string; style: string; action?: string; }
 
 export const GIFTS: Gift[] = [
-  { id: 1, name: "Rosa", amount: 100, emoji: "🌹", style: "text-rose-400 font-bold" },
-  { id: 2, name: "Brindis", amount: 200, emoji: "🥂", style: "text-yellow-200 font-bold" },
-  { id: 3, name: "Beso", amount: 500, emoji: "💋", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
-  { id: 4, name: "Carta", amount: 1000, emoji: "💌", style: "text-fuchsia-400 font-bold" },
-  { id: 5, name: "Corona", amount: 1500, emoji: "👑", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
-  { id: 6, name: "Llave", amount: 2000, emoji: "🗝️", style: "text-amber-200 font-black" },
-  { id: 7, name: "Diamante", amount: 3000, emoji: "💎", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]", action: 'explosion' },
-  { id: 8, name: "Deportivo", amount: 5000, emoji: "🏎️", style: "text-green-400 font-black italic" },
-  { id: 9, name: "Corazón VIP", amount: 10000, emoji: "❤️‍🔥", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase", action: 'fireworks' },
-  { id: 10, name: "Universo", amount: 20000, emoji: "🌌", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase", action: 'galaxy' },
+  { id: 1, name: "Rosa", amount: 100, image: "/gifts/rosa.png", style: "text-rose-400 font-bold" },
+  { id: 2, name: "Brindis", amount: 200, image: "/gifts/brindis.png", style: "text-yellow-200 font-bold" },
+  { id: 3, name: "Beso", amount: 500, image: "/gifts/beso.png", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
+  { id: 4, name: "Carta", amount: 1000, image: "/gifts/carta.png", style: "text-fuchsia-400 font-bold" },
+  { id: 5, name: "Corona", amount: 1500, image: "/gifts/corona.png", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
+  { id: 6, name: "Llave", amount: 2000, image: "/gifts/llave.png", style: "text-amber-200 font-black" },
+  { id: 7, name: "Diamante", amount: 3000, image: "/gifts/diamante.png", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]", action: 'explosion' },
+  { id: 8, name: "Deportivo", amount: 5000, image: "/gifts/deportivo.png", style: "text-green-400 font-black italic" },
+  { id: 9, name: "Corazón VIP", amount: 10000, image: "/gifts/corazon-vip.png", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase", action: 'fireworks' },
+  { id: 10, name: "Universo", amount: 20000, image: "/gifts/universo.png", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase", action: 'galaxy' },
 ];
 
 export interface Donator { userId: string; username: string; amount: number; }
@@ -505,7 +505,7 @@ export default function LiveRoom() {
       {/* 📺 PREPARATION LAYER (Solo Creador) */}
       {isCreatorOrAdmin && !isLiveActive && hasAccess && <PreparationLayer onStart={() => setIsLiveActive(true)} />}
 
-      {/* 🎁 DRAWER DE REGALOS (AHORA CON MONEDAS 🪙) */}
+      {/* 🎁 DRAWER DE REGALOS (AHORA CON IMÁGENES 3D 🪙) */}
       {showGiftMenu && (
         <>
           <div className="absolute inset-0 bg-black/40 z-40 pointer-events-auto" onClick={() => setShowGiftMenu(false)}></div>
@@ -523,7 +523,9 @@ export default function LiveRoom() {
             <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
               {GIFTS.map((gift) => (
                 <button key={gift.id} onClick={() => sendGift(gift)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-yellow-500/50 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm">
-                  <span className="text-3xl group-hover:scale-110 transition-transform mb-1">{gift.emoji}</span>
+                  {/* 🔥 AQUI USAMOS LA IMAGEN 3D DESDE TU CARPETA PUBLIC */}
+                  <img src={gift.image} alt={gift.name} className="w-10 h-10 object-contain group-hover:scale-110 transition-transform mb-1 drop-shadow-lg" />
+                  
                   <span className="text-[9px] text-gray-300 font-bold text-center leading-tight truncate w-full">{t(`gift_name_${gift.id}`) || gift.name}</span>
                   <span className="text-[10px] text-yellow-400 font-mono font-black mt-1 flex items-center gap-0.5">
                     🪙 {gift.amount}
@@ -653,7 +655,9 @@ function GiftEffectOverlay({ giftEffect }: { giftEffect: Gift }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
       <div className="text-center animate-bounce flex flex-col items-center">
-        <div className="text-[120px] drop-shadow-[0_0_50px_rgba(255,255,255,0.4)]">{giftEffect.emoji}</div>
+        {/* 🔥 IMAGEN GIGANTE DEL REGALO EN EL CENTRO DE LA PANTALLA */}
+        <img src={giftEffect.image} alt={giftEffect.name} className="w-48 h-48 object-contain drop-shadow-[0_0_50px_rgba(255,255,255,0.4)]" />
+        
         <div className={`text-2xl font-black mt-4 uppercase tracking-widest px-6 py-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10 ${giftEffect.style}`}>¡{giftEffect.name}!</div>
       </div>
     </div>
