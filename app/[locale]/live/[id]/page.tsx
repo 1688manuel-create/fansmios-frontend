@@ -77,6 +77,9 @@ export default function LiveRoom() {
   const [showViewersModal, setShowViewersModal] = useState(false);
   const [connectedUsers, setConnectedUsers] = useState<any[]>([]);
 
+  // 👤 ATAQUE 1: ESTADO PARA SEGUIR AL CREADOR
+  const [isFollowing, setIsFollowing] = useState(false);
+
   // 🎯 ARMA 3: ESTADO DE LA META
   const [currentGoal, setCurrentGoal] = useState(0);
   const [targetGoal, setTargetGoal] = useState(500);
@@ -102,7 +105,8 @@ export default function LiveRoom() {
 
       if (data.hasAccess) {
         const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-        const isCreatorOrAdmin = String(currentUser.id) === String(data.stream.creatorId) || currentUser.role === 'ADMIN';
+        // 🔥 BLINDAJE: Ignoramos mayúsculas/minúsculas en el ROL
+        const isCreatorOrAdmin = String(currentUser.id) === String(data.stream.creatorId) || String(currentUser.role).toUpperCase() === 'ADMIN';
 
         setMessages([{ isSystem: true, content: `👋 ${t('msg_secure_connection')} ${data.stream.creator?.username || t('lbl_creator')}.` }, ...(data.stream.messages || [])].slice(-100));
         const res = await api.post('/livekit/token', { roomName: id, participantName: currentUser.username || t('lbl_user'), isCreator: isCreatorOrAdmin });
@@ -123,11 +127,10 @@ export default function LiveRoom() {
   const triggerGiftEffect = (gift: Gift) => {
     setGiftEffect(gift);
     
-    // Si el regalo tiene una 'action' (ej. 'galaxy'), disparamos el cañón de sonido
     if (gift.action) {
       try {
         const audio = new Audio(`/sounds/${gift.action}.wav`);
-        audio.volume = 0.8; // Volumen al 80% para que se escuche fuerte pero no sature
+        audio.volume = 0.8;
         audio.play().catch(e => console.log("El navegador bloqueó el auto-play del sonido", e));
       } catch (err) {
         console.error("Error al cargar la munición de audio:", err);
@@ -181,21 +184,18 @@ export default function LiveRoom() {
     },
     onViewerCount: setViewersCount,
     onStreamKilled: () => { alert(t('alert_stream_ended')); router.push('/explore'); },
-    // 🚀 ARMA 1: Escuchar bloqueo
     onPaywallActivated: (newPrice: number) => {
-      const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || user?.role === 'ADMIN';
+      const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || String(user?.role).toUpperCase() === 'ADMIN';
       if (!isCreatorOrAdmin) {
         setStreamData((prev: any) => ({ ...prev, price: newPrice }));
-        setHasAccess(false); // 💥 ¡PUM! Le bloqueamos la pantalla
+        setHasAccess(false); 
       }
     },
-    // 🎯 ARMA 3: Recibir Meta
     onUpdateGoal: (amount: number) => {
       setCurrentGoal(prev => prev + amount);
     }
   });
 
-  // 🚀 ARMA 1: Botón para el creador que activa el Paywall
   const handleLockRoomVIP = () => {
     const priceStr = prompt("¿Cuánto costará la entrada VIP en USD? (Ej: 5)", "5");
     const newPrice = Number(priceStr);
@@ -211,7 +211,7 @@ export default function LiveRoom() {
   useEffect(() => {
     const timer = setInterval(() => {
       if (!streamData?.createdAt) return;
-      const isCreator = String(user?.id) === String(streamData.creatorId) || user?.role === 'ADMIN';
+      const isCreator = String(user?.id) === String(streamData.creatorId) || String(user?.role).toUpperCase() === 'ADMIN';
       if (isCreator && !isLiveActive) return;
       const diff = Math.floor((Date.now() - new Date(streamData.createdAt).getTime()) / 1000);
       const h = String(Math.floor(diff / 3600)).padStart(2, '0');
@@ -249,7 +249,7 @@ export default function LiveRoom() {
       triggerGiftEffect(gift);
       updateTopDonators(res.chatMessage);
       handleStreak();
-      setCurrentGoal(prev => prev + gift.amount); // Sumo a mi propia meta
+      setCurrentGoal(prev => prev + gift.amount); 
     } catch (error) {
       alert(t('alert_error_gift'));
     }
@@ -273,21 +273,27 @@ export default function LiveRoom() {
     }
   };
 
-  // 💸 ARMA 3: COBRO ONE-CLICK AL INSTANTE
+  // 👤 ATAQUE 1: FUNCIÓN PARA SEGUIR AL CREADOR
+  const handleFollow = async () => {
+    try {
+      await api.post(`/users/${streamData.creatorId}/follow`);
+      setIsFollowing(true);
+    } catch (error) {
+      console.error("Error al seguir al creador:", error);
+    }
+  };
+
   const handleBuyTicket = async () => {
     if (!streamData || isProcessing) return;
     setIsProcessing(true);
     try {
-      // Disparamos directo a la nueva ruta rápida del servidor
       const res = await api.post('/live/buy-ticket', { streamId: id, amount: streamData.price });
-      
       if (res.data.success) {
-        setHasAccess(true); // 💥 ¡Tiramos el muro de pago al instante!
+        setHasAccess(true); 
         alert("¡PAGO EXITOSO! Bienvenido a la zona VIP 🤫");
-        loadStreamData(); // Recargamos los mensajes secretos
+        loadStreamData(); 
       }
     } catch (error: any) { 
-      // Si no tiene dinero, le avisamos
       alert(error.response?.data?.error || "Error al procesar el pago. Intenta de nuevo."); 
     } 
     finally { 
@@ -297,7 +303,8 @@ export default function LiveRoom() {
 
   if (!streamData) return <div className="min-h-[100dvh] bg-black flex items-center justify-center text-white font-mono animate-pulse">{t('lbl_connecting_gateway')}</div>;
 
-  const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || user?.role === 'ADMIN';
+  // 🔥 BLINDAJE PRINCIPAL: Ignoramos mayúsculas/minúsculas para ocultarle cosas al Admin
+  const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || String(user?.role).toUpperCase() === 'ADMIN';
   const actualViewers = connectedUsers.length > 0 ? connectedUsers.length : viewersCount;
 
  return (
@@ -318,7 +325,7 @@ export default function LiveRoom() {
         .custom-mask { -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 100%); }
       `}</style>
 
-      {/* 🎯 ARMA 3: BARRA DE META (Estilo TikTok Superior) */}
+      {/* 🎯 ARMA 3: BARRA DE META */}
       <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 w-64">
         <div className="bg-black/40 backdrop-blur-md rounded-full border border-white/10 p-1 px-3 flex items-center gap-2 shadow-lg pointer-events-auto cursor-pointer" onClick={() => isCreatorOrAdmin && setTargetGoal(Number(prompt("Nueva meta:", String(targetGoal))) || targetGoal)}>
           <TrendingUp className="w-3 h-3 text-teal-400" />
@@ -353,15 +360,22 @@ export default function LiveRoom() {
                     <span className="text-sm font-bold leading-tight text-white">{streamData.creator?.username || t('lbl_creator')}</span>
                     <span className="text-[10px] text-gray-300 font-medium">{actualViewers} {t('lbl_viewing')}</span>
                   </div>
+                  
+                  {/* 👤 ATAQUE 1: BOTÓN DE SEGUIR ACTIVO Y OCULTO AL ADMIN */}
                   {!isCreatorOrAdmin && (
-                    <button className="bg-teal-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider hover:scale-105 transition-transform">{t('btn_follow')}</button>
+                    <button 
+                      onClick={handleFollow}
+                      disabled={isFollowing}
+                      className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider transition-all ${isFollowing ? 'bg-gray-600 text-gray-400 cursor-default' : 'bg-teal-500 text-white hover:scale-105'}`}
+                    >
+                      {isFollowing ? 'SIGUIENDO' : t('btn_follow')}
+                    </button>
                   )}
+
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center gap-2">
-                    
-                    {/* 🚀 BOTÓN SALTO VIP (SOLO CREADOR) */}
                     {isCreatorOrAdmin && (
                       <button onClick={handleLockRoomVIP} className="w-9 h-9 rounded-full bg-red-600/80 backdrop-blur-md flex items-center justify-center border border-red-500/50 text-white hover:bg-red-500 transition-colors shadow-[0_0_15px_rgba(220,38,38,0.5)]" title="Pasar a Privado">
                         <Lock className="w-4 h-4" />
@@ -405,9 +419,8 @@ export default function LiveRoom() {
               {/* 🎁 EFECTO ANIMADO DEL REGALO */}
               {giftEffect && <GiftEffectOverlay giftEffect={giftEffect} />}
 
-              {/* 💬 ÁREA INFERIOR (Chat y Controles) */}
+              {/* 💬 ÁREA INFERIOR */}
               <div className="w-full px-4 pb-4 md:w-[500px] pointer-events-auto relative z-20">
-                
                 <div ref={heartsContainerRef} className="absolute bottom-16 right-4 w-16 h-64 pointer-events-none overflow-visible z-0" />
 
                 <div className="max-h-[50vh] overflow-y-auto flex flex-col gap-2 custom-scrollbar pb-2 custom-mask pr-14 relative z-10">
@@ -522,8 +535,6 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
   const socketRef = useRef<Socket | null>(null);
   
   useEffect(() => {
-    // 🔥 EL ARREGLO ESTÁ AQUÍ: Ya no le pasamos 'hasAccess' como dependencia
-    // El socket no se desconectará aunque el usuario sea bloqueado por el Paywall.
     if (!user?.id || !id) return;
     
     socketRef.current?.disconnect();
@@ -532,7 +543,7 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
 
     socketInstance.on('connect', () => {
       const isCreator = String(user.id) === String(streamData?.creatorId);
-      const isGhost = user.role === 'ADMIN' && !isCreator;
+      const isGhost = String(user.role).toUpperCase() === 'ADMIN' && !isCreator;
       socketInstance.emit('joinLiveStream', { streamId: id, userId: user.id, isGhost });
     });
 
@@ -547,12 +558,10 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
       if (String(user.id) !== String(streamData?.creatorId)) onStreamKilled();
     });
 
-    // 🚀 ESCUCHAR BLOQUEO VIP
     socketInstance.on('paywallActivated', ({ price }: { price: number }) => {
       if (onPaywallActivated) onPaywallActivated(price);
     });
 
-    // 🎯 ESCUCHAR ACTUALIZACIÓN DE META
     socketInstance.on('updateLiveGoal', ({ amount }: { amount: number }) => {
       if (onUpdateGoal) onUpdateGoal(amount);
     });
@@ -583,15 +592,13 @@ function PreparationLayer({ onStart }: { onStart: () => void }) {
 function PaywallLayer({ price, isProcessing, onBuy }: { price: number, isProcessing: boolean, onBuy: () => void }) {
   const t = useTranslations('LiveRoom'); 
   const router = useRouter();
-  const [timeLeft, setTimeLeft] = useState(15); // ⏳ 15 segundos para pagar o irse
+  const [timeLeft, setTimeLeft] = useState(15); 
 
   useEffect(() => {
-    // Si el tiempo llega a cero, lo expulsamos sin piedad
     if (timeLeft <= 0) {
       router.push('/explore');
       return;
     }
-    // El reloj descontando cada segundo
     const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
     return () => clearInterval(timer);
   }, [timeLeft, router]);
@@ -605,7 +612,6 @@ function PaywallLayer({ price, isProcessing, onBuy }: { price: number, isProcess
         <h2 className="text-white font-black text-2xl tracking-tight uppercase">¡SALA PRIVADA!</h2>
         <p className="text-gray-400 text-xs mt-2 font-medium">El creador activó el modo VIP. Paga para quedarte o serás expulsado en:</p>
 
-        {/* ⏰ RELOJ DE EXPULSIÓN GIGANTE */}
         <div className="my-6">
           <span className={`text-6xl font-black font-mono tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse scale-110 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]' : 'text-white'}`}>
             00:{timeLeft.toString().padStart(2, '0')}
