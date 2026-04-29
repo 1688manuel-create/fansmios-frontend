@@ -16,6 +16,7 @@ import {
   CheckCircle, XCircle, Eye, UserX, Ghost, ShieldBan, Percent
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import MuteVideoButton from './MuteVideoButton';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -476,7 +477,7 @@ export default function AdminDashboard() {
                     const reportType = r.type || 'POST'; 
                     const referenceId = r.postId || r.messageId || r.reportedUserId || 'N/A';
 
-                    return (
+                   return (
                       <div key={r.id} className="nm-btn border border-red-500/20 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div className="w-full">
                           <h4 className="text-lg font-bold text-white mb-2">{t('lbl_reason')}: {r.reason}</h4>
@@ -520,6 +521,11 @@ export default function AdminDashboard() {
                           >
                             <Eye className="w-4 h-4"/> {t('btn_view_evidence')}
                           </button>
+
+                          {/* 💥 AQUÍ INYECTAMOS EL BISTURÍ DMCA (Solo si es un Video/Post) */}
+                          {reportType === 'POST' && r.postId && (
+                            <MuteVideoButton postId={r.postId} />
+                          )}
 
                           <button onClick={() => handleResolveReport(r.id, 'RESOLVED')} className="w-full px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-500 transition-colors shadow-lg flex items-center justify-center gap-2">
                             <ShieldBan className="w-4 h-4"/> {t('btn_take_action')}
