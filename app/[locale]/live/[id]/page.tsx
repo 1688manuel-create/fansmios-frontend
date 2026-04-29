@@ -21,11 +21,11 @@ import { Track } from 'livekit-client';
 import '@livekit/components-styles';
 
 // 🔥 ICONOS PREMIUM
-import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart, Target, TrendingUp } from 'lucide-react';
+import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart, Target, TrendingUp, Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-// 🔥 BLINDAJE DE CONEXIÓN: Extraemos solo el dominio limpio sin romper nada
-let SOCKET_URL = 'https://api.fansmio.com'; // Ojo: Pon aquí tu dominio real si es otro
+// 🔥 BLINDAJE DE CONEXIÓN
+let SOCKET_URL = 'https://api.fansmio.com';
 if (process.env.NEXT_PUBLIC_API_URL) {
   try {
     const url = new URL(process.env.NEXT_PUBLIC_API_URL);
@@ -35,20 +35,21 @@ if (process.env.NEXT_PUBLIC_API_URL) {
   }
 }
 
-// 🏆 ECONOMÍA DE LUJO FANSMIO
+// 🏆 ECONOMÍA DE LUJO FANSMIO (AHORA EN MONEDAS 🪙)
+// Tasa: 100 Monedas = $1 USD
 export interface Gift { id: number; name: string; amount: number; emoji: string; style: string; action?: string; }
 
 export const GIFTS: Gift[] = [
-  { id: 1, name: "Rosa", amount: 1, emoji: "🌹", style: "text-rose-400 font-bold" },
-  { id: 2, name: "Brindis", amount: 2, emoji: "🥂", style: "text-yellow-200 font-bold" },
-  { id: 3, name: "Beso", amount: 5, emoji: "💋", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
-  { id: 4, name: "Carta", amount: 10, emoji: "💌", style: "text-fuchsia-400 font-bold" },
-  { id: 5, name: "Corona", amount: 15, emoji: "👑", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
-  { id: 6, name: "Llave", amount: 20, emoji: "🗝️", style: "text-amber-200 font-black" },
-  { id: 7, name: "Diamante", amount: 30, emoji: "💎", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]", action: 'explosion' },
-  { id: 8, name: "Deportivo", amount: 50, emoji: "🏎️", style: "text-green-400 font-black italic" },
-  { id: 9, name: "Corazón VIP", amount: 100, emoji: "❤️‍🔥", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase", action: 'fireworks' },
-  { id: 10, name: "Universo", amount: 200, emoji: "🌌", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase", action: 'galaxy' },
+  { id: 1, name: "Rosa", amount: 100, emoji: "🌹", style: "text-rose-400 font-bold" },
+  { id: 2, name: "Brindis", amount: 200, emoji: "🥂", style: "text-yellow-200 font-bold" },
+  { id: 3, name: "Beso", amount: 500, emoji: "💋", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
+  { id: 4, name: "Carta", amount: 1000, emoji: "💌", style: "text-fuchsia-400 font-bold" },
+  { id: 5, name: "Corona", amount: 1500, emoji: "👑", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
+  { id: 6, name: "Llave", amount: 2000, emoji: "🗝️", style: "text-amber-200 font-black" },
+  { id: 7, name: "Diamante", amount: 3000, emoji: "💎", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]", action: 'explosion' },
+  { id: 8, name: "Deportivo", amount: 5000, emoji: "🏎️", style: "text-green-400 font-black italic" },
+  { id: 9, name: "Corazón VIP", amount: 10000, emoji: "❤️‍🔥", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase", action: 'fireworks' },
+  { id: 10, name: "Universo", amount: 20000, emoji: "🌌", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase", action: 'galaxy' },
 ];
 
 export interface Donator { userId: string; username: string; amount: number; }
@@ -77,10 +78,9 @@ export default function LiveRoom() {
   const [showViewersModal, setShowViewersModal] = useState(false);
   const [connectedUsers, setConnectedUsers] = useState<any[]>([]);
 
-  // 👤 ATAQUE 1: ESTADO PARA SEGUIR AL CREADOR
   const [isFollowing, setIsFollowing] = useState(false);
 
-  // 🎯 ARMA 3: ESTADO DE LA META
+  // 🎯 META (Esta sigue siendo en USD porque al Creador le importa el dinero real)
   const [currentGoal, setCurrentGoal] = useState(0);
   const [targetGoal, setTargetGoal] = useState(500);
 
@@ -105,7 +105,6 @@ export default function LiveRoom() {
 
       if (data.hasAccess) {
         const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-        // 🔥 BLINDAJE: Ignoramos mayúsculas/minúsculas en el ROL
         const isCreatorOrAdmin = String(currentUser.id) === String(data.stream.creatorId) || String(currentUser.role).toUpperCase() === 'ADMIN';
 
         setMessages([{ isSystem: true, content: `👋 ${t('msg_secure_connection')} ${data.stream.creator?.username || t('lbl_creator')}.` }, ...(data.stream.messages || [])].slice(-100));
@@ -123,24 +122,22 @@ export default function LiveRoom() {
     });
   };
 
-  // 🔊 ARMA 2: EL MOTOR DE SONIDO VIP
   const triggerGiftEffect = (gift: Gift) => {
     setGiftEffect(gift);
-    
     if (gift.action) {
       try {
         const audio = new Audio(`/sounds/${gift.action}.wav`);
         audio.volume = 0.8;
-        audio.play().catch(e => console.log("El navegador bloqueó el auto-play del sonido", e));
-      } catch (err) {
-        console.error("Error al cargar la munición de audio:", err);
-      }
+        audio.play().catch(e => console.log("Auto-play bloqueado", e));
+      } catch (err) {}
     }
-
     setTimeout(() => setGiftEffect(null), 4000);
   };
 
   const updateTopDonators = (msg: any) => {
+    // 🔥 BLINDAJE 1: Prevenir "Pantalla Blanca" si no hay usuario en el mensaje
+    if (!msg.user?.id) return;
+
     setTopDonators((prev) => {
       const updated = [...prev];
       const index = updated.findIndex(u => u.userId === msg.user.id);
@@ -191,8 +188,9 @@ export default function LiveRoom() {
         setHasAccess(false); 
       }
     },
-    onUpdateGoal: (amount: number) => {
-      setCurrentGoal(prev => prev + amount);
+    onUpdateGoal: (usdAmount: number) => {
+      // La meta sigue subiendo en Dólares porque el creador quiere ver dinero real
+      setCurrentGoal(prev => prev + usdAmount);
     }
   });
 
@@ -203,7 +201,7 @@ export default function LiveRoom() {
     if (newPrice && newPrice > 0) {
       if (window.confirm(`¿Seguro que quieres cerrar la sala y cobrar $${newPrice} a los que están gratis?`)) {
         socketRef.current?.emit('activatePaywall', { streamId: id, price: newPrice });
-        alert("¡Sala Bloqueada! Los fans gratis están viendo la pantalla de pago.");
+        alert("¡Sala Bloqueada!");
       }
     }
   };
@@ -242,14 +240,30 @@ export default function LiveRoom() {
 
   const sendGift = async (gift: Gift) => {
     setShowGiftMenu(false);
+    
+    // Validamos visualmente en el frontend si tiene suficientes monedas
+    if ((user?.coinBalance || 0) < gift.amount) {
+      alert("No tienes suficientes monedas. ¡Recarga tu saldo!");
+      router.push('/dashboard/wallet'); // O donde tengas la tienda de monedas
+      return;
+    }
+
     try {
       const res = await liveService.sendMessage(id as string, `${t('lbl_has_sent_a')} ${gift.name}`, true, gift.amount);
+      
+      // 🔥 BLINDAJE 2: Actualizamos la memoria temporal Y el LocalStorage para evitar "Dinero Fantasma"
+      setUser((prev: any) => {
+        const newUser = { ...prev, coinBalance: prev.coinBalance - gift.amount };
+        localStorage.setItem('user', JSON.stringify(newUser));
+        return newUser;
+      });
+
       setMessages((prev) => [...prev.slice(-99), res.chatMessage]);
       socketRef.current?.emit('broadcastMessage', res.chatMessage);
       triggerGiftEffect(gift);
       updateTopDonators(res.chatMessage);
       handleStreak();
-      setCurrentGoal(prev => prev + gift.amount); 
+      // Nota: El backend mandará el updateLiveGoal en USD para subir la barra
     } catch (error) {
       alert(t('alert_error_gift'));
     }
@@ -273,14 +287,11 @@ export default function LiveRoom() {
     }
   };
 
-  // 👤 ATAQUE 1: FUNCIÓN PARA SEGUIR AL CREADOR
   const handleFollow = async () => {
     try {
       await api.post(`/users/${streamData.creatorId}/follow`);
       setIsFollowing(true);
-    } catch (error) {
-      console.error("Error al seguir al creador:", error);
-    }
+    } catch (error) {}
   };
 
   const handleBuyTicket = async () => {
@@ -303,11 +314,10 @@ export default function LiveRoom() {
 
   if (!streamData) return <div className="min-h-[100dvh] bg-black flex items-center justify-center text-white font-mono animate-pulse">{t('lbl_connecting_gateway')}</div>;
 
-  // 🔥 BLINDAJE PRINCIPAL: Ignoramos mayúsculas/minúsculas para ocultarle cosas al Admin
   const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || String(user?.role).toUpperCase() === 'ADMIN';
   const actualViewers = connectedUsers.length > 0 ? connectedUsers.length : viewersCount;
 
- return (
+  return (
     <div className="fixed inset-0 bg-black text-white font-sans overflow-hidden h-[100dvh] w-full">
       
       <style>{`
@@ -325,14 +335,14 @@ export default function LiveRoom() {
         .custom-mask { -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 100%); }
       `}</style>
 
-      {/* 🎯 ARMA 3: BARRA DE META */}
+      {/* 🎯 META (EN DÓLARES) */}
       <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 w-64">
         <div className="bg-black/40 backdrop-blur-md rounded-full border border-white/10 p-1 px-3 flex items-center gap-2 shadow-lg pointer-events-auto cursor-pointer" onClick={() => isCreatorOrAdmin && setTargetGoal(Number(prompt("Nueva meta:", String(targetGoal))) || targetGoal)}>
           <TrendingUp className="w-3 h-3 text-teal-400" />
           <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden relative">
             <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-teal-400 to-blue-500 transition-all duration-500" style={{ width: `${Math.min((currentGoal/targetGoal)*100, 100)}%` }}></div>
           </div>
-          <span className="text-[9px] font-black font-mono text-white">${currentGoal}/${targetGoal}</span>
+          <span className="text-[9px] font-black font-mono text-white">${currentGoal.toFixed(2)}/${targetGoal}</span>
         </div>
       </div>
 
@@ -361,7 +371,6 @@ export default function LiveRoom() {
                     <span className="text-[10px] text-gray-300 font-medium">{actualViewers} {t('lbl_viewing')}</span>
                   </div>
                   
-                  {/* 👤 ATAQUE 1: BOTÓN DE SEGUIR ACTIVO Y OCULTO AL ADMIN */}
                   {!isCreatorOrAdmin && (
                     <button 
                       onClick={handleFollow}
@@ -371,7 +380,6 @@ export default function LiveRoom() {
                       {isFollowing ? 'SIGUIENDO' : t('btn_follow')}
                     </button>
                   )}
-
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
@@ -381,7 +389,6 @@ export default function LiveRoom() {
                         <Lock className="w-4 h-4" />
                       </button>
                     )}
-
                     <button onClick={() => setShowViewersModal(true)} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg">
                       <Eye className="w-4 h-4" />
                     </button>
@@ -393,7 +400,7 @@ export default function LiveRoom() {
                 </div>
               </div>
 
-              {/* 🏆 TOP DONATORS Y STREAK */}
+              {/* 🏆 TOP DONATORS (EN MONEDAS 🪙) */}
               <div className="absolute right-4 top-28 flex flex-col items-end gap-2 pointer-events-auto">
                 {topDonators.length > 0 && (
                   <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-yellow-500/20 shadow-lg min-w-[100px]">
@@ -403,7 +410,7 @@ export default function LiveRoom() {
                     {topDonators.map((u, i) => (
                       <div key={i} className="text-[10px] flex items-center justify-between gap-3 mt-1">
                         <span className="text-white font-bold truncate max-w-[50px]">{u.username}</span>
-                        <span className="text-teal-400 font-mono">${u.amount}</span>
+                        <span className="text-yellow-400 font-mono font-black flex items-center gap-0.5">🪙 {u.amount}</span>
                       </div>
                     ))}
                   </div>
@@ -431,9 +438,9 @@ export default function LiveRoom() {
                     const canModerate = isCreatorOrAdmin && msg.user?.id !== user?.id;
 
                     return (
-                      <div key={i} className={`text-[13px] px-3 py-1.5 rounded-2xl w-fit max-w-[100%] group/msg flex flex-col leading-tight animate-fade-in ${msg.isDonation ? 'bg-gradient-to-r from-teal-500/30 to-black/30 border border-teal-500/50 backdrop-blur-md shadow-lg' : 'bg-black/30 backdrop-blur-sm'}`}>
+                      <div key={i} className={`text-[13px] px-3 py-1.5 rounded-2xl w-fit max-w-[100%] group/msg flex flex-col leading-tight animate-fade-in ${msg.isDonation ? 'bg-gradient-to-r from-yellow-500/20 to-black/30 border border-yellow-500/50 backdrop-blur-md shadow-lg' : 'bg-black/30 backdrop-blur-sm'}`}>
                         <div className="flex items-center gap-1.5">
-                          {msg.isDonation && <Diamond className="w-3 h-3 text-teal-300 fill-teal-300" />}
+                          {msg.isDonation && <Coins className="w-3 h-3 text-yellow-400 fill-yellow-400/20" />}
                           <span 
                             onClick={() => canModerate && handleKickUser(msg.user?.id, msg.user?.username)}
                             className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'} ${canModerate ? 'cursor-pointer hover:text-red-500' : ''}`}
@@ -462,7 +469,7 @@ export default function LiveRoom() {
                   </div>
                   
                   {!isCreatorOrAdmin && (
-                    <button onClick={() => setShowGiftMenu(true)} className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.5)] hover:scale-105 transition-transform shrink-0">
+                    <button onClick={() => setShowGiftMenu(true)} className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(250,204,21,0.5)] hover:scale-105 transition-transform shrink-0">
                       <Diamond className="w-5 h-5 text-white fill-white" />
                     </button>
                   )}
@@ -498,25 +505,35 @@ export default function LiveRoom() {
       {/* 📺 PREPARATION LAYER (Solo Creador) */}
       {isCreatorOrAdmin && !isLiveActive && hasAccess && <PreparationLayer onStart={() => setIsLiveActive(true)} />}
 
-      {/* 🎁 DRAWER DE REGALOS */}
+      {/* 🎁 DRAWER DE REGALOS (AHORA CON MONEDAS 🪙) */}
       {showGiftMenu && (
         <>
           <div className="absolute inset-0 bg-black/40 z-40 pointer-events-auto" onClick={() => setShowGiftMenu(false)}></div>
           <div className="absolute bottom-0 left-0 right-0 md:left-auto md:right-4 md:bottom-4 md:w-[400px] bg-[#111]/95 backdrop-blur-2xl border-t border-x md:border-y border-white/10 rounded-t-3xl md:rounded-3xl p-6 pb-8 animate-drawer shadow-2xl z-50 pointer-events-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-white font-black text-lg flex items-center gap-2"><Diamond className="w-5 h-5 text-teal-400"/> {t('gift_title')}</h3>
-              <div className="text-xs bg-white/10 px-3 py-1.5 rounded-full font-mono text-teal-400">{t('lbl_balance')}: ${(user?.walletBalance || 0).toFixed(2)}</div>
+              
+              {/* SALDO EN MONEDAS 🪙 */}
+              <div className="text-xs bg-yellow-500/10 border border-yellow-500/30 px-3 py-1.5 rounded-full font-mono text-yellow-400 flex items-center gap-1.5">
+                <Coins className="w-3.5 h-3.5" />
+                <span className="font-bold">{user?.coinBalance || 0}</span>
+              </div>
             </div>
+            
             <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
               {GIFTS.map((gift) => (
-                <button key={gift.id} onClick={() => sendGift(gift)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-teal-500 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm">
+                <button key={gift.id} onClick={() => sendGift(gift)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-yellow-500/50 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm">
                   <span className="text-3xl group-hover:scale-110 transition-transform mb-1">{gift.emoji}</span>
                   <span className="text-[9px] text-gray-300 font-bold text-center leading-tight truncate w-full">{t(`gift_name_${gift.id}`) || gift.name}</span>
-                  <span className="text-[10px] text-teal-400 font-mono font-black mt-1">${gift.amount}</span>
+                  <span className="text-[10px] text-yellow-400 font-mono font-black mt-1 flex items-center gap-0.5">
+                    🪙 {gift.amount}
+                  </span>
                 </button>
               ))}
             </div>
-            <button onClick={() => router.push('/dashboard/wallet')} className="w-full mt-6 bg-white/5 hover:bg-white/10 text-white font-bold py-3 rounded-xl text-sm transition-colors border border-white/10">{t('btn_reload_balance')}</button>
+            <button onClick={() => router.push('/dashboard/wallet')} className="w-full mt-6 bg-gradient-to-r from-yellow-500 to-orange-500 hover:scale-[1.02] active:scale-95 text-white font-black uppercase py-3 rounded-xl text-sm transition-all shadow-[0_5px_20px_rgba(234,179,8,0.3)]">
+              Recargar Monedas
+            </button>
           </div>
         </>
       )}
@@ -528,14 +545,15 @@ export default function LiveRoom() {
 }
 
 // ============================================================================
-// 🧩 SUB-COMPONENTES TÁCTICOS
+// 🧩 SUB-COMPONENTES TÁCTICOS (Con Blindaje Aplicado)
 // ============================================================================
 
 function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal }: any) {
   const socketRef = useRef<Socket | null>(null);
   
   useEffect(() => {
-    if (!user?.id || !id) return;
+    // 🔥 BLINDAJE 3: Evitar el Síndrome de "Creador Fantasma" esperando a streamData
+    if (!user?.id || !id || !streamData) return; 
     
     socketRef.current?.disconnect();
     const socketInstance = io(SOCKET_URL, { transports: ['websocket'] });
@@ -544,7 +562,7 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
     socketInstance.on('connect', () => {
       const isCreator = String(user.id) === String(streamData?.creatorId);
       const isGhost = String(user.role).toUpperCase() === 'ADMIN' && !isCreator;
-      socketInstance.emit('joinLiveStream', { streamId: id, userId: user.id, isGhost });
+      socketInstance.emit('joinLiveStream', { streamId: id, userId: user.id, isGhost, isCreator });
     });
 
     socketInstance.on('newLiveMessage', (msg: any) => {
@@ -567,7 +585,7 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
     });
 
     return () => { socketInstance.disconnect(); };
-  }, [user?.id, id]); 
+  }, [user?.id, id, streamData?.creatorId]); // 🔥 Se añadió la dependencia clave aquí
 
   return socketRef;
 }
