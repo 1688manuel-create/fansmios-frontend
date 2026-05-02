@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { io, Socket } from 'socket.io-client';
 import { liveService } from '../../../../lib/liveService';
-import { paymentService } from '../../../../lib/paymentService';
 import api from '../../../../lib/api';
 
 import {
@@ -21,7 +20,7 @@ import { Track } from 'livekit-client';
 import '@livekit/components-styles';
 
 // 🔥 ICONOS PREMIUM
-import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Power, Play, UserPlus, Heart, Target, TrendingUp, Coins } from 'lucide-react';
+import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Play, Heart, TrendingUp, DollarSign } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 // 🔥 BLINDAJE DE CONEXIÓN
@@ -35,21 +34,20 @@ if (process.env.NEXT_PUBLIC_API_URL) {
   }
 }
 
-// 🏆 ECONOMÍA DE LUJO FANSMIO (AHORA CON IMÁGENES PREMIUM 💎)
-// Tasa: 100 Monedas = $1 USD
+// 🏆 ECONOMÍA DE LUJO FANSMIO (DÓLARES PUROS 💵)
 export interface Gift { id: number; name: string; amount: number; image: string; style: string; action?: string; }
 
 export const GIFTS: Gift[] = [
-  { id: 1, name: "Rosa", amount: 100, image: "/gifts/rosa.png", style: "text-rose-400 font-bold" },
-  { id: 2, name: "Brindis", amount: 200, image: "/gifts/brindis.png", style: "text-yellow-200 font-bold" },
-  { id: 3, name: "Beso", amount: 500, image: "/gifts/beso.png", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
-  { id: 4, name: "Carta", amount: 1000, image: "/gifts/carta.png", style: "text-fuchsia-400 font-bold" },
-  { id: 5, name: "Corona", amount: 1500, image: "/gifts/corona.png", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
-  { id: 6, name: "Llave", amount: 2000, image: "/gifts/llave.png", style: "text-amber-200 font-black" },
-  { id: 7, name: "Diamante", amount: 3000, image: "/gifts/diamante.png", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]", action: 'explosion' },
-  { id: 8, name: "Deportivo", amount: 5000, image: "/gifts/deportivo.png", style: "text-green-400 font-black italic" },
-  { id: 9, name: "Corazón VIP", amount: 10000, image: "/gifts/corazon-vip.png", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase", action: 'fireworks' },
-  { id: 10, name: "Universo", amount: 20000, image: "/gifts/universo.png", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase", action: 'galaxy' },
+  { id: 1, name: "Rosa", amount: 1.00, image: "/gifts/rosa.png", style: "text-rose-400 font-bold" },
+  { id: 2, name: "Brindis", amount: 2.00, image: "/gifts/brindis.png", style: "text-yellow-200 font-bold" },
+  { id: 3, name: "Beso", amount: 5.00, image: "/gifts/beso.png", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
+  { id: 4, name: "Carta", amount: 10.00, image: "/gifts/carta.png", style: "text-fuchsia-400 font-bold" },
+  { id: 5, name: "Corona", amount: 15.00, image: "/gifts/corona.png", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
+  { id: 6, name: "Llave", amount: 20.00, image: "/gifts/llave.png", style: "text-amber-200 font-black" },
+  { id: 7, name: "Diamante", amount: 30.00, image: "/gifts/diamante.png", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]", action: 'explosion' },
+  { id: 8, name: "Deportivo", amount: 50.00, image: "/gifts/deportivo.png", style: "text-green-400 font-black italic" },
+  { id: 9, name: "Corazón VIP", amount: 100.00, image: "/gifts/corazon-vip.png", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase", action: 'fireworks' },
+  { id: 10, name: "Universo", amount: 200.00, image: "/gifts/universo.png", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase", action: 'galaxy' },
 ];
 
 export interface Donator { userId: string; username: string; amount: number; }
@@ -77,10 +75,8 @@ export default function LiveRoom() {
   
   const [showViewersModal, setShowViewersModal] = useState(false);
   const [connectedUsers, setConnectedUsers] = useState<any[]>([]);
-
   const [isFollowing, setIsFollowing] = useState(false);
 
-  // 🎯 META (Esta sigue siendo en USD porque al Creador le importa el dinero real)
   const [currentGoal, setCurrentGoal] = useState(0);
   const [targetGoal, setTargetGoal] = useState(500);
 
@@ -88,11 +84,24 @@ export default function LiveRoom() {
   const streakTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const heartsContainerRef = useRef<HTMLDivElement>(null);
 
+  // 🔥 SINCRONIZACIÓN REAL DE BÓVEDA
   useEffect(() => {
     try {
       const storedUser = typeof window !== "undefined" ? localStorage.getItem('user') : null;
-      if (storedUser && storedUser !== "undefined") setUser(JSON.parse(storedUser));
-      else router.push('/auth');
+      if (storedUser && storedUser !== "undefined") {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        
+        api.get('/wallet').then(res => {
+          if (res.data?.wallet) {
+            const freshUser = { ...parsedUser, walletBalance: res.data.wallet.balance };
+            setUser(freshUser);
+            localStorage.setItem('user', JSON.stringify(freshUser));
+          }
+        }).catch(err => console.error("Error sincronizando bóveda:", err));
+      } else {
+        router.push('/auth');
+      }
     } catch { router.push('/auth'); }
     loadStreamData();
   }, [id]);
@@ -135,14 +144,21 @@ export default function LiveRoom() {
   };
 
   const updateTopDonators = (msg: any) => {
-    // 🔥 BLINDAJE 1: Prevenir "Pantalla Blanca" si no hay usuario en el mensaje
-    if (!msg.user?.id) return;
+    const donorId = msg.userId || msg.senderId; 
+    if (!donorId) return;
 
     setTopDonators((prev) => {
       const updated = [...prev];
-      const index = updated.findIndex(u => u.userId === msg.user.id);
-      if (index >= 0) updated[index].amount += msg.amount;
-      else updated.push({ userId: msg.user.id, username: msg.user.username, amount: msg.amount });
+      const index = updated.findIndex(u => u.userId === donorId);
+      if (index >= 0) {
+        updated[index].amount += msg.amount;
+      } else {
+        updated.push({ 
+          userId: donorId, 
+          username: msg.user?.username || 'Anónimo', 
+          amount: msg.amount 
+        });
+      }
       return updated.sort((a, b) => b.amount - a.amount).slice(0, 3);
     });
   };
@@ -189,7 +205,6 @@ export default function LiveRoom() {
       }
     },
     onUpdateGoal: (usdAmount: number) => {
-      // La meta sigue subiendo en Dólares porque el creador quiere ver dinero real
       setCurrentGoal(prev => prev + usdAmount);
     }
   });
@@ -227,6 +242,7 @@ export default function LiveRoom() {
     socketRef.current?.emit('broadcastMessage', { streamId: id, isLike: true }); 
   };
 
+  // 🔥 MENSAJE NORMAL BLINDADO
   const handleSendMessage = async () => {
     if (!chatInput.trim()) return;
     const content = chatInput;
@@ -234,36 +250,61 @@ export default function LiveRoom() {
     try {
       const res = await liveService.sendMessage(id as string, content, false, 0);
       setMessages((prev) => [...prev.slice(-99), res.chatMessage]);
-      socketRef.current?.emit('broadcastMessage', res.chatMessage);
+      
+      socketRef.current?.emit('broadcastMessage', {
+        ...res.chatMessage,
+        streamId: id,
+        senderId: user?.id,
+        amount: 0,
+        isDonation: false,
+        text: res.chatMessage.content
+      });
     } catch (e) { console.error(e); }
   };
 
+  // 🔥 REGALOS EN DÓLARES BLINDADOS
   const sendGift = async (gift: Gift) => {
     setShowGiftMenu(false);
     
-    // Validamos visualmente en el frontend si tiene suficientes monedas
-    if ((user?.coinBalance || 0) < gift.amount) {
-      alert("No tienes suficientes monedas. ¡Recarga tu saldo!");
-      router.push('/dashboard/wallet'); // O donde tengas la tienda de monedas
+    const fanBalance = parseFloat(user?.walletBalance || 0);
+
+    if (fanBalance < gift.amount) {
+      alert("No tienes suficiente saldo en tu Bóveda. ¡Recarga ahora!");
+      router.push('/dashboard/wallet'); 
       return;
     }
 
     try {
       const res = await liveService.sendMessage(id as string, `${t('lbl_has_sent_a')} ${gift.name}`, true, gift.amount);
       
-      // 🔥 BLINDAJE 2: Actualizamos la memoria temporal Y el LocalStorage para evitar "Dinero Fantasma"
       setUser((prev: any) => {
-        const newUser = { ...prev, coinBalance: prev.coinBalance - gift.amount };
+        const newUser = { ...prev, walletBalance: parseFloat(prev.walletBalance || 0) - gift.amount };
         localStorage.setItem('user', JSON.stringify(newUser));
         return newUser;
       });
 
       setMessages((prev) => [...prev.slice(-99), res.chatMessage]);
-      socketRef.current?.emit('broadcastMessage', res.chatMessage);
+      
+      socketRef.current?.emit('broadcastMessage', {
+        ...res.chatMessage,
+        streamId: id,
+        senderId: user?.id,
+        amount: gift.amount,
+        isDonation: true,
+        text: res.chatMessage.content
+      });
+
       triggerGiftEffect(gift);
-      updateTopDonators(res.chatMessage);
+      
+      updateTopDonators({ 
+        ...res.chatMessage, 
+        amount: gift.amount, 
+        userId: user?.id,
+        user: { username: user?.username } 
+      });
+      
       handleStreak();
-      // Nota: El backend mandará el updateLiveGoal en USD para subir la barra
+      
     } catch (error) {
       alert(t('alert_error_gift'));
     }
@@ -302,6 +343,13 @@ export default function LiveRoom() {
       if (res.data.success) {
         setHasAccess(true); 
         alert("¡PAGO EXITOSO! Bienvenido a la zona VIP 🤫");
+        
+        setUser((prev: any) => {
+          const newUser = { ...prev, walletBalance: parseFloat(prev.walletBalance || 0) - streamData.price };
+          localStorage.setItem('user', JSON.stringify(newUser));
+          return newUser;
+        });
+
         loadStreamData(); 
       }
     } catch (error: any) { 
@@ -342,7 +390,7 @@ export default function LiveRoom() {
           <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden relative">
             <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-teal-400 to-blue-500 transition-all duration-500" style={{ width: `${Math.min((currentGoal/targetGoal)*100, 100)}%` }}></div>
           </div>
-          <span className="text-[9px] font-black font-mono text-white">${currentGoal.toFixed(2)}/${targetGoal}</span>
+          <span className="text-[9px] font-black font-mono text-white">${currentGoal.toFixed(2)}/${targetGoal.toFixed(2)}</span>
         </div>
       </div>
 
@@ -400,17 +448,17 @@ export default function LiveRoom() {
                 </div>
               </div>
 
-              {/* 🏆 TOP DONATORS (EN MONEDAS 🪙) */}
+              {/* 🏆 TOP DONATORS (EN DÓLARES 💵) */}
               <div className="absolute right-4 top-28 flex flex-col items-end gap-2 pointer-events-auto">
                 {topDonators.length > 0 && (
-                  <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-yellow-500/20 shadow-lg min-w-[100px]">
+                  <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-green-500/20 shadow-lg min-w-[100px]">
                     <div className="flex items-center justify-center gap-1 mb-1 border-b border-white/10 pb-1">
-                      <Trophy className="w-3 h-3 text-yellow-400" /> <span className="text-[9px] text-yellow-400 font-black uppercase tracking-widest">Top</span>
+                      <Trophy className="w-3 h-3 text-green-400" /> <span className="text-[9px] text-green-400 font-black uppercase tracking-widest">Top Fans</span>
                     </div>
                     {topDonators.map((u, i) => (
                       <div key={i} className="text-[10px] flex items-center justify-between gap-3 mt-1">
                         <span className="text-white font-bold truncate max-w-[50px]">{u.username}</span>
-                        <span className="text-yellow-400 font-mono font-black flex items-center gap-0.5">🪙 {u.amount}</span>
+                        <span className="text-green-400 font-mono font-black flex items-center gap-0.5">${u.amount.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -438,9 +486,9 @@ export default function LiveRoom() {
                     const canModerate = isCreatorOrAdmin && msg.user?.id !== user?.id;
 
                     return (
-                      <div key={i} className={`text-[13px] px-3 py-1.5 rounded-2xl w-fit max-w-[100%] group/msg flex flex-col leading-tight animate-fade-in ${msg.isDonation ? 'bg-gradient-to-r from-yellow-500/20 to-black/30 border border-yellow-500/50 backdrop-blur-md shadow-lg' : 'bg-black/30 backdrop-blur-sm'}`}>
+                      <div key={i} className={`text-[13px] px-3 py-1.5 rounded-2xl w-fit max-w-[100%] group/msg flex flex-col leading-tight animate-fade-in ${msg.isDonation ? 'bg-gradient-to-r from-green-500/20 to-black/30 border border-green-500/50 backdrop-blur-md shadow-lg' : 'bg-black/30 backdrop-blur-sm'}`}>
                         <div className="flex items-center gap-1.5">
-                          {msg.isDonation && <Coins className="w-3 h-3 text-yellow-400 fill-yellow-400/20" />}
+                          {msg.isDonation && <DollarSign className="w-3 h-3 text-green-400" />}
                           <span 
                             onClick={() => canModerate && handleKickUser(msg.user?.id, msg.user?.username)}
                             className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'} ${canModerate ? 'cursor-pointer hover:text-red-500' : ''}`}
@@ -469,8 +517,8 @@ export default function LiveRoom() {
                   </div>
                   
                   {!isCreatorOrAdmin && (
-                    <button onClick={() => setShowGiftMenu(true)} className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(250,204,21,0.5)] hover:scale-105 transition-transform shrink-0">
-                      <Diamond className="w-5 h-5 text-white fill-white" />
+                    <button onClick={() => setShowGiftMenu(true)} className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:scale-105 transition-transform shrink-0">
+                      <Diamond className="w-5 h-5 text-black fill-black" />
                     </button>
                   )}
                   
@@ -505,7 +553,7 @@ export default function LiveRoom() {
       {/* 📺 PREPARATION LAYER (Solo Creador) */}
       {isCreatorOrAdmin && !isLiveActive && hasAccess && <PreparationLayer onStart={() => setIsLiveActive(true)} />}
 
-      {/* 🎁 DRAWER DE REGALOS (AHORA CON IMÁGENES 3D 🪙) */}
+      {/* 🎁 DRAWER DE REGALOS (AHORA EN DÓLARES 💵) */}
       {showGiftMenu && (
         <>
           <div className="absolute inset-0 bg-black/40 z-40 pointer-events-auto" onClick={() => setShowGiftMenu(false)}></div>
@@ -513,28 +561,28 @@ export default function LiveRoom() {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-white font-black text-lg flex items-center gap-2"><Diamond className="w-5 h-5 text-teal-400"/> {t('gift_title')}</h3>
               
-              {/* SALDO EN MONEDAS 🪙 */}
-              <div className="text-xs bg-yellow-500/10 border border-yellow-500/30 px-3 py-1.5 rounded-full font-mono text-yellow-400 flex items-center gap-1.5">
-                <Coins className="w-3.5 h-3.5" />
-                <span className="font-bold">{user?.coinBalance || 0}</span>
+              {/* SALDO EN DÓLARES 💵 */}
+              <div className="text-xs bg-green-500/10 border border-green-500/30 px-3 py-1.5 rounded-full font-mono text-green-400 flex items-center gap-1.5">
+                <DollarSign className="w-3.5 h-3.5" />
+                <span className="font-bold">{parseFloat(user?.walletBalance || 0).toFixed(2)}</span>
               </div>
             </div>
             
             <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
               {GIFTS.map((gift) => (
-                <button key={gift.id} onClick={() => sendGift(gift)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-yellow-500/50 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm">
-                  {/* 🔥 AQUI USAMOS LA IMAGEN 3D DESDE TU CARPETA PUBLIC */}
+                <button key={gift.id} onClick={() => sendGift(gift)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-green-500/50 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm">
+                  {/* IMAGEN DEL REGALO */}
                   <img src={gift.image} alt={gift.name} className="w-10 h-10 object-contain group-hover:scale-110 transition-transform mb-1 drop-shadow-lg" />
                   
                   <span className="text-[9px] text-gray-300 font-bold text-center leading-tight truncate w-full">{t(`gift_name_${gift.id}`) || gift.name}</span>
-                  <span className="text-[10px] text-yellow-400 font-mono font-black mt-1 flex items-center gap-0.5">
-                    🪙 {gift.amount}
+                  <span className="text-[10px] text-green-400 font-mono font-black mt-1 flex items-center gap-0.5">
+                    ${gift.amount.toFixed(2)}
                   </span>
                 </button>
               ))}
             </div>
-            <button onClick={() => router.push('/dashboard/wallet')} className="w-full mt-6 bg-gradient-to-r from-yellow-500 to-orange-500 hover:scale-[1.02] active:scale-95 text-white font-black uppercase py-3 rounded-xl text-sm transition-all shadow-[0_5px_20px_rgba(234,179,8,0.3)]">
-              Recargar Monedas
+            <button onClick={() => router.push('/dashboard/wallet')} className="w-full mt-6 bg-gradient-to-r from-green-500 to-teal-500 hover:scale-[1.02] active:scale-95 text-black font-black uppercase py-3 rounded-xl text-sm transition-all shadow-[0_5px_20px_rgba(34,197,94,0.3)]">
+              Recargar Saldo
             </button>
           </div>
         </>
@@ -547,14 +595,13 @@ export default function LiveRoom() {
 }
 
 // ============================================================================
-// 🧩 SUB-COMPONENTES TÁCTICOS (Con Blindaje Aplicado)
+// 🧩 SUB-COMPONENTES TÁCTICOS
 // ============================================================================
 
 function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal }: any) {
   const socketRef = useRef<Socket | null>(null);
   
   useEffect(() => {
-    // 🔥 BLINDAJE 3: Evitar el Síndrome de "Creador Fantasma" esperando a streamData
     if (!user?.id || !id || !streamData) return; 
     
     socketRef.current?.disconnect();
@@ -587,7 +634,7 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
     });
 
     return () => { socketInstance.disconnect(); };
-  }, [user?.id, id, streamData?.creatorId]); // 🔥 Se añadió la dependencia clave aquí
+  }, [user?.id, id, streamData?.creatorId]); 
 
   return socketRef;
 }
@@ -640,7 +687,7 @@ function PaywallLayer({ price, isProcessing, onBuy }: { price: number, isProcess
         
         <div className="bg-white/5 p-4 rounded-2xl mb-6 border border-white/5 nm-inset">
           <div className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">{t('lbl_ticket_cost')}</div>
-          <div className="text-4xl font-black text-teal-400 font-mono tracking-tight">${price} <span className="text-sm text-gray-500 font-sans">USD</span></div>
+          <div className="text-4xl font-black text-teal-400 font-mono tracking-tight">${price.toFixed(2)} <span className="text-sm text-gray-500 font-sans">USD</span></div>
         </div>
         
         <button onClick={onBuy} disabled={isProcessing} className="w-full bg-gradient-to-r from-teal-500 to-blue-500 text-white font-black py-4 rounded-xl text-sm hover:scale-105 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(20,184,166,0.3)]">
@@ -655,9 +702,7 @@ function GiftEffectOverlay({ giftEffect }: { giftEffect: Gift }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
       <div className="text-center animate-bounce flex flex-col items-center">
-        {/* 🔥 IMAGEN GIGANTE DEL REGALO EN EL CENTRO DE LA PANTALLA */}
         <img src={giftEffect.image} alt={giftEffect.name} className="w-48 h-48 object-contain drop-shadow-[0_0_50px_rgba(255,255,255,0.4)]" />
-        
         <div className={`text-2xl font-black mt-4 uppercase tracking-widest px-6 py-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10 ${giftEffect.style}`}>¡{giftEffect.name}!</div>
       </div>
     </div>

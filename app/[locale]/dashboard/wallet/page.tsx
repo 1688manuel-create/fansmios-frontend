@@ -7,7 +7,6 @@ import api from '../../../../lib/api';
 import AppLayout from '../../../../components/AppLayout';
 import { useTranslations } from 'next-intl'; 
 
-// 🔥 IMPORTAMOS ICONOS DE ALTA GAMA (Añadidos Coins y ChevronRight)
 import { 
   Wallet, 
   ArrowLeft, 
@@ -25,7 +24,6 @@ import {
   Smartphone, 
   Download, 
   Star, 
-  Banknote, 
   Loader2, 
   CheckCircle, 
   XCircle, 
@@ -33,18 +31,11 @@ import {
   History,
   ArrowUpRight,
   ArrowDownLeft,
-  Coins,
-  ChevronRight,
-  Diamond
+  CreditCard
 } from 'lucide-react';
 
-// 📦 PAQUETES TÁCTICOS DE MONEDAS
-const COIN_PACKAGES = [
-  { id: 'pkg_basic', name: 'Puñado', coins: 500, priceUsd: 5.00, bonus: 0, icon: '🪙', color: 'from-gray-500 to-slate-400' },
-  { id: 'pkg_pro', name: 'Saco', coins: 1000, priceUsd: 10.00, bonus: 50, icon: '💰', color: 'from-blue-500 to-cyan-400' },
-  { id: 'pkg_vip', name: 'Cofre', coins: 5000, priceUsd: 45.00, bonus: 500, icon: '🧰', color: 'from-yellow-500 to-orange-500', popular: true },
-  { id: 'pkg_god', name: 'Bóveda', coins: 10000, priceUsd: 90.00, bonus: 1500, icon: '💎', color: 'from-purple-500 to-fuchsia-500' },
-];
+// 💵 MONTOS DE RECARGA DIRECTA (Diseño Cajero)
+const DEPOSIT_AMOUNTS = [10, 20, 50, 100, 200, 500, 1000];
 
 export default function WalletDashboard() {
   const router = useRouter();
@@ -64,8 +55,10 @@ export default function WalletDashboard() {
   const [cryptoAddress, setCryptoAddress] = useState('');
   const [isSavingWallet, setIsSavingWallet] = useState(false);
 
-  // 🔥 NUEVO: Estado para la compra de monedas
-  const [loadingPkg, setLoadingPkg] = useState<string | null>(null);
+  // 🔥 ESTADOS PARA RECARGA DE DÓLARES
+  const [loadingAmount, setLoadingAmount] = useState<number | null>(null);
+  const [customAmount, setCustomAmount] = useState<string>('');
+  const [isProcessingCustom, setIsProcessingCustom] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -91,16 +84,14 @@ export default function WalletDashboard() {
     }
   };
 
-  // 🚀 DISPARADOR DE COMPRA CRIPTO PARA FANS
-  const handleBuyPackage = async (pkg: typeof COIN_PACKAGES[0]) => {
-    if (loadingPkg) return;
-    setLoadingPkg(pkg.id);
+  // 🚀 DISPARADOR DE COMPRA CRIPTO PURA
+  const handleDeposit = async (amount: number) => {
+    if (loadingAmount || isProcessingCustom) return;
+    setLoadingAmount(amount);
 
     try {
       const response = await api.post('/wallet/buy-coins', {
-        packageId: pkg.id,
-        amountUsd: pkg.priceUsd,
-        coinsToAdd: pkg.coins + pkg.bonus
+        amountUsd: amount // Enviamos SOLO los dólares puros
       });
 
       if (response.data.checkoutUrl) {
@@ -112,8 +103,19 @@ export default function WalletDashboard() {
       console.error("Error al iniciar el pago:", error);
       alert("Hubo un error al conectar con la pasarela blindada. Intenta de nuevo.");
     } finally {
-      setLoadingPkg(null);
+      setLoadingAmount(null);
+      setIsProcessingCustom(false);
     }
+  };
+
+  const handleCustomDeposit = () => {
+    const amount = parseFloat(customAmount);
+    if (!amount || amount < 5) {
+      alert("El monto mínimo es $5.00 USD");
+      return;
+    }
+    setIsProcessingCustom(true);
+    handleDeposit(amount);
   };
 
   const handleSaveCryptoWallet = async () => {
@@ -186,24 +188,23 @@ export default function WalletDashboard() {
   const pendingBalance = financeData?.wallet?.pendingBalance || 0;
   const totalEarned = financeData?.totalEarnedHistorial || 0;
   const allTransactions = financeData?.recentTransactions || [];
-  const fanExactBalance = parseFloat(localUser?.walletBalance || financeData?.wallet?.balance || 0).toFixed(2);
-  const fanCoins = financeData?.wallet?.coinBalance || localUser?.coinBalance || 0;
+  const fanExactBalance = parseFloat(financeData?.wallet?.balance ?? localUser?.walletBalance ?? 0).toFixed(2);
 
   // ============================================================================
-  // 🌟 VISTA EXCLUSIVA PARA FANS (NIVEL 5 - ECONOMÍA INFINITA)
+  // 🌟 VISTA EXCLUSIVA PARA FANS (SOLO DÓLARES)
   // ============================================================================
   if (userRole === 'FAN') {
     return (
       <AppLayout>
         <div className="min-h-screen pb-24 bg-nm-base relative">
-          <div className="absolute top-0 left-1/2 w-[800px] h-[400px] bg-yellow-900/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
+          <div className="absolute top-0 left-1/2 w-[800px] h-[400px] bg-green-900/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
           
           <nav className="sticky top-0 z-50 bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center backdrop-blur-xl shadow-md">
             <h1 className="text-xl font-black text-white flex items-center gap-3 tracking-wide">
-              <div className="w-10 h-10 nm-inset bg-black rounded-xl flex items-center justify-center text-yellow-500 border border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.2)]">
-                <Coins className="w-5 h-5" />
+              <div className="w-10 h-10 nm-inset bg-black rounded-xl flex items-center justify-center text-green-500 border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+                <Wallet className="w-5 h-5" />
               </div>
-              Bóveda
+              Billetera
             </h1>
             <button onClick={() => router.push('/dashboard')} className="text-sm nm-btn text-gray-300 px-5 py-2.5 rounded-full hover:text-white transition-colors font-bold flex items-center gap-2">
               <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">{t('btn_back')}</span>
@@ -212,84 +213,70 @@ export default function WalletDashboard() {
 
           <main className="max-w-4xl mx-auto mt-8 px-4 space-y-8 relative z-10">
             
-            {/* 🛡️ BANNER DE SALDO DEL FAN */}
-            <div className="nm-inset p-8 rounded-[2rem] border border-yellow-500/20 flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none"></div>
-              
-              <div className="z-10">
-                <h3 className="text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2 mb-2">
-                  <ShieldCheck className="w-5 h-5 text-yellow-500" /> Bóveda Segura
-                </h3>
-                <p className="text-gray-400 text-sm font-medium">Municiones para apoyar a tus creadores en vivo.</p>
-                <div className="mt-4 flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-full w-fit">
-                  <Lock className="w-3 h-3 text-green-400" />
-                  <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider">Cripto 100% Anónimo</span>
-                </div>
+            {/* 🛡️ BANNER DE SALDO CENTRALIZADO */}
+            <div className="nm-inset p-8 rounded-[2rem] border border-green-500/20 flex flex-col items-center justify-center relative overflow-hidden text-center py-12">
+              <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-600"></div>
+              <ShieldCheck className="w-8 h-8 text-green-500 mb-3 opacity-50" />
+              <h3 className="text-gray-400 font-bold uppercase tracking-widest mb-2 text-xs">
+                Saldo Disponible
+              </h3>
+              <div className="text-6xl font-black text-white font-mono tracking-tight drop-shadow-md flex items-center gap-2">
+                <span className="text-green-500">$</span>{fanExactBalance}
               </div>
-
-              <div className="flex gap-4 z-10">
-                {/* Saldo Secundario (USD) */}
-                <div className="bg-[#0a0a0a] border border-white/5 px-6 py-4 rounded-3xl shadow-[inset_0_0_15px_rgba(255,255,255,0.02)] flex flex-col items-center justify-center">
-                  <span className="text-xs text-gray-500 font-bold mb-1 uppercase tracking-widest">Saldo USD</span>
-                  <span className="text-xl font-bold text-gray-300 font-mono">${fanExactBalance}</span>
-                </div>
-                
-                {/* Saldo Principal (Monedas) */}
-                <div className="bg-[#0a0a0a] border border-yellow-500/30 px-8 py-4 rounded-3xl shadow-[inset_0_0_20px_rgba(234,179,8,0.1)] flex flex-col items-center justify-center relative overflow-hidden">
-                  <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-yellow-400 to-orange-500"></div>
-                  <span className="text-xs text-yellow-500/80 font-black mb-1 uppercase tracking-widest">Fansmio Coins</span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500 font-mono tracking-tight drop-shadow-md">
-                      {fanCoins}
-                    </span>
-                    <Coins className="w-5 h-5 text-yellow-500" />
-                  </div>
-                </div>
+              <div className="mt-6 flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full">
+                <Lock className="w-3 h-3 text-green-400" />
+                <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider">Cripto 100% Anónimo</span>
               </div>
             </div>
 
-            {/* 🛒 LA VITRINA DE PAQUETES DE MONEDAS */}
-            <div>
-              <h2 className="text-sm font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2 pl-2">
-                <Zap className="w-4 h-4 text-yellow-500" /> Recargar Municiones
-              </h2>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {COIN_PACKAGES.map((pkg) => (
-                  <div key={pkg.id} className={`relative bg-[#0a0a0a] rounded-3xl p-1 transition-all duration-300 hover:scale-[1.02] ${pkg.popular ? 'bg-gradient-to-b from-yellow-500/40 to-[#0a0a0a] shadow-[0_0_20px_rgba(234,179,8,0.1)] border-0' : 'border border-white/5 hover:border-white/20'}`}>
-                    {pkg.popular && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg z-10 whitespace-nowrap">
-                        Más Popular
-                      </div>
-                    )}
-                    <div className="bg-[#111] rounded-[22px] p-5 h-full flex flex-col items-center text-center nm-inset border border-transparent">
-                      <div className="text-4xl mb-2 drop-shadow-2xl">{pkg.icon}</div>
-                      <h3 className="text-sm font-bold text-gray-300 mb-1">{pkg.name}</h3>
-                      <div className="flex items-center gap-1.5 mb-3">
-                        <span className="text-xl font-black font-mono text-yellow-400 tracking-tight">{pkg.coins.toLocaleString()}</span>
-                      </div>
-                      {pkg.bonus > 0 ? (
-                        <div className="bg-teal-500/10 border border-teal-500/30 text-teal-400 text-[10px] font-black px-2 py-0.5 rounded-full mb-4 animate-pulse">
-                          + {pkg.bonus} Gratis
-                        </div>
-                      ) : (
-                        <div className="h-5 mb-4"></div>
-                      )}
-                      <div className="mt-auto w-full">
-                        <button 
-                          onClick={() => handleBuyPackage(pkg)}
-                          disabled={loadingPkg !== null}
-                          className={`w-full py-3 rounded-xl font-black text-xs flex items-center justify-center gap-1 transition-all ${pkg.popular ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-black hover:shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'bg-white/5 text-white hover:bg-white/10 border border-white/10'}`}
-                        >
-                          {loadingPkg === pkg.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Pagar ${pkg.priceUsd.toFixed(2)} <ChevronRight className="w-3 h-3" /></>}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+            {/* 🛒 MODAL DE RECARGA ESTILO CAJERO */}
+            <div className="bg-[#0f0f0f] border border-white/5 p-8 rounded-[2rem] shadow-2xl">
+              <div className="text-center mb-8">
+                <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20">
+                  <CreditCard className="w-6 h-6 text-green-500" />
+                </div>
+                <h2 className="text-2xl font-black text-white">Agregar Fondos</h2>
+                <p className="text-sm text-gray-400 mt-2 font-medium">Elige un monto para recargar tu billetera con cripto.</p>
+              </div>
+
+              {/* Botones Fijos */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                {DEPOSIT_AMOUNTS.map((amt) => (
+                  <button 
+                    key={amt}
+                    onClick={() => handleDeposit(amt)}
+                    disabled={loadingAmount !== null}
+                    className="bg-[#0a0a0a] border border-white/10 hover:border-green-500/50 hover:bg-green-500/5 text-white font-black py-6 rounded-2xl transition-all flex items-center justify-center gap-1 text-2xl nm-inset shadow-sm"
+                  >
+                    {loadingAmount === amt ? <Loader2 className="w-6 h-6 animate-spin text-green-500" /> : `$${amt}`}
+                  </button>
                 ))}
               </div>
+
+              {/* Input Monto Libre */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                <div className="relative flex-1">
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-black text-xl">$</span>
+                  <input 
+                    type="number" 
+                    min="5" 
+                    placeholder="Otro monto (Mín. $5)"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    className="w-full bg-[#0a0a0a] nm-inset border border-white/10 rounded-2xl pl-12 pr-6 py-5 text-white text-xl font-bold outline-none focus:border-green-500/50 transition-colors placeholder:text-gray-700"
+                  />
+                </div>
+                <button 
+                  onClick={handleCustomDeposit}
+                  disabled={isProcessingCustom || loadingAmount !== null || !customAmount}
+                  className="bg-green-500 hover:bg-green-400 text-black font-black px-10 py-5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-lg sm:w-auto w-full"
+                >
+                  {isProcessingCustom ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Pagar'}
+                </button>
+              </div>
             </div>
 
-            {/* HISTORIAL DE MOVIMIENTOS DEL FAN (Intacto) */}
+            {/* HISTORIAL DE MOVIMIENTOS DEL FAN */}
             <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default mt-8">
               <h2 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
                 <History className="w-5 h-5 text-green-500" /> {t('fan_history_title')}
@@ -303,10 +290,8 @@ export default function WalletDashboard() {
                     const isIncome = tx.isIncome || isTopUp;
                     const isPending = tx.status === 'PENDING';
                     
-                    const Icon = isIncome ? ArrowDownLeft : ArrowUpRight;
-                    const colorClass = isIncome ? 'text-green-400' : 'text-white';
                     const sign = isIncome ? '+' : '-';
-                    
+                    const colorClass = isIncome ? 'text-green-400' : 'text-white';
                     const bgClass = isPending 
                       ? 'border-yellow-500/30 hover:border-yellow-500/50 bg-yellow-500/5 opacity-80' 
                       : (isIncome ? 'border-green-500/20 hover:border-green-500/40 bg-green-500/5' : 'border-white/5 hover:border-red-500/20 nm-inset');
@@ -371,9 +356,6 @@ export default function WalletDashboard() {
         </nav>
 
         <main className="max-w-6xl mx-auto mt-8 px-4 space-y-8 relative z-10">
-          {/* =========================================
-              📊 FILA 1: TARJETAS DE MÉTRICAS
-          ========================================= */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="nm-inset p-8 rounded-[2rem] border border-green-500/30 flex flex-col justify-center relative overflow-hidden group">
               <div className="absolute -right-6 -top-6 text-green-500/10 group-hover:scale-110 transition-transform duration-500">
@@ -421,9 +403,6 @@ export default function WalletDashboard() {
             </div>
           </div>
 
-          {/* =========================================
-              🛡️ FILA 2: FORMULARIO DE RETIRO Y BILLETERA
-          ========================================= */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="nm-inset p-8 rounded-[2rem] border border-white/5">
               <h2 className="text-xl font-black text-white mb-6 flex items-center gap-3 tracking-wide">
@@ -491,9 +470,6 @@ export default function WalletDashboard() {
             </div>
           </div>
 
-          {/* =========================================
-              📜 FILA 3: TABLAS HISTÓRICAS
-          ========================================= */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
             <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default">
               <h2 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2"><Download className="w-4 h-4 text-green-500" /> {t('income_title')}</h2>
