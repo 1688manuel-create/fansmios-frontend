@@ -38,17 +38,16 @@ if (process.env.NEXT_PUBLIC_API_URL) {
 export interface Gift { id: number; name: string; amount: number; image: string; style: string; action?: string; }
 
 export const GIFTS: Gift[] = [
-  // Sustituye los links de 'image' por tus URLs reales de Cloudinary
-  { id: 1, name: "Rosa", amount: 1.00, image: "https://res.cloudinary.com/TU_NUBE/image/upload/v1/rosa.png", style: "text-rose-400 font-bold" },
-  { id: 2, name: "Brindis", amount: 2.00, image: "https://res.cloudinary.com/TU_NUBE/image/upload/v1/brindis.png", style: "text-yellow-200 font-bold" },
-  { id: 3, name: "Beso", amount: 5.00, image: "https://res.cloudinary.com/TU_NUBE/image/upload/v1/beso.png", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
-  { id: 4, name: "Carta", amount: 10.00, image: "https://res.cloudinary.com/TU_NUBE/image/upload/v1/carta.png", style: "text-fuchsia-400 font-bold" },
-  { id: 5, name: "Corona", amount: 15.00, image: "https://res.cloudinary.com/TU_NUBE/image/upload/v1/corona.png", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
-  { id: 6, name: "Llave", amount: 20.00, image: "https://res.cloudinary.com/TU_NUBE/image/upload/v1/llave.png", style: "text-amber-200 font-black" },
-  { id: 7, name: "Diamante", amount: 30.00, image: "https://res.cloudinary.com/TU_NUBE/image/upload/v1/diamante.png", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]", action: 'explosion' },
-  { id: 8, name: "Deportivo", amount: 50.00, image: "https://res.cloudinary.com/TU_NUBE/image/upload/v1/deportivo.png", style: "text-green-400 font-black italic" },
-  { id: 9, name: "Corazón VIP", amount: 100.00, image: "https://res.cloudinary.com/TU_NUBE/image/upload/v1/corazon-vip.png", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase", action: 'fireworks' },
-  { id: 10, name: "Universo", amount: 200.00, image: "https://res.cloudinary.com/TU_NUBE/image/upload/v1/universo.png", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase", action: 'galaxy' },
+  { id: 1, name: "Rosa", amount: 1.00, image: "/gifts/rosa.png", style: "text-rose-400 font-bold" },
+  { id: 2, name: "Brindis", amount: 2.00, image: "/gifts/brindis.png", style: "text-yellow-200 font-bold" },
+  { id: 3, name: "Beso", amount: 5.00, image: "/gifts/beso.png", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
+  { id: 4, name: "Carta", amount: 10.00, image: "/gifts/carta.png", style: "text-fuchsia-400 font-bold" },
+  { id: 5, name: "Corona", amount: 15.00, image: "/gifts/corona.png", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
+  { id: 6, name: "Llave", amount: 20.00, image: "/gifts/llave.png", style: "text-amber-200 font-black" },
+  { id: 7, name: "Diamante", amount: 30.00, image: "/gifts/diamante.png", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]", action: 'explosion' },
+  { id: 8, name: "Deportivo", amount: 50.00, image: "/gifts/deportivo.png", style: "text-green-400 font-black italic" },
+  { id: 9, name: "Corazón VIP", amount: 100.00, image: "/gifts/corazon-vip.png", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase", action: 'fireworks' },
+  { id: 10, name: "Universo", amount: 200.00, image: "/gifts/universo.png", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase", action: 'galaxy' },
 ];
 
 export interface Donator { userId: string; username: string; amount: number; }
