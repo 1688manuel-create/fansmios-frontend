@@ -130,30 +130,24 @@ export default function WalletDashboard() {
 
   const handleDownloadPdf = async (withdrawalId: string) => {
     try {
-      const token = localStorage.getItem('token');
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.fansmio.com';
-      
-      // Hacemos un fetch nativo para poder manejar el archivo binario (Blob)
-      const response = await fetch(`${API_URL}/api/wallet/withdraw/${withdrawalId}/pdf`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      // 🔥 Usamos tu motor 'api' nativo con responseType 'blob' para atrapar el PDF
+      const response = await api.get(`/wallet/withdraw/${withdrawalId}/pdf`, {
+        responseType: 'blob' 
       });
 
-      if (!response.ok) throw new Error("No se pudo descargar el PDF");
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      // Transformamos el archivo puro en un enlace descargable
+      const url = window.URL.createObjectURL(new Blob([response.data]));
       const a = document.createElement('a');
       a.href = url;
       a.download = `Fansmio_Recibo_${withdrawalId.substring(0, 8)}.pdf`;
       document.body.appendChild(a);
       a.click();
+      
+      // Limpieza de memoria
       window.URL.revokeObjectURL(url);
       a.remove();
     } catch (error) {
-      console.error(error);
+      console.error("Error al descargar PDF:", error);
       alert("Hubo un error al generar tu comprobante PDF. Intenta más tarde.");
     }
   };
