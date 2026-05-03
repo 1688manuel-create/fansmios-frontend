@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { io, Socket } from 'socket.io-client';
 import { liveService } from '../../../../lib/liveService';
@@ -37,6 +37,7 @@ if (process.env.NEXT_PUBLIC_API_URL) {
 // 🏆 ECONOMÍA DE LUJO FANSMIO (DÓLARES PUROS 💵)
 export interface Gift { id: number; name: string; amount: number; image: string; style: string; action?: string; }
 
+// ✅ RUTAS LOCALES RESTAURADAS (Tus imágenes en public/gifts funcionarán perfecto)
 export const GIFTS: Gift[] = [
   { id: 1, name: "Rosa", amount: 1.00, image: "/gifts/rosa.png", style: "text-rose-400 font-bold" },
   { id: 2, name: "Brindis", amount: 2.00, image: "/gifts/brindis.png", style: "text-yellow-200 font-bold" },
@@ -84,7 +85,6 @@ export default function LiveRoom() {
   const streakTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const heartsContainerRef = useRef<HTMLDivElement>(null);
 
-  // 🔥 SINCRONIZACIÓN REAL DE BÓVEDA
   useEffect(() => {
     try {
       const storedUser = typeof window !== "undefined" ? localStorage.getItem('user') : null;
@@ -104,7 +104,7 @@ export default function LiveRoom() {
       }
     } catch { router.push('/auth'); }
     loadStreamData();
-  }, [id]);
+  }, [id, router]);
 
   const loadStreamData = async () => {
     try {
@@ -184,13 +184,22 @@ export default function LiveRoom() {
     setTimeout(() => el.remove(), parseFloat(randomDuration) * 1000); 
   };
 
+  const onUpdateGoal = useCallback((usdAmount: number) => {
+    setCurrentGoal(prev => prev + usdAmount);
+  }, []);
+
   const socketRef = useLiveSocket({
     id: id as string, user, streamData, onLike: triggerHeart,
     onMessage: (msg: any) => {
       setMessages((prev) => [...prev.slice(-99), msg]); 
       if (msg.isDonation) {
-        const giftData = GIFTS.find(g => g.amount === msg.amount);
-        if (giftData) triggerGiftEffect(giftData);
+        const giftData = GIFTS.find(g => g.amount === msg.amount) || { style: "text-green-400" };
+        if (msg.giftImageUrl) {
+          triggerGiftEffect({ ...giftData, image: msg.giftImageUrl } as Gift);
+        } else {
+          triggerGiftEffect(giftData as Gift);
+        }
+        
         updateTopDonators(msg);
         handleStreak();
       }
@@ -204,9 +213,7 @@ export default function LiveRoom() {
         setHasAccess(false); 
       }
     },
-    onUpdateGoal: (usdAmount: number) => {
-      setCurrentGoal(prev => prev + usdAmount);
-    }
+    onUpdateGoal: onUpdateGoal
   });
 
   const handleLockRoomVIP = () => {
@@ -242,7 +249,6 @@ export default function LiveRoom() {
     socketRef.current?.emit('broadcastMessage', { streamId: id, isLike: true }); 
   };
 
-  // 🔥 MENSAJE NORMAL BLINDADO
   const handleSendMessage = async () => {
     if (!chatInput.trim()) return;
     const content = chatInput;
@@ -262,7 +268,7 @@ export default function LiveRoom() {
     } catch (e) { console.error(e); }
   };
 
-  // 🔥 REGALOS EN DÓLARES BLINDADOS (CORREGIDO PARA EVITAR DOBLE COBRO)
+  // ✅ BLINDAJE DE COBRO + IMAGEN ENVIADA POR SOCKET
   const sendGift = async (gift: Gift) => {
     setShowGiftMenu(false);
     
@@ -275,14 +281,12 @@ export default function LiveRoom() {
     }
 
     try {
-      // 1. Optimistic UI: Descontamos el dinero de la pantalla inmediatamente para que se sienta rápido
       setUser((prev: any) => {
         const newUser = { ...prev, walletBalance: parseFloat(prev.walletBalance || 0) - gift.amount };
         localStorage.setItem('user', JSON.stringify(newUser));
         return newUser;
       });
 
-      // 2. Creamos el mensaje visual en el chat local
       const giftMessage = {
         content: `${t('lbl_has_sent_a')} ${gift.name}`,
         isDonation: true,
@@ -294,17 +298,16 @@ export default function LiveRoom() {
 
       setMessages((prev) => [...prev.slice(-99), giftMessage]);
       
-      // 3. 🚨 DISPARAMOS SOLO EL SOCKET (Él se encarga de restar en BD, sumar al creador y calcular el VIP)
       socketRef.current?.emit('broadcastMessage', {
         streamId: id,
         senderId: user?.id,
         amount: gift.amount,
         isDonation: true,
         text: giftMessage.content,
-        user: giftMessage.user
+        user: giftMessage.user,
+        giftImageUrl: gift.image // <-- Esto evita que el creador vea la imagen rota
       });
 
-      // 4. Disparamos la gamificación en pantalla
       triggerGiftEffect(gift);
       
       updateTopDonators({ 
@@ -422,7 +425,7 @@ export default function LiveRoom() {
               <div className="pt-4 px-4 flex justify-between items-start pointer-events-auto">
                 <div className="flex items-center bg-black/40 backdrop-blur-md rounded-full p-1 pr-3 border border-white/10 shadow-lg cursor-pointer hover:bg-black/50 transition-colors">
                   <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center font-black text-white shadow-inner overflow-hidden border border-white/20 mr-2">
-                    {streamData.creator?.profileImage ? <img src={streamData.creator.profileImage} className="w-full h-full object-cover" /> : streamData.creator?.username?.charAt(0).toUpperCase()}
+                    {streamData.creator?.profileImage ? <img src={streamData.creator.profileImage} alt="perfil" className="w-full h-full object-cover" /> : streamData.creator?.username?.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex flex-col mr-3">
                     <span className="text-sm font-bold leading-tight text-white">{streamData.creator?.username || t('lbl_creator')}</span>
@@ -463,7 +466,7 @@ export default function LiveRoom() {
                 {topDonators.length > 0 && (
                   <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-green-500/20 shadow-lg min-w-[100px]">
                     <div className="flex items-center justify-center gap-1 mb-1 border-b border-white/10 pb-1">
-                      <Trophy className="w-3 h-3 text-green-400" /> <span className="text-[9px] text-green-400 font-black uppercase tracking-widest">Top Fans</span>
+                      < Trophy className="w-3 h-3 text-green-400" /> <span className="text-[9px] text-green-400 font-black uppercase tracking-widest">Top Fans</span>
                     </div>
                     {topDonators.map((u, i) => (
                       <div key={i} className="text-[10px] flex items-center justify-between gap-3 mt-1">
@@ -604,12 +607,17 @@ export default function LiveRoom() {
   );
 }
 
-// ============================================================================
-// 🧩 SUB-COMPONENTES TÁCTICOS
-// ============================================================================
-
+// ✅ SUB-COMPONENTES TÁCTICOS (BLINDADOS CONTRA DESCONEXIÓN INFINITA)
 function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal }: any) {
   const socketRef = useRef<Socket | null>(null);
+  
+  // 🔥 BLINDAJE ANTI-RECONEXIÓN: Guardamos las funciones en referencias para no reiniciar el socket.
+  const callbacks = useRef({ onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal });
+
+  // Actualizamos las referencias en cada render sin disparar el useEffect del Socket
+  useEffect(() => {
+    callbacks.current = { onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal };
+  });
   
   useEffect(() => {
     if (!user?.id || !id || !streamData) return; 
@@ -625,26 +633,28 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
     });
 
     socketInstance.on('newLiveMessage', (msg: any) => {
-      if (msg.isLike) onLike();
-      else onMessage(msg);
+      if (msg.isLike) callbacks.current.onLike();
+      else callbacks.current.onMessage(msg);
     });
 
-    socketInstance.on('viewerCountUpdated', ({ count }: { count: number }) => onViewerCount(count));
+    socketInstance.on('viewerCountUpdated', ({ count }: { count: number }) => {
+      callbacks.current.onViewerCount(count);
+    });
     
     socketInstance.on('streamKilled', () => {
-      if (String(user.id) !== String(streamData?.creatorId)) onStreamKilled();
+      if (String(user.id) !== String(streamData?.creatorId)) callbacks.current.onStreamKilled();
     });
 
     socketInstance.on('paywallActivated', ({ price }: { price: number }) => {
-      if (onPaywallActivated) onPaywallActivated(price);
+      if (callbacks.current.onPaywallActivated) callbacks.current.onPaywallActivated(price);
     });
 
     socketInstance.on('updateLiveGoal', ({ amount }: { amount: number }) => {
-      if (onUpdateGoal) onUpdateGoal(amount);
+      if (callbacks.current.onUpdateGoal) callbacks.current.onUpdateGoal(amount);
     });
 
     return () => { socketInstance.disconnect(); };
-  }, [user?.id, id, streamData?.creatorId]); 
+  }, [user?.id, id, streamData?.creatorId]); // 🚨 SÓLO SE RECONECTA SI CAMBIA EL ID DE USUARIO O DE SALA.
 
   return socketRef;
 }
