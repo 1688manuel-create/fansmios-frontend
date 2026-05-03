@@ -651,6 +651,114 @@ export default function AdminDashboard() {
                 </div>
 
               </div>
+
+              {/* ========================================== */}
+              {/* 👑 PANEL DE COMISIONES VIP (NUEVO)         */}
+              {/* ========================================== */}
+              <div className="mt-8">
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                  <span className="text-yellow-500 mr-2">👑</span> Comisiones VIP por Creador
+                </h3>
+                
+                <div className="bg-[#111111] border border-gray-800 rounded-xl p-6">
+                  <p className="text-sm text-gray-400 mb-6">
+                    Asigna comisiones especiales (más bajas) para retener a grandes creadores. 
+                    Si dejas un campo vacío, el creador volverá a pagar la tarifa global estándar.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    {/* Input del Usuario */}
+                    <div className="md:col-span-1">
+                      <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">@ Usuario</label>
+                      <input 
+                        type="text" 
+                        placeholder="ej. auronplay"
+                        id="vipUsername"
+                        className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg p-3 text-white outline-none focus:border-red-500" 
+                      />
+                    </div>
+
+                    {/* Inputs de Porcentajes */}
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Suscripción (%)</label>
+                      <input 
+                        type="number" 
+                        placeholder="ej. 10"
+                        id="vipSub"
+                        className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg p-3 text-white outline-none focus:border-red-500" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">PPV (%)</label>
+                      <input 
+                        type="number" 
+                        placeholder="ej. 10"
+                        id="vipPPV"
+                        className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg p-3 text-white outline-none focus:border-red-500" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Tips (%)</label>
+                      <input 
+                        type="number" 
+                        placeholder="ej. 10"
+                        id="vipTips"
+                        className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg p-3 text-white outline-none focus:border-red-500" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Live (%)</label>
+                      <input 
+                        type="number" 
+                        placeholder="ej. 15"
+                        id="vipLive"
+                        className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg p-3 text-white outline-none focus:border-red-500" 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <button 
+                      onClick={async () => {
+                        const username = (document.getElementById('vipUsername') as HTMLInputElement).value;
+                        const sub = (document.getElementById('vipSub') as HTMLInputElement).value;
+                        const ppv = (document.getElementById('vipPPV') as HTMLInputElement).value;
+                        const tips = (document.getElementById('vipTips') as HTMLInputElement).value;
+                        const live = (document.getElementById('vipLive') as HTMLInputElement).value;
+
+                        if(!username) return alert("¡Debes poner el nombre de usuario!");
+
+                        try {
+                          // 🔥 Usamos tu motor 'api' importado arriba, mucho más seguro y limpio
+                          const response = await api.post('/admin/vip-commission', {
+                            username: username.replace('@', ''), // Limpiamos el @
+                            customFeeSubscription: sub || null,
+                            customFeePPV: ppv || null,
+                            customFeeTips: tips || null,
+                            customFeeLive: live || null
+                          });
+                          
+                          alert(response.data.message || "¡Comisiones VIP aplicadas con éxito! 👑");
+                          
+                          // Opcional: Limpiar los campos después del éxito
+                          (document.getElementById('vipUsername') as HTMLInputElement).value = '';
+                          (document.getElementById('vipSub') as HTMLInputElement).value = '';
+                          (document.getElementById('vipPPV') as HTMLInputElement).value = '';
+                          (document.getElementById('vipTips') as HTMLInputElement).value = '';
+                          (document.getElementById('vipLive') as HTMLInputElement).value = '';
+
+                        } catch(e: any) {
+                          alert(e.response?.data?.error || "Error al aplicar el estatus VIP.");
+                        }
+                      }}
+                      className="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-[0_0_15px_rgba(202,138,4,0.3)]"
+                    >
+                      APLICAR ESTATUS VIP 👑
+                    </button>
+                  </div>
+                </div>
+              </div>
+
             </div>
           )}
 
