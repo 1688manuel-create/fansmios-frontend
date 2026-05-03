@@ -28,14 +28,8 @@ import {
   CheckCircle, 
   XCircle, 
   ShieldCheck,
-  History,
-  ArrowUpRight,
-  ArrowDownLeft,
-  CreditCard
+  History
 } from 'lucide-react';
-
-// 💵 MONTOS DE RECARGA DIRECTA (Diseño Cajero)
-const DEPOSIT_AMOUNTS = [10, 20, 50, 100, 200, 500, 1000];
 
 export default function WalletDashboard() {
   const router = useRouter();
@@ -54,11 +48,6 @@ export default function WalletDashboard() {
   // Estados Billetera Cripto
   const [cryptoAddress, setCryptoAddress] = useState('');
   const [isSavingWallet, setIsSavingWallet] = useState(false);
-
-  // 🔥 ESTADOS PARA RECARGA DE DÓLARES
-  const [loadingAmount, setLoadingAmount] = useState<number | null>(null);
-  const [customAmount, setCustomAmount] = useState<string>('');
-  const [isProcessingCustom, setIsProcessingCustom] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -82,40 +71,6 @@ export default function WalletDashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // 🚀 DISPARADOR DE COMPRA CRIPTO PURA
-  const handleDeposit = async (amount: number) => {
-    if (loadingAmount || isProcessingCustom) return;
-    setLoadingAmount(amount);
-
-    try {
-      const response = await api.post('/wallet/buy-coins', {
-        amountUsd: amount // Enviamos SOLO los dólares puros
-      });
-
-      if (response.data.checkoutUrl) {
-        window.location.href = response.data.checkoutUrl;
-      } else {
-        alert("Error: No se recibió la ruta de pago cripto.");
-      }
-    } catch (error) {
-      console.error("Error al iniciar el pago:", error);
-      alert("Hubo un error al conectar con la pasarela blindada. Intenta de nuevo.");
-    } finally {
-      setLoadingAmount(null);
-      setIsProcessingCustom(false);
-    }
-  };
-
-  const handleCustomDeposit = () => {
-    const amount = parseFloat(customAmount);
-    if (!amount || amount < 5) {
-      alert("El monto mínimo es $5.00 USD");
-      return;
-    }
-    setIsProcessingCustom(true);
-    handleDeposit(amount);
   };
 
   const handleSaveCryptoWallet = async () => {
@@ -173,6 +128,36 @@ export default function WalletDashboard() {
     }
   };
 
+  const handleDownloadPdf = async (withdrawalId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.fansmio.com';
+      
+      // Hacemos un fetch nativo para poder manejar el archivo binario (Blob)
+      const response = await fetch(`${API_URL}/api/wallet/withdraw/${withdrawalId}/pdf`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) throw new Error("No se pudo descargar el PDF");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Fansmio_Recibo_${withdrawalId.substring(0, 8)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error al generar tu comprobante PDF. Intenta más tarde.");
+    }
+  };
+
   if (isLoading) {
     return (
       <AppLayout>
@@ -191,7 +176,7 @@ export default function WalletDashboard() {
   const fanExactBalance = parseFloat(financeData?.wallet?.balance ?? localUser?.walletBalance ?? 0).toFixed(2);
 
   // ============================================================================
-  // 🌟 VISTA EXCLUSIVA PARA FANS (SOLO DÓLARES)
+  // 🌟 VISTA EXCLUSIVA PARA FANS (SOLO DÓLARES E HISTORIAL)
   // ============================================================================
   if (userRole === 'FAN') {
     return (
@@ -226,53 +211,6 @@ export default function WalletDashboard() {
               <div className="mt-6 flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full">
                 <Lock className="w-3 h-3 text-green-400" />
                 <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider">Cripto 100% Anónimo</span>
-              </div>
-            </div>
-
-            {/* 🛒 MODAL DE RECARGA ESTILO CAJERO */}
-            <div className="bg-[#0f0f0f] border border-white/5 p-8 rounded-[2rem] shadow-2xl">
-              <div className="text-center mb-8">
-                <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20">
-                  <CreditCard className="w-6 h-6 text-green-500" />
-                </div>
-                <h2 className="text-2xl font-black text-white">Agregar Fondos</h2>
-                <p className="text-sm text-gray-400 mt-2 font-medium">Elige un monto para recargar tu billetera con cripto.</p>
-              </div>
-
-              {/* Botones Fijos */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                {DEPOSIT_AMOUNTS.map((amt) => (
-                  <button 
-                    key={amt}
-                    onClick={() => handleDeposit(amt)}
-                    disabled={loadingAmount !== null}
-                    className="bg-[#0a0a0a] border border-white/10 hover:border-green-500/50 hover:bg-green-500/5 text-white font-black py-6 rounded-2xl transition-all flex items-center justify-center gap-1 text-2xl nm-inset shadow-sm"
-                  >
-                    {loadingAmount === amt ? <Loader2 className="w-6 h-6 animate-spin text-green-500" /> : `$${amt}`}
-                  </button>
-                ))}
-              </div>
-
-              {/* Input Monto Libre */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <div className="relative flex-1">
-                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-black text-xl">$</span>
-                  <input 
-                    type="number" 
-                    min="5" 
-                    placeholder="Otro monto (Mín. $5)"
-                    value={customAmount}
-                    onChange={(e) => setCustomAmount(e.target.value)}
-                    className="w-full bg-[#0a0a0a] nm-inset border border-white/10 rounded-2xl pl-12 pr-6 py-5 text-white text-xl font-bold outline-none focus:border-green-500/50 transition-colors placeholder:text-gray-700"
-                  />
-                </div>
-                <button 
-                  onClick={handleCustomDeposit}
-                  disabled={isProcessingCustom || loadingAmount !== null || !customAmount}
-                  className="bg-green-500 hover:bg-green-400 text-black font-black px-10 py-5 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-lg sm:w-auto w-full"
-                >
-                  {isProcessingCustom ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Pagar'}
-                </button>
               </div>
             </div>
 
@@ -514,9 +452,20 @@ export default function WalletDashboard() {
                           <p className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-widest">{new Date(w.createdAt).toLocaleDateString()}</p>
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="flex flex-col items-end gap-1.5">
                         <p className="text-white font-black text-base">-${(w.amount || 0).toFixed(2)}</p>
                         {w.adminNotes && <p className="text-[9px] text-gray-500 font-medium max-w-[120px] truncate mt-1" title={w.adminNotes}>{w.adminNotes}</p>}
+                        
+                        {/* Botón de PDF solo si está Aprobado o Pagado */}
+                        {(w.status === 'APPROVED' || w.status === 'PAID') && (
+                          <button
+                            onClick={() => handleDownloadPdf(w.id)}
+                            className="flex items-center gap-1 text-[10px] bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 px-3 py-1.5 rounded-full font-bold transition-colors border border-blue-500/20"
+                            title="Descargar Comprobante PDF"
+                          >
+                            <Download className="w-3 h-3" /> PDF
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
