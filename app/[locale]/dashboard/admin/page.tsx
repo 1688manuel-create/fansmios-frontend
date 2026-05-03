@@ -13,7 +13,7 @@ import { useModal } from '../../../../src/context/ModalContext';
 import { 
   Crown, Scale, BarChart3, Users, Banknote, Flag, Settings, 
   TrendingUp, PiggyBank, Wallet, Sparkles, ImageIcon,
-  CheckCircle, XCircle, Eye, UserX, Ghost, ShieldBan, Percent
+  CheckCircle, XCircle, Eye, UserX, Ghost, ShieldBan, Percent, Download
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import MuteVideoButton from './MuteVideoButton';
@@ -244,6 +244,34 @@ export default function AdminDashboard() {
     });
   };
 
+  // 🔥 NUEVA FUNCIÓN: DESCARGAR EL PDF DESDE EL MODO DIOS
+  const handleDownloadPdf = async (withdrawalId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.fansmio.com';
+      
+      const response = await fetch(`${API_URL}/api/wallet/withdraw/${withdrawalId}/pdf`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error("No se pudo descargar el PDF");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Fansmio_Recibo_${withdrawalId.substring(0, 8)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error al generar tu comprobante PDF. Intenta más tarde.");
+    }
+  };
+
   if (isLoading) return <div className="min-h-screen bg-nm-base flex items-center justify-center"><div className="w-16 h-16 border-4 border-red-500 rounded-full animate-spin"></div></div>;
 
   return (
@@ -392,22 +420,40 @@ export default function AdminDashboard() {
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-3xl font-black text-green-400 mb-4">${w.amount?.toFixed(2)} <span className="text-sm text-gray-500 font-normal">USDT</span></p>
+                        
+                        {/* 🔥 LÓGICA DE BOTONES Y PDF CONDICIONAL */}
                         <div className="flex flex-col gap-2">
-                          <button 
-                            onClick={() => handleApprovePayout(w.id, w.amount, w.cryptoAddress)} 
-                            disabled={processingId === w.id}
-                            className="w-full px-6 py-3 rounded-xl bg-green-600 text-white font-bold text-sm hover:bg-green-500 transition-colors disabled:opacity-50"
-                          >
-                            {processingId === w.id ? t('btn_processing') : `✅ ${t('btn_approve_crypto')}`}
-                          </button>
-                          <button 
-                            onClick={() => handleRejectPayout(w.id, w.amount)} 
-                            disabled={processingId === w.id}
-                            className="w-full px-6 py-2 rounded-xl border border-red-500/50 text-red-400 font-bold text-xs hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50"
-                          >
-                            {processingId === w.id ? t('btn_processing') : `❌ ${t('btn_reject')}`}
-                          </button>
+                          {w.status === 'PENDING' || w.status === 'PROCESSING' ? (
+                            <>
+                              <button 
+                                onClick={() => handleApprovePayout(w.id, w.amount, w.cryptoAddress)} 
+                                disabled={processingId === w.id}
+                                className="w-full px-6 py-3 rounded-xl bg-green-600 text-white font-bold text-sm hover:bg-green-500 transition-colors disabled:opacity-50"
+                              >
+                                {processingId === w.id ? t('btn_processing') : `✅ ${t('btn_approve_crypto')}`}
+                              </button>
+                              <button 
+                                onClick={() => handleRejectPayout(w.id, w.amount)} 
+                                disabled={processingId === w.id}
+                                className="w-full px-6 py-2 rounded-xl border border-red-500/50 text-red-400 font-bold text-xs hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50"
+                              >
+                                {processingId === w.id ? t('btn_processing') : `❌ ${t('btn_reject')}`}
+                              </button>
+                            </>
+                          ) : (w.status === 'PAID' || w.status === 'APPROVED') ? (
+                            <button 
+                              onClick={() => handleDownloadPdf(w.id)}
+                              className="w-full px-6 py-3 rounded-xl bg-blue-600/20 border border-blue-500/50 text-blue-400 font-bold text-sm hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-2"
+                            >
+                              <Download className="w-4 h-4" /> Descargar PDF
+                            </button>
+                          ) : (
+                            <div className="w-full px-6 py-3 rounded-xl border border-gray-600/50 text-gray-500 font-bold text-sm text-center">
+                              RECHAZADO
+                            </div>
+                          )}
                         </div>
+
                       </div>
                     </div>
                   ))}
@@ -544,7 +590,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* ⚙️ TAB 5: PLATAFORMA (SETTINGS) */}
+          {/* ⚙️ TAB 5: PLATAFORMA (SETTINGS) - TUS 6 COMISIONES ORIGINALES */}
           {activeTab === 'SETTINGS' && (
             <div className="space-y-6 animate-fade-in max-w-4xl">
               <h2 className="text-2xl font-black flex items-center gap-2 mb-6"><Settings className="text-gray-400"/> {t('settings_title')}</h2>
