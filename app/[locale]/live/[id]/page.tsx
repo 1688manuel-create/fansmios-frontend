@@ -85,6 +85,15 @@ export default function LiveRoom() {
   const streakTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const heartsContainerRef = useRef<HTMLDivElement>(null);
 
+  // 🔥 CARGA TÁCTICA: PRE-CACHÉ DE REGALOS (Velocidad de la luz)
+  useEffect(() => {
+    // Al entrar a la sala, forzamos al navegador a guardar los regalos en la memoria caché
+    GIFTS.forEach((gift) => {
+      const img = new window.Image();
+      img.src = gift.image;
+    });
+  }, []);
+
   useEffect(() => {
     try {
       const storedUser = typeof window !== "undefined" ? localStorage.getItem('user') : null;
