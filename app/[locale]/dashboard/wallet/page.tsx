@@ -116,7 +116,13 @@ export default function WalletDashboard() {
 
     setIsWithdrawing(true);
     try {
-      const res = await api.post('/wallet/withdraw', { amount, isExpress, twoFactorToken });
+      // 🔥 NUEVO MOTOR AUTOMÁTICO: Dispara a la ruta de PayRam
+      const res = await api.post('/payouts/request', { 
+        amount, 
+        address: financeData.wallet.cryptoAddress, // Enviamos la address directo
+        currency: 'USDT' 
+      });
+      
       alert(`🏦 ${t('alert_success')} ${res.data.message || t('alert_withdraw_process')}`);
       setWithdrawAmount(''); 
       setTwoFactorToken('');

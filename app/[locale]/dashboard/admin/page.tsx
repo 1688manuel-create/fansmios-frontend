@@ -175,21 +175,20 @@ export default function AdminDashboard() {
     });
   };
 
-  // 2. APROBAR PAGO A CREADOR (Usa Modal Universal)
+  // 2. APROBAR PAGO A CREADOR AUTOMÁTICO 🚀
   const handleApprovePayout = (id: string, amount: number, address: string) => {
     showModal({
-      title: "Aprobar Retiro",
-      message: `El creador solicitó $${amount}. Pégalo en tu panel de Binance/PayRam y luego pega aquí el TX Hash:`,
+      title: "Aprobar Retiro Automático",
+      message: `Se enviarán $${amount} USDT directamente a la wallet: ${address}. La pasarela procesará esto automáticamente. ¿Confirmar envío?`,
       type: 'SUCCESS',
-      showInput: true,
-      placeholder: "Ej. 0xabc123... o TxyZ98...",
-      confirmText: "Aprobar y Finalizar",
-      onConfirm: async (txHash) => {
+      showInput: false, // 💥 APAGAMOS EL INPUT (El Backend y PayRam generan el Hash)
+      confirmText: "Sí, Enviar Dinero Ahora 💸",
+      onConfirm: async () => {
         setProcessingId(id);
         try {
-          await api.post(`/admin/payouts/${id}/approve`, { 
-            txHash: txHash || `SIMULATED_TX_${Date.now()}`,
-            adminNotes: 'Pago Cripto Procesado Oficialmente'
+          // 🔥 RUTA CORREGIDA: Apunta a tu ruta de Admin original
+          await api.post(`/admin/payouts/${id}/approve`, {
+            adminNotes: 'Pago procesado automáticamente vía API.'
           });
           fetchData();
         } catch (error: any) {
