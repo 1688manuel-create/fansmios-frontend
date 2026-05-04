@@ -97,7 +97,7 @@ export default function WalletDashboard() {
     const amount = parseFloat(withdrawAmount);
     const availableBalance = financeData?.wallet?.balance || 0;
     
-    if (!amount || amount < 50) {
+    if (!amount || amount < 1) {
       alert(t('alert_min_withdraw'));
       return;
     }
