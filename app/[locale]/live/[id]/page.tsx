@@ -18,7 +18,8 @@ import {
 import { Track, VideoPresets, RoomOptions } from 'livekit-client';
 import '@livekit/components-styles';
 
-import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Play, Heart, TrendingUp, DollarSign, Swords, UserPlus, Timer, Target, Trash2, CheckCircle2 } from 'lucide-react';
+// 🔥 ICONOS (Añadido Gavel para Subastas)
+import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Play, Heart, TrendingUp, DollarSign, Swords, UserPlus, Timer, Target, Trash2, CheckCircle2, Dices, Gavel } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 let SOCKET_URL = 'https://api.fansmio.com';
@@ -35,27 +36,24 @@ export interface Gift { id: number; name: string; amount: number; image: string;
 export interface Challenge { id: string; title: string; description: string; price: number; isActive: boolean; }
 
 export const GIFTS: Gift[] = [
-  { id: 1, name: "Rosa", amount: 1.00, image: "/gifts/rosa.png", style: "text-rose-400 font-bold" },
-  { id: 2, name: "Brindis", amount: 2.00, image: "/gifts/brindis.png", style: "text-yellow-200 font-bold" },
-  { id: 3, name: "Beso", amount: 5.00, image: "/gifts/beso.png", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
-  { id: 4, name: "Carta", amount: 10.00, image: "/gifts/carta.png", style: "text-fuchsia-400 font-bold" },
-  { id: 5, name: "Corona", amount: 15.00, image: "/gifts/corona.png", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
+  { id: 1, name: "Rosa", amount: 0.25, image: "/gifts/rosa.png", style: "text-rose-400 font-bold" },
+  { id: 2, name: "Brindis", amount: 1.00, image: "/gifts/brindis.png", style: "text-yellow-200 font-bold" },
+  { id: 3, name: "Beso", amount: 2.00, image: "/gifts/beso.png", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
+  { id: 4, name: "Carta", amount: 5.00, image: "/gifts/carta.png", style: "text-fuchsia-400 font-bold" },
+  { id: 5, name: "Corona", amount: 10.00, image: "/gifts/corona.png", style: "text-yellow-400 font-black drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]", action: 'sparkles' },
   { id: 6, name: "Llave", amount: 20.00, image: "/gifts/llave.png", style: "text-amber-200 font-black" },
   { id: 7, name: "Diamante", amount: 30.00, image: "/gifts/diamante.png", style: "text-cyan-300 font-black drop-shadow-[0_0_15px_rgba(103,232,249,0.8)]", action: 'explosion' },
   { id: 8, name: "Deportivo", amount: 50.00, image: "/gifts/deportivo.png", style: "text-green-400 font-black italic" },
   { id: 9, name: "Corazón VIP", amount: 100.00, image: "/gifts/corazon-vip.png", style: "text-red-500 font-extrabold drop-shadow-[0_0_25px_rgba(239,68,68,1)] uppercase", action: 'fireworks' },
   { id: 10, name: "Universo", amount: 200.00, image: "/gifts/universo.png", style: "text-purple-400 font-black drop-shadow-[0_0_35px_rgba(192,132,252,1)] uppercase", action: 'galaxy' },
+  { id: 11, name: "Rayo", amount: 300.00, image: "/gifts/rayo.png", style: "text-purple-500 font-extrabold drop-shadow-[0_0_20px_rgba(168,85,247,1)] uppercase animate-pulse", action: 'vibrate_intenso' }
 ];
 
 export interface Donator { userId: string; username: string; amount: number; }
 
 const roomOptions: RoomOptions = {
   videoCaptureDefaults: { resolution: VideoPresets.h1080.resolution, facingMode: 'user' },
-  publishDefaults: {
-    simulcast: true, 
-    videoEncoding: { maxBitrate: 3000000, maxFramerate: 30 },
-    videoSimulcastLayers: [VideoPresets.h1080, VideoPresets.h720, VideoPresets.h360]
-  }
+  publishDefaults: { simulcast: true, videoEncoding: { maxBitrate: 3000000, maxFramerate: 30 }, videoSimulcastLayers: [VideoPresets.h1080, VideoPresets.h720, VideoPresets.h360] }
 };
 
 export default function LiveRoom() {
@@ -93,18 +91,18 @@ export default function LiveRoom() {
 
   const [battle, setBattle] = useState<any>(null);
   const [slowMode, setSlowMode] = useState(0);
-  
-  // 🔥 FASE 2: Estado local para saber a qué bando va el regalo del Fan
   const [battleSide, setBattleSide] = useState<'left'|'right'>('left');
+  const [rouletteEvent, setRouletteEvent] = useState<{senderName: string, prize: string} | null>(null);
+
+  // 🔥 FASE 4: ESTADO DE LA SUBASTA
+  const [auction, setAuction] = useState<any>(null);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const streakTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const heartsContainerRef = useRef<HTMLDivElement>(null);
   const lastMessageTime = useRef(0);
 
-  useEffect(() => {
-    GIFTS.forEach((gift) => { const img = new window.Image(); img.src = gift.image; });
-  }, []);
+  useEffect(() => { GIFTS.forEach((gift) => { const img = new window.Image(); img.src = gift.image; }); }, []);
 
   useEffect(() => {
     try {
@@ -118,10 +116,8 @@ export default function LiveRoom() {
             setUser(freshUser);
             localStorage.setItem('user', JSON.stringify(freshUser));
           }
-        }).catch(err => console.error("Error sincronizando bóveda:", err));
-      } else {
-        router.push('/auth');
-      }
+        }).catch(err => console.error(err));
+      } else { router.push('/auth'); }
     } catch { router.push('/auth'); }
     loadStreamData();
   }, [id, router]);
@@ -131,17 +127,12 @@ export default function LiveRoom() {
       const data = await liveService.getStream(id as string);
       setStreamData(data.stream);
       setHasAccess(data.hasAccess);
-
       if (data.stream.creatorId) {
-        liveService.getCreatorChallenges(data.stream.creatorId).then(res => {
-          if (res.challenges) setChallenges(res.challenges);
-        });
+        liveService.getCreatorChallenges(data.stream.creatorId).then(res => { if (res.challenges) setChallenges(res.challenges); });
       }
-
       if (data.hasAccess) {
         const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
         const isCreatorOrAdmin = String(currentUser.id) === String(data.stream.creatorId) || String(currentUser.role).toUpperCase() === 'ADMIN';
-
         setMessages([{ isSystem: true, content: `👋 ${t('msg_secure_connection')} ${data.stream.creator?.username || t('lbl_creator')}.` }, ...(data.stream.messages || [])].slice(-100));
         const res = await api.post('/livekit/token', { roomName: id, participantName: currentUser.username || t('lbl_user'), isCreator: isCreatorOrAdmin });
         setLiveKitToken(res.data.token);
@@ -159,28 +150,18 @@ export default function LiveRoom() {
 
   const triggerGiftEffect = (gift: Gift) => {
     setGiftEffect(gift);
-    if (gift.action) {
-      try {
-        const audio = new Audio(`/sounds/${gift.action}.wav`);
-        audio.volume = 0.8;
-        audio.play().catch(e => console.log("Auto-play bloqueado", e));
-      } catch (err) {}
-    }
+    if (gift.action) { try { const audio = new Audio(`/sounds/${gift.action}.wav`); audio.volume = 0.8; audio.play().catch(e => e); } catch (err) {} }
     setTimeout(() => setGiftEffect(null), 4000);
   };
 
   const updateTopDonators = (msg: any) => {
     const donorId = msg.userId || msg.senderId; 
     if (!donorId) return;
-
     setTopDonators((prev) => {
       const updated = [...prev];
       const index = updated.findIndex(u => u.userId === donorId);
-      if (index >= 0) {
-        updated[index].amount += msg.amount;
-      } else {
-        updated.push({ userId: donorId, username: msg.user?.username || 'Anónimo', amount: msg.amount });
-      }
+      if (index >= 0) updated[index].amount += msg.amount;
+      else updated.push({ userId: donorId, username: msg.user?.username || 'Anónimo', amount: msg.amount });
       return updated.sort((a, b) => b.amount - a.amount).slice(0, 3);
     });
   };
@@ -189,26 +170,15 @@ export default function LiveRoom() {
     if (!heartsContainerRef.current) return;
     const el = document.createElement('div');
     const emojis = ['❤️', '💖', '🔥', '✨', '💎'];
-    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-    el.innerHTML = randomEmoji;
-    
+    el.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
     const randomLeft = Math.floor(Math.random() * 40) - 20; 
     const randomDuration = (Math.random() * 1.5 + 2).toFixed(2);
     const randomSize = Math.floor(Math.random() * 10) + 20;
-
     el.className = 'absolute bottom-0 text-red-500 drop-shadow-md pointer-events-none opacity-0';
-    el.style.left = '50%';
-    el.style.fontSize = `${randomSize}px`;
-    el.style.animation = `floatUpAndFade ${randomDuration}s ease-in-out forwards`;
-    el.style.setProperty('--tx', `${randomLeft}px`);
-
+    el.style.left = '50%'; el.style.fontSize = `${randomSize}px`; el.style.animation = `floatUpAndFade ${randomDuration}s ease-in-out forwards`; el.style.setProperty('--tx', `${randomLeft}px`);
     heartsContainerRef.current.appendChild(el);
     setTimeout(() => el.remove(), parseFloat(randomDuration) * 1000); 
   };
-
-  const onUpdateGoal = useCallback((usdAmount: number) => {
-    setCurrentGoal(prev => prev + usdAmount);
-  }, []);
 
   const socketRef = useLiveSocket({
     id: id as string, user, streamData, onLike: triggerHeart,
@@ -216,71 +186,68 @@ export default function LiveRoom() {
       setMessages((prev) => [...prev.slice(-99), msg]); 
       if (msg.isDonation) {
         const giftData = GIFTS.find(g => g.amount === msg.amount) || { style: "text-green-400" };
-        if (msg.giftImageUrl) {
-          triggerGiftEffect({ ...giftData, image: msg.giftImageUrl } as Gift);
-        } else {
-          triggerGiftEffect(giftData as Gift);
-        }
-        updateTopDonators(msg);
-        handleStreak();
+        triggerGiftEffect(msg.giftImageUrl ? { ...giftData, image: msg.giftImageUrl } as Gift : giftData as Gift);
+        updateTopDonators(msg); handleStreak();
       }
     },
     onViewerCount: setViewersCount,
     onStreamKilled: () => { alert(t('alert_stream_ended')); router.push('/explore'); },
     onPaywallActivated: (newPrice: number) => {
       const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || String(user?.role).toUpperCase() === 'ADMIN';
-      if (!isCreatorOrAdmin) {
-        setStreamData((prev: any) => ({ ...prev, price: newPrice }));
-        setHasAccess(false); 
-      }
+      if (!isCreatorOrAdmin) { setStreamData((prev: any) => ({ ...prev, price: newPrice })); setHasAccess(false); }
     },
-    onUpdateGoal: onUpdateGoal,
+    onUpdateGoal: useCallback((usdAmount: number) => setCurrentGoal(prev => prev + usdAmount), []),
     onBattleUpdate: setBattle,
-    onSlowModeUpdate: setSlowMode
+    onSlowModeUpdate: setSlowMode,
+    onRouletteSpun: (data: any) => {
+      setRouletteEvent(data); setTimeout(() => setRouletteEvent(null), 7000);
+      setMessages((prev) => [...prev.slice(-99), { content: `🎡 ${data.senderName} giró la Ruleta y ganó: ${data.prize}!`, isDonation: true, amount: data.amount, isSystem: true, id: Date.now().toString() }]);
+      updateTopDonators({ userId: 'roulette', username: data.senderName, amount: data.amount });
+    },
+    // 🔥 ESCUCHAR LA SUBASTA
+    onAuctionUpdate: setAuction,
+    onError: (err: any) => alert(err.message)
   });
+
+  const handleStartAuction = () => {
+    const item = prompt("¿Qué vas a subastar? (Ej: Lencería rosa, Videollamada):");
+    if (!item) return;
+    const startingPrice = prompt("Precio inicial en USD (Ej: 20):", "20");
+    if (!startingPrice) return;
+    const durationMinutes = prompt("Minutos que durará la subasta:", "3");
+    if (durationMinutes && Number(durationMinutes) > 0) {
+      socketRef.current?.emit('auction:start', { streamId: id, item, startingPrice: Number(startingPrice), durationMinutes: Number(durationMinutes) });
+    }
+  };
+
+  const submitAuctionBid = (amount: number) => {
+    const fanBalance = parseFloat(user?.walletBalance || 0);
+    if (fanBalance < amount) {
+      alert("No tienes saldo suficiente para esta puja. ¡Recarga ahora!");
+      router.push('/dashboard/wallet'); return;
+    }
+    // Optimista local
+    setUser((prev: any) => ({ ...prev, walletBalance: prev.walletBalance - amount }));
+    socketRef.current?.emit('auction:bid', { streamId: id, senderId: user?.id, amount, senderName: user?.username });
+  };
 
   const handleLockRoomVIP = () => {
     const priceStr = prompt("¿Cuánto costará la entrada VIP en USD? (Ej: 5)", "5");
-    const newPrice = Number(priceStr);
-    
-    if (newPrice && newPrice > 0) {
-      if (window.confirm(`¿Seguro que quieres cerrar la sala y cobrar $${newPrice} a los que están gratis?`)) {
-        socketRef.current?.emit('activatePaywall', { streamId: id, price: newPrice });
-        alert("¡Sala Bloqueada!");
-      }
+    if (Number(priceStr) > 0 && window.confirm(`¿Seguro que quieres cerrar la sala y cobrar $${priceStr}?`)) {
+      socketRef.current?.emit('activatePaywall', { streamId: id, price: Number(priceStr) }); alert("¡Sala Bloqueada!");
     }
   };
 
-  // 🔥 FASE 2: PREPARAR BATALLA
   const handleStartBattle = () => {
-    const leftName = prompt("Opción 1 / Equipo Izquierda (Ej: Team Rojo):", "Quitar Blusa");
-    if (!leftName) return;
-    const rightName = prompt("Opción 2 / Equipo Derecha (Ej: Team Azul):", "Quitar Falda");
-    if (!rightName) return;
-    const durationMinutes = prompt("¿Cuántos minutos durará el reto?", "5");
-    
-    if (durationMinutes && Number(durationMinutes) > 0) {
-      socketRef.current?.emit('battle:start', { 
-        streamId: id, 
-        leftName, 
-        rightName, 
-        durationMinutes: Number(durationMinutes) 
-      });
-    }
+    const leftName = prompt("Equipo 1:", "Team Rojo"); const rightName = prompt("Equipo 2:", "Team Azul"); const durationMinutes = prompt("Minutos:", "5");
+    if (leftName && rightName && Number(durationMinutes) > 0) socketRef.current?.emit('battle:start', { streamId: id, leftName, rightName, durationMinutes: Number(durationMinutes) });
   };
 
-  const handleInviteGuest = () => {
-    const guest = prompt("Ingresa el ID del invitado a subir a cámara:");
-    if (guest) socketRef.current?.emit('guest:invite', { streamId: id, userId: guest });
-  };
+  const handleInviteGuest = () => { const guest = prompt("ID del invitado:"); if (guest) socketRef.current?.emit('guest:invite', { streamId: id, userId: guest }); };
 
   const handleToggleSlowMode = () => {
-    const seconds = prompt("¿Cuántos segundos entre cada mensaje? (0 para desactivar)", "5");
-    if (seconds !== null) {
-      const secs = Number(seconds);
-      setSlowMode(secs); 
-      socketRef.current?.emit('slowmode:set', { streamId: id, seconds: secs });
-    }
+    const seconds = prompt("Segundos entre cada mensaje (0 apaga):", "5");
+    if (seconds !== null) { setSlowMode(Number(seconds)); socketRef.current?.emit('slowmode:set', { streamId: id, seconds: Number(seconds) }); }
   };
 
   useEffect(() => {
@@ -289,175 +256,67 @@ export default function LiveRoom() {
       const isCreator = String(user?.id) === String(streamData.creatorId) || String(user?.role).toUpperCase() === 'ADMIN';
       if (isCreator && !isLiveActive) return;
       const diff = Math.floor((Date.now() - new Date(streamData.createdAt).getTime()) / 1000);
-      const h = String(Math.floor(diff / 3600)).padStart(2, '0');
-      const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
-      const s = String(diff % 60).padStart(2, '0');
+      const h = String(Math.floor(diff / 3600)).padStart(2, '0'); const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0'); const s = String(diff % 60).padStart(2, '0');
       setUptime(`${h}:${m}:${s}`);
-    }, 1000);
-    return () => clearInterval(timer);
+    }, 1000); return () => clearInterval(timer);
   }, [streamData, isLiveActive, user]);
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
-  const handleSendHeart = () => {
-    triggerHeart(); 
-    socketRef.current?.emit('broadcastMessage', { streamId: id, isLike: true }); 
-  };
+  const handleSendHeart = () => { triggerHeart(); socketRef.current?.emit('broadcastMessage', { streamId: id, isLike: true }); };
 
   const handleSendMessage = async () => {
     if (!chatInput.trim()) return;
-    
-    if (slowMode > 0 && Date.now() - lastMessageTime.current < slowMode * 1000) {
-      alert(`Modo lento activado. Por favor espera ${slowMode} segundos entre mensajes.`);
-      return;
-    }
-    
-    lastMessageTime.current = Date.now();
-    const content = chatInput;
-    setChatInput('');
-
+    if (slowMode > 0 && Date.now() - lastMessageTime.current < slowMode * 1000) { alert(`Modo lento: ${slowMode}s.`); return; }
+    lastMessageTime.current = Date.now(); const content = chatInput; setChatInput('');
     try {
       const res = await liveService.sendMessage(id as string, content, false, 0);
       setMessages((prev) => [...prev.slice(-99), res.chatMessage]);
-      
-      socketRef.current?.emit('broadcastMessage', {
-        ...res.chatMessage,
-        streamId: id,
-        senderId: user?.id,
-        amount: 0,
-        isDonation: false,
-        text: res.chatMessage.content
-      });
+      socketRef.current?.emit('broadcastMessage', { ...res.chatMessage, streamId: id, senderId: user?.id, amount: 0, isDonation: false, text: res.chatMessage.content });
     } catch (e) { console.error(e); }
   };
 
   const sendGift = async (gift: Gift | Challenge, isChallenge = false) => {
-    setShowGiftMenu(false);
-    const fanBalance = parseFloat(user?.walletBalance || 0);
-    const price = isChallenge ? (gift as Challenge).price : (gift as Gift).amount;
-
-    if (fanBalance < price) {
-      alert("No tienes suficiente saldo en tu Bóveda. ¡Recarga ahora!");
-      router.push('/dashboard/wallet'); 
-      return;
-    }
-
+    setShowGiftMenu(false); const price = isChallenge ? (gift as Challenge).price : (gift as Gift).amount;
+    if (parseFloat(user?.walletBalance || 0) < price) { alert("Saldo insuficiente."); router.push('/dashboard/wallet'); return; }
     try {
-      setUser((prev: any) => {
-        const newUser = { ...prev, walletBalance: parseFloat(prev.walletBalance || 0) - price };
-        localStorage.setItem('user', JSON.stringify(newUser));
-        return newUser;
-      });
-
-      // Si hay batalla y enviaron un regalo normal, añadir tag de bando al chat
-      let battleTag = '';
-      if (battle?.active && !isChallenge) {
-        battleTag = battleSide === 'left' ? ` [Apoya a ${battle.leftName}]` : ` [Apoya a ${battle.rightName}]`;
-      }
-
-      const messageContent = isChallenge 
-        ? `🔥 ¡Pagó por el reto: ${(gift as Challenge).title}!` 
-        : `${t('lbl_has_sent_a')} ${(gift as Gift).name}${battleTag}`;
-
-      const giftMessage = {
-        content: messageContent,
-        isDonation: true,
-        amount: price,
-        user: { username: user?.username, role: user?.role },
-        userId: user?.id,
-        id: Date.now().toString()
-      };
-
+      setUser((prev: any) => ({ ...prev, walletBalance: prev.walletBalance - price }));
+      let battleTag = ''; if (battle?.active && !isChallenge) battleTag = battleSide === 'left' ? ` [Apoya a ${battle.leftName}]` : ` [Apoya a ${battle.rightName}]`;
+      const msgContent = isChallenge ? `🔥 ¡Pagó por el reto: ${(gift as Challenge).title}!` : `${t('lbl_has_sent_a')} ${(gift as Gift).name}${battleTag}`;
+      const giftMessage = { content: msgContent, isDonation: true, amount: price, user: { username: user?.username, role: user?.role }, userId: user?.id, id: Date.now().toString() };
       setMessages((prev) => [...prev.slice(-99), giftMessage]);
-      
-      socketRef.current?.emit('broadcastMessage', {
-        streamId: id,
-        senderId: user?.id,
-        amount: price,
-        isDonation: true,
-        text: giftMessage.content,
-        user: giftMessage.user,
-        giftImageUrl: isChallenge ? '/gifts/corona.png' : (gift as Gift).image,
-        battleSide: battle?.active ? battleSide : null // Enviamos el voto al servidor 🔥
-      });
-
+      socketRef.current?.emit('broadcastMessage', { streamId: id, senderId: user?.id, amount: price, isDonation: true, text: giftMessage.content, user: giftMessage.user, giftImageUrl: isChallenge ? '/gifts/corona.png' : (gift as Gift).image, battleSide: battle?.active ? battleSide : null, action: isChallenge ? null : (gift as Gift).action });
       triggerGiftEffect(isChallenge ? { id: 99, name: "RETO ACEPTADO", amount: price, image: '/gifts/corona.png', style: "text-red-500 font-black", action: 'explosion' } : (gift as Gift));
-      updateTopDonators({ amount: price, userId: user?.id, user: { username: user?.username } });
-      handleStreak();
-      
-    } catch (error) {
-      alert(t('alert_error_gift'));
-    }
+      updateTopDonators({ amount: price, userId: user?.id, user: { username: user?.username } }); handleStreak();
+    } catch (error) { alert(t('alert_error_gift')); }
   };
 
-  const handleKickUser = async (targetUserId: string, targetUsername: string) => {
-    if (targetUserId === user.id) return;
-    if (!window.confirm(`🚨 ${t('confirm_kick')} @${targetUsername}?`)) return;
-    try {
-      socketRef.current?.emit('kickParticipant', { streamId: id, userId: targetUserId, username: targetUsername });
-      alert(`🚫 ${t('alert_kicked')}`);
-    } catch (error) { alert(t('alert_error_kick')); }
+  const spinRoulette = () => {
+    const ROULETTE_PRICE = 15; setShowGiftMenu(false);
+    if (parseFloat(user?.walletBalance || 0) < ROULETTE_PRICE) { alert("Saldo insuficiente."); router.push('/dashboard/wallet'); return; }
+    setUser((prev: any) => ({ ...prev, walletBalance: prev.walletBalance - ROULETTE_PRICE }));
+    socketRef.current?.emit('spinRoulette', { streamId: id, senderId: user?.id, amount: ROULETTE_PRICE, user: { username: user?.username }, battleSide: battle?.active ? battleSide : null });
   };
 
-  const handleEndStream = () => {
-    if (window.confirm(`🚨 ${t('confirm_end_stream')}`)) {
-      liveService.updateStatus(id as string, 'ENDED').then(() => {
-        socketRef.current?.emit('streamEnded', { streamId: id });
-        router.push('/dashboard');
-      });
-    }
-  };
-
-  const handleFollow = async () => {
-    try {
-      await api.post(`/users/${streamData.creatorId}/follow`);
-      setIsFollowing(true);
-    } catch (error) {}
-  };
-
+  const handleKickUser = async (uid: string, uname: string) => { if (uid === user.id) return; if (window.confirm(`🚨 Expulsar a @${uname}?`)) socketRef.current?.emit('kickParticipant', { streamId: id, userId: uid, username: uname }); };
+  const handleEndStream = () => { if (window.confirm(`🚨 Finalizar stream?`)) liveService.updateStatus(id as string, 'ENDED').then(() => { socketRef.current?.emit('streamEnded', { streamId: id }); router.push('/dashboard'); }); };
+  const handleFollow = async () => { try { await api.post(`/users/${streamData.creatorId}/follow`); setIsFollowing(true); } catch (e) {} };
   const handleBuyTicket = async () => {
-    if (!streamData || isProcessing) return;
-    setIsProcessing(true);
-    try {
-      const res = await api.post('/live/buy-ticket', { streamId: id, amount: streamData.price });
-      if (res.data.success) {
-        setHasAccess(true); 
-        alert("¡PAGO EXITOSO! Bienvenido a la zona VIP 🤫");
-        
-        setUser((prev: any) => {
-          const newUser = { ...prev, walletBalance: parseFloat(prev.walletBalance || 0) - streamData.price };
-          localStorage.setItem('user', JSON.stringify(newUser));
-          return newUser;
-        });
-
-        loadStreamData(); 
-      }
-    } catch (error: any) { 
-      alert(error.response?.data?.error || "Error al procesar el pago. Intenta de nuevo."); 
-    } 
-    finally { setIsProcessing(false); }
+    if (!streamData || isProcessing) return; setIsProcessing(true);
+    try { const res = await api.post('/live/buy-ticket', { streamId: id, amount: streamData.price }); if (res.data.success) { setHasAccess(true); setUser((prev: any) => ({ ...prev, walletBalance: prev.walletBalance - streamData.price })); loadStreamData(); } } catch (error: any) { alert(error.response?.data?.error || "Error."); } finally { setIsProcessing(false); }
   };
 
   if (!streamData) return <div className="min-h-[100dvh] bg-black flex items-center justify-center text-white font-mono animate-pulse">{t('lbl_connecting_gateway')}</div>;
-
   const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || String(user?.role).toUpperCase() === 'ADMIN';
-  const actualViewers = connectedUsers.length > 0 ? connectedUsers.length : viewersCount;
 
   return (
     <div className="fixed inset-0 bg-black text-white font-sans overflow-hidden h-[100dvh] w-full">
       <style>{`
-        @keyframes floatUpAndFade {
-          0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0; }
-          10% { opacity: 1; transform: translateY(-20px) translateX(var(--tx)) scale(1.2); }
-          80% { opacity: 0.8; }
-          100% { transform: translateY(-400px) translateX(calc(var(--tx) * 2)) scale(1); opacity: 0; }
-        }
-        @keyframes slideUpDrawer {
-          from { transform: translateY(100%); }
-          to { transform: translateY(0); }
-        }
+        @keyframes floatUpAndFade { 0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0; } 10% { opacity: 1; transform: translateY(-20px) translateX(var(--tx)) scale(1.2); } 80% { opacity: 0.8; } 100% { transform: translateY(-400px) translateX(calc(var(--tx) * 2)) scale(1); opacity: 0; } }
+        @keyframes slideUpDrawer { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .animate-drawer { animation: slideUpDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .custom-mask { -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 100%); }
+        @keyframes slotSpin { 0% { transform: translateY(0); } 100% { transform: translateY(-100%); } }
       `}</style>
 
       {/* 🎯 META */}
@@ -471,8 +330,9 @@ export default function LiveRoom() {
         </div>
       </div>
 
-      {/* 🔥 OVERLAY DE BATALLA */}
       <BattleOverlay battle={battle} />
+      {/* 🔥 OVERLAY DE SUBASTA */}
+      <AuctionOverlay auction={auction} isCreator={isCreatorOrAdmin} onBid={submitAuctionBid} />
 
       <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full" onContextMenu={(e) => e.preventDefault()}>
         {hasAccess && liveKitToken ? (
@@ -493,98 +353,63 @@ export default function LiveRoom() {
                     </div>
                     <div className="flex flex-col mr-3">
                       <span className="text-sm font-bold leading-tight text-white">{streamData.creator?.username || t('lbl_creator')}</span>
-                      <span className="text-[10px] text-gray-300 font-medium">{actualViewers} {t('lbl_viewing')}</span>
+                      <span className="text-[10px] text-gray-300 font-medium">{connectedUsers.length > 0 ? connectedUsers.length : viewersCount} {t('lbl_viewing')}</span>
                     </div>
-                    {!isCreatorOrAdmin && (
-                      <button onClick={handleFollow} disabled={isFollowing} className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider transition-all ${isFollowing ? 'bg-gray-600 text-gray-400 cursor-default' : 'bg-teal-500 text-white hover:scale-105'}`}>
-                        {isFollowing ? 'SIGUIENDO' : t('btn_follow')}
-                      </button>
-                    )}
+                    {!isCreatorOrAdmin && <button onClick={handleFollow} disabled={isFollowing} className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider transition-all ${isFollowing ? 'bg-gray-600 text-gray-400 cursor-default' : 'bg-teal-500 text-white hover:scale-105'}`}>{isFollowing ? 'SIGUIENDO' : t('btn_follow')}</button>}
                   </div>
 
                   {isCreatorOrAdmin && isLiveActive && (
-                    <div className="flex flex-wrap gap-2 max-w-[200px]">
-                      <button onClick={handleInviteGuest} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-teal-400">
-                        <UserPlus className="w-3.5 h-3.5" /> Invitar
-                      </button>
-                      <button onClick={handleStartBattle} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-pink-400">
-                        <Swords className="w-3.5 h-3.5" /> Batalla
-                      </button>
-                      <button onClick={() => setShowChallengeManager(true)} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-red-400">
-                        <Target className="w-3.5 h-3.5" /> Mis Retos
-                      </button>
+                    <div className="flex flex-wrap gap-2 max-w-[250px]">
+                      <button onClick={handleInviteGuest} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-teal-400"><UserPlus className="w-3.5 h-3.5" /> Invitar</button>
+                      <button onClick={handleStartBattle} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-pink-400"><Swords className="w-3.5 h-3.5" /> Batalla</button>
+                      <button onClick={() => setShowChallengeManager(true)} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-red-400"><Target className="w-3.5 h-3.5" /> Mis Retos</button>
+                      {/* 🔥 BOTÓN SUBASTA (Solo Creador) */}
+                      <button onClick={handleStartAuction} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-yellow-400"><Gavel className="w-3.5 h-3.5" /> Subasta</button>
                     </div>
                   )}
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center gap-2">
-                    {isCreatorOrAdmin && (
-                      <button onClick={handleToggleSlowMode} className={`w-9 h-9 rounded-full backdrop-blur-md flex items-center justify-center border shadow-lg transition-colors ${slowMode > 0 ? 'bg-orange-500/80 border-orange-500/50 text-white' : 'bg-black/40 border-white/10 text-gray-400 hover:bg-white/20 hover:text-white'}`} title={`Modo Lento ${slowMode > 0 ? 'Activado' : 'Desactivado'}`}>
-                        <Timer className="w-4 h-4" />
-                      </button>
-                    )}
-                    {isCreatorOrAdmin && (
-                      <button onClick={handleLockRoomVIP} className="w-9 h-9 rounded-full bg-red-600/80 backdrop-blur-md flex items-center justify-center border border-red-500/50 text-white hover:bg-red-500 transition-colors shadow-[0_0_15px_rgba(220,38,38,0.5)]" title="Pasar a Privado">
-                        <Lock className="w-4 h-4" />
-                      </button>
-                    )}
-                    <button onClick={() => setShowViewersModal(true)} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg">
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <button onClick={isCreatorOrAdmin ? handleEndStream : () => router.push('/explore')} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg">
-                      <X className="w-4 h-4" />
-                    </button>
+                    {isCreatorOrAdmin && <button onClick={handleToggleSlowMode} className={`w-9 h-9 rounded-full backdrop-blur-md flex items-center justify-center border shadow-lg transition-colors ${slowMode > 0 ? 'bg-orange-500/80 border-orange-500/50 text-white' : 'bg-black/40 border-white/10 text-gray-400 hover:bg-white/20 hover:text-white'}`}><Timer className="w-4 h-4" /></button>}
+                    {isCreatorOrAdmin && <button onClick={handleLockRoomVIP} className="w-9 h-9 rounded-full bg-red-600/80 backdrop-blur-md flex items-center justify-center border border-red-500/50 text-white hover:bg-red-500 transition-colors shadow-[0_0_15px_rgba(220,38,38,0.5)]"><Lock className="w-4 h-4" /></button>}
+                    <button onClick={() => setShowViewersModal(true)} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg"><Eye className="w-4 h-4" /></button>
+                    <button onClick={isCreatorOrAdmin ? handleEndStream : () => router.push('/explore')} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg"><X className="w-4 h-4" /></button>
                   </div>
                   <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded-full text-gray-300 backdrop-blur-sm border border-white/5">{uptime}</span>
                 </div>
               </div>
 
-              <div className="absolute right-4 top-[240px] sm:top-36 flex flex-col items-end gap-2 pointer-events-auto">
+              <div className="absolute right-4 top-[280px] sm:top-44 flex flex-col items-end gap-2 pointer-events-auto">
                 {topDonators.length > 0 && (
                   <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-green-500/20 shadow-lg min-w-[100px]">
-                    <div className="flex items-center justify-center gap-1 mb-1 border-b border-white/10 pb-1">
-                      < Trophy className="w-3 h-3 text-green-400" /> <span className="text-[9px] text-green-400 font-black uppercase tracking-widest">Top Fans</span>
-                    </div>
+                    <div className="flex items-center justify-center gap-1 mb-1 border-b border-white/10 pb-1">< Trophy className="w-3 h-3 text-green-400" /> <span className="text-[9px] text-green-400 font-black uppercase tracking-widest">Top Fans</span></div>
                     {topDonators.map((u, i) => (
-                      <div key={i} className="text-[10px] flex items-center justify-between gap-3 mt-1">
-                        <span className="text-white font-bold truncate max-w-[50px]">{u.username}</span>
-                        <span className="text-green-400 font-mono font-black flex items-center gap-0.5">${u.amount.toFixed(2)}</span>
-                      </div>
+                      <div key={i} className="text-[10px] flex items-center justify-between gap-3 mt-1"><span className="text-white font-bold truncate max-w-[50px]">{u.username}</span><span className="text-green-400 font-mono font-black flex items-center gap-0.5">${u.amount.toFixed(2)}</span></div>
                     ))}
                   </div>
                 )}
-                {streak > 1 && (
-                  <div className="bg-orange-500/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-orange-500/50 flex items-center gap-1.5 animate-pulse mt-2">
-                    <Zap className="w-3 h-3 text-orange-400 fill-orange-500" />
-                    <span className="text-orange-400 font-black text-xs">Combo x{streak}</span>
-                  </div>
-                )}
+                {streak > 1 && <div className="bg-orange-500/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-orange-500/50 flex items-center gap-1.5 animate-pulse mt-2"><Zap className="w-3 h-3 text-orange-400 fill-orange-500" /><span className="text-orange-400 font-black text-xs">Combo x{streak}</span></div>}
               </div>
 
               {giftEffect && <GiftEffectOverlay giftEffect={giftEffect} />}
+              {rouletteEvent && <RouletteOverlay event={rouletteEvent} />}
 
               <div className="w-full px-4 pb-4 md:w-[500px] pointer-events-auto relative z-20">
                 <div ref={heartsContainerRef} className="absolute bottom-16 right-4 w-16 h-64 pointer-events-none overflow-visible z-0" />
-
                 <div className="max-h-[50vh] overflow-y-auto flex flex-col gap-2 custom-scrollbar pb-2 custom-mask pr-14 relative z-10">
                   {messages.map((msg: any, i: number) => {
-                    if (msg.isSystem) return <div key={i} className="text-[11px] text-teal-400/90 font-bold px-3 py-1 bg-black/30 backdrop-blur-md rounded-xl w-fit border border-teal-500/20">{msg.content}</div>;
+                    if (msg.isSystem) return <div key={i} className={`text-[11px] font-bold px-3 py-1 bg-black/30 backdrop-blur-md rounded-xl w-fit border ${msg.content.includes('🔨') ? 'text-yellow-400/90 border-yellow-500/20' : 'text-teal-400/90 border-teal-500/20'}`}>{msg.content}</div>;
                     const gift = msg.isDonation ? GIFTS.find(g => g.amount === msg.amount) : null;
                     const canModerate = isCreatorOrAdmin && msg.user?.id !== user?.id;
-
                     return (
                       <div key={i} className={`text-[13px] px-3 py-1.5 rounded-2xl w-fit max-w-[100%] group/msg flex flex-col leading-tight animate-fade-in ${msg.isDonation ? 'bg-gradient-to-r from-green-500/20 to-black/30 border border-green-500/50 backdrop-blur-md shadow-lg' : 'bg-black/30 backdrop-blur-sm'}`}>
                         <div className="flex items-center gap-1.5">
                           {msg.isDonation && <DollarSign className="w-3 h-3 text-green-400" />}
-                          <span onClick={() => canModerate && handleKickUser(msg.user?.id, msg.user?.username)} className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'} ${canModerate ? 'cursor-pointer hover:text-red-500' : ''}`}>
-                            {msg.user?.username}:
-                          </span>
+                          <span onClick={() => canModerate && handleKickUser(msg.user?.id, msg.user?.username)} className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'} ${canModerate ? 'cursor-pointer hover:text-red-500' : ''}`}>{msg.user?.username}:</span>
                           {canModerate && <button onClick={() => handleKickUser(msg.user?.id, msg.user?.username)} className="opacity-0 group-hover/msg:opacity-100 transition-opacity text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-black uppercase ml-1">KICK</button>}
                         </div>
-                        <span className={`mt-0.5 ${gift ? gift.style : (msg.isDonation ? 'text-red-400 font-bold' : 'text-white font-medium')} drop-shadow-md`}>
-                          {msg.content}
-                        </span>
+                        <span className={`mt-0.5 ${gift ? gift.style : 'text-white font-medium'} drop-shadow-md`}>{msg.content}</span>
                       </div>
                     );
                   })}
@@ -596,19 +421,8 @@ export default function LiveRoom() {
                     <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} placeholder={slowMode > 0 ? `Modo lento: ${slowMode}s` : t('ph_chat')} className="bg-transparent text-white text-sm w-full outline-none placeholder-gray-300 font-medium" />
                     {chatInput.trim() && <button onClick={handleSendMessage} className="text-teal-400 hover:text-teal-300 transition-colors p-1"><Send className="w-4 h-4" /></button>}
                   </div>
-                  
-                  {!isCreatorOrAdmin && (
-                    <button onClick={() => setShowGiftMenu(true)} className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:scale-105 transition-transform shrink-0">
-                      <Diamond className="w-5 h-5 text-black fill-black" />
-                    </button>
-                  )}
-                  
-                  {!isCreatorOrAdmin && (
-                    <button onClick={handleSendHeart} className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center shadow-[0_0_15px_rgba(20,184,166,0.5)] hover:scale-105 transition-transform active:scale-95 shrink-0">
-                      <Heart className="w-5 h-5 text-white fill-white" />
-                    </button>
-                  )}
-
+                  {!isCreatorOrAdmin && <button onClick={() => setShowGiftMenu(true)} className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:scale-105 transition-transform shrink-0"><Diamond className="w-5 h-5 text-black fill-black" /></button>}
+                  {!isCreatorOrAdmin && <button onClick={handleSendHeart} className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center shadow-[0_0_15px_rgba(20,184,166,0.5)] hover:scale-105 transition-transform active:scale-95 shrink-0"><Heart className="w-5 h-5 text-white fill-white" /></button>}
                   {isCreatorOrAdmin && isLiveActive && (
                     <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center shadow-lg px-1 py-0.5">
                       <ControlBar variation="minimal" controls={{ microphone: true, camera: true, screenShare: false, leave: false, chat: false }} className="flex gap-1 [&_.lk-button]:!bg-transparent [&_.lk-button]:!text-white [&_.lk-button:hover]:!bg-white/20 [&_.lk-button]:!rounded-full [&_.lk-button]:!p-2 [&_.lk-button]:!m-0 [&_.lk-button]:!w-10 [&_.lk-button]:!h-10 [&_.lk-button]:!flex [&_.lk-button]:!items-center [&_.lk-button]:!justify-center" />
@@ -625,141 +439,150 @@ export default function LiveRoom() {
       {!hasAccess && <PaywallLayer price={streamData?.price || 0} isProcessing={isProcessing} onBuy={handleBuyTicket} />}
       {isCreatorOrAdmin && !isLiveActive && hasAccess && <PreparationLayer onStart={() => setIsLiveActive(true)} />}
 
-      {/* 🎁 DRAWER DE REGALOS, RETOS Y SELECCIÓN DE BATALLA */}
       {showGiftMenu && (
         <>
           <div className="absolute inset-0 bg-black/40 z-40 pointer-events-auto" onClick={() => setShowGiftMenu(false)}></div>
           <div className="absolute bottom-0 left-0 right-0 md:left-auto md:right-4 md:bottom-4 md:w-[400px] bg-[#111]/95 backdrop-blur-2xl border-t border-x md:border-y border-white/10 rounded-t-3xl md:rounded-3xl p-6 pb-8 animate-drawer shadow-2xl z-50 pointer-events-auto">
-            
-            {/* 🔥 SELECTOR DE BANDO SI HAY BATALLA */}
             {battle?.active && (
               <div className="flex gap-2 mb-4 bg-black/50 p-1.5 rounded-xl border border-white/10">
-                <button onClick={() => setBattleSide('left')} className={`flex-1 py-2 rounded-lg text-[10px] uppercase font-black transition-all border ${battleSide === 'left' ? 'bg-pink-600 border-pink-400 text-white shadow-[0_0_10px_rgba(244,114,182,0.4)]' : 'border-transparent text-gray-500 hover:text-white'}`}>
-                  Votar: {battle.leftName}
-                </button>
-                <button onClick={() => setBattleSide('right')} className={`flex-1 py-2 rounded-lg text-[10px] uppercase font-black transition-all border ${battleSide === 'right' ? 'bg-blue-600 border-blue-400 text-white shadow-[0_0_10px_rgba(96,165,250,0.4)]' : 'border-transparent text-gray-500 hover:text-white'}`}>
-                  Votar: {battle.rightName}
-                </button>
+                <button onClick={() => setBattleSide('left')} className={`flex-1 py-2 rounded-lg text-[10px] uppercase font-black transition-all border ${battleSide === 'left' ? 'bg-pink-600 border-pink-400 text-white shadow-[0_0_10px_rgba(244,114,182,0.4)]' : 'border-transparent text-gray-500 hover:text-white'}`}>Votar: {battle.leftName}</button>
+                <button onClick={() => setBattleSide('right')} className={`flex-1 py-2 rounded-lg text-[10px] uppercase font-black transition-all border ${battleSide === 'right' ? 'bg-blue-600 border-blue-400 text-white shadow-[0_0_10px_rgba(96,165,250,0.4)]' : 'border-transparent text-gray-500 hover:text-white'}`}>Votar: {battle.rightName}</button>
               </div>
             )}
-
             <div className="flex justify-between items-center mb-4">
               <div className="flex gap-3 bg-black/50 p-1 rounded-xl border border-white/10">
-                <button onClick={() => setGiftTab('GIFTS')} className={`px-4 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1 ${giftTab === 'GIFTS' ? 'bg-teal-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}>
-                  <Diamond className="w-3 h-3"/> REGALOS
-                </button>
-                <button onClick={() => setGiftTab('CHALLENGES')} className={`px-4 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1 ${giftTab === 'CHALLENGES' ? 'bg-red-500 text-white shadow-md' : 'text-gray-400 hover:text-white'}`}>
-                  <Target className="w-3 h-3"/> RETOS
-                </button>
+                <button onClick={() => setGiftTab('GIFTS')} className={`px-4 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1 ${giftTab === 'GIFTS' ? 'bg-teal-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}><Diamond className="w-3 h-3"/> REGALOS</button>
+                <button onClick={() => setGiftTab('CHALLENGES')} className={`px-4 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1 ${giftTab === 'CHALLENGES' ? 'bg-red-500 text-white shadow-md' : 'text-gray-400 hover:text-white'}`}><Target className="w-3 h-3"/> RETOS</button>
               </div>
-              
               <div className="text-xs bg-green-500/10 border border-green-500/30 px-3 py-1.5 rounded-full font-mono text-green-400 flex items-center gap-1.5">
-                <DollarSign className="w-3.5 h-3.5" />
-                <span className="font-bold">{parseFloat(user?.walletBalance || 0).toFixed(2)}</span>
+                <DollarSign className="w-3.5 h-3.5" /> <span className="font-bold">{parseFloat(user?.walletBalance || 0).toFixed(2)}</span>
               </div>
             </div>
-            
+            <button onClick={spinRoulette} className="w-full mb-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-[1.02] active:scale-95 text-white font-black uppercase py-3 rounded-xl text-sm transition-all shadow-[0_5px_20px_rgba(192,132,252,0.4)] flex items-center justify-center gap-2 border border-pink-400/50">
+              <Dices className="w-5 h-5"/> GIRAR RULETA CALIENTE - $15.00
+            </button>
             {giftTab === 'GIFTS' ? (
-              <div className="grid grid-cols-4 md:grid-cols-5 gap-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+              <div className="grid grid-cols-4 md:grid-cols-5 gap-3 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
                 {GIFTS.map((gift) => (
-                  <button key={gift.id} onClick={() => sendGift(gift, false)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-green-500/50 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm">
-                    <img src={gift.image} alt={gift.name} className="w-10 h-10 object-contain group-hover:scale-110 transition-transform mb-1 drop-shadow-lg" />
-                    <span className="text-[9px] text-gray-300 font-bold text-center leading-tight truncate w-full">{t(`gift_name_${gift.id}`) || gift.name}</span>
-                    <span className="text-[10px] text-green-400 font-mono font-black mt-1 flex items-center gap-0.5">
-                      ${gift.amount.toFixed(2)}
-                    </span>
-                  </button>
+                  <button key={gift.id} onClick={() => sendGift(gift, false)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-green-500/50 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm"><img src={gift.image} alt={gift.name} className="w-10 h-10 object-contain group-hover:scale-110 transition-transform mb-1 drop-shadow-lg" /><span className="text-[9px] text-gray-300 font-bold text-center leading-tight truncate w-full">{t(`gift_name_${gift.id}`) || gift.name}</span><span className="text-[10px] text-green-400 font-mono font-black mt-1 flex items-center gap-0.5">${gift.amount.toFixed(2)}</span></button>
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col gap-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
-                {challenges.filter(c => c.isActive).length === 0 ? (
-                  <div className="text-center text-gray-500 py-10 text-xs font-bold">El creador no tiene retos activos ahora mismo.</div>
-                ) : (
-                  challenges.filter(c => c.isActive).map(challenge => (
-                    <button key={challenge.id} onClick={() => sendGift(challenge, true)} className="bg-gradient-to-r from-red-900/40 to-black hover:from-red-800/60 border border-red-500/30 p-3 rounded-xl transition-all flex items-center justify-between group text-left">
-                      <div>
-                        <div className="text-red-400 font-black text-sm group-hover:text-red-300">{challenge.title}</div>
-                        {challenge.description && <div className="text-gray-400 text-[10px] mt-0.5 max-w-[200px]">{challenge.description}</div>}
-                      </div>
-                      <div className="bg-red-500/20 text-red-400 font-mono font-black px-3 py-1.5 rounded-lg border border-red-500/50">
-                        ${challenge.price.toFixed(2)}
-                      </div>
-                    </button>
-                  ))
-                )}
+              <div className="flex flex-col gap-2 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
+                {challenges.filter(c => c.isActive).length === 0 ? <div className="text-center text-gray-500 py-10 text-xs font-bold">El creador no tiene retos activos ahora mismo.</div> : challenges.filter(c => c.isActive).map(challenge => (
+                  <button key={challenge.id} onClick={() => sendGift(challenge, true)} className="bg-gradient-to-r from-red-900/40 to-black hover:from-red-800/60 border border-red-500/30 p-3 rounded-xl transition-all flex items-center justify-between group text-left"><div><div className="text-red-400 font-black text-sm group-hover:text-red-300">{challenge.title}</div>{challenge.description && <div className="text-gray-400 text-[10px] mt-0.5 max-w-[200px]">{challenge.description}</div>}</div><div className="bg-red-500/20 text-red-400 font-mono font-black px-3 py-1.5 rounded-lg border border-red-500/50">${challenge.price.toFixed(2)}</div></button>
+                ))}
               </div>
             )}
-            
-            <button onClick={() => router.push('/dashboard/wallet')} className="w-full mt-6 bg-gradient-to-r from-green-500 to-teal-500 hover:scale-[1.02] active:scale-95 text-black font-black uppercase py-3 rounded-xl text-sm transition-all shadow-[0_5px_20px_rgba(34,197,94,0.3)]">
-              Recargar Saldo
-            </button>
+            <button onClick={() => router.push('/dashboard/wallet')} className="w-full mt-4 bg-transparent border border-white/10 hover:bg-white/5 active:scale-95 text-gray-300 font-bold uppercase py-2 rounded-xl text-xs transition-all">Recargar Bóveda</button>
           </div>
         </>
       )}
 
-      {showChallengeManager && (
-        <ChallengeManagerModal challenges={challenges} setChallenges={setChallenges} onClose={() => setShowChallengeManager(false)} />
-      )}
+      {showChallengeManager && <ChallengeManagerModal challenges={challenges} setChallenges={setChallenges} onClose={() => setShowChallengeManager(false)} />}
       {showViewersModal && <ViewersModal connectedUsers={connectedUsers} onClose={() => setShowViewersModal(false)} />}
     </div>
   );
 }
 
 // ==========================================================
-// 🛠️ COMPONENTES TÁCTICOS
+// 🛠️ COMPONENTES TÁCTICOS BLINDADOS
 // ==========================================================
-function ChallengeManagerModal({ challenges, setChallenges, onClose }: { challenges: Challenge[], setChallenges: any, onClose: () => void }) {
-  const [title, setTitle] = useState('');
-  const [desc, setDesc] = useState('');
-  const [price, setPrice] = useState('');
-  const [loading, setLoading] = useState(false);
 
+// 🔥 FASE 4: COMPONENTE DE SUBASTA
+function AuctionOverlay({ auction, isCreator, onBid }: { auction: any, isCreator: boolean, onBid: (amount: number) => void }) {
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [customBid, setCustomBid] = useState('');
+
+  useEffect(() => {
+    if (!auction || !auction.active) return;
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, Math.floor((auction.endTime - Date.now()) / 1000));
+      setTimeLeft(remaining);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [auction]);
+
+  if (!auction || !auction.active) return null;
+
+  const isFinished = timeLeft <= 0;
+  const mins = Math.floor(timeLeft / 60); 
+  const secs = timeLeft % 60;
+
+  return (
+    <div className="absolute top-[210px] sm:top-44 left-1/2 -translate-x-1/2 w-72 z-40 pointer-events-auto">
+      <div className={`bg-gradient-to-b from-yellow-900/90 to-black border-2 border-yellow-500 rounded-3xl p-4 shadow-[0_0_30px_rgba(234,179,8,0.4)] ${isFinished ? 'animate-pulse' : 'animate-fade-in'}`}>
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex items-center gap-1 text-yellow-400 font-black text-xs uppercase tracking-widest"><Gavel className="w-4 h-4"/> SUBASTA</div>
+          <div className="text-white font-mono text-xs bg-black/50 px-2 py-1 rounded-md">{isFinished ? 'FINALIZADA' : `${mins}:${secs.toString().padStart(2, '0')}`}</div>
+        </div>
+        
+        <h3 className="text-white font-bold text-sm text-center mb-1 leading-tight">{auction.item}</h3>
+        
+        <div className="bg-black/50 rounded-xl p-3 text-center my-3 border border-yellow-500/30">
+          <div className="text-[10px] text-gray-400 uppercase font-bold mb-1">Mejor Puja</div>
+          <div className="text-3xl font-black text-yellow-400 font-mono tracking-tighter">${auction.currentBid.toFixed(2)}</div>
+          <div className="text-[10px] text-yellow-200 mt-1">{auction.highestBidderName ? `por @${auction.highestBidderName}` : '¡Sé el primero en pujar!'}</div>
+        </div>
+
+        {!isCreator && !isFinished && (
+          <div className="flex gap-2">
+            <button onClick={() => onBid(auction.currentBid + 5)} className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-black py-2 rounded-xl text-xs transition-colors shadow-md">
+              + $5 USD
+            </button>
+            <div className="flex-1 flex">
+              <input type="number" placeholder="Ej: 50" value={customBid} onChange={e => setCustomBid(e.target.value)} className="w-full bg-black border border-yellow-500/50 rounded-l-xl px-2 text-white text-xs font-mono outline-none" />
+              <button onClick={() => { if(Number(customBid) > auction.currentBid) onBid(Number(customBid)); }} className="bg-yellow-600 hover:bg-yellow-500 px-2 rounded-r-xl text-black font-black text-xs">GO</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function RouletteOverlay({ event }: { event: {senderName: string, prize: string} }) {
+  const [isSpinning, setIsSpinning] = useState(true);
+  useEffect(() => { const timer = setTimeout(() => setIsSpinning(false), 3000); return () => clearTimeout(timer); }, []);
+  return (
+    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-none">
+      <div className={`flex flex-col items-center justify-center p-8 bg-gradient-to-b from-purple-900/90 to-black border-2 border-pink-500 rounded-3xl shadow-[0_0_80px_rgba(236,72,153,0.5)] transition-all transform ${isSpinning ? 'scale-100' : 'scale-110'}`}>
+        <Dices className={`w-16 h-16 text-pink-400 mb-4 drop-shadow-[0_0_15px_rgba(236,72,153,0.8)] ${isSpinning ? 'animate-spin' : 'animate-bounce'}`} />
+        <h2 className="text-white font-black text-xl mb-2 uppercase tracking-widest text-center">{event.senderName} Giró la Ruleta!</h2>
+        <div className="w-full h-1 bg-white/20 rounded-full mb-6 overflow-hidden relative">{isSpinning && <div className="absolute top-0 left-0 h-full bg-pink-500 w-1/3 animate-[slide_1s_infinite_linear]"></div>}</div>
+        <div className={`text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400 text-center uppercase tracking-tighter ${isSpinning ? 'animate-pulse blur-[2px]' : 'drop-shadow-[0_0_20px_rgba(236,72,153,1)]'}`}>{isSpinning ? 'Calculando...' : event.prize}</div>
+      </div>
+    </div>
+  );
+}
+
+function ChallengeManagerModal({ challenges, setChallenges, onClose }: { challenges: Challenge[], setChallenges: any, onClose: () => void }) {
+  const [title, setTitle] = useState(''); const [desc, setDesc] = useState(''); const [price, setPrice] = useState(''); const [loading, setLoading] = useState(false);
   const handleAdd = async () => {
     if (!title || !price) return;
     setLoading(true);
-    try {
-      const data = await liveService.createChallenge(title, desc, Number(price));
-      setChallenges((prev: any) => [...prev, data.challenge]);
-      setTitle(''); setDesc(''); setPrice('');
-    } catch (e) { alert("Error al crear el reto"); }
+    try { const data = await liveService.createChallenge(title, desc, Number(price)); setChallenges((prev: any) => [...prev, data.challenge]); setTitle(''); setDesc(''); setPrice(''); } catch (e) { alert("Error al crear el reto"); }
     setLoading(false);
   };
-
   const handleToggle = async (id: string, currentStatus: boolean) => {
-    try {
-      await liveService.toggleChallenge(id, !currentStatus);
-      setChallenges((prev: any) => prev.map((c: any) => c.id === id ? { ...c, isActive: !currentStatus } : c));
-    } catch (e) { alert("Error al actualizar"); }
+    try { await liveService.toggleChallenge(id, !currentStatus); setChallenges((prev: any) => prev.map((c: any) => c.id === id ? { ...c, isActive: !currentStatus } : c)); } catch (e) { alert("Error al actualizar"); }
   };
-
   const handleDelete = async (id: string) => {
     if (!window.confirm("¿Borrar este reto para siempre?")) return;
-    try {
-      await liveService.deleteChallenge(id);
-      setChallenges((prev: any) => prev.filter((c: any) => c.id !== id));
-    } catch (e) { alert("Error al eliminar"); }
+    try { await liveService.deleteChallenge(id); setChallenges((prev: any) => prev.filter((c: any) => c.id !== id)); } catch (e) { alert("Error al eliminar"); }
   };
-
   return (
     <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 pointer-events-auto">
       <div className="bg-[#111] border border-red-500/30 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(220,38,38,0.2)] animate-fade-in">
         <div className="flex items-center justify-between p-5 border-b border-white/10 bg-gradient-to-r from-red-900/30 to-transparent">
-          <h3 className="text-white font-black text-lg flex items-center gap-2"><Target className="w-5 h-5 text-red-500" /> Mis Retos VIP</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
+          <h3 className="text-white font-black text-lg flex items-center gap-2"><Target className="w-5 h-5 text-red-500" /> Mis Retos VIP</h3><button onClick={onClose} className="text-gray-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
         </div>
         <div className="p-5">
           <div className="bg-black/50 border border-white/5 rounded-2xl p-4 mb-6">
             <h4 className="text-xs font-bold text-red-400 mb-3 uppercase tracking-widest">Crear Nuevo Reto</h4>
             <div className="space-y-3">
               <input type="text" placeholder="Ej: Bailar 10 segundos" value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-red-500/50" />
-              <div className="flex gap-3">
-                <input type="text" placeholder="Detalle (opcional)" value={desc} onChange={e => setDesc(e.target.value)} className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-red-500/50" />
-                <div className="relative w-28">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
-                  <input type="number" placeholder="Precio" value={price} onChange={e => setPrice(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl pl-7 pr-3 py-2.5 text-sm text-white font-mono font-bold outline-none focus:border-red-500/50" />
-                </div>
-              </div>
+              <div className="flex gap-3"><input type="text" placeholder="Detalle (opcional)" value={desc} onChange={e => setDesc(e.target.value)} className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-red-500/50" /><div className="relative w-28"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span><input type="number" placeholder="Precio" value={price} onChange={e => setPrice(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl pl-7 pr-3 py-2.5 text-sm text-white font-mono font-bold outline-none focus:border-red-500/50" /></div></div>
               <button onClick={handleAdd} disabled={loading || !title || !price} className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-2.5 rounded-xl transition-colors disabled:opacity-50 text-sm">{loading ? 'Guardando...' : '+ Añadir a mi lista'}</button>
             </div>
           </div>
@@ -767,10 +590,7 @@ function ChallengeManagerModal({ challenges, setChallenges, onClose }: { challen
             {challenges.length === 0 ? <div className="text-center text-gray-500 text-xs py-4">No has creado ningún reto todavía.</div> : challenges.map(c => (
               <div key={c.id} className={`flex items-center justify-between p-3 rounded-xl border transition-all ${c.isActive ? 'bg-red-900/10 border-red-500/20' : 'bg-white/5 border-white/5 opacity-50'}`}>
                 <div className="flex-1"><div className="text-sm font-bold text-white">{c.title} <span className="text-green-400 font-mono text-xs ml-2">${c.price.toFixed(2)}</span></div>{c.description && <div className="text-[10px] text-gray-400">{c.description}</div>}</div>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => handleToggle(c.id, c.isActive)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${c.isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/50 text-gray-400'}`}><CheckCircle2 className="w-4 h-4" /></button>
-                  <button onClick={() => handleDelete(c.id)} className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"><Trash2 className="w-4 h-4" /></button>
-                </div>
+                <div className="flex items-center gap-2"><button onClick={() => handleToggle(c.id, c.isActive)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${c.isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/50 text-gray-400'}`}><CheckCircle2 className="w-4 h-4" /></button><button onClick={() => handleDelete(c.id)} className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"><Trash2 className="w-4 h-4" /></button></div>
               </div>
             ))}
           </div>
@@ -785,76 +605,42 @@ function StreamStage() {
   const visibleTracks = tracks.slice(0, 4); 
   const layout = visibleTracks.length <= 1 ? "grid-cols-1" : visibleTracks.length === 2 ? "grid-cols-2" : "grid-cols-2 grid-rows-2";
   return (
-    <div className="w-full h-full flex flex-col relative bg-transparent">
-      <div className="absolute inset-0 z-0">
-        <div className={`grid ${layout} w-full h-full [&_video]:!object-cover`}>
-          {visibleTracks.map((track) => ( <ParticipantTile key={track.participant.identity} trackRef={track} /> ))}
-        </div>
-      </div>
-    </div>
+    <div className="w-full h-full flex flex-col relative bg-transparent"><div className="absolute inset-0 z-0"><div className={`grid ${layout} w-full h-full [&_video]:!object-cover`}>{visibleTracks.map((track) => ( <ParticipantTile key={track.participant.identity} trackRef={track} /> ))}</div></div></div>
   );
 }
 
-// 🔥 FASE 2: OVERLAY CON RELOJ Y GANADOR
 function BattleOverlay({ battle }: { battle: any }) {
   const [timeLeft, setTimeLeft] = useState(0);
-
   useEffect(() => {
     if (!battle || !battle.active) return;
-    const interval = setInterval(() => {
-      const remaining = Math.max(0, Math.floor((battle.endTime - Date.now()) / 1000));
-      setTimeLeft(remaining);
-    }, 1000);
+    const interval = setInterval(() => { const remaining = Math.max(0, Math.floor((battle.endTime - Date.now()) / 1000)); setTimeLeft(remaining); }, 1000);
     return () => clearInterval(interval);
   }, [battle]);
-
   if (!battle || !battle.active) return null;
 
   const total = (battle.leftScore || 0) + (battle.rightScore || 0);
   const leftPct = total ? (battle.leftScore / total) * 100 : 50;
-
-  const mins = Math.floor(timeLeft / 60);
-  const secs = timeLeft % 60;
-  const isFinished = timeLeft <= 0;
-  
-  // Decide al ganador basándose en el score
+  const mins = Math.floor(timeLeft / 60); const secs = timeLeft % 60; const isFinished = timeLeft <= 0;
   const winner = battle.leftScore >= battle.rightScore ? battle.leftName : battle.rightName;
 
   return (
     <div className="absolute top-[180px] sm:top-36 left-0 w-full px-8 z-30 animate-fade-in pointer-events-none">
       <div className="flex flex-col items-center mb-1">
-        {isFinished ? (
-          <span className="bg-yellow-500 text-black px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(234,179,8,0.8)] animate-bounce">
-            ¡TIEMPO! GANA: {winner}
-          </span>
-        ) : (
-          <span className="bg-red-600 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20 shadow-lg flex items-center gap-1 animate-pulse">
-            <Timer className="w-3 h-3"/> {mins}:{secs.toString().padStart(2, '0')}
-          </span>
-        )}
+        {isFinished ? <span className="bg-yellow-500 text-black px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(234,179,8,0.8)] animate-bounce">¡TIEMPO! GANA: {winner}</span> : <span className="bg-red-600 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20 shadow-lg flex items-center gap-1 animate-pulse"><Timer className="w-3 h-3"/> {mins}:{secs.toString().padStart(2, '0')}</span>}
       </div>
-      
-      <div className="flex justify-between w-full px-2 mb-1 text-[9px] font-black uppercase text-white drop-shadow-md">
-        <span>{battle.leftName}</span>
-        <span>{battle.rightName}</span>
-      </div>
-
+      <div className="flex justify-between w-full px-2 mb-1 text-[9px] font-black uppercase text-white drop-shadow-md"><span>{battle.leftName}</span><span>{battle.rightName}</span></div>
       <div className="h-6 bg-black/60 rounded-full flex overflow-hidden border border-white/20 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-        <div className="bg-gradient-to-r from-pink-600 to-pink-400 transition-all duration-700 ease-out flex items-center pl-2" style={{ width: `${leftPct}%` }}>
-          <span className="text-white text-[10px] font-black">${battle.leftScore.toFixed(2)}</span>
-        </div>
-        <div className="bg-gradient-to-r from-blue-400 to-blue-600 flex-1 transition-all duration-700 ease-out flex items-center justify-end pr-2">
-          <span className="text-white text-[10px] font-black">${battle.rightScore.toFixed(2)}</span>
-        </div>
+        <div className="bg-gradient-to-r from-pink-600 to-pink-400 transition-all duration-700 ease-out flex items-center pl-2" style={{ width: `${leftPct}%` }}><span className="text-white text-[10px] font-black">${battle.leftScore.toFixed(2)}</span></div>
+        <div className="bg-gradient-to-r from-blue-400 to-blue-600 flex-1 transition-all duration-700 ease-out flex items-center justify-end pr-2"><span className="text-white text-[10px] font-black">${battle.rightScore.toFixed(2)}</span></div>
       </div>
     </div>
   );
 }
 
-function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate }: any) {
+function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate, onRouletteSpun, onAuctionUpdate, onError }: any) {
   const socketRef = useRef<Socket | null>(null);
-  const callbacks = useRef({ onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate });
-  useEffect(() => { callbacks.current = { onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate }; });
+  const callbacks = useRef({ onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate, onRouletteSpun, onAuctionUpdate, onError });
+  useEffect(() => { callbacks.current = { onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate, onRouletteSpun, onAuctionUpdate, onError }; });
   
   useEffect(() => {
     if (!user?.id || !id || !streamData) return; 
@@ -873,6 +659,9 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
     socketInstance.on('updateLiveGoal', ({ amount }: { amount: number }) => { if (callbacks.current.onUpdateGoal) callbacks.current.onUpdateGoal(amount); });
     socketInstance.on('battle:update', (data: any) => { if (callbacks.current.onBattleUpdate) callbacks.current.onBattleUpdate(data); });
     socketInstance.on('slowmode:update', (seconds: number) => { if (callbacks.current.onSlowModeUpdate) callbacks.current.onSlowModeUpdate(seconds); });
+    socketInstance.on('rouletteSpun', (data: any) => { if (callbacks.current.onRouletteSpun) callbacks.current.onRouletteSpun(data); });
+    socketInstance.on('auction:update', (data: any) => { if (callbacks.current.onAuctionUpdate) callbacks.current.onAuctionUpdate(data); });
+    socketInstance.on('error', (err: any) => { if (callbacks.current.onError) callbacks.current.onError(err); });
     return () => { socketInstance.disconnect(); };
   }, [user?.id, id, streamData?.creatorId]); 
   return socketRef;
