@@ -19,8 +19,8 @@ import {
 import { Track, VideoPresets, RoomOptions } from 'livekit-client';
 import '@livekit/components-styles';
 
-// 🔥 ICONOS PREMIUM
-import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Play, Heart, TrendingUp, DollarSign } from 'lucide-react';
+// 🔥 ICONOS PREMIUM (Añadidos iconos para Batallas e Invitados)
+import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Play, Heart, TrendingUp, DollarSign, Swords, UserPlus, Timer } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 // 🔥 BLINDAJE DE CONEXIÓN
@@ -34,10 +34,9 @@ if (process.env.NEXT_PUBLIC_API_URL) {
   }
 }
 
-// 🏆 ECONOMÍA DE LUJO FANSMIO (DÓLARES PUROS 💵)
+// 🏆 ECONOMÍA DE LUJO FANSMIO
 export interface Gift { id: number; name: string; amount: number; image: string; style: string; action?: string; }
 
-// ✅ RUTAS LOCALES RESTAURADAS (Tus imágenes en public/gifts funcionarán perfecto)
 export const GIFTS: Gift[] = [
   { id: 1, name: "Rosa", amount: 1.00, image: "/gifts/rosa.png", style: "text-rose-400 font-bold" },
   { id: 2, name: "Brindis", amount: 2.00, image: "/gifts/brindis.png", style: "text-yellow-200 font-bold" },
@@ -53,23 +52,12 @@ export const GIFTS: Gift[] = [
 
 export interface Donator { userId: string; username: string; amount: number; }
 
-// 🔥 MOTOR DE VIDEO PREMIUM (Cámara Frontal al Máximo y Simulcast)
 const roomOptions: RoomOptions = {
-  videoCaptureDefaults: {
-    resolution: VideoPresets.h1080.resolution, 
-    facingMode: 'user', // 🎯 ESTA ES LA CLAVE: 'user' fuerza la cámara frontal
-  },
+  videoCaptureDefaults: { resolution: VideoPresets.h1080.resolution, facingMode: 'user' },
   publishDefaults: {
     simulcast: true, 
-    videoEncoding: {
-      maxBitrate: 3000000, // 3 Mbps de subida pura
-      maxFramerate: 30,
-    },
-    videoSimulcastLayers: [
-      VideoPresets.h1080, 
-      VideoPresets.h720,  
-      VideoPresets.h360   
-    ]
+    videoEncoding: { maxBitrate: 3000000, maxFramerate: 30 },
+    videoSimulcastLayers: [VideoPresets.h1080, VideoPresets.h720, VideoPresets.h360]
   }
 };
 
@@ -101,17 +89,17 @@ export default function LiveRoom() {
   const [currentGoal, setCurrentGoal] = useState(0);
   const [targetGoal, setTargetGoal] = useState(500);
 
+  // 🔥 NUEVOS ESTADOS: Batallas, Invitados y Modo Lento
+  const [battle, setBattle] = useState<any>(null);
+  const [slowMode, setSlowMode] = useState(0);
+
   const chatEndRef = useRef<HTMLDivElement>(null);
   const streakTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const heartsContainerRef = useRef<HTMLDivElement>(null);
+  const lastMessageTime = useRef(0);
 
-  // 🔥 CARGA TÁCTICA: PRE-CACHÉ DE REGALOS (Velocidad de la luz)
   useEffect(() => {
-    // Al entrar a la sala, forzamos al navegador a guardar los regalos en la memoria caché
-    GIFTS.forEach((gift) => {
-      const img = new window.Image();
-      img.src = gift.image;
-    });
+    GIFTS.forEach((gift) => { const img = new window.Image(); img.src = gift.image; });
   }, []);
 
   useEffect(() => {
@@ -182,11 +170,7 @@ export default function LiveRoom() {
       if (index >= 0) {
         updated[index].amount += msg.amount;
       } else {
-        updated.push({ 
-          userId: donorId, 
-          username: msg.user?.username || 'Anónimo', 
-          amount: msg.amount 
-        });
+        updated.push({ userId: donorId, username: msg.user?.username || 'Anónimo', amount: msg.amount });
       }
       return updated.sort((a, b) => b.amount - a.amount).slice(0, 3);
     });
@@ -228,7 +212,6 @@ export default function LiveRoom() {
         } else {
           triggerGiftEffect(giftData as Gift);
         }
-        
         updateTopDonators(msg);
         handleStreak();
       }
@@ -242,7 +225,10 @@ export default function LiveRoom() {
         setHasAccess(false); 
       }
     },
-    onUpdateGoal: onUpdateGoal
+    onUpdateGoal: onUpdateGoal,
+    // 🔥 NUEVOS GANCHOS PREPARADOS
+    onBattleUpdate: setBattle,
+    onSlowModeUpdate: setSlowMode
   });
 
   const handleLockRoomVIP = () => {
@@ -254,6 +240,26 @@ export default function LiveRoom() {
         socketRef.current?.emit('activatePaywall', { streamId: id, price: newPrice });
         alert("¡Sala Bloqueada!");
       }
+    }
+  };
+
+  // 🔥 NUEVAS ACCIONES DEL CREADOR
+  const handleStartBattle = () => {
+    const rival = prompt("Ingresa el ID o Username de tu rival:");
+    if (rival) socketRef.current?.emit('battle:start', { streamId: id, rivalId: rival });
+  };
+
+  const handleInviteGuest = () => {
+    const guest = prompt("Ingresa el ID del invitado a subir a cámara:");
+    if (guest) socketRef.current?.emit('guest:invite', { streamId: id, userId: guest });
+  };
+
+  const handleToggleSlowMode = () => {
+    const seconds = prompt("¿Cuántos segundos entre cada mensaje? (0 para desactivar)", "5");
+    if (seconds !== null) {
+      const secs = Number(seconds);
+      setSlowMode(secs); // Optimista
+      socketRef.current?.emit('slowmode:set', { streamId: id, seconds: secs });
     }
   };
 
@@ -280,8 +286,17 @@ export default function LiveRoom() {
 
   const handleSendMessage = async () => {
     if (!chatInput.trim()) return;
+    
+    // 🔥 CONTROL DE MODO LENTO
+    if (slowMode > 0 && Date.now() - lastMessageTime.current < slowMode * 1000) {
+      alert(`Modo lento activado. Por favor espera ${slowMode} segundos entre mensajes.`);
+      return;
+    }
+    
+    lastMessageTime.current = Date.now();
     const content = chatInput;
     setChatInput('');
+
     try {
       const res = await liveService.sendMessage(id as string, content, false, 0);
       setMessages((prev) => [...prev.slice(-99), res.chatMessage]);
@@ -297,10 +312,8 @@ export default function LiveRoom() {
     } catch (e) { console.error(e); }
   };
 
-  // ✅ BLINDAJE DE COBRO + IMAGEN ENVIADA POR SOCKET
   const sendGift = async (gift: Gift) => {
     setShowGiftMenu(false);
-    
     const fanBalance = parseFloat(user?.walletBalance || 0);
 
     if (fanBalance < gift.amount) {
@@ -334,17 +347,11 @@ export default function LiveRoom() {
         isDonation: true,
         text: giftMessage.content,
         user: giftMessage.user,
-        giftImageUrl: gift.image // <-- Esto evita que el creador vea la imagen rota
+        giftImageUrl: gift.image
       });
 
       triggerGiftEffect(gift);
-      
-      updateTopDonators({ 
-        amount: gift.amount, 
-        userId: user?.id,
-        user: { username: user?.username } 
-      });
-      
+      updateTopDonators({ amount: gift.amount, userId: user?.id, user: { username: user?.username } });
       handleStreak();
       
     } catch (error) {
@@ -397,9 +404,7 @@ export default function LiveRoom() {
     } catch (error: any) { 
       alert(error.response?.data?.error || "Error al procesar el pago. Intenta de nuevo."); 
     } 
-    finally { 
-      setIsProcessing(false); 
-    }
+    finally { setIsProcessing(false); }
   };
 
   if (!streamData) return <div className="min-h-[100dvh] bg-black flex items-center justify-center text-white font-mono animate-pulse">{t('lbl_connecting_gateway')}</div>;
@@ -436,7 +441,10 @@ export default function LiveRoom() {
         </div>
       </div>
 
-      {/* 🎬 VIDEO LAYER */}
+      {/* 🔥 OVERLAY DE BATALLA */}
+      <BattleOverlay battle={battle} />
+
+      {/* 🎬 VIDEO LAYER MULTI-GUEST */}
       <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full" onContextMenu={(e) => e.preventDefault()}>
         {hasAccess && liveKitToken ? (
           <LiveKitRoom video={isCreatorOrAdmin ? isLiveActive : false} audio={isCreatorOrAdmin ? isLiveActive : false} token={liveKitToken} serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.fansmio.com"} options={roomOptions} className="w-full h-full relative">
@@ -452,28 +460,43 @@ export default function LiveRoom() {
               
               {/* 🔝 TOP HUD */}
               <div className="pt-4 px-4 flex justify-between items-start pointer-events-auto">
-                <div className="flex items-center bg-black/40 backdrop-blur-md rounded-full p-1 pr-3 border border-white/10 shadow-lg cursor-pointer hover:bg-black/50 transition-colors">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center font-black text-white shadow-inner overflow-hidden border border-white/20 mr-2">
-                    {streamData.creator?.profileImage ? <img src={streamData.creator.profileImage} alt="perfil" className="w-full h-full object-cover" /> : streamData.creator?.username?.charAt(0).toUpperCase()}
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center bg-black/40 backdrop-blur-md rounded-full p-1 pr-3 border border-white/10 shadow-lg cursor-pointer hover:bg-black/50 transition-colors">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center font-black text-white shadow-inner overflow-hidden border border-white/20 mr-2">
+                      {streamData.creator?.profileImage ? <img src={streamData.creator.profileImage} alt="perfil" className="w-full h-full object-cover" /> : streamData.creator?.username?.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex flex-col mr-3">
+                      <span className="text-sm font-bold leading-tight text-white">{streamData.creator?.username || t('lbl_creator')}</span>
+                      <span className="text-[10px] text-gray-300 font-medium">{actualViewers} {t('lbl_viewing')}</span>
+                    </div>
+                    
+                    {!isCreatorOrAdmin && (
+                      <button onClick={handleFollow} disabled={isFollowing} className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider transition-all ${isFollowing ? 'bg-gray-600 text-gray-400 cursor-default' : 'bg-teal-500 text-white hover:scale-105'}`}>
+                        {isFollowing ? 'SIGUIENDO' : t('btn_follow')}
+                      </button>
+                    )}
                   </div>
-                  <div className="flex flex-col mr-3">
-                    <span className="text-sm font-bold leading-tight text-white">{streamData.creator?.username || t('lbl_creator')}</span>
-                    <span className="text-[10px] text-gray-300 font-medium">{actualViewers} {t('lbl_viewing')}</span>
-                  </div>
-                  
-                  {!isCreatorOrAdmin && (
-                    <button 
-                      onClick={handleFollow}
-                      disabled={isFollowing}
-                      className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider transition-all ${isFollowing ? 'bg-gray-600 text-gray-400 cursor-default' : 'bg-teal-500 text-white hover:scale-105'}`}
-                    >
-                      {isFollowing ? 'SIGUIENDO' : t('btn_follow')}
-                    </button>
+
+                  {/* 🔥 BOTONES RÁPIDOS DEL CREADOR */}
+                  {isCreatorOrAdmin && isLiveActive && (
+                    <div className="flex gap-2">
+                      <button onClick={handleInviteGuest} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-teal-400">
+                        <UserPlus className="w-3.5 h-3.5" /> Invitar
+                      </button>
+                      <button onClick={handleStartBattle} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-pink-400">
+                        <Swords className="w-3.5 h-3.5" /> Batalla
+                      </button>
+                    </div>
                   )}
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center gap-2">
+                    {isCreatorOrAdmin && (
+                      <button onClick={handleToggleSlowMode} className={`w-9 h-9 rounded-full backdrop-blur-md flex items-center justify-center border shadow-lg transition-colors ${slowMode > 0 ? 'bg-orange-500/80 border-orange-500/50 text-white' : 'bg-black/40 border-white/10 text-gray-400 hover:bg-white/20 hover:text-white'}`} title={`Modo Lento ${slowMode > 0 ? 'Activado' : 'Desactivado'}`}>
+                        <Timer className="w-4 h-4" />
+                      </button>
+                    )}
                     {isCreatorOrAdmin && (
                       <button onClick={handleLockRoomVIP} className="w-9 h-9 rounded-full bg-red-600/80 backdrop-blur-md flex items-center justify-center border border-red-500/50 text-white hover:bg-red-500 transition-colors shadow-[0_0_15px_rgba(220,38,38,0.5)]" title="Pasar a Privado">
                         <Lock className="w-4 h-4" />
@@ -491,7 +514,7 @@ export default function LiveRoom() {
               </div>
 
               {/* 🏆 TOP DONATORS (EN DÓLARES 💵) */}
-              <div className="absolute right-4 top-28 flex flex-col items-end gap-2 pointer-events-auto">
+              <div className="absolute right-4 top-36 flex flex-col items-end gap-2 pointer-events-auto">
                 {topDonators.length > 0 && (
                   <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-green-500/20 shadow-lg min-w-[100px]">
                     <div className="flex items-center justify-center gap-1 mb-1 border-b border-white/10 pb-1">
@@ -531,10 +554,7 @@ export default function LiveRoom() {
                       <div key={i} className={`text-[13px] px-3 py-1.5 rounded-2xl w-fit max-w-[100%] group/msg flex flex-col leading-tight animate-fade-in ${msg.isDonation ? 'bg-gradient-to-r from-green-500/20 to-black/30 border border-green-500/50 backdrop-blur-md shadow-lg' : 'bg-black/30 backdrop-blur-sm'}`}>
                         <div className="flex items-center gap-1.5">
                           {msg.isDonation && <DollarSign className="w-3 h-3 text-green-400" />}
-                          <span 
-                            onClick={() => canModerate && handleKickUser(msg.user?.id, msg.user?.username)}
-                            className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'} ${canModerate ? 'cursor-pointer hover:text-red-500' : ''}`}
-                          >
+                          <span onClick={() => canModerate && handleKickUser(msg.user?.id, msg.user?.username)} className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'} ${canModerate ? 'cursor-pointer hover:text-red-500' : ''}`}>
                             {msg.user?.username}:
                           </span>
                           {canModerate && (
@@ -552,7 +572,7 @@ export default function LiveRoom() {
 
                 <div className="flex gap-2 items-center mt-2 relative z-30">
                   <div className="flex-1 bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center px-4 py-2 shadow-lg focus-within:border-teal-500/50 transition-colors">
-                    <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} placeholder={t('ph_chat')} className="bg-transparent text-white text-sm w-full outline-none placeholder-gray-300 font-medium" />
+                    <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} placeholder={slowMode > 0 ? `Modo lento: ${slowMode}s` : t('ph_chat')} className="bg-transparent text-white text-sm w-full outline-none placeholder-gray-300 font-medium" />
                     {chatInput.trim() && (
                       <button onClick={handleSendMessage} className="text-teal-400 hover:text-teal-300 transition-colors p-1"><Send className="w-4 h-4" /></button>
                     )}
@@ -592,7 +612,7 @@ export default function LiveRoom() {
       {/* 🛑 PAYWALL LAYER */}
       {!hasAccess && <PaywallLayer price={streamData?.price || 0} isProcessing={isProcessing} onBuy={handleBuyTicket} />}
 
-      {/* 📺 PREPARATION LAYER (Solo Creador) */}
+      {/* 📺 PREPARATION LAYER */}
       {isCreatorOrAdmin && !isLiveActive && hasAccess && <PreparationLayer onStart={() => setIsLiveActive(true)} />}
 
       {/* 🎁 DRAWER DE REGALOS (AHORA EN DÓLARES 💵) */}
@@ -603,7 +623,6 @@ export default function LiveRoom() {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-white font-black text-lg flex items-center gap-2"><Diamond className="w-5 h-5 text-teal-400"/> {t('gift_title')}</h3>
               
-              {/* SALDO EN DÓLARES 💵 */}
               <div className="text-xs bg-green-500/10 border border-green-500/30 px-3 py-1.5 rounded-full font-mono text-green-400 flex items-center gap-1.5">
                 <DollarSign className="w-3.5 h-3.5" />
                 <span className="font-bold">{parseFloat(user?.walletBalance || 0).toFixed(2)}</span>
@@ -613,9 +632,7 @@ export default function LiveRoom() {
             <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
               {GIFTS.map((gift) => (
                 <button key={gift.id} onClick={() => sendGift(gift)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-green-500/50 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm">
-                  {/* IMAGEN DEL REGALO */}
                   <img src={gift.image} alt={gift.name} className="w-10 h-10 object-contain group-hover:scale-110 transition-transform mb-1 drop-shadow-lg" />
-                  
                   <span className="text-[9px] text-gray-300 font-bold text-center leading-tight truncate w-full">{t(`gift_name_${gift.id}`) || gift.name}</span>
                   <span className="text-[10px] text-green-400 font-mono font-black mt-1 flex items-center gap-0.5">
                     ${gift.amount.toFixed(2)}
@@ -636,16 +653,66 @@ export default function LiveRoom() {
   );
 }
 
-// ✅ SUB-COMPONENTES TÁCTICOS (BLINDADOS CONTRA DESCONEXIÓN INFINITA)
-function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal }: any) {
+// ✅ SUB-COMPONENTES TÁCTICOS BLINDADOS
+
+// 🔥 NUEVO STAGE DINÁMICO (SOPORTA HASTA 4 INVITADOS)
+function StreamStage() {
+  // Ahora capturamos los tracks de cámara de todos los participantes conectados
+  const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: false }]);
+  const visibleTracks = tracks.slice(0, 4); // Límite de 4 invitados en pantalla
+
+  const layout =
+    visibleTracks.length <= 1
+      ? "grid-cols-1"
+      : visibleTracks.length === 2
+      ? "grid-cols-2"
+      : "grid-cols-2 grid-rows-2";
+
+  return (
+    <div className="w-full h-full flex flex-col relative bg-transparent">
+      <div className="absolute inset-0 z-0">
+        <div className={`grid ${layout} w-full h-full [&_video]:!object-cover`}>
+          {visibleTracks.map((track) => (
+            <ParticipantTile key={track.participant.identity} trackRef={track} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// 🔥 OVERLAY HUD DE BATALLAS
+function BattleOverlay({ battle }: { battle: any }) {
+  if (!battle || !battle.active) return null;
+  const total = (battle.leftScore || 0) + (battle.rightScore || 0);
+  const leftPct = total ? (battle.leftScore / total) * 100 : 50;
+
+  return (
+    <div className="absolute top-28 left-0 w-full px-8 z-30 animate-fade-in pointer-events-none">
+      <div className="flex flex-col items-center mb-1">
+        <span className="bg-red-600 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20 shadow-lg flex items-center gap-1 animate-pulse">
+          <Swords className="w-3 h-3"/> Batalla Épica
+        </span>
+      </div>
+      <div className="h-6 bg-black/60 rounded-full flex overflow-hidden border border-white/20 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+        <div className="bg-gradient-to-r from-pink-600 to-pink-400 transition-all duration-700 ease-out" style={{ width: `${leftPct}%` }} />
+        <div className="bg-gradient-to-r from-blue-400 to-blue-600 flex-1 transition-all duration-700 ease-out" />
+      </div>
+      <div className="flex justify-between mt-1 text-xs font-black uppercase tracking-widest drop-shadow-md">
+        <span className="text-pink-400 ml-2 drop-shadow-[0_0_5px_rgba(244,114,182,0.8)]">{battle.leftScore || 0}</span>
+        <span className="text-blue-400 mr-2 drop-shadow-[0_0_5px_rgba(96,165,250,0.8)]">{battle.rightScore || 0}</span>
+      </div>
+    </div>
+  );
+}
+
+function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate }: any) {
   const socketRef = useRef<Socket | null>(null);
   
-  // 🔥 BLINDAJE ANTI-RECONEXIÓN: Guardamos las funciones en referencias para no reiniciar el socket.
-  const callbacks = useRef({ onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal });
+  const callbacks = useRef({ onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate });
 
-  // Actualizamos las referencias en cada render sin disparar el useEffect del Socket
   useEffect(() => {
-    callbacks.current = { onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal };
+    callbacks.current = { onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate };
   });
   
   useEffect(() => {
@@ -666,9 +733,7 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
       else callbacks.current.onMessage(msg);
     });
 
-    socketInstance.on('viewerCountUpdated', ({ count }: { count: number }) => {
-      callbacks.current.onViewerCount(count);
-    });
+    socketInstance.on('viewerCountUpdated', ({ count }: { count: number }) => callbacks.current.onViewerCount(count));
     
     socketInstance.on('streamKilled', () => {
       if (String(user.id) !== String(streamData?.creatorId)) callbacks.current.onStreamKilled();
@@ -682,8 +747,17 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
       if (callbacks.current.onUpdateGoal) callbacks.current.onUpdateGoal(amount);
     });
 
+    // 🔥 PREPARANDO CANALES PARA EL NUEVO BACKEND
+    socketInstance.on('battle:update', (data: any) => {
+      if (callbacks.current.onBattleUpdate) callbacks.current.onBattleUpdate(data);
+    });
+
+    socketInstance.on('slowmode:update', (seconds: number) => {
+      if (callbacks.current.onSlowModeUpdate) callbacks.current.onSlowModeUpdate(seconds);
+    });
+
     return () => { socketInstance.disconnect(); };
-  }, [user?.id, id, streamData?.creatorId]); // 🚨 SÓLO SE RECONECTA SI CAMBIA EL ID DE USUARIO O DE SALA.
+  }, [user?.id, id, streamData?.creatorId]); 
 
   return socketRef;
 }
@@ -723,22 +797,18 @@ function PaywallLayer({ price, isProcessing, onBuy }: { price: number, isProcess
     <div className="absolute inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 pointer-events-auto">
       <div className="text-center p-8 bg-[#0a0a0a] rounded-[2rem] border border-red-500/30 shadow-[0_0_80px_rgba(220,38,38,0.2)] max-w-sm w-full relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-orange-500"></div>
-        
         <Lock className="w-12 h-12 text-red-500 mx-auto mb-2 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
         <h2 className="text-white font-black text-2xl tracking-tight uppercase">¡SALA PRIVADA!</h2>
         <p className="text-gray-400 text-xs mt-2 font-medium">El creador activó el modo VIP. Paga para quedarte o serás expulsado en:</p>
-
         <div className="my-6">
           <span className={`text-6xl font-black font-mono tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse scale-110 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]' : 'text-white'}`}>
             00:{timeLeft.toString().padStart(2, '0')}
           </span>
         </div>
-        
         <div className="bg-white/5 p-4 rounded-2xl mb-6 border border-white/5 nm-inset">
           <div className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">{t('lbl_ticket_cost')}</div>
           <div className="text-4xl font-black text-teal-400 font-mono tracking-tight">${price.toFixed(2)} <span className="text-sm text-gray-500 font-sans">USD</span></div>
         </div>
-        
         <button onClick={onBuy} disabled={isProcessing} className="w-full bg-gradient-to-r from-teal-500 to-blue-500 text-white font-black py-4 rounded-xl text-sm hover:scale-105 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(20,184,166,0.3)]">
           {isProcessing ? t('btn_processing') : <><Star className="w-4 h-4 fill-white"/> DESBLOQUEAR AHORA</>}
         </button>
@@ -785,21 +855,6 @@ function ViewersModal({ connectedUsers, onClose }: { connectedUsers: any[], onCl
             })
           )}
         </div>
-      </div>
-    </div>
-  );
-}
-
-function StreamStage() {
-  const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: false }]);
-  const mainTrack = tracks.slice(0, 1);
-  
-  return (
-    <div className="w-full h-full flex flex-col relative bg-transparent">
-      <div className="absolute inset-0 z-0">
-        <GridLayout tracks={mainTrack} style={{ width: '100%', height: '100%' }}>
-          <ParticipantTile />
-        </GridLayout>
       </div>
     </div>
   );
