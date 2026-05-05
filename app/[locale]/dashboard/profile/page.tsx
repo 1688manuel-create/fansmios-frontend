@@ -255,19 +255,22 @@ export default function ProfileSettings() {
                   </div>
 
                   <div className="absolute -bottom-10 left-6 md:left-10 z-10">
+                    {/* 🔥 AVATAR CON ANILLO VIP (Vista Previa en Ajustes) */}
                     <div 
-                      className="relative w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-[#0a0a0a] bg-nm-base overflow-hidden shadow-2xl group/avatar cursor-pointer nm-inset select-none" 
+                      className={`relative w-24 h-24 md:w-32 md:h-32 rounded-full shadow-2xl group/avatar cursor-pointer select-none flex items-center justify-center transition-transform hover:scale-105 ${(role === 'CREATOR' || role === 'ADMIN') ? 'bg-gradient-to-tr from-red-500 via-orange-500 to-yellow-500 p-[3px] md:p-[4px]' : 'border-4 border-[#0a0a0a] bg-[#0a0a0a]'}`}
                       onClick={() => profileInputRef.current?.click()}
                     >
-                      {profilePreview ? (
-                        <img src={profilePreview} alt="Avatar" className="w-full h-full object-cover group-hover/avatar:opacity-40 transition-all pointer-events-none" draggable="false" />
-                      ) : (
-                        <span className="text-4xl md:text-5xl font-black bg-gradient-to-tr from-blue-600 to-purple-600 w-full h-full flex items-center justify-center text-white">
-                          {username ? username.toUpperCase().charAt(0) : 'U'}
-                        </span>
-                      )}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity bg-black/60 backdrop-blur-sm">
-                        <Camera className="w-6 h-6 text-white" />
+                      <div className="w-full h-full rounded-full overflow-hidden relative bg-[#0a0a0a] border-4 border-[#0a0a0a]">
+                        {profilePreview ? (
+                          <img src={profilePreview} alt="Avatar" className="w-full h-full object-cover group-hover/avatar:opacity-40 transition-all pointer-events-none" draggable="false" />
+                        ) : (
+                          <span className="text-4xl md:text-5xl font-black bg-gradient-to-tr from-blue-600 to-purple-600 w-full h-full flex items-center justify-center text-white">
+                            {username ? username.toUpperCase().charAt(0) : 'U'}
+                          </span>
+                        )}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity bg-black/60 backdrop-blur-sm">
+                          <Camera className="w-6 h-6 text-white" />
+                        </div>
                       </div>
                     </div>
                   </div>
