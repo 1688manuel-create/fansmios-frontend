@@ -18,7 +18,6 @@ import {
 import { Track, VideoPresets, RoomOptions } from 'livekit-client';
 import '@livekit/components-styles';
 
-// 🔥 ICONOS (Añadido Target, Trash2 y CheckCircle2 para Retos)
 import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Play, Heart, TrendingUp, DollarSign, Swords, UserPlus, Timer, Target, Trash2, CheckCircle2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -76,7 +75,6 @@ export default function LiveRoom() {
   const [viewersCount, setViewersCount] = useState(0);
   const [uptime, setUptime] = useState('00:00:00');
   
-  // 🔥 FASE 1: RETOS PRIVADOS
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [showChallengeManager, setShowChallengeManager] = useState(false);
   const [giftTab, setGiftTab] = useState<'GIFTS' | 'CHALLENGES'>('GIFTS');
@@ -93,9 +91,11 @@ export default function LiveRoom() {
   const [currentGoal, setCurrentGoal] = useState(0);
   const [targetGoal, setTargetGoal] = useState(500);
 
-  // 🔥 NUEVOS ESTADOS: Batallas, Invitados y Modo Lento
   const [battle, setBattle] = useState<any>(null);
   const [slowMode, setSlowMode] = useState(0);
+  
+  // 🔥 FASE 2: Estado local para saber a qué bando va el regalo del Fan
+  const [battleSide, setBattleSide] = useState<'left'|'right'>('left');
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const streakTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -112,7 +112,6 @@ export default function LiveRoom() {
       if (storedUser && storedUser !== "undefined") {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
-        
         api.get('/wallet').then(res => {
           if (res.data?.wallet) {
             const freshUser = { ...parsedUser, walletBalance: res.data.wallet.balance };
@@ -133,7 +132,6 @@ export default function LiveRoom() {
       setStreamData(data.stream);
       setHasAccess(data.hasAccess);
 
-      // 🔥 Cargar Retos del Creador
       if (data.stream.creatorId) {
         liveService.getCreatorChallenges(data.stream.creatorId).then(res => {
           if (res.challenges) setChallenges(res.challenges);
@@ -253,9 +251,22 @@ export default function LiveRoom() {
     }
   };
 
+  // 🔥 FASE 2: PREPARAR BATALLA
   const handleStartBattle = () => {
-    const rival = prompt("Ingresa el ID o Username de tu rival:");
-    if (rival) socketRef.current?.emit('battle:start', { streamId: id, rivalId: rival });
+    const leftName = prompt("Opción 1 / Equipo Izquierda (Ej: Team Rojo):", "Quitar Blusa");
+    if (!leftName) return;
+    const rightName = prompt("Opción 2 / Equipo Derecha (Ej: Team Azul):", "Quitar Falda");
+    if (!rightName) return;
+    const durationMinutes = prompt("¿Cuántos minutos durará el reto?", "5");
+    
+    if (durationMinutes && Number(durationMinutes) > 0) {
+      socketRef.current?.emit('battle:start', { 
+        streamId: id, 
+        leftName, 
+        rightName, 
+        durationMinutes: Number(durationMinutes) 
+      });
+    }
   };
 
   const handleInviteGuest = () => {
@@ -296,7 +307,6 @@ export default function LiveRoom() {
   const handleSendMessage = async () => {
     if (!chatInput.trim()) return;
     
-    // 🔥 CONTROL DE MODO LENTO
     if (slowMode > 0 && Date.now() - lastMessageTime.current < slowMode * 1000) {
       alert(`Modo lento activado. Por favor espera ${slowMode} segundos entre mensajes.`);
       return;
@@ -321,7 +331,6 @@ export default function LiveRoom() {
     } catch (e) { console.error(e); }
   };
 
-  // 🔥 ENVÍO INTEGRADO DE REGALOS Y RETOS
   const sendGift = async (gift: Gift | Challenge, isChallenge = false) => {
     setShowGiftMenu(false);
     const fanBalance = parseFloat(user?.walletBalance || 0);
@@ -340,9 +349,15 @@ export default function LiveRoom() {
         return newUser;
       });
 
+      // Si hay batalla y enviaron un regalo normal, añadir tag de bando al chat
+      let battleTag = '';
+      if (battle?.active && !isChallenge) {
+        battleTag = battleSide === 'left' ? ` [Apoya a ${battle.leftName}]` : ` [Apoya a ${battle.rightName}]`;
+      }
+
       const messageContent = isChallenge 
         ? `🔥 ¡Pagó por el reto: ${(gift as Challenge).title}!` 
-        : `${t('lbl_has_sent_a')} ${(gift as Gift).name}`;
+        : `${t('lbl_has_sent_a')} ${(gift as Gift).name}${battleTag}`;
 
       const giftMessage = {
         content: messageContent,
@@ -362,7 +377,8 @@ export default function LiveRoom() {
         isDonation: true,
         text: giftMessage.content,
         user: giftMessage.user,
-        giftImageUrl: isChallenge ? '/gifts/corona.png' : (gift as Gift).image
+        giftImageUrl: isChallenge ? '/gifts/corona.png' : (gift as Gift).image,
+        battleSide: battle?.active ? battleSide : null // Enviamos el voto al servidor 🔥
       });
 
       triggerGiftEffect(isChallenge ? { id: 99, name: "RETO ACEPTADO", amount: price, image: '/gifts/corona.png', style: "text-red-500 font-black", action: 'explosion' } : (gift as Gift));
@@ -429,7 +445,6 @@ export default function LiveRoom() {
 
   return (
     <div className="fixed inset-0 bg-black text-white font-sans overflow-hidden h-[100dvh] w-full">
-      
       <style>{`
         @keyframes floatUpAndFade {
           0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0; }
@@ -445,7 +460,7 @@ export default function LiveRoom() {
         .custom-mask { -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 100%); }
       `}</style>
 
-      {/* 🎯 META (EN DÓLARES) */}
+      {/* 🎯 META */}
       <div className="absolute top-[130px] sm:top-24 left-1/2 -translate-x-1/2 z-30 w-64">
         <div className="bg-black/40 backdrop-blur-md rounded-full border border-white/10 p-1 px-3 flex items-center gap-2 shadow-lg pointer-events-auto cursor-pointer" onClick={() => isCreatorOrAdmin && setTargetGoal(Number(prompt("Nueva meta:", String(targetGoal))) || targetGoal)}>
           <TrendingUp className="w-3 h-3 text-teal-400" />
@@ -459,7 +474,6 @@ export default function LiveRoom() {
       {/* 🔥 OVERLAY DE BATALLA */}
       <BattleOverlay battle={battle} />
 
-      {/* 🎬 VIDEO LAYER MULTI-GUEST */}
       <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full" onContextMenu={(e) => e.preventDefault()}>
         {hasAccess && liveKitToken ? (
           <LiveKitRoom video={isCreatorOrAdmin ? isLiveActive : false} audio={isCreatorOrAdmin ? isLiveActive : false} token={liveKitToken} serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.fansmio.com"} options={roomOptions} className="w-full h-full relative">
@@ -467,13 +481,10 @@ export default function LiveRoom() {
             <StreamStage />
             <RoomAudioRenderer />
 
-            {/* 💎 UI INMERSIVA */}
             <div className="absolute inset-0 z-10 flex flex-col justify-between pointer-events-none pb-safe">
-              
               <div className="absolute top-0 w-full h-32 bg-gradient-to-b from-black/80 to-transparent pointer-events-none -z-10"></div>
               <div className="absolute bottom-0 w-full h-64 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none -z-10"></div>
               
-              {/* 🔝 TOP HUD */}
               <div className="pt-4 px-4 flex justify-between items-start pointer-events-auto">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center bg-black/40 backdrop-blur-md rounded-full p-1 pr-3 border border-white/10 shadow-lg cursor-pointer hover:bg-black/50 transition-colors">
@@ -484,7 +495,6 @@ export default function LiveRoom() {
                       <span className="text-sm font-bold leading-tight text-white">{streamData.creator?.username || t('lbl_creator')}</span>
                       <span className="text-[10px] text-gray-300 font-medium">{actualViewers} {t('lbl_viewing')}</span>
                     </div>
-                    
                     {!isCreatorOrAdmin && (
                       <button onClick={handleFollow} disabled={isFollowing} className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider transition-all ${isFollowing ? 'bg-gray-600 text-gray-400 cursor-default' : 'bg-teal-500 text-white hover:scale-105'}`}>
                         {isFollowing ? 'SIGUIENDO' : t('btn_follow')}
@@ -492,7 +502,6 @@ export default function LiveRoom() {
                     )}
                   </div>
 
-                  {/* 🔥 BOTONES RÁPIDOS DEL CREADOR */}
                   {isCreatorOrAdmin && isLiveActive && (
                     <div className="flex flex-wrap gap-2 max-w-[200px]">
                       <button onClick={handleInviteGuest} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-teal-400">
@@ -501,7 +510,6 @@ export default function LiveRoom() {
                       <button onClick={handleStartBattle} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-pink-400">
                         <Swords className="w-3.5 h-3.5" /> Batalla
                       </button>
-                      {/* 🔥 BOTÓN PARA ABRIR GESTOR DE RETOS */}
                       <button onClick={() => setShowChallengeManager(true)} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-red-400">
                         <Target className="w-3.5 h-3.5" /> Mis Retos
                       </button>
@@ -532,7 +540,6 @@ export default function LiveRoom() {
                 </div>
               </div>
 
-              {/* 🏆 TOP DONATORS (EN DÓLARES 💵) */}
               <div className="absolute right-4 top-[240px] sm:top-36 flex flex-col items-end gap-2 pointer-events-auto">
                 {topDonators.length > 0 && (
                   <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-green-500/20 shadow-lg min-w-[100px]">
@@ -555,17 +562,14 @@ export default function LiveRoom() {
                 )}
               </div>
 
-              {/* 🎁 EFECTO ANIMADO DEL REGALO */}
               {giftEffect && <GiftEffectOverlay giftEffect={giftEffect} />}
 
-              {/* 💬 ÁREA INFERIOR */}
               <div className="w-full px-4 pb-4 md:w-[500px] pointer-events-auto relative z-20">
                 <div ref={heartsContainerRef} className="absolute bottom-16 right-4 w-16 h-64 pointer-events-none overflow-visible z-0" />
 
                 <div className="max-h-[50vh] overflow-y-auto flex flex-col gap-2 custom-scrollbar pb-2 custom-mask pr-14 relative z-10">
                   {messages.map((msg: any, i: number) => {
                     if (msg.isSystem) return <div key={i} className="text-[11px] text-teal-400/90 font-bold px-3 py-1 bg-black/30 backdrop-blur-md rounded-xl w-fit border border-teal-500/20">{msg.content}</div>;
-                    
                     const gift = msg.isDonation ? GIFTS.find(g => g.amount === msg.amount) : null;
                     const canModerate = isCreatorOrAdmin && msg.user?.id !== user?.id;
 
@@ -576,9 +580,7 @@ export default function LiveRoom() {
                           <span onClick={() => canModerate && handleKickUser(msg.user?.id, msg.user?.username)} className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'} ${canModerate ? 'cursor-pointer hover:text-red-500' : ''}`}>
                             {msg.user?.username}:
                           </span>
-                          {canModerate && (
-                            <button onClick={() => handleKickUser(msg.user?.id, msg.user?.username)} className="opacity-0 group-hover/msg:opacity-100 transition-opacity text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-black uppercase ml-1">KICK</button>
-                          )}
+                          {canModerate && <button onClick={() => handleKickUser(msg.user?.id, msg.user?.username)} className="opacity-0 group-hover/msg:opacity-100 transition-opacity text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-black uppercase ml-1">KICK</button>}
                         </div>
                         <span className={`mt-0.5 ${gift ? gift.style : (msg.isDonation ? 'text-red-400 font-bold' : 'text-white font-medium')} drop-shadow-md`}>
                           {msg.content}
@@ -592,9 +594,7 @@ export default function LiveRoom() {
                 <div className="flex gap-2 items-center mt-2 relative z-30">
                   <div className="flex-1 bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center px-4 py-2 shadow-lg focus-within:border-teal-500/50 transition-colors">
                     <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} placeholder={slowMode > 0 ? `Modo lento: ${slowMode}s` : t('ph_chat')} className="bg-transparent text-white text-sm w-full outline-none placeholder-gray-300 font-medium" />
-                    {chatInput.trim() && (
-                      <button onClick={handleSendMessage} className="text-teal-400 hover:text-teal-300 transition-colors p-1"><Send className="w-4 h-4" /></button>
-                    )}
+                    {chatInput.trim() && <button onClick={handleSendMessage} className="text-teal-400 hover:text-teal-300 transition-colors p-1"><Send className="w-4 h-4" /></button>}
                   </div>
                   
                   {!isCreatorOrAdmin && (
@@ -611,11 +611,7 @@ export default function LiveRoom() {
 
                   {isCreatorOrAdmin && isLiveActive && (
                     <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center shadow-lg px-1 py-0.5">
-                      <ControlBar 
-                        variation="minimal" 
-                        controls={{ microphone: true, camera: true, screenShare: false, leave: false, chat: false }} 
-                        className="flex gap-1 [&_.lk-button]:!bg-transparent [&_.lk-button]:!text-white [&_.lk-button:hover]:!bg-white/20 [&_.lk-button]:!rounded-full [&_.lk-button]:!p-2 [&_.lk-button]:!m-0 [&_.lk-button]:!w-10 [&_.lk-button]:!h-10 [&_.lk-button]:!flex [&_.lk-button]:!items-center [&_.lk-button]:!justify-center" 
-                      />
+                      <ControlBar variation="minimal" controls={{ microphone: true, camera: true, screenShare: false, leave: false, chat: false }} className="flex gap-1 [&_.lk-button]:!bg-transparent [&_.lk-button]:!text-white [&_.lk-button:hover]:!bg-white/20 [&_.lk-button]:!rounded-full [&_.lk-button]:!p-2 [&_.lk-button]:!m-0 [&_.lk-button]:!w-10 [&_.lk-button]:!h-10 [&_.lk-button]:!flex [&_.lk-button]:!items-center [&_.lk-button]:!justify-center" />
                     </div>
                   )}
                 </div>
@@ -623,22 +619,30 @@ export default function LiveRoom() {
             </div>
 
           </LiveKitRoom>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center opacity-30"><Tv className="w-16 h-16 animate-pulse" /></div>
-        )}
+        ) : <div className="w-full h-full flex items-center justify-center opacity-30"><Tv className="w-16 h-16 animate-pulse" /></div>}
       </div>
 
-      {/* 🛑 PAYWALL LAYER */}
       {!hasAccess && <PaywallLayer price={streamData?.price || 0} isProcessing={isProcessing} onBuy={handleBuyTicket} />}
-
-      {/* 📺 PREPARATION LAYER */}
       {isCreatorOrAdmin && !isLiveActive && hasAccess && <PreparationLayer onStart={() => setIsLiveActive(true)} />}
 
-      {/* 🎁 DRAWER DE REGALOS Y RETOS (FASE 1) */}
+      {/* 🎁 DRAWER DE REGALOS, RETOS Y SELECCIÓN DE BATALLA */}
       {showGiftMenu && (
         <>
           <div className="absolute inset-0 bg-black/40 z-40 pointer-events-auto" onClick={() => setShowGiftMenu(false)}></div>
           <div className="absolute bottom-0 left-0 right-0 md:left-auto md:right-4 md:bottom-4 md:w-[400px] bg-[#111]/95 backdrop-blur-2xl border-t border-x md:border-y border-white/10 rounded-t-3xl md:rounded-3xl p-6 pb-8 animate-drawer shadow-2xl z-50 pointer-events-auto">
+            
+            {/* 🔥 SELECTOR DE BANDO SI HAY BATALLA */}
+            {battle?.active && (
+              <div className="flex gap-2 mb-4 bg-black/50 p-1.5 rounded-xl border border-white/10">
+                <button onClick={() => setBattleSide('left')} className={`flex-1 py-2 rounded-lg text-[10px] uppercase font-black transition-all border ${battleSide === 'left' ? 'bg-pink-600 border-pink-400 text-white shadow-[0_0_10px_rgba(244,114,182,0.4)]' : 'border-transparent text-gray-500 hover:text-white'}`}>
+                  Votar: {battle.leftName}
+                </button>
+                <button onClick={() => setBattleSide('right')} className={`flex-1 py-2 rounded-lg text-[10px] uppercase font-black transition-all border ${battleSide === 'right' ? 'bg-blue-600 border-blue-400 text-white shadow-[0_0_10px_rgba(96,165,250,0.4)]' : 'border-transparent text-gray-500 hover:text-white'}`}>
+                  Votar: {battle.rightName}
+                </button>
+              </div>
+            )}
+
             <div className="flex justify-between items-center mb-4">
               <div className="flex gap-3 bg-black/50 p-1 rounded-xl border border-white/10">
                 <button onClick={() => setGiftTab('GIFTS')} className={`px-4 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1 ${giftTab === 'GIFTS' ? 'bg-teal-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}>
@@ -694,23 +698,16 @@ export default function LiveRoom() {
         </>
       )}
 
-      {/* 🛠️ GESTOR DE RETOS (Solo Creador) */}
       {showChallengeManager && (
-        <ChallengeManagerModal 
-          challenges={challenges} 
-          setChallenges={setChallenges} 
-          onClose={() => setShowChallengeManager(false)} 
-        />
+        <ChallengeManagerModal challenges={challenges} setChallenges={setChallenges} onClose={() => setShowChallengeManager(false)} />
       )}
-
-      {/* 👁️ MODAL ESPECTADORES */}
       {showViewersModal && <ViewersModal connectedUsers={connectedUsers} onClose={() => setShowViewersModal(false)} />}
     </div>
   );
 }
 
 // ==========================================================
-// 🛠️ COMPONENTE: GESTOR DE RETOS PARA EL CREADOR
+// 🛠️ COMPONENTES TÁCTICOS
 // ==========================================================
 function ChallengeManagerModal({ challenges, setChallenges, onClose }: { challenges: Challenge[], setChallenges: any, onClose: () => void }) {
   const [title, setTitle] = useState('');
@@ -751,7 +748,6 @@ function ChallengeManagerModal({ challenges, setChallenges, onClose }: { challen
           <h3 className="text-white font-black text-lg flex items-center gap-2"><Target className="w-5 h-5 text-red-500" /> Mis Retos VIP</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
         </div>
-        
         <div className="p-5">
           <div className="bg-black/50 border border-white/5 rounded-2xl p-4 mb-6">
             <h4 className="text-xs font-bold text-red-400 mb-3 uppercase tracking-widest">Crear Nuevo Reto</h4>
@@ -764,85 +760,92 @@ function ChallengeManagerModal({ challenges, setChallenges, onClose }: { challen
                   <input type="number" placeholder="Precio" value={price} onChange={e => setPrice(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl pl-7 pr-3 py-2.5 text-sm text-white font-mono font-bold outline-none focus:border-red-500/50" />
                 </div>
               </div>
-              <button onClick={handleAdd} disabled={loading || !title || !price} className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-2.5 rounded-xl transition-colors disabled:opacity-50 text-sm">
-                {loading ? 'Guardando...' : '+ Añadir a mi lista'}
-              </button>
+              <button onClick={handleAdd} disabled={loading || !title || !price} className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-2.5 rounded-xl transition-colors disabled:opacity-50 text-sm">{loading ? 'Guardando...' : '+ Añadir a mi lista'}</button>
             </div>
           </div>
-
           <div className="max-h-[300px] overflow-y-auto custom-scrollbar space-y-2 pr-1">
-            {challenges.length === 0 ? (
-              <div className="text-center text-gray-500 text-xs py-4">No has creado ningún reto todavía.</div>
-            ) : (
-              challenges.map(c => (
-                <div key={c.id} className={`flex items-center justify-between p-3 rounded-xl border transition-all ${c.isActive ? 'bg-red-900/10 border-red-500/20' : 'bg-white/5 border-white/5 opacity-50'}`}>
-                  <div className="flex-1">
-                    <div className="text-sm font-bold text-white">{c.title} <span className="text-green-400 font-mono text-xs ml-2">${c.price.toFixed(2)}</span></div>
-                    {c.description && <div className="text-[10px] text-gray-400">{c.description}</div>}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => handleToggle(c.id, c.isActive)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${c.isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/50 text-gray-400'}`}>
-                      <CheckCircle2 className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => handleDelete(c.id)} className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+            {challenges.length === 0 ? <div className="text-center text-gray-500 text-xs py-4">No has creado ningún reto todavía.</div> : challenges.map(c => (
+              <div key={c.id} className={`flex items-center justify-between p-3 rounded-xl border transition-all ${c.isActive ? 'bg-red-900/10 border-red-500/20' : 'bg-white/5 border-white/5 opacity-50'}`}>
+                <div className="flex-1"><div className="text-sm font-bold text-white">{c.title} <span className="text-green-400 font-mono text-xs ml-2">${c.price.toFixed(2)}</span></div>{c.description && <div className="text-[10px] text-gray-400">{c.description}</div>}</div>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => handleToggle(c.id, c.isActive)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${c.isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/50 text-gray-400'}`}><CheckCircle2 className="w-4 h-4" /></button>
+                  <button onClick={() => handleDelete(c.id)} className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>
-              ))
-            )}
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   );
 }
-
-// ✅ SUB-COMPONENTES TÁCTICOS BLINDADOS
 
 function StreamStage() {
   const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: false }]);
   const visibleTracks = tracks.slice(0, 4); 
-
-  const layout =
-    visibleTracks.length <= 1
-      ? "grid-cols-1"
-      : visibleTracks.length === 2
-      ? "grid-cols-2"
-      : "grid-cols-2 grid-rows-2";
-
+  const layout = visibleTracks.length <= 1 ? "grid-cols-1" : visibleTracks.length === 2 ? "grid-cols-2" : "grid-cols-2 grid-rows-2";
   return (
     <div className="w-full h-full flex flex-col relative bg-transparent">
       <div className="absolute inset-0 z-0">
         <div className={`grid ${layout} w-full h-full [&_video]:!object-cover`}>
-          {visibleTracks.map((track) => (
-            <ParticipantTile key={track.participant.identity} trackRef={track} />
-          ))}
+          {visibleTracks.map((track) => ( <ParticipantTile key={track.participant.identity} trackRef={track} /> ))}
         </div>
       </div>
     </div>
   );
 }
 
+// 🔥 FASE 2: OVERLAY CON RELOJ Y GANADOR
 function BattleOverlay({ battle }: { battle: any }) {
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  useEffect(() => {
+    if (!battle || !battle.active) return;
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, Math.floor((battle.endTime - Date.now()) / 1000));
+      setTimeLeft(remaining);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [battle]);
+
   if (!battle || !battle.active) return null;
+
   const total = (battle.leftScore || 0) + (battle.rightScore || 0);
   const leftPct = total ? (battle.leftScore / total) * 100 : 50;
+
+  const mins = Math.floor(timeLeft / 60);
+  const secs = timeLeft % 60;
+  const isFinished = timeLeft <= 0;
+  
+  // Decide al ganador basándose en el score
+  const winner = battle.leftScore >= battle.rightScore ? battle.leftName : battle.rightName;
 
   return (
     <div className="absolute top-[180px] sm:top-36 left-0 w-full px-8 z-30 animate-fade-in pointer-events-none">
       <div className="flex flex-col items-center mb-1">
-        <span className="bg-red-600 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20 shadow-lg flex items-center gap-1 animate-pulse">
-          <Swords className="w-3 h-3"/> Batalla Épica
-        </span>
+        {isFinished ? (
+          <span className="bg-yellow-500 text-black px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(234,179,8,0.8)] animate-bounce">
+            ¡TIEMPO! GANA: {winner}
+          </span>
+        ) : (
+          <span className="bg-red-600 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20 shadow-lg flex items-center gap-1 animate-pulse">
+            <Timer className="w-3 h-3"/> {mins}:{secs.toString().padStart(2, '0')}
+          </span>
+        )}
       </div>
+      
+      <div className="flex justify-between w-full px-2 mb-1 text-[9px] font-black uppercase text-white drop-shadow-md">
+        <span>{battle.leftName}</span>
+        <span>{battle.rightName}</span>
+      </div>
+
       <div className="h-6 bg-black/60 rounded-full flex overflow-hidden border border-white/20 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-        <div className="bg-gradient-to-r from-pink-600 to-pink-400 transition-all duration-700 ease-out" style={{ width: `${leftPct}%` }} />
-        <div className="bg-gradient-to-r from-blue-400 to-blue-600 flex-1 transition-all duration-700 ease-out" />
-      </div>
-      <div className="flex justify-between mt-1 text-xs font-black uppercase tracking-widest drop-shadow-md">
-        <span className="text-pink-400 ml-2 drop-shadow-[0_0_5px_rgba(244,114,182,0.8)]">{battle.leftScore || 0}</span>
-        <span className="text-blue-400 mr-2 drop-shadow-[0_0_5px_rgba(96,165,250,0.8)]">{battle.rightScore || 0}</span>
+        <div className="bg-gradient-to-r from-pink-600 to-pink-400 transition-all duration-700 ease-out flex items-center pl-2" style={{ width: `${leftPct}%` }}>
+          <span className="text-white text-[10px] font-black">${battle.leftScore.toFixed(2)}</span>
+        </div>
+        <div className="bg-gradient-to-r from-blue-400 to-blue-600 flex-1 transition-all duration-700 ease-out flex items-center justify-end pr-2">
+          <span className="text-white text-[10px] font-black">${battle.rightScore.toFixed(2)}</span>
+        </div>
       </div>
     </div>
   );
@@ -850,56 +853,28 @@ function BattleOverlay({ battle }: { battle: any }) {
 
 function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate }: any) {
   const socketRef = useRef<Socket | null>(null);
-  
   const callbacks = useRef({ onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate });
-
-  useEffect(() => {
-    callbacks.current = { onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate };
-  });
+  useEffect(() => { callbacks.current = { onLike, onMessage, onViewerCount, onStreamKilled, onPaywallActivated, onUpdateGoal, onBattleUpdate, onSlowModeUpdate }; });
   
   useEffect(() => {
     if (!user?.id || !id || !streamData) return; 
-    
     socketRef.current?.disconnect();
     const socketInstance = io(SOCKET_URL, { transports: ['websocket'] });
     socketRef.current = socketInstance;
-
     socketInstance.on('connect', () => {
       const isCreator = String(user.id) === String(streamData?.creatorId);
       const isGhost = String(user.role).toUpperCase() === 'ADMIN' && !isCreator;
       socketInstance.emit('joinLiveStream', { streamId: id, userId: user.id, isGhost, isCreator });
     });
-
-    socketInstance.on('newLiveMessage', (msg: any) => {
-      if (msg.isLike) callbacks.current.onLike();
-      else callbacks.current.onMessage(msg);
-    });
-
+    socketInstance.on('newLiveMessage', (msg: any) => { if (msg.isLike) callbacks.current.onLike(); else callbacks.current.onMessage(msg); });
     socketInstance.on('viewerCountUpdated', ({ count }: { count: number }) => callbacks.current.onViewerCount(count));
-    
-    socketInstance.on('streamKilled', () => {
-      if (String(user.id) !== String(streamData?.creatorId)) callbacks.current.onStreamKilled();
-    });
-
-    socketInstance.on('paywallActivated', ({ price }: { price: number }) => {
-      if (callbacks.current.onPaywallActivated) callbacks.current.onPaywallActivated(price);
-    });
-
-    socketInstance.on('updateLiveGoal', ({ amount }: { amount: number }) => {
-      if (callbacks.current.onUpdateGoal) callbacks.current.onUpdateGoal(amount);
-    });
-
-    socketInstance.on('battle:update', (data: any) => {
-      if (callbacks.current.onBattleUpdate) callbacks.current.onBattleUpdate(data);
-    });
-
-    socketInstance.on('slowmode:update', (seconds: number) => {
-      if (callbacks.current.onSlowModeUpdate) callbacks.current.onSlowModeUpdate(seconds);
-    });
-
+    socketInstance.on('streamKilled', () => { if (String(user.id) !== String(streamData?.creatorId)) callbacks.current.onStreamKilled(); });
+    socketInstance.on('paywallActivated', ({ price }: { price: number }) => { if (callbacks.current.onPaywallActivated) callbacks.current.onPaywallActivated(price); });
+    socketInstance.on('updateLiveGoal', ({ amount }: { amount: number }) => { if (callbacks.current.onUpdateGoal) callbacks.current.onUpdateGoal(amount); });
+    socketInstance.on('battle:update', (data: any) => { if (callbacks.current.onBattleUpdate) callbacks.current.onBattleUpdate(data); });
+    socketInstance.on('slowmode:update', (seconds: number) => { if (callbacks.current.onSlowModeUpdate) callbacks.current.onSlowModeUpdate(seconds); });
     return () => { socketInstance.disconnect(); };
   }, [user?.id, id, streamData?.creatorId]); 
-
   return socketRef;
 }
 
@@ -909,8 +884,7 @@ function PreparationLayer({ onStart }: { onStart: () => void }) {
     <div className="absolute inset-0 z-40 bg-black/80 backdrop-blur-xl flex flex-col items-center justify-center p-4">
       <div className="text-center max-w-sm px-6 flex flex-col items-center">
         <div className="w-24 h-24 bg-teal-500/20 rounded-full flex items-center justify-center mb-6 border border-teal-500/30 relative">
-          <div className="absolute inset-0 rounded-full border border-teal-500 animate-ping opacity-50"></div>
-          <Tv className="w-10 h-10 text-teal-400" />
+          <div className="absolute inset-0 rounded-full border border-teal-500 animate-ping opacity-50"></div><Tv className="w-10 h-10 text-teal-400" />
         </div>
         <h2 className="text-3xl font-black text-white mb-3 tracking-tight">{t('prep_title')}</h2>
         <p className="text-gray-400 mb-8 text-sm leading-relaxed">{t('prep_desc')}</p>
@@ -921,38 +895,18 @@ function PreparationLayer({ onStart }: { onStart: () => void }) {
 }
 
 function PaywallLayer({ price, isProcessing, onBuy }: { price: number, isProcessing: boolean, onBuy: () => void }) {
-  const t = useTranslations('LiveRoom'); 
-  const router = useRouter();
-  const [timeLeft, setTimeLeft] = useState(15); 
-
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      router.push('/explore');
-      return;
-    }
-    const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft, router]);
-
+  const t = useTranslations('LiveRoom'); const router = useRouter(); const [timeLeft, setTimeLeft] = useState(15); 
+  useEffect(() => { if (timeLeft <= 0) { router.push('/explore'); return; } const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000); return () => clearInterval(timer); }, [timeLeft, router]);
   return (
     <div className="absolute inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 pointer-events-auto">
       <div className="text-center p-8 bg-[#0a0a0a] rounded-[2rem] border border-red-500/30 shadow-[0_0_80px_rgba(220,38,38,0.2)] max-w-sm w-full relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-orange-500"></div>
-        <Lock className="w-12 h-12 text-red-500 mx-auto mb-2 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-orange-500"></div><Lock className="w-12 h-12 text-red-500 mx-auto mb-2 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
         <h2 className="text-white font-black text-2xl tracking-tight uppercase">¡SALA PRIVADA!</h2>
-        <p className="text-gray-400 text-xs mt-2 font-medium">El creador activó el modo VIP. Paga para quedarte o serás expulsado en:</p>
-        <div className="my-6">
-          <span className={`text-6xl font-black font-mono tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse scale-110 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]' : 'text-white'}`}>
-            00:{timeLeft.toString().padStart(2, '0')}
-          </span>
-        </div>
+        <div className="my-6"><span className={`text-6xl font-black font-mono tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse scale-110 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]' : 'text-white'}`}>00:{timeLeft.toString().padStart(2, '0')}</span></div>
         <div className="bg-white/5 p-4 rounded-2xl mb-6 border border-white/5 nm-inset">
-          <div className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">{t('lbl_ticket_cost')}</div>
-          <div className="text-4xl font-black text-teal-400 font-mono tracking-tight">${price.toFixed(2)} <span className="text-sm text-gray-500 font-sans">USD</span></div>
+          <div className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">{t('lbl_ticket_cost')}</div><div className="text-4xl font-black text-teal-400 font-mono tracking-tight">${price.toFixed(2)} <span className="text-sm text-gray-500 font-sans">USD</span></div>
         </div>
-        <button onClick={onBuy} disabled={isProcessing} className="w-full bg-gradient-to-r from-teal-500 to-blue-500 text-white font-black py-4 rounded-xl text-sm hover:scale-105 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(20,184,166,0.3)]">
-          {isProcessing ? t('btn_processing') : <><Star className="w-4 h-4 fill-white"/> DESBLOQUEAR AHORA</>}
-        </button>
+        <button onClick={onBuy} disabled={isProcessing} className="w-full bg-gradient-to-r from-teal-500 to-blue-500 text-white font-black py-4 rounded-xl text-sm hover:scale-105 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(20,184,166,0.3)]">{isProcessing ? t('btn_processing') : <><Star className="w-4 h-4 fill-white"/> DESBLOQUEAR AHORA</>}</button>
       </div>
     </div>
   );
@@ -975,26 +929,18 @@ function ViewersModal({ connectedUsers, onClose }: { connectedUsers: any[], onCl
     <div className="absolute inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-auto">
       <div className="bg-[#111] border border-white/10 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-sm overflow-hidden shadow-2xl animate-drawer sm:animate-fade-in pb-safe">
         <div className="flex items-center justify-between p-5 border-b border-white/5">
-          <h3 className="text-white font-black text-base flex items-center gap-2"><Eye className="w-4 h-4 text-teal-400" /> {t('modal_viewers_title')} ({connectedUsers.length})</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-white p-1.5 bg-white/5 hover:bg-red-500 rounded-full transition-colors"><X className="w-4 h-4" /></button>
+          <h3 className="text-white font-black text-base flex items-center gap-2"><Eye className="w-4 h-4 text-teal-400" /> {t('modal_viewers_title')} ({connectedUsers.length})</h3><button onClick={onClose} className="text-gray-400 hover:text-white p-1.5 bg-white/5 hover:bg-red-500 rounded-full transition-colors"><X className="w-4 h-4" /></button>
         </div>
         <div className="p-2 max-h-[50vh] overflow-y-auto custom-scrollbar">
-          {connectedUsers.length === 0 ? (
-            <div className="text-center text-gray-500 py-10 font-medium text-sm">{t('modal_viewers_empty')}</div>
-          ) : (
-            connectedUsers.map((p, i) => {
-              const displayName = p.name || p.identity || t('lbl_user');
-              return (
-                <div key={p.identity || i} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl transition-colors cursor-default">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center font-black text-white shadow-lg border border-white/10">{displayName.charAt(0).toUpperCase()}</div>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-bold text-white">{displayName}</span>
-                    <span className="text-[10px] text-teal-400 font-mono flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span> {t('lbl_connected')}</span>
-                  </div>
-                </div>
-              );
-            })
-          )}
+          {connectedUsers.length === 0 ? <div className="text-center text-gray-500 py-10 font-medium text-sm">{t('modal_viewers_empty')}</div> : connectedUsers.map((p, i) => {
+            const displayName = p.name || p.identity || t('lbl_user');
+            return (
+              <div key={p.identity || i} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl transition-colors cursor-default">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center font-black text-white shadow-lg border border-white/10">{displayName.charAt(0).toUpperCase()}</div>
+                <div className="flex flex-col"><span className="text-sm font-bold text-white">{displayName}</span><span className="text-[10px] text-teal-400 font-mono flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span> {t('lbl_connected')}</span></div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -1003,6 +949,5 @@ function ViewersModal({ connectedUsers, onClose }: { connectedUsers: any[], onCl
 
 function ParticipantsTracker({ onUpdate }: { onUpdate: (participants: any[]) => void }) {
   const participants = useParticipants();
-  useEffect(() => { onUpdate(participants); }, [participants, onUpdate]);
-  return null;
+  useEffect(() => { onUpdate(participants); }, [participants, onUpdate]); return null;
 }
