@@ -713,8 +713,8 @@ export default function Feed() {
                                   @{post.user?.username || 'usuario'}
                                 </h3>
                                 
-                                {/* Aquí aparece la palomita si es Creador Verificado */}
-                                {(post.user?.role === 'CREATOR' || post.user?.role === 'ADMIN') && (
+                                {/* 🔥 LÓGICA REFORZADA: Si el rol es CREATOR/ADMIN o si tiene el check de verificado */}
+                                {(post.user?.role === 'CREATOR' || post.user?.role === 'ADMIN' || post.user?.creatorProfile?.isVerified) && (
                                   <span title="Creador Verificado" className="inline-flex">
                                     <BadgeCheck className="w-5 h-5 text-red-500 fill-white drop-shadow-md" />
                                   </span>
