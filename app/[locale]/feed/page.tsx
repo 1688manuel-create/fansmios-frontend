@@ -19,7 +19,7 @@ import BoostModal from '../../../components/BoostModal';
 import { 
   Image as ImageIcon, Lock, Radio, Bell, MessageCircle, LogOut, 
   Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, X, User,
-  TrendingUp, Zap, Star, ChevronRight, ChevronLeft, Send, Flag, Wallet, Bookmark
+  TrendingUp, Zap, Star, ChevronRight, ChevronLeft, Send, BadgeCheck, Flag, Wallet, Bookmark
 } from 'lucide-react';
 
 import { useTranslations } from 'next-intl';
@@ -360,6 +360,14 @@ export default function Feed() {
          return;
       }
 
+      // 🛑 NUEVO ESCUDO: Validación de 150MB para Posts
+      const hasOversizedFile = filesArray.some(f => f.size > 150 * 1024 * 1024);
+      if (hasOversizedFile) {
+        alert('¡Alto! El archivo es muy pesado (Máximo 150MB o 5 Minutos).');
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+
       setSelectedFiles(filesArray);
       setImagePreviews(filesArray.map(f => URL.createObjectURL(f)));
     }
@@ -397,6 +405,14 @@ export default function Feed() {
   const handleStoryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+
+      // 🛑 NUEVO ESCUDO: Validación de 150MB para Historias
+      if (file.size > 150 * 1024 * 1024) {
+        alert('¡Alto! La historia es muy pesada (Máximo 150MB).');
+        if (storyFileInputRef.current) storyFileInputRef.current.value = '';
+        return;
+      }
+
       const caption = window.prompt(t('prompt_story_msg'));
       setIsUploadingStory(true);
       try { await storyService.createStory(file, caption || ''); await fetchData(); } catch (error) {} 
@@ -673,16 +689,41 @@ export default function Feed() {
 
                         <div className="flex justify-between items-center relative z-10">
                           <div className="flex items-center gap-3">
-                            <div onClick={() => router.push(`/${post.user.username}`)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shadow-lg overflow-hidden cursor-pointer border ${post.isPromoted ? 'border-yellow-500' : 'border-white/10'}`}>
-                              {post.user?.creatorProfile?.profileImage ? <img src={getImageUrl(post.user.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center ${post.isPromoted ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}>{(post.user?.username || 'U').toUpperCase()}</div>}
+                            
+                            {/* 🔥 1. AVATAR VERIFICADO (Mantiene el tamaño exacto w-12 h-12) */}
+                            <div onClick={() => router.push(`/${post.user.username}`)} className={`relative w-12 h-12 shrink-0 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-transform hover:scale-105 ${(post.user?.role === 'CREATOR' || post.user?.role === 'ADMIN') ? 'bg-gradient-to-tr from-red-500 via-orange-500 to-yellow-500 p-[2px]' : (post.isPromoted ? 'border border-yellow-500' : 'border border-white/10')}`}>
+                              <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-black text-white font-bold">
+                                {post.user?.creatorProfile?.profileImage ? (
+                                  <img src={getImageUrl(post.user.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className={`w-full h-full flex items-center justify-center ${post.isPromoted ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}>
+                                    {(post.user?.username || 'U').toUpperCase()}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                            <div onClick={() => router.push(`/${post.user.username}`)} className="cursor-pointer group">
-                              <h3 className={`font-bold text-lg ${post.isPromoted ? 'text-yellow-500' : 'text-white'}`}>@{post.user?.username || 'usuario'}</h3>
-                              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
+
+                            {/* 🔥 2. NOMBRE Y PALOMITA OFICIAL */}
+                            <div onClick={() => router.push(`/${post.user.username}`)} className="cursor-pointer group flex flex-col justify-center">
+                              <div className="flex items-center gap-1">
+                                <h3 className={`font-bold text-lg leading-none ${post.isPromoted ? 'text-yellow-500' : 'text-white'} group-hover:text-gray-300 transition-colors`}>
+                                  @{post.user?.username || 'usuario'}
+                                </h3>
+                                
+                                {/* Aquí aparece la palomita si es Creador Verificado */}
+                                {(post.user?.role === 'CREATOR' || post.user?.role === 'ADMIN') && (
+                                  <span title="Creador Verificado" className="inline-flex">
+                                    <BadgeCheck className="w-5 h-5 text-red-500 fill-white drop-shadow-md" />
+                                  </span>
+                                )}  
+                              </div>
+                              
+                              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1.5 flex items-center gap-1">
                                 {post.isPPV ? (!post.hasAccess ? <><Lock className="w-3 h-3 text-red-400"/> {isOwner ? `Tu PPV: $${(post.price || 0).toFixed(2)}` : t('lbl_exclusive_ppv')}</> : <><Unlock className="w-3 h-3 text-green-400"/> {isOwner ? `Tu PPV: $${(post.price || 0).toFixed(2)}` : t('lbl_unlocked')}</>) : !post.hasAccess ? <><Lock className="w-3 h-3 text-red-400"/> {t('lbl_exclusive_vip')}</> : <><Star className="w-3 h-3 text-yellow-500"/> VIP</>}
                               </p>
                             </div>
                           </div>
+                          
                           {post.isPromoted && !isOwner && <button onClick={() => router.push(`/${post.user.username}`)} className="nm-btn border-yellow-500/30 text-yellow-500 px-4 py-2 rounded-full text-xs font-bold mr-10">Ver Perfil</button>}
                         </div>
                         
@@ -737,7 +778,6 @@ export default function Feed() {
                                       draggable="false" 
                                       onContextMenu={(e) => e.preventDefault()} 
                                       className={`${itemStyle} cursor-pointer hover:opacity-90 transition-opacity`} 
-                                      // 🔥 CORRECCIÓN: Ahora enviamos toda la galería y el índice de la foto tocada
                                       onClick={() => setExpandedGallery({ urls: mediaUrls, currentIndex: idx, username: post.user?.username })} 
                                     />
                                   );
@@ -765,7 +805,6 @@ export default function Feed() {
                                   </button>
                                 </div>
                                 
-                                {/* 🔥 ZONA DERECHA: BOTÓN DE GUARDAR Y PROPINAS */}
                                 <div className="flex items-center gap-4">
                                   <button onClick={() => handleToggleBookmark(post.id)} className="flex items-center gap-1.5 text-gray-400 hover:text-blue-400 font-bold transition-colors" title="Guardar en Favoritos">
                                     <Bookmark className="w-5 h-5" />
