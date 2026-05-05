@@ -431,7 +431,7 @@ export default function LiveRoom() {
       `}</style>
 
       {/* 🎯 META (EN DÓLARES) */}
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 w-64">
+      <div className="absolute top-[130px] sm:top-24 left-1/2 -translate-x-1/2 z-30 w-64">
         <div className="bg-black/40 backdrop-blur-md rounded-full border border-white/10 p-1 px-3 flex items-center gap-2 shadow-lg pointer-events-auto cursor-pointer" onClick={() => isCreatorOrAdmin && setTargetGoal(Number(prompt("Nueva meta:", String(targetGoal))) || targetGoal)}>
           <TrendingUp className="w-3 h-3 text-teal-400" />
           <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden relative">
@@ -688,7 +688,7 @@ function BattleOverlay({ battle }: { battle: any }) {
   const leftPct = total ? (battle.leftScore / total) * 100 : 50;
 
   return (
-    <div className="absolute top-28 left-0 w-full px-8 z-30 animate-fade-in pointer-events-none">
+    <div className="absolute top-[180px] sm:top-36 left-0 w-full px-8 z-30 animate-fade-in pointer-events-none">
       <div className="flex flex-col items-center mb-1">
         <span className="bg-red-600 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20 shadow-lg flex items-center gap-1 animate-pulse">
           <Swords className="w-3 h-3"/> Batalla Épica
