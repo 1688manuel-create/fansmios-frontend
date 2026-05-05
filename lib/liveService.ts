@@ -27,8 +27,31 @@ export const liveService = {
   },
 
   // Enviar un mensaje o Donación al backend (respaldo de la base de datos)
-  sendMessage: async (streamId: string, content: string, isDonation = false, amount = 0) => {
+  sendMessage: async (streamId: string, content: string, isDonation: boolean = false, amount: number = 0) => {
     const res = await api.post('/live/message', { streamId, content, isDonation, amount });
+    return res.data;
+  },
+
+  // ==========================================
+  // 🔥 FASE 1: RETOS PRIVADOS
+  // ==========================================
+  createChallenge: async (title: string, description: string, price: number) => {
+    const res = await api.post('/live/challenges', { title, description, price });
+    return res.data;
+  },
+  
+  getCreatorChallenges: async (creatorId: string) => {
+    const res = await api.get(`/live/challenges/${creatorId}`);
+    return res.data;
+  },
+  
+  toggleChallenge: async (challengeId: string, isActive: boolean) => {
+    const res = await api.put(`/live/challenges/${challengeId}`, { isActive });
+    return res.data;
+  },
+  
+  deleteChallenge: async (challengeId: string) => {
+    const res = await api.delete(`/live/challenges/${challengeId}`);
     return res.data;
   }
 };

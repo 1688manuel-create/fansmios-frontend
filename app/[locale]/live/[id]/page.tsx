@@ -9,7 +9,6 @@ import api from '../../../../lib/api';
 import {
   LiveKitRoom,
   RoomAudioRenderer,
-  GridLayout,
   ParticipantTile,
   ControlBar,
   useTracks,
@@ -19,11 +18,10 @@ import {
 import { Track, VideoPresets, RoomOptions } from 'livekit-client';
 import '@livekit/components-styles';
 
-// 🔥 ICONOS PREMIUM (Añadidos iconos para Batallas e Invitados)
-import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Play, Heart, TrendingUp, DollarSign, Swords, UserPlus, Timer } from 'lucide-react';
+// 🔥 ICONOS (Añadido Target, Trash2 y CheckCircle2 para Retos)
+import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Play, Heart, TrendingUp, DollarSign, Swords, UserPlus, Timer, Target, Trash2, CheckCircle2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-// 🔥 BLINDAJE DE CONEXIÓN
 let SOCKET_URL = 'https://api.fansmio.com';
 if (process.env.NEXT_PUBLIC_API_URL) {
   try {
@@ -34,8 +32,8 @@ if (process.env.NEXT_PUBLIC_API_URL) {
   }
 }
 
-// 🏆 ECONOMÍA DE LUJO FANSMIO
 export interface Gift { id: number; name: string; amount: number; image: string; style: string; action?: string; }
+export interface Challenge { id: string; title: string; description: string; price: number; isActive: boolean; }
 
 export const GIFTS: Gift[] = [
   { id: 1, name: "Rosa", amount: 1.00, image: "/gifts/rosa.png", style: "text-rose-400 font-bold" },
@@ -77,6 +75,12 @@ export default function LiveRoom() {
   const [chatInput, setChatInput] = useState('');
   const [viewersCount, setViewersCount] = useState(0);
   const [uptime, setUptime] = useState('00:00:00');
+  
+  // 🔥 FASE 1: RETOS PRIVADOS
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [showChallengeManager, setShowChallengeManager] = useState(false);
+  const [giftTab, setGiftTab] = useState<'GIFTS' | 'CHALLENGES'>('GIFTS');
+
   const [showGiftMenu, setShowGiftMenu] = useState(false);
   const [giftEffect, setGiftEffect] = useState<Gift | null>(null);
   const [topDonators, setTopDonators] = useState<Donator[]>([]);
@@ -128,6 +132,13 @@ export default function LiveRoom() {
       const data = await liveService.getStream(id as string);
       setStreamData(data.stream);
       setHasAccess(data.hasAccess);
+
+      // 🔥 Cargar Retos del Creador
+      if (data.stream.creatorId) {
+        liveService.getCreatorChallenges(data.stream.creatorId).then(res => {
+          if (res.challenges) setChallenges(res.challenges);
+        });
+      }
 
       if (data.hasAccess) {
         const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
@@ -226,7 +237,6 @@ export default function LiveRoom() {
       }
     },
     onUpdateGoal: onUpdateGoal,
-    // 🔥 NUEVOS GANCHOS PREPARADOS
     onBattleUpdate: setBattle,
     onSlowModeUpdate: setSlowMode
   });
@@ -243,7 +253,6 @@ export default function LiveRoom() {
     }
   };
 
-  // 🔥 NUEVAS ACCIONES DEL CREADOR
   const handleStartBattle = () => {
     const rival = prompt("Ingresa el ID o Username de tu rival:");
     if (rival) socketRef.current?.emit('battle:start', { streamId: id, rivalId: rival });
@@ -258,7 +267,7 @@ export default function LiveRoom() {
     const seconds = prompt("¿Cuántos segundos entre cada mensaje? (0 para desactivar)", "5");
     if (seconds !== null) {
       const secs = Number(seconds);
-      setSlowMode(secs); // Optimista
+      setSlowMode(secs); 
       socketRef.current?.emit('slowmode:set', { streamId: id, seconds: secs });
     }
   };
@@ -312,11 +321,13 @@ export default function LiveRoom() {
     } catch (e) { console.error(e); }
   };
 
-  const sendGift = async (gift: Gift) => {
+  // 🔥 ENVÍO INTEGRADO DE REGALOS Y RETOS
+  const sendGift = async (gift: Gift | Challenge, isChallenge = false) => {
     setShowGiftMenu(false);
     const fanBalance = parseFloat(user?.walletBalance || 0);
+    const price = isChallenge ? (gift as Challenge).price : (gift as Gift).amount;
 
-    if (fanBalance < gift.amount) {
+    if (fanBalance < price) {
       alert("No tienes suficiente saldo en tu Bóveda. ¡Recarga ahora!");
       router.push('/dashboard/wallet'); 
       return;
@@ -324,15 +335,19 @@ export default function LiveRoom() {
 
     try {
       setUser((prev: any) => {
-        const newUser = { ...prev, walletBalance: parseFloat(prev.walletBalance || 0) - gift.amount };
+        const newUser = { ...prev, walletBalance: parseFloat(prev.walletBalance || 0) - price };
         localStorage.setItem('user', JSON.stringify(newUser));
         return newUser;
       });
 
+      const messageContent = isChallenge 
+        ? `🔥 ¡Pagó por el reto: ${(gift as Challenge).title}!` 
+        : `${t('lbl_has_sent_a')} ${(gift as Gift).name}`;
+
       const giftMessage = {
-        content: `${t('lbl_has_sent_a')} ${gift.name}`,
+        content: messageContent,
         isDonation: true,
-        amount: gift.amount,
+        amount: price,
         user: { username: user?.username, role: user?.role },
         userId: user?.id,
         id: Date.now().toString()
@@ -343,15 +358,15 @@ export default function LiveRoom() {
       socketRef.current?.emit('broadcastMessage', {
         streamId: id,
         senderId: user?.id,
-        amount: gift.amount,
+        amount: price,
         isDonation: true,
         text: giftMessage.content,
         user: giftMessage.user,
-        giftImageUrl: gift.image
+        giftImageUrl: isChallenge ? '/gifts/corona.png' : (gift as Gift).image
       });
 
-      triggerGiftEffect(gift);
-      updateTopDonators({ amount: gift.amount, userId: user?.id, user: { username: user?.username } });
+      triggerGiftEffect(isChallenge ? { id: 99, name: "RETO ACEPTADO", amount: price, image: '/gifts/corona.png', style: "text-red-500 font-black", action: 'explosion' } : (gift as Gift));
+      updateTopDonators({ amount: price, userId: user?.id, user: { username: user?.username } });
       handleStreak();
       
     } catch (error) {
@@ -479,12 +494,16 @@ export default function LiveRoom() {
 
                   {/* 🔥 BOTONES RÁPIDOS DEL CREADOR */}
                   {isCreatorOrAdmin && isLiveActive && (
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2 max-w-[200px]">
                       <button onClick={handleInviteGuest} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-teal-400">
                         <UserPlus className="w-3.5 h-3.5" /> Invitar
                       </button>
                       <button onClick={handleStartBattle} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-pink-400">
                         <Swords className="w-3.5 h-3.5" /> Batalla
+                      </button>
+                      {/* 🔥 BOTÓN PARA ABRIR GESTOR DE RETOS */}
+                      <button onClick={() => setShowChallengeManager(true)} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-red-400">
+                        <Target className="w-3.5 h-3.5" /> Mis Retos
                       </button>
                     </div>
                   )}
@@ -514,7 +533,7 @@ export default function LiveRoom() {
               </div>
 
               {/* 🏆 TOP DONATORS (EN DÓLARES 💵) */}
-              <div className="absolute right-4 top-36 flex flex-col items-end gap-2 pointer-events-auto">
+              <div className="absolute right-4 top-[240px] sm:top-36 flex flex-col items-end gap-2 pointer-events-auto">
                 {topDonators.length > 0 && (
                   <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-green-500/20 shadow-lg min-w-[100px]">
                     <div className="flex items-center justify-center gap-1 mb-1 border-b border-white/10 pb-1">
@@ -561,7 +580,7 @@ export default function LiveRoom() {
                             <button onClick={() => handleKickUser(msg.user?.id, msg.user?.username)} className="opacity-0 group-hover/msg:opacity-100 transition-opacity text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-black uppercase ml-1">KICK</button>
                           )}
                         </div>
-                        <span className={`mt-0.5 ${gift ? gift.style : 'text-white font-medium'} drop-shadow-md`}>
+                        <span className={`mt-0.5 ${gift ? gift.style : (msg.isDonation ? 'text-red-400 font-bold' : 'text-white font-medium')} drop-shadow-md`}>
                           {msg.content}
                         </span>
                       </div>
@@ -615,13 +634,20 @@ export default function LiveRoom() {
       {/* 📺 PREPARATION LAYER */}
       {isCreatorOrAdmin && !isLiveActive && hasAccess && <PreparationLayer onStart={() => setIsLiveActive(true)} />}
 
-      {/* 🎁 DRAWER DE REGALOS (AHORA EN DÓLARES 💵) */}
+      {/* 🎁 DRAWER DE REGALOS Y RETOS (FASE 1) */}
       {showGiftMenu && (
         <>
           <div className="absolute inset-0 bg-black/40 z-40 pointer-events-auto" onClick={() => setShowGiftMenu(false)}></div>
           <div className="absolute bottom-0 left-0 right-0 md:left-auto md:right-4 md:bottom-4 md:w-[400px] bg-[#111]/95 backdrop-blur-2xl border-t border-x md:border-y border-white/10 rounded-t-3xl md:rounded-3xl p-6 pb-8 animate-drawer shadow-2xl z-50 pointer-events-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-white font-black text-lg flex items-center gap-2"><Diamond className="w-5 h-5 text-teal-400"/> {t('gift_title')}</h3>
+              <div className="flex gap-3 bg-black/50 p-1 rounded-xl border border-white/10">
+                <button onClick={() => setGiftTab('GIFTS')} className={`px-4 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1 ${giftTab === 'GIFTS' ? 'bg-teal-500 text-black shadow-md' : 'text-gray-400 hover:text-white'}`}>
+                  <Diamond className="w-3 h-3"/> REGALOS
+                </button>
+                <button onClick={() => setGiftTab('CHALLENGES')} className={`px-4 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1 ${giftTab === 'CHALLENGES' ? 'bg-red-500 text-white shadow-md' : 'text-gray-400 hover:text-white'}`}>
+                  <Target className="w-3 h-3"/> RETOS
+                </button>
+              </div>
               
               <div className="text-xs bg-green-500/10 border border-green-500/30 px-3 py-1.5 rounded-full font-mono text-green-400 flex items-center gap-1.5">
                 <DollarSign className="w-3.5 h-3.5" />
@@ -629,22 +655,52 @@ export default function LiveRoom() {
               </div>
             </div>
             
-            <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
-              {GIFTS.map((gift) => (
-                <button key={gift.id} onClick={() => sendGift(gift)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-green-500/50 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm">
-                  <img src={gift.image} alt={gift.name} className="w-10 h-10 object-contain group-hover:scale-110 transition-transform mb-1 drop-shadow-lg" />
-                  <span className="text-[9px] text-gray-300 font-bold text-center leading-tight truncate w-full">{t(`gift_name_${gift.id}`) || gift.name}</span>
-                  <span className="text-[10px] text-green-400 font-mono font-black mt-1 flex items-center gap-0.5">
-                    ${gift.amount.toFixed(2)}
-                  </span>
-                </button>
-              ))}
-            </div>
+            {giftTab === 'GIFTS' ? (
+              <div className="grid grid-cols-4 md:grid-cols-5 gap-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+                {GIFTS.map((gift) => (
+                  <button key={gift.id} onClick={() => sendGift(gift, false)} className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-green-500/50 p-2 rounded-2xl transition-all flex flex-col items-center group shadow-sm">
+                    <img src={gift.image} alt={gift.name} className="w-10 h-10 object-contain group-hover:scale-110 transition-transform mb-1 drop-shadow-lg" />
+                    <span className="text-[9px] text-gray-300 font-bold text-center leading-tight truncate w-full">{t(`gift_name_${gift.id}`) || gift.name}</span>
+                    <span className="text-[10px] text-green-400 font-mono font-black mt-1 flex items-center gap-0.5">
+                      ${gift.amount.toFixed(2)}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+                {challenges.filter(c => c.isActive).length === 0 ? (
+                  <div className="text-center text-gray-500 py-10 text-xs font-bold">El creador no tiene retos activos ahora mismo.</div>
+                ) : (
+                  challenges.filter(c => c.isActive).map(challenge => (
+                    <button key={challenge.id} onClick={() => sendGift(challenge, true)} className="bg-gradient-to-r from-red-900/40 to-black hover:from-red-800/60 border border-red-500/30 p-3 rounded-xl transition-all flex items-center justify-between group text-left">
+                      <div>
+                        <div className="text-red-400 font-black text-sm group-hover:text-red-300">{challenge.title}</div>
+                        {challenge.description && <div className="text-gray-400 text-[10px] mt-0.5 max-w-[200px]">{challenge.description}</div>}
+                      </div>
+                      <div className="bg-red-500/20 text-red-400 font-mono font-black px-3 py-1.5 rounded-lg border border-red-500/50">
+                        ${challenge.price.toFixed(2)}
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+            
             <button onClick={() => router.push('/dashboard/wallet')} className="w-full mt-6 bg-gradient-to-r from-green-500 to-teal-500 hover:scale-[1.02] active:scale-95 text-black font-black uppercase py-3 rounded-xl text-sm transition-all shadow-[0_5px_20px_rgba(34,197,94,0.3)]">
               Recargar Saldo
             </button>
           </div>
         </>
+      )}
+
+      {/* 🛠️ GESTOR DE RETOS (Solo Creador) */}
+      {showChallengeManager && (
+        <ChallengeManagerModal 
+          challenges={challenges} 
+          setChallenges={setChallenges} 
+          onClose={() => setShowChallengeManager(false)} 
+        />
       )}
 
       {/* 👁️ MODAL ESPECTADORES */}
@@ -653,13 +709,100 @@ export default function LiveRoom() {
   );
 }
 
+// ==========================================================
+// 🛠️ COMPONENTE: GESTOR DE RETOS PARA EL CREADOR
+// ==========================================================
+function ChallengeManagerModal({ challenges, setChallenges, onClose }: { challenges: Challenge[], setChallenges: any, onClose: () => void }) {
+  const [title, setTitle] = useState('');
+  const [desc, setDesc] = useState('');
+  const [price, setPrice] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleAdd = async () => {
+    if (!title || !price) return;
+    setLoading(true);
+    try {
+      const data = await liveService.createChallenge(title, desc, Number(price));
+      setChallenges((prev: any) => [...prev, data.challenge]);
+      setTitle(''); setDesc(''); setPrice('');
+    } catch (e) { alert("Error al crear el reto"); }
+    setLoading(false);
+  };
+
+  const handleToggle = async (id: string, currentStatus: boolean) => {
+    try {
+      await liveService.toggleChallenge(id, !currentStatus);
+      setChallenges((prev: any) => prev.map((c: any) => c.id === id ? { ...c, isActive: !currentStatus } : c));
+    } catch (e) { alert("Error al actualizar"); }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("¿Borrar este reto para siempre?")) return;
+    try {
+      await liveService.deleteChallenge(id);
+      setChallenges((prev: any) => prev.filter((c: any) => c.id !== id));
+    } catch (e) { alert("Error al eliminar"); }
+  };
+
+  return (
+    <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 pointer-events-auto">
+      <div className="bg-[#111] border border-red-500/30 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(220,38,38,0.2)] animate-fade-in">
+        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-gradient-to-r from-red-900/30 to-transparent">
+          <h3 className="text-white font-black text-lg flex items-center gap-2"><Target className="w-5 h-5 text-red-500" /> Mis Retos VIP</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
+        </div>
+        
+        <div className="p-5">
+          <div className="bg-black/50 border border-white/5 rounded-2xl p-4 mb-6">
+            <h4 className="text-xs font-bold text-red-400 mb-3 uppercase tracking-widest">Crear Nuevo Reto</h4>
+            <div className="space-y-3">
+              <input type="text" placeholder="Ej: Bailar 10 segundos" value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-red-500/50" />
+              <div className="flex gap-3">
+                <input type="text" placeholder="Detalle (opcional)" value={desc} onChange={e => setDesc(e.target.value)} className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-red-500/50" />
+                <div className="relative w-28">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
+                  <input type="number" placeholder="Precio" value={price} onChange={e => setPrice(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl pl-7 pr-3 py-2.5 text-sm text-white font-mono font-bold outline-none focus:border-red-500/50" />
+                </div>
+              </div>
+              <button onClick={handleAdd} disabled={loading || !title || !price} className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-2.5 rounded-xl transition-colors disabled:opacity-50 text-sm">
+                {loading ? 'Guardando...' : '+ Añadir a mi lista'}
+              </button>
+            </div>
+          </div>
+
+          <div className="max-h-[300px] overflow-y-auto custom-scrollbar space-y-2 pr-1">
+            {challenges.length === 0 ? (
+              <div className="text-center text-gray-500 text-xs py-4">No has creado ningún reto todavía.</div>
+            ) : (
+              challenges.map(c => (
+                <div key={c.id} className={`flex items-center justify-between p-3 rounded-xl border transition-all ${c.isActive ? 'bg-red-900/10 border-red-500/20' : 'bg-white/5 border-white/5 opacity-50'}`}>
+                  <div className="flex-1">
+                    <div className="text-sm font-bold text-white">{c.title} <span className="text-green-400 font-mono text-xs ml-2">${c.price.toFixed(2)}</span></div>
+                    {c.description && <div className="text-[10px] text-gray-400">{c.description}</div>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => handleToggle(c.id, c.isActive)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${c.isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/50 text-gray-400'}`}>
+                      <CheckCircle2 className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => handleDelete(c.id)} className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ✅ SUB-COMPONENTES TÁCTICOS BLINDADOS
 
-// 🔥 NUEVO STAGE DINÁMICO (SOPORTA HASTA 4 INVITADOS)
 function StreamStage() {
-  // Ahora capturamos los tracks de cámara de todos los participantes conectados
   const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: false }]);
-  const visibleTracks = tracks.slice(0, 4); // Límite de 4 invitados en pantalla
+  const visibleTracks = tracks.slice(0, 4); 
 
   const layout =
     visibleTracks.length <= 1
@@ -681,7 +824,6 @@ function StreamStage() {
   );
 }
 
-// 🔥 OVERLAY HUD DE BATALLAS
 function BattleOverlay({ battle }: { battle: any }) {
   if (!battle || !battle.active) return null;
   const total = (battle.leftScore || 0) + (battle.rightScore || 0);
@@ -747,7 +889,6 @@ function useLiveSocket({ id, user, streamData, onLike, onMessage, onViewerCount,
       if (callbacks.current.onUpdateGoal) callbacks.current.onUpdateGoal(amount);
     });
 
-    // 🔥 PREPARANDO CANALES PARA EL NUEVO BACKEND
     socketInstance.on('battle:update', (data: any) => {
       if (callbacks.current.onBattleUpdate) callbacks.current.onBattleUpdate(data);
     });
