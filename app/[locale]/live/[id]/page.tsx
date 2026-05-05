@@ -16,7 +16,7 @@ import {
   useParticipants 
 } from '@livekit/components-react';
 
-import { Track } from 'livekit-client';
+import { Track, VideoPresets, RoomOptions } from 'livekit-client';
 import '@livekit/components-styles';
 
 // 🔥 ICONOS PREMIUM
@@ -52,6 +52,26 @@ export const GIFTS: Gift[] = [
 ];
 
 export interface Donator { userId: string; username: string; amount: number; }
+
+// 🔥 MOTOR DE VIDEO PREMIUM (Cámara Frontal al Máximo y Simulcast)
+const roomOptions: RoomOptions = {
+  videoCaptureDefaults: {
+    resolution: VideoPresets.h1080.resolution, 
+    facingMode: 'user', // 🎯 ESTA ES LA CLAVE: 'user' fuerza la cámara frontal
+  },
+  publishDefaults: {
+    simulcast: true, 
+    videoEncoding: {
+      maxBitrate: 3000000, // 3 Mbps de subida pura
+      maxFramerate: 30,
+    },
+    videoSimulcastLayers: [
+      VideoPresets.h1080, 
+      VideoPresets.h720,  
+      VideoPresets.h360   
+    ]
+  }
+};
 
 export default function LiveRoom() {
   const { id } = useParams();
@@ -419,7 +439,7 @@ export default function LiveRoom() {
       {/* 🎬 VIDEO LAYER */}
       <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full" onContextMenu={(e) => e.preventDefault()}>
         {hasAccess && liveKitToken ? (
-          <LiveKitRoom video={isCreatorOrAdmin ? isLiveActive : false} audio={isCreatorOrAdmin ? isLiveActive : false} token={liveKitToken} serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.fansmio.com"} className="w-full h-full relative">
+          <LiveKitRoom video={isCreatorOrAdmin ? isLiveActive : false} audio={isCreatorOrAdmin ? isLiveActive : false} token={liveKitToken} serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://live.fansmio.com"} options={roomOptions} className="w-full h-full relative">
             <ParticipantsTracker onUpdate={setConnectedUsers} />
             <StreamStage />
             <RoomAudioRenderer />
