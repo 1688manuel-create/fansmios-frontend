@@ -16,7 +16,7 @@ import {
   ArrowLeft, CheckCircle2, MessageCircle, Star, Lock, Settings,
   Unlock, Trash2, Coins, Package, Ghost, X, Plus, Crown, Send,
   Instagram, Twitter, Globe, ShieldAlert, Flag, AlertTriangle,
-  LayoutGrid, Image as ImageIcon, Video, Eye, ChevronLeft, ChevronRight
+  LayoutGrid, Image as ImageIcon, Video, Eye, ChevronLeft, BadgeCheck, ChevronRight
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -411,13 +411,29 @@ export default function CreatorProfile() {
         <main className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 -mt-16 sm:-mt-20">
           <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-end mb-8 gap-4">
             <div className="flex flex-col items-start relative">
-              <div className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-[6px] border-[#050505] shadow-2xl flex items-center justify-center text-white text-5xl font-black bg-[#0a0a0a] relative overflow-hidden shrink-0 z-10 nm-inset select-none ${profile.isVerified ? 'shadow-[0_0_30px_rgba(20,184,166,0.3)]' : ''}`} onContextMenu={(e) => e.preventDefault()}>
-                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase().charAt(0)}</span>}
+              
+              {/* 🔥 1. AVATAR CON ANILLO DE CREADOR (Perfil) */}
+              <div className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full shrink-0 z-10 flex items-center justify-center relative shadow-2xl select-none ${(creator.role === 'CREATOR' || creator.role === 'ADMIN') ? 'bg-gradient-to-tr from-red-500 via-orange-500 to-yellow-500 p-[4px]' : 'border-[6px] border-[#050505] bg-[#0a0a0a]'}`} onContextMenu={(e) => e.preventDefault()}>
+                <div className="w-full h-full rounded-full overflow-hidden bg-[#0a0a0a] border-4 border-[#050505] flex items-center justify-center text-white text-5xl font-black">
+                  {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase().charAt(0)}</span>}
+                </div>
               </div>
+              
+              {/* 🔥 2. NOMBRE Y PALOMITA OFICIAL */}
               <div className="mt-3 px-2">
                 <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-2 drop-shadow-md">
                   {creator.name || creator.username}
-                  {profile.isVerified && <span title={t('lbl_verified')}><CheckCircle2 className="w-6 h-6 text-teal-400 fill-teal-400/20 drop-shadow-[0_0_5px_rgba(20,184,166,0.8)]" /></span>}
+                  
+                  {/* Aquí aparece la palomita oficial si es Creador */}
+                  {(creator.role === 'CREATOR' || creator.role === 'ADMIN') && (
+                    <span title="Creador Verificado" className="inline-flex">
+                      <BadgeCheck className="w-7 h-7 text-red-500 fill-white drop-shadow-md" />
+                    </span>
+                  )}
+                  
+                  {/* Palomita original genérica (solo para Fans) */}
+                  {profile.isVerified && creator.role === 'FAN' && <span title={t('lbl_verified')}><CheckCircle2 className="w-6 h-6 text-teal-400 fill-teal-400/20 drop-shadow-[0_0_5px_rgba(20,184,166,0.8)]" /></span>}
+                  
                   {currentUser?.role === 'ADMIN' && <span title={t('lbl_admin_view')}><ShieldAlert className="w-5 h-5 text-red-500" /></span>}
                 </h1>
                 <p className="text-gray-400 text-sm font-bold mt-0.5">@{creator.username}</p>
