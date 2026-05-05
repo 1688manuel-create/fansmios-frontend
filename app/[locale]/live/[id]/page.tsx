@@ -18,8 +18,7 @@ import {
 import { Track, VideoPresets, RoomOptions } from 'livekit-client';
 import '@livekit/components-styles';
 
-// 🔥 ICONOS (Añadido Gavel para Subastas)
-import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Play, Heart, TrendingUp, DollarSign, Swords, UserPlus, Timer, Target, Trash2, CheckCircle2, Dices, Gavel } from 'lucide-react';
+import { Eye, X, Lock, Tv, Star, Diamond, Trophy, Zap, Send, Play, Heart, TrendingUp, DollarSign, Swords, UserPlus, Timer, Target, Trash2, CheckCircle2, Dices, Gavel, AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 let SOCKET_URL = 'https://api.fansmio.com';
@@ -93,9 +92,11 @@ export default function LiveRoom() {
   const [slowMode, setSlowMode] = useState(0);
   const [battleSide, setBattleSide] = useState<'left'|'right'>('left');
   const [rouletteEvent, setRouletteEvent] = useState<{senderName: string, prize: string} | null>(null);
-
-  // 🔥 FASE 4: ESTADO DE LA SUBASTA
   const [auction, setAuction] = useState<any>(null);
+
+  // 🔥 NUEVO SISTEMA DE MODALES ELEGANTES (Reemplaza los Prompts Feos)
+  const [promptConfig, setPromptConfig] = useState<any>(null);
+  const [confirmConfig, setConfirmConfig] = useState<any>(null);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const streakTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -191,7 +192,7 @@ export default function LiveRoom() {
       }
     },
     onViewerCount: setViewersCount,
-    onStreamKilled: () => { alert(t('alert_stream_ended')); router.push('/explore'); },
+    onStreamKilled: () => { setConfirmConfig({ title: "Fin de Transmisión", message: t('alert_stream_ended'), confirmText: "Entendido", onConfirm: () => router.push('/explore'), hideCancel: true }); },
     onPaywallActivated: (newPrice: number) => {
       const isCreatorOrAdmin = String(user?.id) === String(streamData?.creatorId) || String(user?.role).toUpperCase() === 'ADMIN';
       if (!isCreatorOrAdmin) { setStreamData((prev: any) => ({ ...prev, price: newPrice })); setHasAccess(false); }
@@ -204,50 +205,107 @@ export default function LiveRoom() {
       setMessages((prev) => [...prev.slice(-99), { content: `🎡 ${data.senderName} giró la Ruleta y ganó: ${data.prize}!`, isDonation: true, amount: data.amount, isSystem: true, id: Date.now().toString() }]);
       updateTopDonators({ userId: 'roulette', username: data.senderName, amount: data.amount });
     },
-    // 🔥 ESCUCHAR LA SUBASTA
     onAuctionUpdate: setAuction,
-    onError: (err: any) => alert(err.message)
+    onError: (err: any) => setConfirmConfig({ title: "Atención", message: err.message, confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) })
   });
 
+  // 💎 REEMPLAZO DE PROMPTS Y CONFIRMS CON MODALES ELEGANTES 💎
   const handleStartAuction = () => {
-    const item = prompt("¿Qué vas a subastar? (Ej: Lencería rosa, Videollamada):");
-    if (!item) return;
-    const startingPrice = prompt("Precio inicial en USD (Ej: 20):", "20");
-    if (!startingPrice) return;
-    const durationMinutes = prompt("Minutos que durará la subasta:", "3");
-    if (durationMinutes && Number(durationMinutes) > 0) {
-      socketRef.current?.emit('auction:start', { streamId: id, item, startingPrice: Number(startingPrice), durationMinutes: Number(durationMinutes) });
-    }
+    setPromptConfig({
+      title: "Iniciar Subasta", icon: <Gavel className="text-yellow-500" />,
+      fields: [
+        { id: 'item', label: 'Artículo a subastar', placeholder: 'Ej: Lencería rosa, Videollamada...' },
+        { id: 'price', label: 'Precio inicial (USD)', placeholder: 'Ej: 20', type: 'number', defaultValue: '20' },
+        { id: 'duration', label: 'Minutos', placeholder: 'Ej: 3', type: 'number', defaultValue: '3' }
+      ],
+      submitText: "Lanzar Subasta",
+      onSubmit: (v: any) => {
+        if(v.item && v.price) socketRef.current?.emit('auction:start', { streamId: id, item: v.item, startingPrice: Number(v.price), durationMinutes: Number(v.duration) });
+        setPromptConfig(null);
+      },
+      onCancel: () => setPromptConfig(null)
+    });
   };
 
   const submitAuctionBid = (amount: number) => {
     const fanBalance = parseFloat(user?.walletBalance || 0);
     if (fanBalance < amount) {
-      alert("No tienes saldo suficiente para esta puja. ¡Recarga ahora!");
-      router.push('/dashboard/wallet'); return;
+      setConfirmConfig({ title: "Saldo Insuficiente", message: "No tienes saldo suficiente para esta puja. ¡Recarga ahora!", confirmText: "Recargar", onConfirm: () => router.push('/dashboard/wallet'), onCancel: () => setConfirmConfig(null) });
+      return;
     }
-    // Optimista local
     setUser((prev: any) => ({ ...prev, walletBalance: prev.walletBalance - amount }));
     socketRef.current?.emit('auction:bid', { streamId: id, senderId: user?.id, amount, senderName: user?.username });
   };
 
   const handleLockRoomVIP = () => {
-    const priceStr = prompt("¿Cuánto costará la entrada VIP en USD? (Ej: 5)", "5");
-    if (Number(priceStr) > 0 && window.confirm(`¿Seguro que quieres cerrar la sala y cobrar $${priceStr}?`)) {
-      socketRef.current?.emit('activatePaywall', { streamId: id, price: Number(priceStr) }); alert("¡Sala Bloqueada!");
-    }
+    setPromptConfig({
+      title: "Cerrar Sala VIP", icon: <Lock className="text-red-500" />,
+      fields: [{ id: 'price', label: 'Costo de entrada (USD)', placeholder: 'Ej: 5', type: 'number', defaultValue: '5' }],
+      submitText: "Configurar Precio",
+      onSubmit: (v: any) => {
+        setPromptConfig(null);
+        setConfirmConfig({
+          title: "¡Atención!", message: `¿Seguro que quieres cerrar la sala y cobrar $${v.price} a los que están gratis?`, confirmText: "Sí, Bloquear", confirmColor: "bg-red-600",
+          onConfirm: () => { socketRef.current?.emit('activatePaywall', { streamId: id, price: Number(v.price) }); setConfirmConfig(null); },
+          onCancel: () => setConfirmConfig(null)
+        });
+      },
+      onCancel: () => setPromptConfig(null)
+    });
   };
 
   const handleStartBattle = () => {
-    const leftName = prompt("Equipo 1:", "Team Rojo"); const rightName = prompt("Equipo 2:", "Team Azul"); const durationMinutes = prompt("Minutos:", "5");
-    if (leftName && rightName && Number(durationMinutes) > 0) socketRef.current?.emit('battle:start', { streamId: id, leftName, rightName, durationMinutes: Number(durationMinutes) });
+    setPromptConfig({
+      title: "Configurar Batalla", icon: <Swords className="text-pink-500" />,
+      fields: [
+        { id: 'leftName', label: 'Equipo 1', placeholder: 'Ej: Team Rojo', defaultValue: 'Team Rojo' },
+        { id: 'rightName', label: 'Equipo 2', placeholder: 'Ej: Team Azul', defaultValue: 'Team Azul' },
+        { id: 'duration', label: 'Minutos', placeholder: 'Ej: 5', type: 'number', defaultValue: '5' }
+      ],
+      submitText: "Iniciar Batalla",
+      onSubmit: (v: any) => {
+        if(v.leftName && v.rightName) socketRef.current?.emit('battle:start', { streamId: id, leftName: v.leftName, rightName: v.rightName, durationMinutes: Number(v.duration) });
+        setPromptConfig(null);
+      },
+      onCancel: () => setPromptConfig(null)
+    });
   };
 
-  const handleInviteGuest = () => { const guest = prompt("ID del invitado:"); if (guest) socketRef.current?.emit('guest:invite', { streamId: id, userId: guest }); };
+  const handleInviteGuest = () => {
+    setPromptConfig({
+      title: "Invitar Participante", icon: <UserPlus className="text-teal-500" />,
+      fields: [{ id: 'guestId', label: 'ID del Usuario', placeholder: 'Pega el ID aquí...' }],
+      submitText: "Enviar Invitación",
+      onSubmit: (v: any) => { if(v.guestId) socketRef.current?.emit('guest:invite', { streamId: id, userId: v.guestId }); setPromptConfig(null); },
+      onCancel: () => setPromptConfig(null)
+    });
+  };
 
   const handleToggleSlowMode = () => {
-    const seconds = prompt("Segundos entre cada mensaje (0 apaga):", "5");
-    if (seconds !== null) { setSlowMode(Number(seconds)); socketRef.current?.emit('slowmode:set', { streamId: id, seconds: Number(seconds) }); }
+    setPromptConfig({
+      title: "Modo Lento", icon: <Timer className="text-orange-500" />,
+      fields: [{ id: 'secs', label: 'Segundos entre mensajes (0 apaga)', placeholder: 'Ej: 5', type: 'number', defaultValue: '5' }],
+      submitText: "Aplicar",
+      onSubmit: (v: any) => { setSlowMode(Number(v.secs)); socketRef.current?.emit('slowmode:set', { streamId: id, seconds: Number(v.secs) }); setPromptConfig(null); },
+      onCancel: () => setPromptConfig(null)
+    });
+  };
+
+  const handleKickUser = async (uid: string, uname: string) => {
+    if (uid === user.id) return;
+    setConfirmConfig({
+      title: "Expulsar Espectador", message: `¿Estás seguro de expulsar a @${uname} de la sala?`, confirmText: "Expulsar", confirmColor: "bg-red-600",
+      onConfirm: () => { socketRef.current?.emit('kickParticipant', { streamId: id, userId: uid, username: uname }); setConfirmConfig(null); },
+      onCancel: () => setConfirmConfig(null)
+    });
+  };
+
+  const handleEndStream = () => {
+    setConfirmConfig({
+      title: "Finalizar Transmisión", message: "¿Estás seguro de terminar el en vivo? Esta acción cortará la señal para todos.", confirmText: "Finalizar", confirmColor: "bg-red-600",
+      onConfirm: () => { liveService.updateStatus(id as string, 'ENDED').then(() => { socketRef.current?.emit('streamEnded', { streamId: id }); router.push('/dashboard'); }); },
+      onCancel: () => setConfirmConfig(null)
+    });
   };
 
   useEffect(() => {
@@ -267,7 +325,9 @@ export default function LiveRoom() {
 
   const handleSendMessage = async () => {
     if (!chatInput.trim()) return;
-    if (slowMode > 0 && Date.now() - lastMessageTime.current < slowMode * 1000) { alert(`Modo lento: ${slowMode}s.`); return; }
+    if (slowMode > 0 && Date.now() - lastMessageTime.current < slowMode * 1000) { 
+      setConfirmConfig({ title: "Modo Lento", message: `Debes esperar ${slowMode} segundos entre mensajes.`, confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); return; 
+    }
     lastMessageTime.current = Date.now(); const content = chatInput; setChatInput('');
     try {
       const res = await liveService.sendMessage(id as string, content, false, 0);
@@ -278,7 +338,9 @@ export default function LiveRoom() {
 
   const sendGift = async (gift: Gift | Challenge, isChallenge = false) => {
     setShowGiftMenu(false); const price = isChallenge ? (gift as Challenge).price : (gift as Gift).amount;
-    if (parseFloat(user?.walletBalance || 0) < price) { alert("Saldo insuficiente."); router.push('/dashboard/wallet'); return; }
+    if (parseFloat(user?.walletBalance || 0) < price) { 
+      setConfirmConfig({ title: "Saldo Insuficiente", message: "No tienes saldo suficiente. ¡Recarga tu bóveda ahora!", confirmText: "Recargar", onConfirm: () => router.push('/dashboard/wallet'), onCancel: () => setConfirmConfig(null) }); return; 
+    }
     try {
       setUser((prev: any) => ({ ...prev, walletBalance: prev.walletBalance - price }));
       let battleTag = ''; if (battle?.active && !isChallenge) battleTag = battleSide === 'left' ? ` [Apoya a ${battle.leftName}]` : ` [Apoya a ${battle.rightName}]`;
@@ -288,22 +350,23 @@ export default function LiveRoom() {
       socketRef.current?.emit('broadcastMessage', { streamId: id, senderId: user?.id, amount: price, isDonation: true, text: giftMessage.content, user: giftMessage.user, giftImageUrl: isChallenge ? '/gifts/corona.png' : (gift as Gift).image, battleSide: battle?.active ? battleSide : null, action: isChallenge ? null : (gift as Gift).action });
       triggerGiftEffect(isChallenge ? { id: 99, name: "RETO ACEPTADO", amount: price, image: '/gifts/corona.png', style: "text-red-500 font-black", action: 'explosion' } : (gift as Gift));
       updateTopDonators({ amount: price, userId: user?.id, user: { username: user?.username } }); handleStreak();
-    } catch (error) { alert(t('alert_error_gift')); }
+    } catch (error) { setConfirmConfig({ title: "Error", message: t('alert_error_gift'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); }
   };
 
   const spinRoulette = () => {
     const ROULETTE_PRICE = 15; setShowGiftMenu(false);
-    if (parseFloat(user?.walletBalance || 0) < ROULETTE_PRICE) { alert("Saldo insuficiente."); router.push('/dashboard/wallet'); return; }
+    if (parseFloat(user?.walletBalance || 0) < ROULETTE_PRICE) { 
+      setConfirmConfig({ title: "Saldo Insuficiente", message: "Necesitas $15 USD para girar. ¡Recarga tu bóveda!", confirmText: "Recargar", onConfirm: () => router.push('/dashboard/wallet'), onCancel: () => setConfirmConfig(null) }); return; 
+    }
     setUser((prev: any) => ({ ...prev, walletBalance: prev.walletBalance - ROULETTE_PRICE }));
     socketRef.current?.emit('spinRoulette', { streamId: id, senderId: user?.id, amount: ROULETTE_PRICE, user: { username: user?.username }, battleSide: battle?.active ? battleSide : null });
   };
 
-  const handleKickUser = async (uid: string, uname: string) => { if (uid === user.id) return; if (window.confirm(`🚨 Expulsar a @${uname}?`)) socketRef.current?.emit('kickParticipant', { streamId: id, userId: uid, username: uname }); };
-  const handleEndStream = () => { if (window.confirm(`🚨 Finalizar stream?`)) liveService.updateStatus(id as string, 'ENDED').then(() => { socketRef.current?.emit('streamEnded', { streamId: id }); router.push('/dashboard'); }); };
   const handleFollow = async () => { try { await api.post(`/users/${streamData.creatorId}/follow`); setIsFollowing(true); } catch (e) {} };
+  
   const handleBuyTicket = async () => {
     if (!streamData || isProcessing) return; setIsProcessing(true);
-    try { const res = await api.post('/live/buy-ticket', { streamId: id, amount: streamData.price }); if (res.data.success) { setHasAccess(true); setUser((prev: any) => ({ ...prev, walletBalance: prev.walletBalance - streamData.price })); loadStreamData(); } } catch (error: any) { alert(error.response?.data?.error || "Error."); } finally { setIsProcessing(false); }
+    try { const res = await api.post('/live/buy-ticket', { streamId: id, amount: streamData.price }); if (res.data.success) { setHasAccess(true); setUser((prev: any) => ({ ...prev, walletBalance: prev.walletBalance - streamData.price })); loadStreamData(); } } catch (error: any) { setConfirmConfig({ title: "Error", message: error.response?.data?.error || "Error.", confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); } finally { setIsProcessing(false); }
   };
 
   if (!streamData) return <div className="min-h-[100dvh] bg-black flex items-center justify-center text-white font-mono animate-pulse">{t('lbl_connecting_gateway')}</div>;
@@ -321,7 +384,10 @@ export default function LiveRoom() {
 
       {/* 🎯 META */}
       <div className="absolute top-[130px] sm:top-24 left-1/2 -translate-x-1/2 z-30 w-64">
-        <div className="bg-black/40 backdrop-blur-md rounded-full border border-white/10 p-1 px-3 flex items-center gap-2 shadow-lg pointer-events-auto cursor-pointer" onClick={() => isCreatorOrAdmin && setTargetGoal(Number(prompt("Nueva meta:", String(targetGoal))) || targetGoal)}>
+        <div className="bg-black/40 backdrop-blur-md rounded-full border border-white/10 p-1 px-3 flex items-center gap-2 shadow-lg pointer-events-auto cursor-pointer" onClick={() => {
+          if (!isCreatorOrAdmin) return;
+          setPromptConfig({ title: "Actualizar Meta", icon: <TrendingUp className="text-teal-400" />, fields: [{ id: 'goal', label: 'Meta (USD)', placeholder: 'Ej: 1000', type: 'number', defaultValue: String(targetGoal) }], submitText: "Guardar", onSubmit: (v: any) => { setTargetGoal(Number(v.goal) || targetGoal); setPromptConfig(null); }, onCancel: () => setPromptConfig(null) });
+        }}>
           <TrendingUp className="w-3 h-3 text-teal-400" />
           <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden relative">
             <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-teal-400 to-blue-500 transition-all duration-500" style={{ width: `${Math.min((currentGoal/targetGoal)*100, 100)}%` }}></div>
@@ -331,7 +397,6 @@ export default function LiveRoom() {
       </div>
 
       <BattleOverlay battle={battle} />
-      {/* 🔥 OVERLAY DE SUBASTA */}
       <AuctionOverlay auction={auction} isCreator={isCreatorOrAdmin} onBid={submitAuctionBid} />
 
       <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full" onContextMenu={(e) => e.preventDefault()}>
@@ -363,7 +428,6 @@ export default function LiveRoom() {
                       <button onClick={handleInviteGuest} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-teal-400"><UserPlus className="w-3.5 h-3.5" /> Invitar</button>
                       <button onClick={handleStartBattle} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-pink-400"><Swords className="w-3.5 h-3.5" /> Batalla</button>
                       <button onClick={() => setShowChallengeManager(true)} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-red-400"><Target className="w-3.5 h-3.5" /> Mis Retos</button>
-                      {/* 🔥 BOTÓN SUBASTA (Solo Creador) */}
                       <button onClick={handleStartAuction} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-yellow-400"><Gavel className="w-3.5 h-3.5" /> Subasta</button>
                     </div>
                   )}
@@ -479,8 +543,66 @@ export default function LiveRoom() {
         </>
       )}
 
-      {showChallengeManager && <ChallengeManagerModal challenges={challenges} setChallenges={setChallenges} onClose={() => setShowChallengeManager(false)} />}
+      {/* 🔥 RENDERIZADO DE MODALES DINÁMICOS */}
+      {promptConfig && <DynamicPromptModal config={promptConfig} />}
+      {confirmConfig && <DynamicConfirmModal config={confirmConfig} />}
+
+      {showChallengeManager && <ChallengeManagerModal challenges={challenges} setChallenges={setChallenges} onClose={() => setShowChallengeManager(false)} setConfirmConfig={setConfirmConfig} />}
       {showViewersModal && <ViewersModal connectedUsers={connectedUsers} onClose={() => setShowViewersModal(false)} />}
+    </div>
+  );
+}
+
+// ==========================================================
+// 🛠️ MODALES DINÁMICOS (Reemplazan prompt y confirm nativos)
+// ==========================================================
+
+function DynamicPromptModal({ config }: { config: any }) {
+  const [values, setValues] = useState<Record<string, string>>(() => {
+    const init: Record<string, string> = {};
+    config.fields.forEach((f: any) => init[f.id] = f.defaultValue || '');
+    return init;
+  });
+
+  return (
+    <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
+      <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in">
+        <div className="flex items-center justify-between p-5 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent">
+          <h3 className="text-white font-black text-lg flex items-center gap-2">{config.icon} {config.title}</h3>
+          <button onClick={config.onCancel} className="text-gray-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
+        </div>
+        <div className="p-5 space-y-4">
+          {config.fields.map((f: any) => (
+            <div key={f.id}>
+              <label className="text-xs font-bold text-gray-400 mb-1.5 block uppercase tracking-wider">{f.label}</label>
+              <input type={f.type || 'text'} placeholder={f.placeholder} value={values[f.id]} onChange={e => setValues({...values, [f.id]: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-teal-500/50 transition-colors" />
+            </div>
+          ))}
+          <button onClick={() => config.onSubmit(values)} className="w-full mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:scale-[1.02] active:scale-95 text-white font-black uppercase py-3 rounded-xl text-sm transition-all shadow-lg">
+            {config.submitText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DynamicConfirmModal({ config }: { config: any }) {
+  return (
+    <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
+      <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in text-center p-6">
+         <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
+           <AlertTriangle className="w-8 h-8 text-yellow-500" />
+         </div>
+         <h3 className="text-white font-black text-xl mb-2">{config.title}</h3>
+         <p className="text-gray-400 text-sm mb-6 leading-relaxed">{config.message}</p>
+         <div className="flex gap-3">
+            {!config.hideCancel && (
+              <button onClick={config.onCancel} className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-3 rounded-xl transition-colors text-sm">Cancelar</button>
+            )}
+            <button onClick={config.onConfirm} className={`flex-1 ${config.confirmColor || 'bg-teal-600 hover:bg-teal-500'} text-white font-black py-3 rounded-xl transition-colors shadow-lg text-sm`}>{config.confirmText || 'Confirmar'}</button>
+         </div>
+      </div>
     </div>
   );
 }
@@ -489,7 +611,6 @@ export default function LiveRoom() {
 // 🛠️ COMPONENTES TÁCTICOS BLINDADOS
 // ==========================================================
 
-// 🔥 FASE 4: COMPONENTE DE SUBASTA
 function AuctionOverlay({ auction, isCreator, onBid }: { auction: any, isCreator: boolean, onBid: (amount: number) => void }) {
   const [timeLeft, setTimeLeft] = useState(0);
   const [customBid, setCustomBid] = useState('');
@@ -556,20 +677,26 @@ function RouletteOverlay({ event }: { event: {senderName: string, prize: string}
   );
 }
 
-function ChallengeManagerModal({ challenges, setChallenges, onClose }: { challenges: Challenge[], setChallenges: any, onClose: () => void }) {
+function ChallengeManagerModal({ challenges, setChallenges, onClose, setConfirmConfig }: { challenges: Challenge[], setChallenges: any, onClose: () => void, setConfirmConfig: any }) {
   const [title, setTitle] = useState(''); const [desc, setDesc] = useState(''); const [price, setPrice] = useState(''); const [loading, setLoading] = useState(false);
   const handleAdd = async () => {
     if (!title || !price) return;
     setLoading(true);
-    try { const data = await liveService.createChallenge(title, desc, Number(price)); setChallenges((prev: any) => [...prev, data.challenge]); setTitle(''); setDesc(''); setPrice(''); } catch (e) { alert("Error al crear el reto"); }
+    try { const data = await liveService.createChallenge(title, desc, Number(price)); setChallenges((prev: any) => [...prev, data.challenge]); setTitle(''); setDesc(''); setPrice(''); } catch (e) { setConfirmConfig({ title: "Error", message: "Error al crear el reto", confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); }
     setLoading(false);
   };
   const handleToggle = async (id: string, currentStatus: boolean) => {
-    try { await liveService.toggleChallenge(id, !currentStatus); setChallenges((prev: any) => prev.map((c: any) => c.id === id ? { ...c, isActive: !currentStatus } : c)); } catch (e) { alert("Error al actualizar"); }
+    try { await liveService.toggleChallenge(id, !currentStatus); setChallenges((prev: any) => prev.map((c: any) => c.id === id ? { ...c, isActive: !currentStatus } : c)); } catch (e) { setConfirmConfig({ title: "Error", message: "Error al actualizar", confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); }
   };
   const handleDelete = async (id: string) => {
-    if (!window.confirm("¿Borrar este reto para siempre?")) return;
-    try { await liveService.deleteChallenge(id); setChallenges((prev: any) => prev.filter((c: any) => c.id !== id)); } catch (e) { alert("Error al eliminar"); }
+    setConfirmConfig({
+      title: "Eliminar Reto", message: "¿Borrar este reto para siempre?", confirmText: "Borrar", confirmColor: "bg-red-600 hover:bg-red-500",
+      onConfirm: async () => {
+        setConfirmConfig(null);
+        try { await liveService.deleteChallenge(id); setChallenges((prev: any) => prev.filter((c: any) => c.id !== id)); } catch (e) { }
+      },
+      onCancel: () => setConfirmConfig(null)
+    });
   };
   return (
     <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 pointer-events-auto">
