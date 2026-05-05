@@ -574,16 +574,19 @@ export default function Feed() {
             {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
               <div className="nm-inset p-6 rounded-[2rem] space-y-4 border border-white/5">
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-red-600 to-orange-600 flex items-center justify-center text-white font-bold text-xl overflow-hidden shadow-lg shrink-0">
-                    {(() => {
-                      const myFreshData = posts.find(p => p.user?.id === user?.id)?.user;
-                      const avatarUrl = myFreshData?.creatorProfile?.profileImage || user?.creatorProfile?.profileImage;
-                      return avatarUrl ? (
-                        <img src={getImageUrl(avatarUrl)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover object-center" alt="Avatar" />
-                      ) : (
-                        (user?.username || 'C').toUpperCase()
-                      );
-                    })()}
+                  {/* 🔥 AVATAR EN LA CAJA DE "CREAR NUEVO POST" CON ANILLO VIP */}
+                  <div className={`w-12 h-12 shrink-0 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105 ${(user?.role === 'CREATOR' || user?.role === 'ADMIN') ? 'bg-gradient-to-tr from-red-500 via-orange-500 to-yellow-500 p-[2px]' : 'border border-white/10'}`}>
+                    <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-black text-white font-bold text-xl">
+                      {(() => {
+                        const myFreshData = posts.find(p => p.user?.id === user?.id)?.user;
+                        const avatarUrl = myFreshData?.creatorProfile?.profileImage || user?.creatorProfile?.profileImage;
+                        return avatarUrl ? (
+                          <img src={getImageUrl(avatarUrl)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover object-center" alt="Avatar" />
+                        ) : (
+                          (user?.username || 'C').toUpperCase()
+                        );
+                      })()}
+                    </div>
                   </div>
                   
                   <div className="w-full pt-2">
