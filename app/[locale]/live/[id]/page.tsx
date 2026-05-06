@@ -635,9 +635,12 @@ function DynamicConfirmModal({ config }: { config: any }) {
 // ==========================================================
 
 function AuctionOverlay({ auction, isCreator, onBid }: { auction: any, isCreator: boolean, onBid: (amount: number) => void }) {
+  // 1. TODOS LOS ESTADOS ARRIBA
   const [timeLeft, setTimeLeft] = useState(0);
   const [customBid, setCustomBid] = useState('');
+  const [hide, setHide] = useState(false); 
 
+  // 2. TODOS LOS EFECTOS ARRIBA
   useEffect(() => {
     if (!auction || !auction.active) return;
     const interval = setInterval(() => {
@@ -647,24 +650,24 @@ function AuctionOverlay({ auction, isCreator, onBid }: { auction: any, isCreator
     return () => clearInterval(interval);
   }, [auction]);
 
-  if (!auction || !auction.active) return null;
-
   const isFinished = timeLeft <= 0;
-  const mins = Math.floor(timeLeft / 60); 
-  const secs = timeLeft % 60;
-  const [hide, setHide] = useState(false);
 
   useEffect(() => {
-    if (isFinished) {
+    if (auction && auction.active && isFinished) {
       const timer = setTimeout(() => setHide(true), 5000); // Se oculta a los 5 segundos
       return () => clearTimeout(timer);
     } else {
       setHide(false); // Resetea si empieza una nueva subasta
     }
-  }, [isFinished, auction.id]);
+  }, [isFinished, auction]);
 
-  if (hide) return null;
+  // 3. AHORA SÍ, LOS RETORNOS (CORTES)
+  if (!auction || !auction.active || hide) return null;
 
+  const mins = Math.floor(timeLeft / 60); 
+  const secs = timeLeft % 60;
+
+  // 4. EL RENDERIZADO VISUAL
   return (
     <div className="absolute top-[250px] sm:top-44 left-1/2 -translate-x-1/2 w-64 sm:w-72 z-40 pointer-events-auto">
       <div className={`bg-gradient-to-b from-yellow-900/90 to-black border-2 border-yellow-500 rounded-3xl p-4 shadow-[0_0_30px_rgba(234,179,8,0.4)] ${isFinished ? 'animate-pulse' : 'animate-fade-in'}`}>
