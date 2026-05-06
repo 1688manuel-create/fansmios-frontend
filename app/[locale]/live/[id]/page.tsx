@@ -94,7 +94,6 @@ export default function LiveRoom() {
   const [rouletteEvent, setRouletteEvent] = useState<{senderName: string, prize: string} | null>(null);
   const [auction, setAuction] = useState<any>(null);
 
-  // 🔥 NUEVO SISTEMA DE MODALES ELEGANTES (Reemplaza los Prompts Feos)
   const [promptConfig, setPromptConfig] = useState<any>(null);
   const [confirmConfig, setConfirmConfig] = useState<any>(null);
 
@@ -209,7 +208,6 @@ export default function LiveRoom() {
     onError: (err: any) => setConfirmConfig({ title: "Atención", message: err.message, confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) })
   });
 
-  // 💎 REEMPLAZO DE PROMPTS Y CONFIRMS CON MODALES ELEGANTES 💎
   const handleStartAuction = () => {
     setPromptConfig({
       title: "Iniciar Subasta", icon: <Gavel className="text-yellow-500" />,
@@ -382,8 +380,8 @@ export default function LiveRoom() {
         @keyframes slotSpin { 0% { transform: translateY(0); } 100% { transform: translateY(-100%); } }
       `}</style>
 
-      {/* 🎯 META */}
-      <div className="absolute top-[130px] sm:top-24 left-1/2 -translate-x-1/2 z-30 w-64">
+      {/* 🎯 META CORREGIDA (Más abajo en móvil) */}
+      <div className="absolute top-[170px] sm:top-28 left-1/2 -translate-x-1/2 z-30 w-64">
         <div className="bg-black/40 backdrop-blur-md rounded-full border border-white/10 p-1 px-3 flex items-center gap-2 shadow-lg pointer-events-auto cursor-pointer" onClick={() => {
           if (!isCreatorOrAdmin) return;
           setPromptConfig({ title: "Actualizar Meta", icon: <TrendingUp className="text-teal-400" />, fields: [{ id: 'goal', label: 'Meta (USD)', placeholder: 'Ej: 1000', type: 'number', defaultValue: String(targetGoal) }], submitText: "Guardar", onSubmit: (v: any) => { setTargetGoal(Number(v.goal) || targetGoal); setPromptConfig(null); }, onCancel: () => setPromptConfig(null) });
@@ -410,9 +408,11 @@ export default function LiveRoom() {
               <div className="absolute top-0 w-full h-32 bg-gradient-to-b from-black/80 to-transparent pointer-events-none -z-10"></div>
               <div className="absolute bottom-0 w-full h-64 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none -z-10"></div>
               
-              <div className="pt-4 px-4 flex justify-between items-start pointer-events-auto">
+              <div className="pt-4 px-2 sm:px-4 flex justify-between items-start pointer-events-auto">
+                
+                {/* 🛡️ IZQUIERDA: Perfil y Botones del Creador */}
                 <div className="flex flex-col gap-3">
-                  <div className="flex items-center bg-black/40 backdrop-blur-md rounded-full p-1 pr-3 border border-white/10 shadow-lg cursor-pointer hover:bg-black/50 transition-colors">
+                  <div className="flex items-center bg-black/40 backdrop-blur-md rounded-full p-1 pr-3 border border-white/10 shadow-lg cursor-pointer hover:bg-black/50 transition-colors max-w-fit">
                     <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center font-black text-white shadow-inner overflow-hidden border border-white/20 mr-2">
                       {streamData.creator?.profileImage ? <img src={streamData.creator.profileImage} alt="perfil" className="w-full h-full object-cover" /> : streamData.creator?.username?.charAt(0).toUpperCase()}
                     </div>
@@ -424,27 +424,28 @@ export default function LiveRoom() {
                   </div>
 
                   {isCreatorOrAdmin && isLiveActive && (
-                    <div className="flex flex-wrap gap-2 max-w-[250px]">
-                      <button onClick={handleInviteGuest} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-teal-400"><UserPlus className="w-3.5 h-3.5" /> Invitar</button>
-                      <button onClick={handleStartBattle} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-pink-400"><Swords className="w-3.5 h-3.5" /> Batalla</button>
-                      <button onClick={() => setShowChallengeManager(true)} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-red-400"><Target className="w-3.5 h-3.5" /> Mis Retos</button>
-                      <button onClick={handleStartAuction} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/20 transition-all text-xs font-bold shadow-lg text-yellow-400"><Gavel className="w-3.5 h-3.5" /> Subasta</button>
+                    <div className="flex flex-wrap gap-1.5 max-w-[200px] sm:max-w-[250px]">
+                      <button onClick={handleInviteGuest} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5 flex items-center gap-1 hover:bg-white/20 transition-all text-[10px] sm:text-xs font-bold shadow-lg text-teal-400"><UserPlus className="w-3.5 h-3.5" /> Invitar</button>
+                      <button onClick={handleStartBattle} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5 flex items-center gap-1 hover:bg-white/20 transition-all text-[10px] sm:text-xs font-bold shadow-lg text-pink-400"><Swords className="w-3.5 h-3.5" /> Batalla</button>
+                      <button onClick={() => setShowChallengeManager(true)} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5 flex items-center gap-1 hover:bg-white/20 transition-all text-[10px] sm:text-xs font-bold shadow-lg text-red-400"><Target className="w-3.5 h-3.5" /> Mis Retos</button>
+                      <button onClick={handleStartAuction} className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5 flex items-center gap-1 hover:bg-white/20 transition-all text-[10px] sm:text-xs font-bold shadow-lg text-yellow-400"><Gavel className="w-3.5 h-3.5" /> Subasta</button>
                     </div>
                   )}
                 </div>
 
-                <div className="flex flex-col items-end gap-2">
-                  <div className="flex items-center gap-2">
-                    {isCreatorOrAdmin && <button onClick={handleToggleSlowMode} className={`w-9 h-9 rounded-full backdrop-blur-md flex items-center justify-center border shadow-lg transition-colors ${slowMode > 0 ? 'bg-orange-500/80 border-orange-500/50 text-white' : 'bg-black/40 border-white/10 text-gray-400 hover:bg-white/20 hover:text-white'}`}><Timer className="w-4 h-4" /></button>}
-                    {isCreatorOrAdmin && <button onClick={handleLockRoomVIP} className="w-9 h-9 rounded-full bg-red-600/80 backdrop-blur-md flex items-center justify-center border border-red-500/50 text-white hover:bg-red-500 transition-colors shadow-[0_0_15px_rgba(220,38,38,0.5)]"><Lock className="w-4 h-4" /></button>}
-                    <button onClick={() => setShowViewersModal(true)} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg"><Eye className="w-4 h-4" /></button>
-                    <button onClick={isCreatorOrAdmin ? handleEndStream : () => router.push('/explore')} className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg"><X className="w-4 h-4" /></button>
+                {/* 🛡️ DERECHA: Controles (Ahora envuelven si falta espacio) */}
+                <div className="flex flex-col items-end gap-1.5 sm:gap-2">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-end max-w-[100px] sm:max-w-none">
+                    {isCreatorOrAdmin && <button onClick={handleToggleSlowMode} className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full backdrop-blur-md flex items-center justify-center border shadow-lg transition-colors ${slowMode > 0 ? 'bg-orange-500/80 border-orange-500/50 text-white' : 'bg-black/40 border-white/10 text-gray-400 hover:bg-white/20 hover:text-white'}`}><Timer className="w-4 h-4 sm:w-4 sm:h-4" /></button>}
+                    {isCreatorOrAdmin && <button onClick={handleLockRoomVIP} className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-red-600/80 backdrop-blur-md flex items-center justify-center border border-red-500/50 text-white hover:bg-red-500 transition-colors shadow-[0_0_15px_rgba(220,38,38,0.5)]"><Lock className="w-4 h-4 sm:w-4 sm:h-4" /></button>}
+                    <button onClick={() => setShowViewersModal(true)} className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg"><Eye className="w-4 h-4 sm:w-4 sm:h-4" /></button>
+                    <button onClick={isCreatorOrAdmin ? handleEndStream : () => router.push('/explore')} className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 text-white hover:bg-white/20 transition-colors shadow-lg"><X className="w-4 h-4 sm:w-4 sm:h-4" /></button>
                   </div>
-                  <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded-full text-gray-300 backdrop-blur-sm border border-white/5">{uptime}</span>
+                  <span className="text-[9px] sm:text-[10px] font-mono bg-black/40 px-2 py-1 rounded-full text-gray-300 backdrop-blur-sm border border-white/5">{uptime}</span>
                 </div>
               </div>
 
-              <div className="absolute right-4 top-[280px] sm:top-44 flex flex-col items-end gap-2 pointer-events-auto">
+              <div className="absolute right-2 sm:right-4 top-[240px] sm:top-44 flex flex-col items-end gap-2 pointer-events-auto">
                 {topDonators.length > 0 && (
                   <div className="bg-black/30 backdrop-blur-md p-2 rounded-2xl border border-green-500/20 shadow-lg min-w-[100px]">
                     <div className="flex items-center justify-center gap-1 mb-1 border-b border-white/10 pb-1">< Trophy className="w-3 h-3 text-green-400" /> <span className="text-[9px] text-green-400 font-black uppercase tracking-widest">Top Fans</span></div>
@@ -565,7 +566,7 @@ function DynamicPromptModal({ config }: { config: any }) {
   });
 
   return (
-    <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
+    <div className="absolute inset-0 z-[100002] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
       <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in">
         <div className="flex items-center justify-between p-5 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent">
           <h3 className="text-white font-black text-lg flex items-center gap-2">{config.icon} {config.title}</h3>
@@ -589,7 +590,7 @@ function DynamicPromptModal({ config }: { config: any }) {
 
 function DynamicConfirmModal({ config }: { config: any }) {
   return (
-    <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
+    <div className="absolute inset-0 z-[100002] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
       <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in text-center p-6">
          <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
            <AlertTriangle className="w-8 h-8 text-yellow-500" />
@@ -631,7 +632,7 @@ function AuctionOverlay({ auction, isCreator, onBid }: { auction: any, isCreator
   const secs = timeLeft % 60;
 
   return (
-    <div className="absolute top-[210px] sm:top-44 left-1/2 -translate-x-1/2 w-72 z-40 pointer-events-auto">
+    <div className="absolute top-[250px] sm:top-44 left-1/2 -translate-x-1/2 w-64 sm:w-72 z-40 pointer-events-auto">
       <div className={`bg-gradient-to-b from-yellow-900/90 to-black border-2 border-yellow-500 rounded-3xl p-4 shadow-[0_0_30px_rgba(234,179,8,0.4)] ${isFinished ? 'animate-pulse' : 'animate-fade-in'}`}>
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center gap-1 text-yellow-400 font-black text-xs uppercase tracking-widest"><Gavel className="w-4 h-4"/> SUBASTA</div>
@@ -751,7 +752,7 @@ function BattleOverlay({ battle }: { battle: any }) {
   const winner = battle.leftScore >= battle.rightScore ? battle.leftName : battle.rightName;
 
   return (
-    <div className="absolute top-[180px] sm:top-36 left-0 w-full px-8 z-30 animate-fade-in pointer-events-none">
+    <div className="absolute top-[210px] sm:top-36 left-0 w-full px-4 sm:px-8 z-30 animate-fade-in pointer-events-none">
       <div className="flex flex-col items-center mb-1">
         {isFinished ? <span className="bg-yellow-500 text-black px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(234,179,8,0.8)] animate-bounce">¡TIEMPO! GANA: {winner}</span> : <span className="bg-red-600 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20 shadow-lg flex items-center gap-1 animate-pulse"><Timer className="w-3 h-3"/> {mins}:{secs.toString().padStart(2, '0')}</span>}
       </div>
