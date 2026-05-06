@@ -185,8 +185,13 @@ export default function LiveRoom() {
     onMessage: (msg: any) => {
       setMessages((prev) => [...prev.slice(-99), msg]); 
       if (msg.isDonation) {
-        const giftData = GIFTS.find(g => g.amount === msg.amount) || { style: "text-green-400" };
-        triggerGiftEffect(msg.giftImageUrl ? { ...giftData, image: msg.giftImageUrl } as Gift : giftData as Gift);
+        // 🔥 SI ES UN RETO, INICIA LA ANIMACIÓN ROJA GIGANTE
+        if (msg.isChallenge) {
+           triggerGiftEffect({ id: 999, name: msg.challengeTitle, amount: msg.amount, image: '', style: "text-red-500 font-black", action: 'explosion' } as Gift);
+        } else {
+           const giftData = GIFTS.find(g => g.amount === msg.amount) || { style: "text-green-400" };
+           triggerGiftEffect(msg.giftImageUrl ? { ...giftData, image: msg.giftImageUrl } as Gift : giftData as Gift);
+        }
         updateTopDonators(msg); handleStreak();
       }
     },
@@ -345,8 +350,25 @@ export default function LiveRoom() {
       const msgContent = isChallenge ? `🔥 ¡Pagó por el reto: ${(gift as Challenge).title}!` : `${t('lbl_has_sent_a')} ${(gift as Gift).name}${battleTag}`;
       const giftMessage = { content: msgContent, isDonation: true, amount: price, user: { username: user?.username, role: user?.role }, userId: user?.id, id: Date.now().toString() };
       setMessages((prev) => [...prev.slice(-99), giftMessage]);
-      socketRef.current?.emit('broadcastMessage', { streamId: id, senderId: user?.id, amount: price, isDonation: true, text: giftMessage.content, user: giftMessage.user, giftImageUrl: isChallenge ? '/gifts/corona.png' : (gift as Gift).image, battleSide: battle?.active ? battleSide : null, action: isChallenge ? null : (gift as Gift).action });
-      triggerGiftEffect(isChallenge ? { id: 99, name: "RETO ACEPTADO", amount: price, image: '/gifts/corona.png', style: "text-red-500 font-black", action: 'explosion' } : (gift as Gift));
+      
+      // 🔥 AVISAMOS AL SERVIDOR QUE ES UN RETO Y LE PASAMOS EL TÍTULO
+      socketRef.current?.emit('broadcastMessage', { 
+        streamId: id, senderId: user?.id, amount: price, isDonation: true, 
+        text: giftMessage.content, user: giftMessage.user, 
+        giftImageUrl: isChallenge ? null : (gift as Gift).image, // Ya no mandamos la corona
+        battleSide: battle?.active ? battleSide : null, 
+        action: isChallenge ? null : (gift as Gift).action,
+        isChallenge: isChallenge, 
+        challengeTitle: isChallenge ? (gift as Challenge).title : null
+      });
+
+      // 🔥 DISPARO LOCAL DE LA ANIMACIÓN
+      if (isChallenge) {
+         triggerGiftEffect({ id: 999, name: (gift as Challenge).title, amount: price, image: '', style: "text-red-500 font-black", action: 'explosion' } as Gift);
+      } else {
+         triggerGiftEffect(gift as Gift);
+      }
+      
       updateTopDonators({ amount: price, userId: user?.id, user: { username: user?.username } }); handleStreak();
     } catch (error) { setConfirmConfig({ title: "Error", message: t('alert_error_gift'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); }
   };
@@ -886,6 +908,22 @@ function PaywallLayer({ price, isProcessing, onBuy }: { price: number, isProcess
 }
 
 function GiftEffectOverlay({ giftEffect }: { giftEffect: Gift }) {
+  // 🔥 INTERFAZ ESPECIAL PARA RETOS PAGADOS (ID 999)
+  if (giftEffect.id === 999) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
+        <div className="text-center animate-[bounce_1s_infinite] flex flex-col items-center px-8 py-6 bg-gradient-to-b from-red-600/90 to-red-900/90 backdrop-blur-xl border-4 border-red-500 rounded-3xl shadow-[0_0_80px_rgba(220,38,38,0.8)] transform scale-110">
+          <div className="text-5xl mb-2 animate-pulse">🚨</div>
+          <h2 className="text-white font-black text-xl uppercase tracking-widest mb-1 drop-shadow-md">¡RETO PAGADO!</h2>
+          <div className="text-3xl md:text-4xl font-black text-yellow-300 uppercase tracking-tighter drop-shadow-[0_0_15px_rgba(253,224,71,0.8)] mt-2">
+            {giftEffect.name}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 🎁 INTERFAZ NORMAL PARA REGALOS
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
       <div className="text-center animate-bounce flex flex-col items-center">
