@@ -183,17 +183,37 @@ export default function LiveRoom() {
   const socketRef = useLiveSocket({
     id: id as string, user, streamData, onLike: triggerHeart,
     onMessage: (msg: any) => {
-      setMessages((prev) => [...prev.slice(-99), msg]); 
-      if (msg.isDonation) {
-        // 🔥 SI ES UN RETO, INICIA LA ANIMACIÓN ROJA GIGANTE
-        if (msg.isChallenge) {
-           triggerGiftEffect({ id: 999, name: msg.challengeTitle, amount: msg.amount, image: '', style: "text-red-500 font-black", action: 'explosion' } as Gift);
-        } else {
-           const giftData = GIFTS.find(g => g.amount === msg.amount) || { style: "text-green-400" };
-           triggerGiftEffect(msg.giftImageUrl ? { ...giftData, image: msg.giftImageUrl } as Gift : giftData as Gift);
+      setMessages((prev) => {
+        // 🛡️ DEDUPLICADOR: Creamos un ID único basado en el mensaje o usamos el que trae
+        const msgText = msg.text || msg.content;
+        const msgId = msg.id || msg._id || `${msg.senderId || msg.userId}-${msgText}-${msg.amount}-${msg.user?.username}`;
+        
+        // 🛡️ ESCUDO: Verificamos si este mensaje ya existe en nuestra pantalla
+        const exists = prev.some(m => {
+           const mText = m.text || m.content;
+           const existingId = m.id || m._id || `${m.senderId || m.userId}-${mText}-${m.amount}-${m.user?.username}`;
+           return existingId === msgId;
+        });
+        
+        // Si ya existe (porque lo acabamos de escribir nosotros), lo ignoramos y no hacemos nada
+        if (exists) return prev;
+
+        // Si es un mensaje/regalo NUEVO, procesamos las animaciones
+        if (msg.isDonation) {
+           setTimeout(() => {
+              if (msg.isChallenge) {
+                 triggerGiftEffect({ id: 999, name: msg.challengeTitle, amount: msg.amount, image: '', style: "text-red-500 font-black", action: 'explosion' } as Gift);
+              } else {
+                 const giftData = GIFTS.find(g => g.amount === msg.amount) || { style: "text-green-400" };
+                 triggerGiftEffect(msg.giftImageUrl ? { ...giftData, image: msg.giftImageUrl } as Gift : giftData as Gift);
+              }
+              updateTopDonators(msg); handleStreak();
+           }, 0);
         }
-        updateTopDonators(msg); handleStreak();
-      }
+
+        // Finalmente, agregamos el mensaje a la lista
+        return [...prev.slice(-99), { ...msg, id: msgId, content: msgText }];
+      });
     },
     onViewerCount: setViewersCount,
     onStreamKilled: () => { setConfirmConfig({ title: "Fin de Transmisión", message: t('alert_stream_ended'), confirmText: "Entendido", onConfirm: () => router.push('/explore'), hideCancel: true }); },
@@ -349,8 +369,15 @@ export default function LiveRoom() {
     lastMessageTime.current = Date.now(); const content = chatInput; setChatInput('');
     try {
       const res = await liveService.sendMessage(id as string, content, false, 0);
-      setMessages((prev) => [...prev.slice(-99), res.chatMessage]);
-      socketRef.current?.emit('broadcastMessage', { ...res.chatMessage, streamId: id, senderId: user?.id, amount: 0, isDonation: false, text: res.chatMessage.content });
+      
+      // 🛡️ CREAMOS UN ID UNICO PARA RASTREARLO
+      const newMsg = { ...res.chatMessage, id: res.chatMessage?.id || Date.now().toString(), senderId: user?.id };
+      
+      // 1. Lo mostramos localmente al instante (Velocidad de la luz)
+      setMessages((prev) => [...prev.slice(-99), newMsg]);
+      
+      // 2. Lo enviamos al servidor con ese MISMO ID para que cuando regrese, el escudo lo destruya
+      socketRef.current?.emit('broadcastMessage', { ...newMsg, streamId: id, amount: 0, isDonation: false, text: newMsg.content });
     } catch (e) { console.error(e); }
   };
 
@@ -363,11 +390,18 @@ export default function LiveRoom() {
       setUser((prev: any) => ({ ...prev, walletBalance: prev.walletBalance - price }));
       let battleTag = ''; if (battle?.active && !isChallenge) battleTag = battleSide === 'left' ? ` [Apoya a ${battle.leftName}]` : ` [Apoya a ${battle.rightName}]`;
       const msgContent = isChallenge ? `🔥 ¡Pagó por el reto: ${(gift as Challenge).title}!` : `${t('lbl_has_sent_a')} ${(gift as Gift).name}${battleTag}`;
-      const giftMessage = { content: msgContent, isDonation: true, amount: price, user: { username: user?.username, role: user?.role }, userId: user?.id, id: Date.now().toString() };
+      
+      // 🛡️ CREAMOS EL ID ÚNICO DEL REGALO Y LO GUARDAMOS
+      const msgId = Date.now().toString() + Math.floor(Math.random() * 1000).toString();
+      
+      const giftMessage = { content: msgContent, isDonation: true, amount: price, user: { username: user?.username, role: user?.role }, userId: user?.id, senderId: user?.id, id: msgId };
+      
+      // 1. Mostramos el mensaje localmente
       setMessages((prev) => [...prev.slice(-99), giftMessage]);
       
-      // 🔥 AVISAMOS AL SERVIDOR QUE ES UN RETO Y LE PASAMOS EL TÍTULO
+      // 2. DISPARAMOS AL SERVIDOR INYECTANDO EL ID (¡El Escudo lo leerá cuando regrese!)
       socketRef.current?.emit('broadcastMessage', { 
+        id: msgId, // <--- INYECCIÓN DEL ID TÁCTICO
         streamId: id, senderId: user?.id, amount: price, isDonation: true, 
         text: giftMessage.content, user: giftMessage.user, 
         giftImageUrl: isChallenge ? null : (gift as Gift).image, // Ya no mandamos la corona
