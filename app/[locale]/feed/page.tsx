@@ -19,7 +19,7 @@ import BoostModal from '../../../components/BoostModal';
 import { 
   Image as ImageIcon, Lock, Radio, Bell, MessageCircle, LogOut, 
   Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, X, User,
-  TrendingUp, Zap, Star, ChevronRight, ChevronLeft, Send, BadgeCheck, Flag, Wallet, Bookmark
+  TrendingUp, Zap, Star, ChevronRight, ChevronLeft, Send, BadgeCheck, Flag, Wallet, Bookmark, AlertTriangle
 } from 'lucide-react';
 
 import { useTranslations } from 'next-intl';
@@ -145,7 +145,6 @@ export default function Feed() {
   const [isPPV, setIsPPV] = useState(false);
   const [price, setPrice] = useState('');
   
-  // 🔥 ESTADOS PARA MÚLTIPLES ARCHIVOS
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -166,7 +165,6 @@ export default function Feed() {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0); 
   
-  // 🔥 NUEVOS ESTADOS PARA LA GALERÍA DESLIZABLE
   const [expandedGallery, setExpandedGallery] = useState<{urls: string[], currentIndex: number, username: string} | null>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -175,6 +173,10 @@ export default function Feed() {
   const [featuredBundle, setFeaturedBundle] = useState<any>(null);
   const [vipCreator, setVipCreator] = useState<any>(null);
   const [walletBalance, setWalletBalance] = useState(0);
+
+  // 🔥 NUEVOS ESTADOS DE MODALES
+  const [promptConfig, setPromptConfig] = useState<any>(null);
+  const [confirmConfig, setConfirmConfig] = useState<any>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -291,8 +293,10 @@ export default function Feed() {
   const handleToggleBookmark = async (postId: string) => {
     try {
       await api.post(`/bookmarks/${postId}/toggle`);
-      alert('🔖 Post actualizado en tu Bóveda de Favoritos');
-    } catch (error) { alert('Error al guardar el post'); }
+      setConfirmConfig({ title: "Guardado", message: "🔖 Post actualizado en tu Bóveda de Favoritos.", confirmText: "Genial", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
+    } catch (error) { 
+      setConfirmConfig({ title: "Error", message: "Error al guardar el post.", confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
+    }
   };
 
   const submitComment = async (postId: string) => {
@@ -311,59 +315,86 @@ export default function Feed() {
       setCommentText(''); setCommentingPostId(null); setReplyingToCommentId(null);
       setExpandedComments(prev => ({...prev, [postId]: true}));
       fetchData(); 
-    } catch (error) { alert(t('alert_publish_error')); } finally { setIsSubmittingComment(false); }
+    } catch (error) { 
+      setConfirmConfig({ title: "Error", message: t('alert_publish_error'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); 
+    } finally { setIsSubmittingComment(false); }
   };
 
   const handleReplyClick = (postId: string, commentId: string) => { setCommentingPostId(postId); setReplyingToCommentId(commentId); };
 
   const handleDeleteComment = async (commentId: string) => {
-    if (!window.confirm(t('confirm_delete_comment'))) return;
-    try { await api.delete(`/posts/comments/${commentId}`); fetchData(); } catch (error) { alert(t('alert_error_delete_comment')); }
+    setConfirmConfig({
+      title: "Eliminar Comentario", message: t('confirm_delete_comment'), confirmText: "Eliminar", confirmColor: "bg-red-600 hover:bg-red-500",
+      onConfirm: async () => {
+        setConfirmConfig(null);
+        try { await api.delete(`/posts/comments/${commentId}`); fetchData(); } 
+        catch (error) { setConfirmConfig({ title: "Error", message: t('alert_error_delete_comment'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); }
+      },
+      onCancel: () => setConfirmConfig(null)
+    });
   };
 
   const handleBlockUser = async (userId: string, username: string) => {
-    if (!window.confirm(`${t('confirm_block_user_1')} @${username}? ${t('confirm_block_user_2')}`)) return;
-    try { await api.post(`/users/${userId}/block`); alert(`🚫 ${t('alert_blocked')} @${username}.`); fetchData(); } catch (error) {}
+    setConfirmConfig({
+      title: "Bloquear Usuario", message: `${t('confirm_block_user_1')} @${username}? ${t('confirm_block_user_2')}`, confirmText: "Bloquear", confirmColor: "bg-red-600 hover:bg-red-500",
+      onConfirm: async () => {
+        setConfirmConfig(null);
+        try { 
+          await api.post(`/users/${userId}/block`); 
+          setConfirmConfig({ title: "Bloqueado", message: `🚫 ${t('alert_blocked')} @${username}.`, confirmText: "Entendido", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
+          fetchData(); 
+        } catch (error) {}
+      },
+      onCancel: () => setConfirmConfig(null)
+    });
   };
 
   const handleUnlockClick = async (post: any) => {
     try {
       const data = await paymentService.createPaymentIntent({ amount: post.price || 0, type: 'PPV_POST', creatorId: post.user?.id || 'mock', postId: post.id, description: 'Desbloqueo de Post' });
-      if (data.success || data.receipt) { alert(t('alert_unlocked')); fetchData(); } 
+      if (data.success || data.receipt) { 
+        setConfirmConfig({ title: "¡Éxito!", message: t('alert_unlocked'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); 
+        fetchData(); 
+      } 
       else { setClientSecret(data.clientSecret); setSelectedPost(post); setIsPaymentModalOpen(true); }
-    } catch (error) { alert(t('alert_gateway_error')); }
+    } catch (error) { 
+      setConfirmConfig({ title: "Error", message: t('alert_gateway_error'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); 
+    }
   };
 
   const handleUnlockBundle = async (bundle: any) => {
     try {
       const payload: any = { amount: bundle.price || 0, type: 'BUNDLE', creatorId: bundle.creatorId || bundle.creator?.id, bundleId: bundle.id, description: `Compra de Paquete VIP: ${bundle.title}` };
       const data = await paymentService.createPaymentIntent(payload);
-      if (data.success || data.receipt) { alert(t('alert_bundle_bought')); fetchData(); } 
+      if (data.success || data.receipt) { 
+        setConfirmConfig({ title: "¡Éxito!", message: t('alert_bundle_bought'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); 
+        fetchData(); 
+      } 
       else { setClientSecret(data.clientSecret); setSelectedPost({ id: bundle.id, price: bundle.price, user: bundle.creator, isBundle: true }); setIsPaymentModalOpen(true); }
-    } catch (error) { alert(t('alert_error_bundle')); }
+    } catch (error) { 
+      setConfirmConfig({ title: "Error", message: t('alert_error_bundle'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); 
+    }
   };
 
-  // 🔥 NUEVA LÓGICA DE MÚLTIPLES ARCHIVOS
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const filesArray = Array.from(e.target.files);
       
       const hasVideo = filesArray.some(f => f.type.startsWith('video/'));
       if (hasVideo && filesArray.length > 1) {
-         alert('Solo puedes subir 1 video por publicación.');
+         setConfirmConfig({ title: "Límite Excedido", message: "Solo puedes subir 1 video por publicación.", confirmText: "Entendido", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
          if (fileInputRef.current) fileInputRef.current.value = '';
          return;
       }
       if (filesArray.length > 5) {
-         alert('Puedes subir un máximo de 5 imágenes.');
+         setConfirmConfig({ title: "Límite Excedido", message: "Puedes subir un máximo de 5 imágenes.", confirmText: "Entendido", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
          if (fileInputRef.current) fileInputRef.current.value = '';
          return;
       }
 
-      // 🛑 NUEVO ESCUDO: Validación de 150MB para Posts
       const hasOversizedFile = filesArray.some(f => f.size > 150 * 1024 * 1024);
       if (hasOversizedFile) {
-        alert('¡Alto! El archivo es muy pesado (Máximo 150MB o 5 Minutos).');
+        setConfirmConfig({ title: "Archivo Muy Pesado", message: "¡Alto! El archivo es muy pesado (Máximo 150MB o 5 Minutos).", confirmText: "Entendido", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
         if (fileInputRef.current) fileInputRef.current.value = '';
         return;
       }
@@ -388,42 +419,54 @@ export default function Feed() {
       formData.append('isPPV', String(isPPV));
       formData.append('price', String(isPPV ? Number(price) : 0));
       
-      // Adjuntamos todos los archivos
-      selectedFiles.forEach(file => {
-         formData.append('media', file); 
-      });
-
+      selectedFiles.forEach(file => { formData.append('media', file); });
       await postService.createPost(formData);
       
       setNewPostContent(''); setIsPPV(false); setPrice(''); setSelectedFiles([]); setImagePreviews([]);
       if (fileInputRef.current) fileInputRef.current.value = ''; 
       fetchData(); 
-    } catch (error: any) { alert(error.response?.data?.error || t('alert_publish_error')); } 
+    } catch (error: any) { 
+      setConfirmConfig({ title: "Error", message: error.response?.data?.error || t('alert_publish_error'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); 
+    } 
     finally { setIsPublishing(false); }
   };
 
-  const handleStoryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStoryUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-
-      // 🛑 NUEVO ESCUDO: Validación de 150MB para Historias
       if (file.size > 150 * 1024 * 1024) {
-        alert('¡Alto! La historia es muy pesada (Máximo 150MB).');
+        setConfirmConfig({ title: "Archivo Muy Pesado", message: "¡Alto! La historia es muy pesada (Máximo 150MB).", confirmText: "Entendido", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
         if (storyFileInputRef.current) storyFileInputRef.current.value = '';
         return;
       }
-
-      const caption = window.prompt(t('prompt_story_msg'));
-      setIsUploadingStory(true);
-      try { await storyService.createStory(file, caption || ''); await fetchData(); } catch (error) {} 
-      finally { setIsUploadingStory(false); if (storyFileInputRef.current) storyFileInputRef.current.value = ''; }
+      setPromptConfig({
+        title: "Nueva Historia", icon: <ImageIcon className="text-teal-400" />,
+        fields: [{ id: 'caption', label: 'Pie de foto (opcional)', placeholder: t('prompt_story_msg') }],
+        submitText: "Subir Historia",
+        onSubmit: async (v: any) => {
+          setPromptConfig(null);
+          setIsUploadingStory(true);
+          try { await storyService.createStory(file, v.caption || ''); await fetchData(); } catch (error) {} 
+          finally { setIsUploadingStory(false); if (storyFileInputRef.current) storyFileInputRef.current.value = ''; }
+        },
+        onCancel: () => { setPromptConfig(null); if (storyFileInputRef.current) storyFileInputRef.current.value = ''; }
+      });
     }
   };
 
-  const handleStartLive = async () => {
-    const title = window.prompt(t('prompt_live_title'));
-    if (!title) return; 
-    try { const res = await liveService.createStream(title); router.push(`/live/${res.liveStream.id}`); } catch (error) { alert(t('alert_live_error')); }
+  const handleStartLive = () => {
+    setPromptConfig({
+      title: "Nuevo En Vivo", icon: <Radio className="text-red-500" />,
+      fields: [{ id: 'title', label: 'Título de la transmisión', placeholder: t('prompt_live_title') }],
+      submitText: "Comenzar",
+      onSubmit: async (v: any) => {
+        setPromptConfig(null);
+        if (!v.title) return;
+        try { const res = await liveService.createStream(v.title); router.push(`/live/${res.liveStream.id}`); } 
+        catch (error) { setConfirmConfig({ title: "Error", message: t('alert_live_error'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); }
+      },
+      onCancel: () => setPromptConfig(null)
+    });
   };
 
   const openStory = async (story: any) => {
@@ -432,13 +475,25 @@ export default function Feed() {
   };
 
   const handleDeleteStory = async (storyId: string) => {
-    if (!window.confirm(t('confirm_delete_story'))) return;
-    try { await api.delete(`/stories/${storyId}`); setActiveStory(null); fetchData(); } catch (error) {}
+    setConfirmConfig({
+      title: "Eliminar Historia", message: t('confirm_delete_story'), confirmText: "Eliminar", confirmColor: "bg-red-600 hover:bg-red-500",
+      onConfirm: async () => {
+        setConfirmConfig(null);
+        try { await api.delete(`/stories/${storyId}`); setActiveStory(null); fetchData(); } catch (error) {}
+      },
+      onCancel: () => setConfirmConfig(null)
+    });
   };
 
   const handleDeletePost = async (postId: string) => {
-    if (!window.confirm(t('confirm_delete_post'))) return;
-    try { await api.delete(`/posts/${postId}`); fetchData(); } catch (error) {}
+    setConfirmConfig({
+      title: "Eliminar Post", message: t('confirm_delete_post'), confirmText: "Eliminar", confirmColor: "bg-red-600 hover:bg-red-500",
+      onConfirm: async () => {
+        setConfirmConfig(null);
+        try { await api.delete(`/posts/${postId}`); fetchData(); } catch (error) {}
+      },
+      onCancel: () => setConfirmConfig(null)
+    });
   };
 
   const handleLogout = () => { localStorage.clear(); router.push('/auth'); };
@@ -1018,11 +1073,11 @@ export default function Feed() {
         )}
 
         {isTipModalOpen && tipRecipient && (
-          <TipModal creatorName={tipRecipient.username} onClose={() => setIsTipModalOpen(false)} onContinue={async (amount, message) => { setIsTipModalOpen(false); try { const data = await paymentService.createPaymentIntent({ amount: amount || 0, type: 'TIP', creatorId: tipRecipient.id, description: `Propina: ${message}` }); if (data.success || data.receipt) { alert('✅ ' + t('alert_unlocked')); router.refresh(); fetchData(); } else { setClientSecret(data.clientSecret); setSelectedPost({ id: 'tip', price: amount }); setIsPaymentModalOpen(true); } } catch (error) { alert(t('alert_error_payment')); } }} />
+          <TipModal creatorName={tipRecipient.username} onClose={() => setIsTipModalOpen(false)} onContinue={async (amount, message) => { setIsTipModalOpen(false); try { const data = await paymentService.createPaymentIntent({ amount: amount || 0, type: 'TIP', creatorId: tipRecipient.id, description: `Propina: ${message}` }); if (data.success || data.receipt) { setConfirmConfig({ title: "¡Gracias!", message: '✅ ' + t('alert_unlocked'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); router.refresh(); fetchData(); } else { setClientSecret(data.clientSecret); setSelectedPost({ id: 'tip', price: amount }); setIsPaymentModalOpen(true); } } catch (error) { setConfirmConfig({ title: "Error", message: t('alert_error_payment'), confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); } }} />
         )}
         
         {isPaymentModalOpen && clientSecret && selectedPost && (
-          <PaymentModal clientSecret={clientSecret} price={selectedPost.price || 0} creatorId={selectedPost.user?.id || tipRecipient?.id || featuredBundle?.creatorId} onClose={() => setIsPaymentModalOpen(false)} onSuccess={async () => { setIsPaymentModalOpen(false); if (selectedPost.isBundle) { try { await api.post('/bundles/purchase', { bundleId: selectedPost.id }); } catch (e) { console.error('Error interno al liberar el paquete:', e); } } alert(t('alert_payment_success')); fetchData(); }} />
+          <PaymentModal clientSecret={clientSecret} price={selectedPost.price || 0} creatorId={selectedPost.user?.id || tipRecipient?.id || featuredBundle?.creatorId} onClose={() => setIsPaymentModalOpen(false)} onSuccess={async () => { setIsPaymentModalOpen(false); if (selectedPost.isBundle) { try { await api.post('/bundles/purchase', { bundleId: selectedPost.id }); } catch (e) { console.error('Error interno al liberar el paquete:', e); } } setConfirmConfig({ title: "Pago Exitoso", message: t('alert_payment_success'), confirmText: "Genial", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); fetchData(); }} />
         )}
 
         {isBoostModalOpen && (
@@ -1109,7 +1164,65 @@ export default function Feed() {
           </div>
         )}
 
+        {/* 🔥 RENDERIZADO DE MODALES DINÁMICOS */}
+        {promptConfig && <DynamicPromptModal config={promptConfig} />}
+        {confirmConfig && <DynamicConfirmModal config={confirmConfig} />}
+
       </div>
     </AppLayout>
+  );
+}
+
+// ==========================================================
+// 🛠️ MODALES DINÁMICOS (Reemplazan prompt y confirm nativos)
+// ==========================================================
+
+function DynamicPromptModal({ config }: { config: any }) {
+  const [values, setValues] = useState<Record<string, string>>(() => {
+    const init: Record<string, string> = {};
+    config.fields.forEach((f: any) => init[f.id] = f.defaultValue || '');
+    return init;
+  });
+
+  return (
+    <div className="absolute inset-0 z-[100002] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
+      <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in">
+        <div className="flex items-center justify-between p-5 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent">
+          <h3 className="text-white font-black text-lg flex items-center gap-2">{config.icon} {config.title}</h3>
+          <button onClick={config.onCancel} className="text-gray-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
+        </div>
+        <div className="p-5 space-y-4">
+          {config.fields.map((f: any) => (
+            <div key={f.id}>
+              <label className="text-xs font-bold text-gray-400 mb-1.5 block uppercase tracking-wider">{f.label}</label>
+              <input type={f.type || 'text'} placeholder={f.placeholder} value={values[f.id]} onChange={e => setValues({...values, [f.id]: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-teal-500/50 transition-colors" />
+            </div>
+          ))}
+          <button onClick={() => config.onSubmit(values)} className="w-full mt-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:scale-[1.02] active:scale-95 text-white font-black uppercase py-3 rounded-xl text-sm transition-all shadow-lg">
+            {config.submitText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DynamicConfirmModal({ config }: { config: any }) {
+  return (
+    <div className="absolute inset-0 z-[100002] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
+      <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in text-center p-6">
+         <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
+           <AlertTriangle className="w-8 h-8 text-yellow-500" />
+         </div>
+         <h3 className="text-white font-black text-xl mb-2">{config.title}</h3>
+         <p className="text-gray-400 text-sm mb-6 leading-relaxed">{config.message}</p>
+         <div className="flex gap-3">
+            {!config.hideCancel && (
+              <button onClick={config.onCancel} className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-3 rounded-xl transition-colors text-sm">Cancelar</button>
+            )}
+            <button onClick={config.onConfirm} className={`flex-1 ${config.confirmColor || 'bg-teal-600 hover:bg-teal-500'} text-white font-black py-3 rounded-xl transition-colors shadow-lg text-sm`}>{config.confirmText || 'Confirmar'}</button>
+         </div>
+      </div>
+    </div>
   );
 }
