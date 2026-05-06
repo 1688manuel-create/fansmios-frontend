@@ -630,6 +630,18 @@ function AuctionOverlay({ auction, isCreator, onBid }: { auction: any, isCreator
   const isFinished = timeLeft <= 0;
   const mins = Math.floor(timeLeft / 60); 
   const secs = timeLeft % 60;
+  const [hide, setHide] = useState(false);
+
+  useEffect(() => {
+    if (isFinished) {
+      const timer = setTimeout(() => setHide(true), 5000); // Se oculta a los 5 segundos
+      return () => clearTimeout(timer);
+    } else {
+      setHide(false); // Resetea si empieza una nueva subasta
+    }
+  }, [isFinished, auction.id]);
+
+  if (hide) return null;
 
   return (
     <div className="absolute top-[250px] sm:top-44 left-1/2 -translate-x-1/2 w-64 sm:w-72 z-40 pointer-events-auto">
@@ -679,16 +691,33 @@ function RouletteOverlay({ event }: { event: {senderName: string, prize: string}
 }
 
 function ChallengeManagerModal({ challenges, setChallenges, onClose, setConfirmConfig }: { challenges: Challenge[], setChallenges: any, onClose: () => void, setConfirmConfig: any }) {
-  const [title, setTitle] = useState(''); const [desc, setDesc] = useState(''); const [price, setPrice] = useState(''); const [loading, setLoading] = useState(false);
+  const [title, setTitle] = useState(''); 
+  const [desc, setDesc] = useState(''); 
+  const [price, setPrice] = useState(''); 
+  const [loading, setLoading] = useState(false);
+  
   const handleAdd = async () => {
     if (!title || !price) return;
     setLoading(true);
-    try { const data = await liveService.createChallenge(title, desc, Number(price)); setChallenges((prev: any) => [...prev, data.challenge]); setTitle(''); setDesc(''); setPrice(''); } catch (e) { setConfirmConfig({ title: "Error", message: "Error al crear el reto", confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); }
+    try { 
+      const data = await liveService.createChallenge(title, desc, Number(price)); 
+      setChallenges((prev: any) => [...prev, data.challenge]); 
+      setTitle(''); setDesc(''); setPrice(''); 
+    } catch (e) { 
+      setConfirmConfig({ title: "Error", message: "Error al crear el reto", confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); 
+    }
     setLoading(false);
   };
+  
   const handleToggle = async (id: string, currentStatus: boolean) => {
-    try { await liveService.toggleChallenge(id, !currentStatus); setChallenges((prev: any) => prev.map((c: any) => c.id === id ? { ...c, isActive: !currentStatus } : c)); } catch (e) { setConfirmConfig({ title: "Error", message: "Error al actualizar", confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); }
+    try { 
+      await liveService.toggleChallenge(id, !currentStatus); 
+      setChallenges((prev: any) => prev.map((c: any) => c.id === id ? { ...c, isActive: !currentStatus } : c)); 
+    } catch (e) { 
+      setConfirmConfig({ title: "Error", message: "Error al actualizar", confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) }); 
+    }
   };
+  
   const handleDelete = async (id: string) => {
     setConfirmConfig({
       title: "Eliminar Reto", message: "¿Borrar este reto para siempre?", confirmText: "Borrar", confirmColor: "bg-red-600 hover:bg-red-500",
@@ -699,28 +728,55 @@ function ChallengeManagerModal({ challenges, setChallenges, onClose, setConfirmC
       onCancel: () => setConfirmConfig(null)
     });
   };
+  
   return (
     <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 pointer-events-auto">
       <div className="bg-[#111] border border-red-500/30 rounded-3xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(220,38,38,0.2)] animate-fade-in">
         <div className="flex items-center justify-between p-5 border-b border-white/10 bg-gradient-to-r from-red-900/30 to-transparent">
-          <h3 className="text-white font-black text-lg flex items-center gap-2"><Target className="w-5 h-5 text-red-500" /> Mis Retos VIP</h3><button onClick={onClose} className="text-gray-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
+          <h3 className="text-white font-black text-lg flex items-center gap-2"><Target className="w-5 h-5 text-red-500" /> Mis Retos VIP</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-white p-1.5 hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
         </div>
         <div className="p-5">
           <div className="bg-black/50 border border-white/5 rounded-2xl p-4 mb-6">
             <h4 className="text-xs font-bold text-red-400 mb-3 uppercase tracking-widest">Crear Nuevo Reto</h4>
             <div className="space-y-3">
               <input type="text" placeholder="Ej: Bailar 10 segundos" value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-red-500/50" />
-              <div className="flex gap-3"><input type="text" placeholder="Detalle (opcional)" value={desc} onChange={e => setDesc(e.target.value)} className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-red-500/50" /><div className="relative w-28"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span><input type="number" placeholder="Precio" value={price} onChange={e => setPrice(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl pl-7 pr-3 py-2.5 text-sm text-white font-mono font-bold outline-none focus:border-red-500/50" /></div></div>
-              <button onClick={handleAdd} disabled={loading || !title || !price} className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-2.5 rounded-xl transition-colors disabled:opacity-50 text-sm">{loading ? 'Guardando...' : '+ Añadir a mi lista'}</button>
+              
+              {/* 🔥 CORRECCIÓN AQUÍ: Se ajustaron los flex y shrink para móvil */}
+              <div className="flex gap-3">
+                <input type="text" placeholder="Detalle (opcional)" value={desc} onChange={e => setDesc(e.target.value)} className="flex-1 min-w-0 bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-red-500/50" />
+                <div className="relative w-24 sm:w-28 shrink-0">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
+                  <input type="number" placeholder="Precio" value={price} onChange={e => setPrice(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl pl-7 pr-2 py-2.5 text-sm text-white font-mono font-bold outline-none focus:border-red-500/50" />
+                </div>
+              </div>
+
+              <button onClick={handleAdd} disabled={loading || !title || !price} className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-2.5 rounded-xl transition-colors disabled:opacity-50 text-sm">
+                {loading ? 'Guardando...' : '+ Añadir a mi lista'}
+              </button>
             </div>
           </div>
           <div className="max-h-[300px] overflow-y-auto custom-scrollbar space-y-2 pr-1">
-            {challenges.length === 0 ? <div className="text-center text-gray-500 text-xs py-4">No has creado ningún reto todavía.</div> : challenges.map(c => (
-              <div key={c.id} className={`flex items-center justify-between p-3 rounded-xl border transition-all ${c.isActive ? 'bg-red-900/10 border-red-500/20' : 'bg-white/5 border-white/5 opacity-50'}`}>
-                <div className="flex-1"><div className="text-sm font-bold text-white">{c.title} <span className="text-green-400 font-mono text-xs ml-2">${c.price.toFixed(2)}</span></div>{c.description && <div className="text-[10px] text-gray-400">{c.description}</div>}</div>
-                <div className="flex items-center gap-2"><button onClick={() => handleToggle(c.id, c.isActive)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${c.isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/50 text-gray-400'}`}><CheckCircle2 className="w-4 h-4" /></button><button onClick={() => handleDelete(c.id)} className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"><Trash2 className="w-4 h-4" /></button></div>
-              </div>
-            ))}
+            {challenges.length === 0 ? (
+              <div className="text-center text-gray-500 text-xs py-4">No has creado ningún reto todavía.</div>
+            ) : (
+              challenges.map(c => (
+                <div key={c.id} className={`flex items-center justify-between p-3 rounded-xl border transition-all ${c.isActive ? 'bg-red-900/10 border-red-500/20' : 'bg-white/5 border-white/5 opacity-50'}`}>
+                  <div className="flex-1">
+                    <div className="text-sm font-bold text-white">{c.title} <span className="text-green-400 font-mono text-xs ml-2">${c.price.toFixed(2)}</span></div>
+                    {c.description && <div className="text-[10px] text-gray-400">{c.description}</div>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => handleToggle(c.id, c.isActive)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${c.isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/50 text-gray-400'}`}>
+                      <CheckCircle2 className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => handleDelete(c.id)} className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
