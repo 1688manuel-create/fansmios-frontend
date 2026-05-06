@@ -540,13 +540,15 @@ export default function LiveRoom() {
                     const canModerate = isCreatorOrAdmin && msg.user?.id !== user?.id;
                     return (
                       <div key={i} className={`text-[13px] px-3 py-1.5 rounded-2xl w-fit max-w-[100%] group/msg flex flex-col leading-tight animate-fade-in ${msg.isDonation ? 'bg-gradient-to-r from-green-500/20 to-black/30 border border-green-500/50 backdrop-blur-md shadow-lg' : 'bg-black/30 backdrop-blur-sm'}`}>
-                        <div className="flex items-center gap-1.5">
+                        
+                        {/* 🔥 SE AGREGÓ flex-wrap PARA QUE NO SE ROMPA EN MÓVILES PEQUEÑOS */}
+                        <div className="flex flex-wrap items-center gap-1.5">
                           {msg.isDonation && <DollarSign className="w-3 h-3 text-green-400" />}
                           <span className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'}`}>{msg.user?.username}:</span>
                           
-                          {/* 🔥 LOS CONTROLES RÁPIDOS 1-CLIC PARA EL CREADOR */}
+                          {/* 🔥 CONTROLES 1-CLIC: SIEMPRE VISIBLES EN MÓVIL, HOVER EN PC */}
                           {canModerate && (
-                            <div className="opacity-0 group-hover/msg:opacity-100 transition-opacity flex items-center gap-1 ml-1">
+                            <div className="opacity-100 md:opacity-0 md:group-hover/msg:opacity-100 transition-opacity flex items-center gap-1 ml-1 mt-0.5 md:mt-0">
                               <button onClick={() => {
                                  const targetId = msg.userId || msg.user?.id || msg.senderId;
                                  if(targetId) {
@@ -559,6 +561,7 @@ export default function LiveRoom() {
                             </div>
                           )}
                         </div>
+
                         <span className={`mt-0.5 ${gift ? gift.style : 'text-white font-medium'} drop-shadow-md`}>{msg.content}</span>
                       </div>
                     );
