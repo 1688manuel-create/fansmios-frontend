@@ -276,10 +276,25 @@ export default function LiveRoom() {
 
   const handleInviteGuest = () => {
     setPromptConfig({
-      title: "Invitar Participante", icon: <UserPlus className="text-teal-500" />,
-      fields: [{ id: 'guestId', label: 'ID del Usuario', placeholder: 'Pega el ID aquí...' }],
-      submitText: "Enviar Invitación",
-      onSubmit: (v: any) => { if(v.guestId) socketRef.current?.emit('guest:invite', { streamId: id, userId: v.guestId }); setPromptConfig(null); },
+      title: "Invitar a Cámara", icon: <UserPlus className="text-teal-500" />,
+      fields: [{ id: 'username', label: 'Nombre de usuario (Sin @)', placeholder: 'Ej: fan123' }],
+      submitText: "Buscar e Invitar",
+      onSubmit: (v: any) => {
+        const targetUsername = v.username?.trim().replace('@', '');
+        if (!targetUsername) return;
+        
+        // 🔍 Rastreo automático del ID en el chat
+        const foundMsg = messages.find((m: any) => m.user?.username?.toLowerCase() === targetUsername.toLowerCase());
+        const targetId = foundMsg?.userId || foundMsg?.user?.id || foundMsg?.senderId;
+
+        if (targetId) {
+           socketRef.current?.emit('guest:invite', { streamId: id, userId: targetId });
+           setPromptConfig(null);
+           setConfirmConfig({ title: "Invitación Enviada", message: `Se ha invitado a @${targetUsername} a subir a la cámara.`, confirmText: "OK", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
+        } else {
+           setConfirmConfig({ title: "Usuario no detectado", message: `No encontramos a @${targetUsername}. Pídele que escriba un simple "Hola" en el chat para que el radar lo detecte y puedas invitarlo.`, confirmText: "Entendido", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
+        }
+      },
       onCancel: () => setPromptConfig(null)
     });
   };
@@ -493,8 +508,22 @@ export default function LiveRoom() {
                       <div key={i} className={`text-[13px] px-3 py-1.5 rounded-2xl w-fit max-w-[100%] group/msg flex flex-col leading-tight animate-fade-in ${msg.isDonation ? 'bg-gradient-to-r from-green-500/20 to-black/30 border border-green-500/50 backdrop-blur-md shadow-lg' : 'bg-black/30 backdrop-blur-sm'}`}>
                         <div className="flex items-center gap-1.5">
                           {msg.isDonation && <DollarSign className="w-3 h-3 text-green-400" />}
-                          <span onClick={() => canModerate && handleKickUser(msg.user?.id, msg.user?.username)} className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'} ${canModerate ? 'cursor-pointer hover:text-red-500' : ''}`}>{msg.user?.username}:</span>
-                          {canModerate && <button onClick={() => handleKickUser(msg.user?.id, msg.user?.username)} className="opacity-0 group-hover/msg:opacity-100 transition-opacity text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-black uppercase ml-1">KICK</button>}
+                          <span className={`font-bold ${msg.user?.role === 'ADMIN' ? 'text-red-400' : 'text-gray-300'}`}>{msg.user?.username}:</span>
+                          
+                          {/* 🔥 LOS CONTROLES RÁPIDOS 1-CLIC PARA EL CREADOR */}
+                          {canModerate && (
+                            <div className="opacity-0 group-hover/msg:opacity-100 transition-opacity flex items-center gap-1 ml-1">
+                              <button onClick={() => {
+                                 const targetId = msg.userId || msg.user?.id || msg.senderId;
+                                 if(targetId) {
+                                   socketRef.current?.emit('guest:invite', { streamId: id, userId: targetId });
+                                   setConfirmConfig({ title: "Invitación Enviada", message: `Has invitado a @${msg.user?.username} a la cámara compartida.`, confirmText: "Genial", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
+                                 }
+                              }} className="text-[9px] bg-teal-600 hover:bg-teal-500 text-white px-1.5 py-0.5 rounded font-black uppercase shadow-md transition-colors">Subir</button>
+                              
+                              <button onClick={() => handleKickUser(msg.userId || msg.user?.id, msg.user?.username)} className="text-[9px] bg-red-600 hover:bg-red-500 text-white px-1.5 py-0.5 rounded font-black uppercase shadow-md transition-colors">Kick</button>
+                            </div>
+                          )}
                         </div>
                         <span className={`mt-0.5 ${gift ? gift.style : 'text-white font-medium'} drop-shadow-md`}>{msg.content}</span>
                       </div>
