@@ -199,22 +199,28 @@ export default function Sidebar() {
                 href={link.href}
                 className="relative flex flex-col items-center justify-center w-14 h-12 transition-all group"
               >
-                {/* Si es el botón central, lo hacemos destacar (estilo TikTok/IG) */}
+                {/* 🔥 EL BOTÓN CENTRAL (Jerarquía VIP) */}
                 {link.isCenter ? (
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90 ${isActive ? 'bg-gradient-to-tr from-teal-500 to-blue-500 shadow-[0_0_15px_rgba(20,184,166,0.5)]' : 'bg-white/10 border border-white/20'}`}>
-                    <Icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-gray-300'}`} strokeWidth={isActive ? 3 : 2} />
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
+                    isActive 
+                      ? 'bg-gradient-to-tr from-red-600 to-orange-500 shadow-[0_0_15px_rgba(239,68,68,0.6)]' 
+                      : 'bg-red-500/10 border border-red-500/40 shadow-[0_0_10px_rgba(239,68,68,0.2)] hover:bg-red-500/20'
+                  }`}>
+                    <Icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-red-500 drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]'}`} strokeWidth={isActive ? 3 : 2.5} />
                   </div>
                 ) : (
+                  /* 🔘 ÍCONOS NORMALES (Mejorada la visibilidad) */
                   <>
                     <Icon 
                       className={`w-6 h-6 transition-all duration-300 ${
                         isActive 
                           ? 'text-teal-400 drop-shadow-[0_0_8px_rgba(20,184,166,0.6)] scale-110' 
-                          : 'text-gray-500 group-hover:text-gray-300'
+                          // 🔥 CORRECCIÓN: Cambiamos text-gray-500 por text-gray-400 para que se vean bien
+                          : 'text-gray-400 group-hover:text-gray-200' 
                       }`} 
                       strokeWidth={isActive ? 3 : 2.5} 
                     />
-                    {/* Solo mostramos el puntito si está activo (minimalismo puro) */}
+                    {/* Puntito indicador activo */}
                     {isActive && (
                       <span className="absolute -bottom-1.5 w-1 h-1 bg-teal-400 rounded-full shadow-[0_0_5px_rgba(20,184,166,0.8)]"></span>
                     )}
