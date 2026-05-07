@@ -1,10 +1,8 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 import withPWAInit from '@ducanh2912/next-pwa';
 
-// 🌍 1. Motor de Idiomas (🔥 CORRECCIÓN AQUÍ 🔥)
-// Le decimos EXACTAMENTE cómo se llama y dónde está tu archivo de idiomas.
-// NOTA: Si tu archivo i18n.ts está dentro de la carpeta "src", cambia esto a './src/i18n.ts'
-const withNextIntl = createNextIntlPlugin('./i18n.ts'); 
+// 🌍 1. Motor de Idiomas (🔥 RUTA EXACTA SEGÚN TU FOTO)
+const withNextIntl = createNextIntlPlugin('./i18n/i18n.ts'); 
 
 // 📱 2. Motor de la PWA (App Nativa)
 const withPWA = withPWAInit({
@@ -16,7 +14,7 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  turbopack: {}, // Mantiene a raya el error anterior de compilación
+  turbopack: {}, 
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**' }
