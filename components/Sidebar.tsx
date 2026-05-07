@@ -119,6 +119,7 @@ export default function Sidebar() {
               <Link 
                 key={link.name} 
                 href={link.href}
+                prefetch={true} // 🔥 NITRO ACTIVADO PARA PC
                 className={`flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${
                   isActive 
                     ? 'nm-inset text-teal-500 shadow-[inset_0_0_10px_rgba(20,184,166,0.1)] border border-teal-500/20' 
@@ -139,6 +140,7 @@ export default function Sidebar() {
               {/* Botón Principal Admin (Usuarios/Stats) */}
               <Link 
                 href="/dashboard/admin"
+                prefetch={true} // 🔥 NITRO ACTIVADO
                 className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${
                   pathname === '/dashboard/admin' ? 'nm-inset text-red-500' : 'nm-btn text-red-500/80 hover:text-red-400'
                 }`}
@@ -150,6 +152,7 @@ export default function Sidebar() {
               {/* 💸 Botón de Payouts (Pagos) */}
               <Link 
                 href="/admin/payouts"
+                prefetch={true} // 🔥 NITRO ACTIVADO
                 className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${
                   pathname === '/admin/payouts' ? 'nm-inset text-orange-500' : 'nm-btn text-orange-500/80 hover:text-orange-400'
                 }`}
@@ -161,6 +164,7 @@ export default function Sidebar() {
               {/* ⚙️ NUEVO: Botón de Configuración (Mensajes de Bienvenida) */}
               <Link 
                 href="/admin/settings"
+                prefetch={true} // 🔥 NITRO ACTIVADO
                 className={`flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all ${
                   pathname === '/admin/settings' ? 'nm-inset text-purple-500' : 'nm-btn text-purple-500/80 hover:text-purple-400'
                 }`}
@@ -197,6 +201,7 @@ export default function Sidebar() {
               <Link 
                 key={`${link.name}-${index}`} 
                 href={link.href}
+                prefetch={true} // 🔥 NITRO ACTIVADO PARA CELULARES
                 className="relative flex flex-col items-center justify-center w-14 h-12 transition-all group"
               >
                 {/* 🔥 EL BOTÓN CENTRAL (Jerarquía VIP) */}
