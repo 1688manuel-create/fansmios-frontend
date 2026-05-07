@@ -1,5 +1,10 @@
-import withPWAInit from "@ducanh2912/next-pwa";
+import createNextIntlPlugin from 'next-intl/plugin';
+import withPWAInit from '@ducanh2912/next-pwa';
 
+// 🌍 1. Motor de Idiomas (El que se nos había borrado)
+const withNextIntl = createNextIntlPlugin();
+
+// 📱 2. Motor de la PWA (App Nativa)
 const withPWA = withPWAInit({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
@@ -9,10 +14,14 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 🔥 LÍNEA NUEVA: Apaga la alerta de Turbopack vs Webpack
-  turbopack: {}, 
-  
-  // (Aquí dejas cualquier otra configuración que ya tuvieras, como images)
+  turbopack: {}, // Mantiene a raya el error anterior de compilación
+  // Si tenías dominios de imágenes (Cloudinary, etc.), ponlos aquí abajo:
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: '**' }
+    ],
+  },
 };
 
-export default withPWA(nextConfig);
+// 🚀 3. FUSIÓN DE MOTORES: Envolvemos la configuración con los dos escudos
+export default withPWA(withNextIntl(nextConfig));
