@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next"; // 🔥 Agregamos Viewport aquí arriba
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css"; // 👈 AQUÍ LLAMAMOS A TUS ESTILOS (TAILWIND)
 
@@ -19,6 +19,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// 🔥 NUEVO: Definimos el color de la barra de estado del celular para la PWA
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+};
+
 // 🌍 METADATA DINÁMICA: Cambia el SEO de Google según el idioma
 export async function generateMetadata({ 
   params 
@@ -31,6 +36,7 @@ export async function generateMetadata({
   return {
     title: t('title'),
     description: t('description'),
+    manifest: '/manifest.json', // 🔥 LÍNEA NUEVA: Conecta tu DNI de la PWA
     icons: {
       icon: '/favicon.ico',
     },
