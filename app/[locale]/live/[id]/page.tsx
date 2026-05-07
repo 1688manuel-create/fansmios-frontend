@@ -31,10 +31,10 @@ if (process.env.NEXT_PUBLIC_API_URL) {
   }
 }
 
-export interface Gift { id: number; name: string; amount: number; image: string; style: string; action?: string; }
-export interface Challenge { id: string; title: string; description: string; price: number; isActive: boolean; }
+interface Gift { id: number; name: string; amount: number; image: string; style: string; action?: string; }
+interface Challenge { id: string; title: string; description: string; price: number; isActive: boolean; }
 
-export const GIFTS: Gift[] = [
+const GIFTS: Gift[] = [
   { id: 1, name: "Rosa", amount: 0.25, image: "/gifts/rosa.png", style: "text-rose-400 font-bold" },
   { id: 2, name: "Brindis", amount: 1.00, image: "/gifts/brindis.png", style: "text-yellow-200 font-bold" },
   { id: 3, name: "Beso", amount: 2.00, image: "/gifts/beso.png", style: "text-pink-500 font-bold drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" },
@@ -48,7 +48,7 @@ export const GIFTS: Gift[] = [
   { id: 11, name: "Rayo", amount: 300.00, image: "/gifts/rayo.png", style: "text-purple-500 font-extrabold drop-shadow-[0_0_20px_rgba(168,85,247,1)] uppercase animate-pulse", action: 'vibrate_intenso' }
 ];
 
-export interface Donator { userId: string; username: string; amount: number; }
+interface Donator { userId: string; username: string; amount: number; }
 
 const roomOptions: RoomOptions = {
   videoCaptureDefaults: { resolution: VideoPresets.h1080.resolution, facingMode: 'user' },
