@@ -11,12 +11,14 @@ export default getRequestConfig(async ({ locale }) => {
   if (!locale || !locales.includes(locale as Locale)) {
     return {
       locale: 'es',
-      messages: (await import(`./messages/es.json`)).default
+      // 🔥 CORRECCIÓN 1: Dos puntos para salir de la carpeta
+      messages: (await import(`../messages/es.json`)).default
     };
   }
 
   try {
-    const messages = (await import(`./messages/${locale}.json`)).default;
+    // 🔥 CORRECCIÓN 2: Dos puntos para salir de la carpeta
+    const messages = (await import(`../messages/${locale}.json`)).default;
 
     return {
       locale,
@@ -26,7 +28,8 @@ export default getRequestConfig(async ({ locale }) => {
     // 🛡️ Fallback si el archivo no existe
     return {
       locale: 'es',
-      messages: (await import(`./messages/es.json`)).default
+      // 🔥 CORRECCIÓN 3: Dos puntos para salir de la carpeta
+      messages: (await import(`../messages/es.json`)).default
     };
   }
 });
