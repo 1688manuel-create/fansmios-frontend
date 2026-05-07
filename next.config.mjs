@@ -9,7 +9,10 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Aquí dejas lo que ya tuvieras configurado de antes
+  // 🔥 LÍNEA NUEVA: Apaga la alerta de Turbopack vs Webpack
+  turbopack: {}, 
+  
+  // (Aquí dejas cualquier otra configuración que ya tuvieras, como images)
 };
 
 export default withPWA(nextConfig);
