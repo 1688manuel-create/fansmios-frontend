@@ -702,6 +702,57 @@ export default function Feed() {
               </div>
             )}
 
+            {/* 🔥 NUEVO: CARRUSEL TRENDING VIP (SOLO MÓVIL) */}
+            {trendingCreators.length > 0 && (
+              <div className="block lg:hidden mt-6 mb-4 animate-fade-in bg-[#050505]/50 rounded-3xl p-4 border border-white/5">
+                <div className="flex items-center justify-between mb-4 px-2">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
+                    <h3 className="text-white font-black uppercase tracking-widest text-sm">{t('aside_trending')}</h3>
+                  </div>
+                  {/* Botón opcional para que compren promoción en móvil */}
+                  {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
+                    <button onClick={() => setIsBoostModalOpen(true)} className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest bg-yellow-500/10 px-2 py-1 rounded-full border border-yellow-500/30">
+                      Aparecer aquí
+                    </button>
+                  )}
+                </div>
+                
+                <div className="flex gap-5 overflow-x-auto pb-2 custom-scrollbar px-1">
+                  {trendingCreators.map((creator) => (
+                    <div key={creator.id} onClick={() => router.push(`/${creator.username}`)} className="shrink-0 flex flex-col items-center gap-2 w-[72px] cursor-pointer group">
+                      <div className="relative">
+                        {/* Corona/Estrella si pagó promoción */}
+                        {creator.isPromoted && (
+                          <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10 bg-[#0e0e0e] border border-yellow-500 rounded-full px-1.5 py-0.5 flex items-center shadow-[0_0_10px_rgba(234,179,8,0.8)]">
+                            <Star className="w-2.5 h-2.5 text-yellow-400 fill-yellow-500" />
+                          </div>
+                        )}
+                        
+                        {/* Avatar */}
+                        <div className={`w-[72px] h-[72px] rounded-full flex items-center justify-center font-bold overflow-hidden transition-transform active:scale-95 border-[3px] ${creator.isPromoted ? 'border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.3)]' : 'border-white/10'}`}>
+                          {creator.creatorProfile?.profileImage ? (
+                            <img src={getImageUrl(creator.creatorProfile.profileImage)} draggable="false" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className={`w-full h-full flex items-center justify-center text-white text-2xl ${creator.isPromoted ? 'bg-gradient-to-tr from-yellow-500 to-yellow-700' : 'bg-white/10'}`}>
+                              {(creator.username || 'U').charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Nombre */}
+                      <div className="text-center w-full">
+                        <p className={`text-xs font-bold truncate ${creator.isPromoted ? 'text-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]' : 'text-gray-300'}`}>
+                          @{creator.username}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* FEED POSTS */}
             <div className="space-y-6">
               {posts.length === 0 ? (
