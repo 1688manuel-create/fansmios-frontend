@@ -788,16 +788,19 @@ export default function Feed() {
                   }
 
                   return (
-                    <React.Fragment key={`${post.id}-${index}`}>
-                      {/* 🔥 ETIQUETA PROMO: Ya no tiene sombra fea. Es pura letra limpia */}
-                      {post.isPromoted && (
-                        <div className="flex items-center gap-1.5 text-yellow-500 mb-3 ml-4 relative z-10 animate-fade-in">
-                          <Star className="w-4 h-4 fill-yellow-500" /> {/* Sombra removida */}
-                          <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-yellow-400">{t('lbl_recommended')}</span>
-                        </div>
-                      )}
+                      <React.Fragment key={`${post.id}-${index}`}>
+                        {/* 🔥 ETIQUETA PROMO: Pura letra limpia, sin sombras que ensucien */}
+                        {post.isPromoted && (
+                          <div className="flex items-center gap-1.5 mb-2 sm:mb-3 ml-4 relative z-10">
+                            <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-500 fill-yellow-500" />
+                            <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-yellow-500">
+                              {t('lbl_recommended')}
+                            </span>
+                          </div>
+                        )}
 
-                      <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-4 sm:p-6 rounded-[2rem] space-y-4 sm:space-y-5 relative overflow-hidden shadow-xl border group ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
+                        {/* 🔥 TARJETA DEL POST: Sin sombra negra en móvil para no manchar el texto */}
+                        <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-4 sm:p-6 rounded-[2rem] space-y-4 sm:space-y-5 relative overflow-hidden shadow-none sm:shadow-xl border group ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
                         
                         {isOwner ? (
                           <button onClick={() => handleDeletePost(post.id)} className="absolute top-5 right-5 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20" title={t('title_delete_post')}><Trash2 className="w-5 h-5" /></button>
