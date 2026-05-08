@@ -854,7 +854,7 @@ export default function Feed() {
                             </div>
                           </div>
                           
-                          {post.isPromoted && !isOwner && <button onClick={() => router.push(`/${post.user.username}`)} className="nm-btn border-yellow-500/30 text-yellow-500 px-4 py-2 rounded-full text-xs font-bold mr-10">Ver Perfil</button>}
+          
                         </div>
                         
                         {post.content && <p className="text-gray-200 text-base leading-relaxed">{post.content}</p>}
