@@ -559,9 +559,9 @@ export default function Feed() {
           </div>
         </nav>
 
-        <div className="max-w-7xl mx-auto flex justify-center gap-8 mt-6 px-4">
-          <main className="w-full max-w-3xl shrink-0 space-y-8 pb-10">
-            <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
+        <div className="max-w-7xl mx-auto flex justify-center gap-8 mt-2 sm:mt-6 px-0 sm:px-4">
+          <main className="w-full max-w-3xl shrink-0 space-y-2 sm:space-y-8 pb-10 bg-black sm:bg-transparent">
+            <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar px-4 sm:px-0 pt-2 sm:pt-0">
               {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
                 <div onClick={() => storyFileInputRef.current?.click()} className="flex flex-col items-center gap-1 cursor-pointer group shrink-0">
                   <div className="w-16 h-16 rounded-full p-1 transition-transform group-hover:scale-105 bg-white/5 border border-white/10 group-hover:border-red-500/50 flex items-center justify-center shadow-lg">
@@ -627,7 +627,7 @@ export default function Feed() {
             )}
 
             {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
-              <div className="nm-inset p-6 rounded-[2rem] space-y-4 border border-white/5">
+              <div className="nm-inset p-4 sm:p-6 rounded-none sm:rounded-[2rem] space-y-4 border-y sm:border border-x-0 sm:border-x border-white/5 bg-[#0a0a0a]">
                 <div className="flex gap-4">
                   {/* 🔥 AVATAR EN LA CAJA DE "CREAR NUEVO POST" CON ANILLO VIP */}
                   <div className={`w-12 h-12 shrink-0 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105 ${(user?.role === 'CREATOR' || user?.role === 'ADMIN') ? 'bg-gradient-to-tr from-red-500 via-orange-500 to-yellow-500 p-[2px]' : 'border border-white/10'}`}>
@@ -704,7 +704,7 @@ export default function Feed() {
 
             {/* 🔥 NUEVO: CARRUSEL TRENDING VIP (SOLO MÓVIL) - DISEÑO LIMPIO */}
             {trendingCreators.length > 0 && (
-              <div className="block lg:hidden mt-8 mb-8 animate-fade-in bg-[#050505]/40 rounded-[2rem] p-5 border border-white/5 shadow-lg">
+              <div className="block lg:hidden animate-fade-in bg-[#0a0a0a] sm:bg-[#050505]/40 rounded-none sm:rounded-[2rem] p-4 sm:p-5 border-y border-x-0 border-white/5 shadow-none sm:shadow-lg">
                 <div className="flex items-center justify-between mb-5 px-1">
                   <div className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
@@ -762,7 +762,7 @@ export default function Feed() {
             )}
 
             {/* FEED POSTS */}
-            <div className="space-y-8 sm:space-y-10">
+            <div className="space-y-2 sm:space-y-10 bg-black sm:bg-transparent">
               {posts.length === 0 ? (
                 <div className="text-center text-gray-500 py-10 nm-inset border border-white/5 rounded-3xl">{t('empty_feed')}</div>
               ) : (
@@ -797,7 +797,7 @@ export default function Feed() {
                         </div>
                       )}
 
-                      <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-5 sm:p-7 rounded-[2rem] space-y-5 relative overflow-hidden shadow-xl border group ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
+                      <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-4 sm:p-7 rounded-none sm:rounded-[2rem] space-y-4 sm:space-y-5 relative overflow-hidden shadow-none sm:shadow-xl border-y sm:border border-x-0 sm:border-x group ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
                         
                         {isOwner ? (
                           <button onClick={() => handleDeletePost(post.id)} className="absolute top-5 right-5 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20" title={t('title_delete_post')}><Trash2 className="w-5 h-5" /></button>
