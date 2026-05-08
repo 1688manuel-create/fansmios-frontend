@@ -729,15 +729,23 @@ export default function Feed() {
                           </div>
                         )}
                         
-                        {/* Avatar */}
-                        <div className={`w-[72px] h-[72px] rounded-full flex items-center justify-center font-bold overflow-hidden transition-transform active:scale-95 border-[3px] ${creator.isPromoted ? 'border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.3)]' : 'border-white/10'}`}>
-                          {creator.creatorProfile?.profileImage ? (
-                            <img src={getImageUrl(creator.creatorProfile.profileImage)} draggable="false" className="w-full h-full object-cover" />
-                          ) : (
-                            <div className={`w-full h-full flex items-center justify-center text-white text-2xl ${creator.isPromoted ? 'bg-gradient-to-tr from-yellow-500 to-yellow-700' : 'bg-white/10'}`}>
-                              {(creator.username || 'U').charAt(0).toUpperCase()}
-                            </div>
-                          )}
+                        {/* 🔥 Avatar con Fuego Dinámico */}
+                        <div className={`relative w-[72px] h-[72px] rounded-full flex items-center justify-center font-bold transition-transform active:scale-95 ${
+                          creator.hasFireBorder || creator.addons?.includes('FIRE_BORDER')
+                            ? 'p-[3px] bg-gradient-to-b from-yellow-400 via-orange-500 to-red-600 shadow-[0_0_25px_rgba(239,68,68,0.8)] animate-pulse'
+                            : creator.isPromoted 
+                              ? 'border-[3px] border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.3)]' 
+                              : 'border-[3px] border-white/10'
+                        }`}>
+                          <div className="w-full h-full rounded-full overflow-hidden border-[3px] border-black bg-black flex items-center justify-center">
+                            {creator.creatorProfile?.profileImage ? (
+                              <img src={getImageUrl(creator.creatorProfile.profileImage)} draggable="false" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className={`w-full h-full flex items-center justify-center text-white text-2xl ${creator.isPromoted ? 'bg-gradient-to-tr from-yellow-500 to-yellow-700' : 'bg-white/10'}`}>
+                                {(creator.username || 'U').charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                       
@@ -799,9 +807,17 @@ export default function Feed() {
                         <div className="flex justify-between items-center relative z-10">
                           <div className="flex items-center gap-3">
                             
-                            {/* 🔥 1. AVATAR VERIFICADO (Mantiene el tamaño exacto w-12 h-12) */}
-                            <div onClick={() => router.push(`/${post.user.username}`)} className={`relative w-12 h-12 shrink-0 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-transform hover:scale-105 ${(post.user?.role === 'CREATOR' || post.user?.role === 'ADMIN') ? 'bg-gradient-to-tr from-red-500 via-orange-500 to-yellow-500 p-[2px]' : (post.isPromoted ? 'border border-yellow-500' : 'border border-white/10')}`}>
-                              <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-black text-white font-bold">
+                            {/* 🔥 1. AVATAR VERIFICADO CON FUEGO OPCIONAL */}
+                            <div onClick={() => router.push(`/${post.user.username}`)} className={`relative w-12 h-12 shrink-0 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-transform hover:scale-105 ${
+                              post.user?.hasFireBorder || post.user?.addons?.includes('FIRE_BORDER')
+                                ? 'p-[3px] bg-gradient-to-b from-yellow-400 via-orange-500 to-red-600 shadow-[0_0_20px_rgba(239,68,68,0.8)] animate-pulse'
+                                : (post.user?.role === 'CREATOR' || post.user?.role === 'ADMIN') 
+                                  ? 'bg-gradient-to-tr from-red-500 via-orange-500 to-yellow-500 p-[2px]' 
+                                  : post.isPromoted 
+                                    ? 'border border-yellow-500' 
+                                    : 'border border-white/10'
+                            }`}>
+                              <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-black text-white font-bold border-2 border-black">
                                 {post.user?.creatorProfile?.profileImage ? (
                                   <img src={getImageUrl(post.user.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
                                 ) : (
@@ -977,12 +993,21 @@ export default function Feed() {
                   {trendingCreators.map((creator, idx) => (
                     <div key={creator.id} onClick={() => router.push(`/${creator.username}`)} className={`flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 cursor-pointer group transition-all ${creator.isPromoted ? 'bg-yellow-500/5 border border-yellow-500/20' : ''}`}>
                       <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-black font-bold overflow-hidden shadow-lg border ${creator.isPromoted ? 'bg-gradient-to-tr from-yellow-400 to-yellow-600 border-yellow-500/50' : 'bg-white/10 border-white/20 text-white'}`}>
-                          {creator.creatorProfile?.profileImage ? (
-                            <img src={getImageUrl(creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
-                          ) : (
-                            (creator.username || 'U').toUpperCase()
-                          )}
+                        {/* 🔥 Avatar en Columna Derecha con Fuego */}
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-black font-bold shadow-lg ${
+                          creator.hasFireBorder || creator.addons?.includes('FIRE_BORDER')
+                            ? 'p-[2.5px] bg-gradient-to-b from-yellow-400 via-orange-500 to-red-600 shadow-[0_0_15px_rgba(239,68,68,0.8)] animate-pulse'
+                            : creator.isPromoted 
+                              ? 'bg-gradient-to-tr from-yellow-400 to-yellow-600 border border-yellow-500/50' 
+                              : 'bg-white/10 border border-white/20 text-white'
+                        }`}>
+                          <div className="w-full h-full rounded-full overflow-hidden border-2 border-black bg-black flex items-center justify-center">
+                            {creator.creatorProfile?.profileImage ? (
+                              <img src={getImageUrl(creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="text-white">{(creator.username || 'U').toUpperCase()}</span>
+                            )}
+                          </div>
                         </div>
                         <div>
                           <p className="text-white font-bold text-sm flex items-center gap-1.5">
@@ -1116,7 +1141,7 @@ export default function Feed() {
             </div>
 
             {activeStory.caption && (
-              <div className="fixed bottom-10 left-0 w-full text-center px-4 [100000]">
+              <div className="fixed bottom-10 left-0 w-full text-center px-4">
                 <span className="bg-black/70 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl text-white font-medium shadow-2xl inline-block max-w-xl">{activeStory.caption}</span>
               </div>
             )}
