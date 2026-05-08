@@ -702,46 +702,46 @@ export default function Feed() {
               </div>
             )}
 
-            {/* 🔥 NUEVO: CARRUSEL TRENDING VIP (SOLO MÓVIL) */}
+            {/* 🔥 NUEVO: CARRUSEL TRENDING VIP (SOLO MÓVIL) - DISEÑO LIMPIO */}
             {trendingCreators.length > 0 && (
-              <div className="block lg:hidden mt-6 mb-4 animate-fade-in bg-[#050505]/50 rounded-3xl p-4 border border-white/5">
-                <div className="flex items-center justify-between mb-4 px-2">
+              <div className="block lg:hidden mt-8 mb-8 animate-fade-in bg-[#050505]/40 rounded-[2rem] p-5 border border-white/5 shadow-lg">
+                <div className="flex items-center justify-between mb-5 px-1">
                   <div className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
-                    <h3 className="text-white font-black uppercase tracking-widest text-sm">{t('aside_trending')}</h3>
+                    <h3 className="text-white font-black uppercase tracking-widest text-[11px] sm:text-sm">{t('aside_trending')}</h3>
                   </div>
                   {/* Botón opcional para que compren promoción en móvil */}
                   {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
-                    <button onClick={() => setIsBoostModalOpen(true)} className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest bg-yellow-500/10 px-2 py-1 rounded-full border border-yellow-500/30">
+                    <button onClick={() => setIsBoostModalOpen(true)} className="text-[9px] sm:text-[10px] text-yellow-500 font-bold uppercase tracking-widest bg-yellow-500/10 px-3 py-1.5 rounded-full border border-yellow-500/30 hover:bg-yellow-500/20 transition-colors">
                       Aparecer aquí
                     </button>
                   )}
                 </div>
                 
-                <div className="flex gap-5 overflow-x-auto pb-2 custom-scrollbar px-1">
+                <div className="flex gap-4 overflow-x-auto pb-3 custom-scrollbar px-1">
                   {trendingCreators.map((creator) => (
-                    <div key={creator.id} onClick={() => router.push(`/${creator.username}`)} className="shrink-0 flex flex-col items-center gap-2 w-[72px] cursor-pointer group">
+                    <div key={creator.id} onClick={() => router.push(`/${creator.username}`)} className="shrink-0 flex flex-col items-center gap-2.5 w-16 cursor-pointer group">
                       <div className="relative">
                         {/* Corona/Estrella si pagó promoción */}
                         {creator.isPromoted && (
-                          <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10 bg-[#0e0e0e] border border-yellow-500 rounded-full px-1.5 py-0.5 flex items-center shadow-[0_0_10px_rgba(234,179,8,0.8)]">
-                            <Star className="w-2.5 h-2.5 text-yellow-400 fill-yellow-500" />
+                          <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 bg-[#0e0e0e] border border-yellow-500 rounded-full px-1.5 py-0.5 flex items-center shadow-[0_0_10px_rgba(234,179,8,0.8)]">
+                            <Star className="w-2 h-2 text-yellow-400 fill-yellow-500" />
                           </div>
                         )}
                         
-                        {/* 🔥 Avatar con Fuego Dinámico */}
-                        <div className={`relative w-[72px] h-[72px] rounded-full flex items-center justify-center font-bold transition-transform active:scale-95 ${
+                        {/* 🔥 Avatar con Fuego Dinámico (Tamaño Perfecto: 64px) */}
+                        <div className={`relative w-16 h-16 rounded-full flex items-center justify-center font-bold transition-transform active:scale-95 ${
                           creator.hasFireBorder || creator.addons?.includes('FIRE_BORDER')
-                            ? 'p-[3px] bg-gradient-to-b from-yellow-400 via-orange-500 to-red-600 shadow-[0_0_25px_rgba(239,68,68,0.8)] animate-pulse'
+                            ? 'p-[3px] bg-gradient-to-b from-yellow-400 via-orange-500 to-red-600 shadow-[0_0_20px_rgba(239,68,68,0.6)] animate-pulse'
                             : creator.isPromoted 
-                              ? 'border-[3px] border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.3)]' 
-                              : 'border-[3px] border-white/10'
+                              ? 'border-[2px] border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)]' 
+                              : 'border-[2px] border-white/10'
                         }`}>
-                          <div className="w-full h-full rounded-full overflow-hidden border-[3px] border-black bg-black flex items-center justify-center">
+                          <div className="w-full h-full rounded-full overflow-hidden border-[2px] border-black bg-black flex items-center justify-center">
                             {creator.creatorProfile?.profileImage ? (
                               <img src={getImageUrl(creator.creatorProfile.profileImage)} draggable="false" className="w-full h-full object-cover" />
                             ) : (
-                              <div className={`w-full h-full flex items-center justify-center text-white text-2xl ${creator.isPromoted ? 'bg-gradient-to-tr from-yellow-500 to-yellow-700' : 'bg-white/10'}`}>
+                              <div className={`w-full h-full flex items-center justify-center text-white text-xl ${creator.isPromoted ? 'bg-gradient-to-tr from-yellow-500 to-yellow-700' : 'bg-white/10'}`}>
                                 {(creator.username || 'U').charAt(0).toUpperCase()}
                               </div>
                             )}
@@ -751,7 +751,7 @@ export default function Feed() {
                       
                       {/* Nombre */}
                       <div className="text-center w-full">
-                        <p className={`text-xs font-bold truncate ${creator.isPromoted ? 'text-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]' : 'text-gray-300'}`}>
+                        <p className={`text-[10px] sm:text-xs font-bold truncate ${creator.isPromoted ? 'text-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]' : 'text-gray-400'}`}>
                           @{creator.username}
                         </p>
                       </div>
@@ -762,7 +762,7 @@ export default function Feed() {
             )}
 
             {/* FEED POSTS */}
-            <div className="space-y-6">
+            <div className="space-y-8 sm:space-y-10">
               {posts.length === 0 ? (
                 <div className="text-center text-gray-500 py-10 nm-inset border border-white/5 rounded-3xl">{t('empty_feed')}</div>
               ) : (
@@ -789,19 +789,20 @@ export default function Feed() {
 
                   return (
                     <React.Fragment key={`${post.id}-${index}`}>
+                      {/* 🔥 ETIQUETA PROMO: Ya no choca. Tiene mb-3 y un diseño más limpio */}
                       {post.isPromoted && (
-                        <div className="flex items-center gap-2 text-yellow-500 mb-[-12px] ml-4 relative z-10 animate-fade-in">
-                          <Star className="w-4 h-4 fill-yellow-500" />
-                          <span className="text-xs font-black uppercase tracking-widest">{t('lbl_recommended')}</span>
+                        <div className="flex items-center gap-1.5 text-yellow-500 mb-3 ml-2 sm:ml-4 relative z-10 animate-fade-in">
+                          <Star className="w-4 h-4 fill-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.6)]" />
+                          <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-yellow-400">{t('lbl_recommended')}</span>
                         </div>
                       )}
 
-                      <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-4 sm:p-6 rounded-[2rem] space-y-4 relative overflow-hidden shadow-xl border group ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
+                      <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-5 sm:p-7 rounded-[2rem] space-y-5 relative overflow-hidden shadow-xl border group ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
                         
                         {isOwner ? (
-                          <button onClick={() => handleDeletePost(post.id)} className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20" title={t('title_delete_post')}><Trash2 className="w-5 h-5" /></button>
+                          <button onClick={() => handleDeletePost(post.id)} className="absolute top-5 right-5 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20" title={t('title_delete_post')}><Trash2 className="w-5 h-5" /></button>
                         ) : (
-                          <button onClick={() => setReportData({ type: 'POST', targetId: post.id, reportedUsername: post.user?.username })} className="absolute top-6 right-6 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20 opacity-50 hover:opacity-100" title={t('title_report_post')}><Flag className="w-5 h-5" /></button>
+                          <button onClick={() => setReportData({ type: 'POST', targetId: post.id, reportedUsername: post.user?.username })} className="absolute top-5 right-5 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20 opacity-50 hover:opacity-100" title={t('title_report_post')}><Flag className="w-5 h-5" /></button>
                         )}
 
                         <div className="flex justify-between items-center relative z-10">
