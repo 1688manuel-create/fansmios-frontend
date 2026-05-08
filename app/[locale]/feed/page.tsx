@@ -627,7 +627,7 @@ export default function Feed() {
             )}
 
             {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
-              <div className="nm-inset p-4 sm:p-6 rounded-none sm:rounded-[2rem] space-y-4 border-y sm:border border-x-0 sm:border-x border-white/5 bg-[#0a0a0a]">
+              <div className="nm-inset p-4 sm:p-6 rounded-[2rem] space-y-4 border border-white/5 bg-[#0a0a0a]">
                 <div className="flex gap-4">
                   {/* 🔥 AVATAR EN LA CAJA DE "CREAR NUEVO POST" CON ANILLO VIP */}
                   <div className={`w-12 h-12 shrink-0 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105 ${(user?.role === 'CREATOR' || user?.role === 'ADMIN') ? 'bg-gradient-to-tr from-red-500 via-orange-500 to-yellow-500 p-[2px]' : 'border border-white/10'}`}>
@@ -789,10 +789,10 @@ export default function Feed() {
 
                   return (
                     <React.Fragment key={`${post.id}-${index}`}>
-                      {/* 🔥 ETIQUETA PROMO */}
+                      {/* 🔥 ETIQUETA PROMO: Ya no tiene sombra fea. Es pura letra limpia */}
                       {post.isPromoted && (
                         <div className="flex items-center gap-1.5 text-yellow-500 mb-3 ml-4 relative z-10 animate-fade-in">
-                          <Star className="w-4 h-4 fill-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.6)]" />
+                          <Star className="w-4 h-4 fill-yellow-500" /> {/* Sombra removida */}
                           <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-yellow-400">{t('lbl_recommended')}</span>
                         </div>
                       )}
