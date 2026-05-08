@@ -705,12 +705,13 @@ export default function Feed() {
             {/* 🔥 NUEVO: CARRUSEL TRENDING VIP (SOLO MÓVIL) - DISEÑO LIMPIO */}
             {trendingCreators.length > 0 && (
               <div className="block lg:hidden mt-6 mb-6 animate-fade-in bg-[#050505]/40 rounded-[2rem] p-4 sm:p-5 border border-white/5 shadow-lg">
-                <div className="flex items-center justify-between mb-5 px-1">
+                
+                {/* Ajustamos el margin-bottom (mb-2) para compensar el espacio del padding que viene abajo */}
+                <div className="flex items-center justify-between mb-2 px-1">
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
+                    <TrendingUp className="w-5 h-5 text-yellow-500" />
                     <h3 className="text-white font-black uppercase tracking-widest text-[11px] sm:text-sm">{t('aside_trending')}</h3>
                   </div>
-                  {/* Botón opcional para que compren promoción en móvil */}
                   {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
                     <button onClick={() => setIsBoostModalOpen(true)} className="text-[9px] sm:text-[10px] text-yellow-500 font-bold uppercase tracking-widest bg-yellow-500/10 px-3 py-1.5 rounded-full border border-yellow-500/30 hover:bg-yellow-500/20 transition-colors">
                       Aparecer aquí
@@ -718,23 +719,25 @@ export default function Feed() {
                   )}
                 </div>
                 
-                <div className="flex gap-4 overflow-x-auto pb-3 custom-scrollbar px-1">
+                {/* 🔥 LA SOLUCIÓN: pt-4 (padding top) le da "techo" al contenedor para que la coronita no se corte */}
+                <div className="flex gap-4 overflow-x-auto pt-4 pb-3 custom-scrollbar px-1">
                   {trendingCreators.map((creator) => (
                     <div key={creator.id} onClick={() => router.push(`/${creator.username}`)} className="shrink-0 flex flex-col items-center gap-2.5 w-16 cursor-pointer group">
                       <div className="relative">
+                        
                         {/* Corona/Estrella si pagó promoción */}
                         {creator.isPromoted && (
-                          <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 bg-[#0e0e0e] border border-yellow-500 rounded-full px-1.5 py-0.5 flex items-center shadow-[0_0_10px_rgba(234,179,8,0.8)]">
+                          <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 bg-[#0e0e0e] border border-yellow-500 rounded-full px-1.5 py-0.5 flex items-center">
                             <Star className="w-2 h-2 text-yellow-400 fill-yellow-500" />
                           </div>
                         )}
                         
-                        {/* 🔥 Avatar con Fuego Dinámico (Tamaño Perfecto: 64px) */}
+                        {/* Avatar con Fuego Dinámico */}
                         <div className={`relative w-16 h-16 rounded-full flex items-center justify-center font-bold transition-transform active:scale-95 ${
                           creator.hasFireBorder || creator.addons?.includes('FIRE_BORDER')
                             ? 'p-[3px] bg-gradient-to-b from-yellow-400 via-orange-500 to-red-600 shadow-[0_0_20px_rgba(239,68,68,0.6)] animate-pulse'
                             : creator.isPromoted 
-                              ? 'border-[2px] border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)]' 
+                              ? 'border-[2px] border-yellow-500' 
                               : 'border-[2px] border-white/10'
                         }`}>
                           <div className="w-full h-full rounded-full overflow-hidden border-[2px] border-black bg-black flex items-center justify-center">
@@ -751,7 +754,7 @@ export default function Feed() {
                       
                       {/* Nombre */}
                       <div className="text-center w-full">
-                        <p className={`text-[10px] sm:text-xs font-bold truncate ${creator.isPromoted ? 'text-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]' : 'text-gray-400'}`}>
+                        <p className={`text-[10px] sm:text-xs font-bold truncate ${creator.isPromoted ? 'text-yellow-500' : 'text-gray-400'}`}>
                           @{creator.username}
                         </p>
                       </div>
