@@ -559,8 +559,8 @@ export default function Feed() {
           </div>
         </nav>
 
-        <div className="max-w-7xl mx-auto flex justify-center gap-8 mt-2 sm:mt-6 px-0 sm:px-4">
-          <main className="w-full max-w-3xl shrink-0 space-y-2 sm:space-y-8 pb-10 bg-black sm:bg-transparent">
+        <div className="max-w-7xl mx-auto flex justify-center gap-8 mt-6 px-2 sm:px-4">
+          <main className="w-full max-w-3xl shrink-0 space-y-6 sm:space-y-8 pb-10">
             <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar px-4 sm:px-0 pt-2 sm:pt-0">
               {(user?.role === 'CREATOR' || user?.role === 'ADMIN') && (
                 <div onClick={() => storyFileInputRef.current?.click()} className="flex flex-col items-center gap-1 cursor-pointer group shrink-0">
@@ -704,7 +704,7 @@ export default function Feed() {
 
             {/* 🔥 NUEVO: CARRUSEL TRENDING VIP (SOLO MÓVIL) - DISEÑO LIMPIO */}
             {trendingCreators.length > 0 && (
-              <div className="block lg:hidden animate-fade-in bg-[#0a0a0a] sm:bg-[#050505]/40 rounded-none sm:rounded-[2rem] p-4 sm:p-5 border-y border-x-0 border-white/5 shadow-none sm:shadow-lg">
+              <div className="block lg:hidden mt-6 mb-6 animate-fade-in bg-[#050505]/40 rounded-[2rem] p-4 sm:p-5 border border-white/5 shadow-lg">
                 <div className="flex items-center justify-between mb-5 px-1">
                   <div className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
@@ -789,15 +789,15 @@ export default function Feed() {
 
                   return (
                     <React.Fragment key={`${post.id}-${index}`}>
-                      {/* 🔥 ETIQUETA PROMO: Ya no choca. Tiene mb-3 y un diseño más limpio */}
+                      {/* 🔥 ETIQUETA PROMO */}
                       {post.isPromoted && (
-                        <div className="flex items-center gap-1.5 text-yellow-500 mb-3 ml-2 sm:ml-4 relative z-10 animate-fade-in">
+                        <div className="flex items-center gap-1.5 text-yellow-500 mb-3 ml-4 relative z-10 animate-fade-in">
                           <Star className="w-4 h-4 fill-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.6)]" />
                           <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-yellow-400">{t('lbl_recommended')}</span>
                         </div>
                       )}
 
-                      <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-4 sm:p-7 rounded-none sm:rounded-[2rem] space-y-4 sm:space-y-5 relative overflow-hidden shadow-none sm:shadow-xl border-y sm:border border-x-0 sm:border-x group ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
+                      <div id={`post-${post.id}`} className={`scroll-mt-24 transition-all duration-500 p-4 sm:p-6 rounded-[2rem] space-y-4 sm:space-y-5 relative overflow-hidden shadow-xl border group ${post.isPromoted ? 'bg-[#111] border-yellow-500/30' : 'bg-[#0a0a0a] border-white/5'}`}>
                         
                         {isOwner ? (
                           <button onClick={() => handleDeletePost(post.id)} className="absolute top-5 right-5 text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2.5 rounded-full transition-all z-20" title={t('title_delete_post')}><Trash2 className="w-5 h-5" /></button>
