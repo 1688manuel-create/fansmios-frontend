@@ -353,13 +353,24 @@ export default function CreatorProfile() {
     router.push(`/dashboard/messages?chatWith=${creator.id}&name=${creator.username}`);
   };
 
+  // 🔥 NUEVO ESTADO: Guarda el ID del post si estamos reportando una publicación
+  const [reportPostId, setReportPostId] = useState<string | null>(null);
+
   const handleSubmitReport = async () => {
     if (!reportReason) { alert(t('alert_report_reason')); return; }
     setIsSubmittingReport(true);
     try {
-      await api.post('/reports', { type: 'USER', reportedUserId: creator.id, reason: reportReason, description: reportDescription });
+      // 🔥 LÓGICA INTELIGENTE: Si hay ID de post, reporta el POST. Si no, reporta al USUARIO.
+      const payload = reportPostId 
+        ? { type: 'POST', reportedPostId: reportPostId, reason: reportReason, description: reportDescription }
+        : { type: 'USER', reportedUserId: creator.id, reason: reportReason, description: reportDescription };
+        
+      await api.post('/reports', payload);
       alert(t('alert_report_success'));
-      setIsReportModalOpen(false); setReportReason(''); setReportDescription('');
+      setIsReportModalOpen(false); 
+      setReportReason(''); 
+      setReportDescription(''); 
+      setReportPostId(null); // Limpiamos el ID al terminar
     } catch (error) { alert(t('alert_report_error')); } 
     finally { setIsSubmittingReport(false); }
   };
@@ -507,10 +518,17 @@ export default function CreatorProfile() {
                       <button onClick={handleMessageClick} title={t('btn_send_message')} className="bg-[#111] border border-white/10 text-gray-300 hover:text-yellow-500 font-bold w-14 h-14 rounded-full flex items-center justify-center transition-colors shadow-lg">
                         <MessageCircle className="w-6 h-6" />
                       </button>
+                      
                       {currentUser?.role !== 'ADMIN' && (
-                        <button onClick={() => { setTipRecipient(creator); setIsTipModalOpen(true); }} title={t('btn_tip')} className="bg-[#111] border border-white/10 text-gray-300 hover:text-green-400 font-bold w-14 h-14 rounded-full flex items-center justify-center transition-colors shadow-lg">
-                          <Coins className="w-6 h-6" />
-                        </button>
+                        <>
+                          <button onClick={() => { setTipRecipient(creator); setIsTipModalOpen(true); }} title={t('btn_tip')} className="bg-[#111] border border-white/10 text-gray-300 hover:text-green-400 font-bold w-14 h-14 rounded-full flex items-center justify-center transition-colors shadow-lg">
+                            <Coins className="w-6 h-6" />
+                          </button>
+                          {/* 🔥 BOTÓN DE REPORTAR PERFIL */}
+                          <button onClick={() => { if(!currentUser) { router.push('/auth'); return; } setReportPostId(null); setIsReportModalOpen(true); }} title="Reportar Perfil" className="bg-[#111] border border-white/10 text-gray-500 hover:text-red-500 font-bold w-14 h-14 rounded-full flex items-center justify-center transition-colors shadow-lg">
+                            <Flag className="w-5 h-5" />
+                          </button>
+                        </>
                       )}
                     </div>
                   )}
@@ -690,8 +708,16 @@ export default function CreatorProfile() {
                       }
 
                       return !isPostUnlocked ? (
-                        <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 bg-[#0a0a0a] p-4 sm:p-6 rounded-[2rem] space-y-4 border border-white/5 shadow-xl">
-                          <div className="flex items-center gap-3 mb-4">
+                        <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 bg-[#0a0a0a] p-4 sm:p-6 rounded-[2rem] space-y-4 border border-white/5 shadow-xl relative group">
+                          
+                          {/* 🔥 BOTÓN DE REPORTAR POST BLOQUEADO */}
+                          {!isOwnerOrAdmin && currentUser && (
+                            <button onClick={() => { setReportPostId(post.id); setIsReportModalOpen(true); }} className="absolute top-6 right-6 text-gray-600 hover:text-red-500 transition-colors z-20" title="Reportar Post">
+                              <Flag className="w-5 h-5" />
+                            </button>
+                          )}
+
+                          <div className="flex items-center gap-3 mb-4 pr-10">
                             <div className="w-12 h-12 rounded-full border-2 border-yellow-500/50 flex items-center justify-center overflow-hidden shrink-0">
                               {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} className="w-full h-full object-cover" /> : <span className="text-white font-bold">{creator.username.charAt(0).toUpperCase()}</span>}
                             </div>
@@ -715,9 +741,18 @@ export default function CreatorProfile() {
                           </div>
                         </div>
                       ) : (
-                        <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 bg-[#0a0a0a] p-4 sm:p-6 rounded-[2rem] space-y-4 border border-white/5 shadow-xl relative">
-                          {isOwnerOrAdmin && <button onClick={() => handleDeletePost(post.id)} className="absolute top-6 right-6 text-gray-500 hover:text-red-500"><Trash2 className="w-5 h-5" /></button>}
-                          <div className="flex items-center gap-3">
+                        <div id={`post-${post.id}`} key={post.id} className="scroll-mt-24 bg-[#0a0a0a] p-4 sm:p-6 rounded-[2rem] space-y-4 border border-white/5 shadow-xl relative group">
+                          
+                          {/* 🔥 BOTÓN DE BORRAR O REPORTAR EN POST DESBLOQUEADO */}
+                          {isOwnerOrAdmin ? (
+                            <button onClick={() => handleDeletePost(post.id)} className="absolute top-6 right-6 text-gray-500 hover:text-red-500 transition-colors z-20" title="Eliminar Post"><Trash2 className="w-5 h-5" /></button>
+                          ) : currentUser ? (
+                            <button onClick={() => { setReportPostId(post.id); setIsReportModalOpen(true); }} className="absolute top-6 right-6 text-gray-600 hover:text-red-500 transition-colors z-20" title="Reportar Post">
+                              <Flag className="w-5 h-5" />
+                            </button>
+                          ) : null}
+
+                          <div className="flex items-center gap-3 pr-10">
                             <div className="w-12 h-12 rounded-full border-2 border-yellow-500/50 flex items-center justify-center overflow-hidden shrink-0">
                               {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} className="w-full h-full object-cover" /> : <span className="text-white font-bold">{creator.username.charAt(0).toUpperCase()}</span>}
                             </div>
@@ -906,10 +941,13 @@ export default function CreatorProfile() {
         {isReportModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
             <div className="bg-[#111] p-6 sm:p-8 rounded-3xl border border-white/10 w-full max-w-md shadow-2xl relative">
-              <button onClick={() => setIsReportModalOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><X className="w-5 h-5" /></button>
+              <button onClick={() => { setIsReportModalOpen(false); setReportPostId(null); }} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><X className="w-5 h-5" /></button>
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 shrink-0"><AlertTriangle className="w-6 h-6" /></div>
-                <div><h3 className="text-xl font-black text-white">{t('title_report_user')}</h3><p className="text-xs text-gray-400">@{creator?.username}</p></div>
+                <div>
+                  <h3 className="text-xl font-black text-white">{reportPostId ? "Reportar Publicación" : t('title_report_user')}</h3>
+                  <p className="text-xs text-gray-400">@{creator?.username}</p>
+                </div>
               </div>
               <div className="space-y-4">
                 <div>
