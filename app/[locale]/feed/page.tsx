@@ -892,12 +892,17 @@ export default function Feed() {
                                 {mediaUrls.map((url, idx) => {
                                   const isVideo = url.match(/\.(mp4|mov|webm)$/i);
                                   
-                                  let itemStyle = 'w-full h-full object-cover bg-black ';
-                                  if (mediaUrls.length === 1) itemStyle += 'max-h-[70vh] sm:max-h-[600px] object-contain';
-                                  else if (mediaUrls.length === 2) itemStyle += 'aspect-[3/4] sm:aspect-square';
-                                  else if (mediaUrls.length === 3) itemStyle += idx === 0 ? 'col-span-2 aspect-[2/1] sm:aspect-[21/9]' : 'col-span-1 aspect-square';
-                                  else if (mediaUrls.length === 4) itemStyle += 'col-span-1 aspect-square';
-                                  else if (mediaUrls.length === 5) itemStyle += idx < 2 ? 'col-span-3 aspect-[4/3]' : 'col-span-2 aspect-square';
+                                  // 🔥 CORRECCIÓN: Separamos el recorte (cover) del ajuste completo (contain)
+                                  let itemStyle = 'w-full h-full bg-black ';
+                                  if (mediaUrls.length === 1) {
+                                    itemStyle += 'max-h-[75vh] object-contain'; // <- Muestra el cuerpo completo sin recortes
+                                  } else {
+                                    itemStyle += 'object-cover '; // <- Recorta solo cuando hay cuadrícula de 2 o más
+                                    if (mediaUrls.length === 2) itemStyle += 'aspect-[3/4] sm:aspect-square';
+                                    else if (mediaUrls.length === 3) itemStyle += idx === 0 ? 'col-span-2 aspect-[2/1] sm:aspect-[21/9]' : 'col-span-1 aspect-square';
+                                    else if (mediaUrls.length === 4) itemStyle += 'col-span-1 aspect-square';
+                                    else if (mediaUrls.length === 5) itemStyle += idx < 2 ? 'col-span-3 aspect-[4/3]' : 'col-span-2 aspect-square';
+                                  }
 
                                   return isVideo ? (
                                     <video key={idx} onContextMenu={(e) => e.preventDefault()} controls controlsList="nodownload noplaybackrate" disablePictureInPicture src={getImageUrl(url)} className={itemStyle} />
