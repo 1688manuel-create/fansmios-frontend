@@ -360,9 +360,10 @@ export default function CreatorProfile() {
     if (!reportReason) { alert(t('alert_report_reason')); return; }
     setIsSubmittingReport(true);
     try {
-      // 🔥 LÓGICA INTELIGENTE: Si hay ID de post, reporta el POST. Si no, reporta al USUARIO.
+      // 🔥 LÓGICA BLINDADA: Siempre enviamos el "reportedUserId" para que salga el Acusado. 
+      // Y si es un post, enviamos el ID usando la variable exacta "targetId".
       const payload = reportPostId 
-        ? { type: 'POST', reportedPostId: reportPostId, reason: reportReason, description: reportDescription }
+        ? { type: 'POST', targetId: reportPostId, reportedUserId: creator.id, reason: reportReason, description: reportDescription }
         : { type: 'USER', reportedUserId: creator.id, reason: reportReason, description: reportDescription };
         
       await api.post('/reports', payload);
@@ -370,9 +371,12 @@ export default function CreatorProfile() {
       setIsReportModalOpen(false); 
       setReportReason(''); 
       setReportDescription(''); 
-      setReportPostId(null); // Limpiamos el ID al terminar
-    } catch (error) { alert(t('alert_report_error')); } 
-    finally { setIsSubmittingReport(false); }
+      setReportPostId(null);
+    } catch (error) { 
+      alert(t('alert_report_error')); 
+    } finally { 
+      setIsSubmittingReport(false); 
+    }
   };
 
   const buildCommentTree = (comments: any[]) => {
