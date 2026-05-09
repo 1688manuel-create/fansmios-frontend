@@ -958,8 +958,16 @@ export default function CreatorProfile() {
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">{t('lbl_main_reason')}</label>
                   <select value={reportReason} onChange={(e) => setReportReason(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-red-500 transition-colors">
                     <option value="">{t('ph_select_reason')}</option>
-                    <option value="SPAM">{t('rep_spam')}</option><option value="FRAUD">{t('rep_fraud')}</option>
-                    <option value="HARASSMENT">{t('rep_harassment')}</option><option value="INAPPROPRIATE">{t('rep_inappropriate')}</option><option value="OTHER">{t('rep_other')}</option>
+                    <option value="NUDITY">Desnudos</option>
+                    <option value="VIOLENCE">Violencia</option>
+                    <option value="HARASSMENT">Acoso</option>
+                    <option value="SELF_HARM">Suicidio o autolesiones</option>
+                    <option value="FALSE_INFO">Información falsa</option>
+                    <option value="SPAM">Spam</option>
+                    <option value="UNAUTHORIZED_SALES">Ventas no autorizadas</option>
+                    <option value="HATE_SPEECH">Lenguaje que incita al odio</option>
+                    <option value="TERRORISM">Terrorismo</option>
+                    <option value="OTHER">Otro motivo</option>
                   </select>
                 </div>
                 <div>
