@@ -1271,7 +1271,7 @@ function DynamicPromptModal({ config }: { config: any }) {
   });
 
   return (
-    <div className="absolute inset-0 z-[100002] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
+    <div className="fixed inset-0 z-[100002] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
       <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in">
         <div className="flex items-center justify-between p-5 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent">
           <h3 className="text-white font-black text-lg flex items-center gap-2">{config.icon} {config.title}</h3>
@@ -1295,7 +1295,7 @@ function DynamicPromptModal({ config }: { config: any }) {
 
 function DynamicConfirmModal({ config }: { config: any }) {
   return (
-    <div className="absolute inset-0 z-[100002] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
+    <div className="fixed inset-0 z-[100002] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 pointer-events-auto">
       <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in text-center p-6">
          <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
            <AlertTriangle className="w-8 h-8 text-yellow-500" />
