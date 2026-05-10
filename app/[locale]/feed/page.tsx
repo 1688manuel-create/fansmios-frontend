@@ -90,7 +90,7 @@ const CommentNode = ({ comment, postId, postOwnerId, currentUser, onReply, onDel
       <div className="text-sm bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm relative transition-all duration-500">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center">
-            {userProfileImage ? <img src={getImageUrl(userProfileImage)} alt="Avatar" className="w-full h-full object-cover" /> : <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">{initial}</span>}
+            {userProfileImage ? <img src={getImageUrl(userProfileImage)} alt="Avatar" loading="lazy" className="w-full h-full object-cover" /> : <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">{initial}</span>}
           </div>
           <span className="font-bold text-gray-300">@{comment.user?.username || 'Usuario'}:</span>
         </div>
@@ -240,7 +240,7 @@ export default function Feed() {
     const interval = setInterval(() => {
       notificationService.getNotifications().then(res => setUnreadNotifications(res.unreadCount || 0)).catch(() => {});
       chatService.getUnreadCount().then(res => setUnreadMessages(res.unreadCount || 0)).catch(() => {});
-    }, 5000); 
+    }, 30000); // 🔥 NITRO ACTIVADO: Cambiamos de 5000 a 30000 (30 segundos)
     return () => clearInterval(interval);
   }, []);
 
@@ -583,7 +583,7 @@ export default function Feed() {
                     <div className="w-16 h-16 rounded-full p-1 transition-transform group-hover:scale-105 bg-gradient-to-tr from-yellow-400 to-yellow-600 shadow-[0_0_15px_rgba(234,179,8,0.3)] mt-1">
                       <div className="w-full h-full rounded-full bg-black border-2 border-black flex items-center justify-center overflow-hidden">
                         {vipCreator.creatorProfile?.profileImage ? (
-                          <img src={getImageUrl(vipCreator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" alt="Avatar VIP" />
+                          <img src={getImageUrl(vipCreator.creatorProfile.profileImage)} loading="lazy" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" alt="Avatar VIP" />
                         ) : (
                           <span className="text-2xl text-yellow-400 font-bold bg-[#111]">{(vipCreator.username || 'V').toUpperCase()}</span>
                         )}
@@ -597,7 +597,7 @@ export default function Feed() {
                 <div key={story.id} onClick={() => openStory(story)} className="flex flex-col items-center gap-1 cursor-pointer group shrink-0">
                   <div className="w-16 h-16 rounded-full p-1 transition-transform group-hover:scale-105 bg-gradient-to-tr from-red-600 to-orange-500 shadow-lg">
                     <div className="w-full h-full rounded-full bg-black border-2 border-black flex items-center justify-center overflow-hidden">
-                      {story.creator?.creatorProfile?.profileImage ? <img src={getImageUrl(story.creator.creatorProfile.profileImage)} alt="Avatar" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" /> : <span className="text-xl text-white font-bold">{(story.creator?.username || 'U').toUpperCase()}</span>}
+                      {story.creator?.creatorProfile?.profileImage ? <img src={getImageUrl(story.creator.creatorProfile.profileImage)} loading="lazy" alt="Avatar" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" /> : <span className="text-xl text-white font-bold">{(story.creator?.username || 'U').toUpperCase()}</span>}
                     </div>
                   </div>
                   <span className="text-xs text-gray-300 max-w-[64px] truncate font-medium">@{story.creator?.username || 'Usuario'}</span>
@@ -611,7 +611,7 @@ export default function Feed() {
                   <div key={stream.id} onClick={() => router.push(`/live/${stream.id}`)} className="relative shrink-0 w-56 h-32 rounded-2xl overflow-hidden cursor-pointer group border border-red-500/30 shadow-lg">
                     <div className="absolute inset-0 bg-black">
                       {stream.creator?.creatorProfile?.profileImage ? (
-                        <img src={getImageUrl(stream.creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity" alt="Fondo" />
+                        <img src={getImageUrl(stream.creator.creatorProfile.profileImage)} loading="lazy" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity" alt="Fondo" />
                       ) : <div className="w-full h-full bg-gradient-to-br from-red-900 to-black"></div>}
                     </div>
                     <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse flex items-center gap-1">
@@ -636,7 +636,7 @@ export default function Feed() {
                         const myFreshData = posts.find(p => p.user?.id === user?.id)?.user;
                         const avatarUrl = myFreshData?.creatorProfile?.profileImage || user?.creatorProfile?.profileImage;
                         return avatarUrl ? (
-                          <img src={getImageUrl(avatarUrl)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover object-center" alt="Avatar" />
+                          <img src={getImageUrl(avatarUrl)} loading="lazy" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover object-center" alt="Avatar" />
                         ) : (
                           (user?.username || 'C').toUpperCase()
                         );
@@ -742,7 +742,7 @@ export default function Feed() {
                         }`}>
                           <div className="w-full h-full rounded-full overflow-hidden border-[2px] border-black bg-black flex items-center justify-center">
                             {creator.creatorProfile?.profileImage ? (
-                              <img src={getImageUrl(creator.creatorProfile.profileImage)} draggable="false" className="w-full h-full object-cover" />
+                              <img src={getImageUrl(creator.creatorProfile.profileImage)} loading="lazy" draggable="false" className="w-full h-full object-cover" />
                             ) : (
                               <div className={`w-full h-full flex items-center justify-center text-white text-xl ${creator.isPromoted ? 'bg-gradient-to-tr from-yellow-500 to-yellow-700' : 'bg-white/10'}`}>
                                 {(creator.username || 'U').charAt(0).toUpperCase()}
@@ -824,7 +824,7 @@ export default function Feed() {
                             }`}>
                               <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-black text-white font-bold border-2 border-black">
                                 {post.user?.creatorProfile?.profileImage ? (
-                                  <img src={getImageUrl(post.user.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
+                                  <img src={getImageUrl(post.user.creatorProfile.profileImage)} loading="lazy" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
                                 ) : (
                                   <div className={`w-full h-full flex items-center justify-center ${post.isPromoted ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}>
                                     {(post.user?.username || 'U').toUpperCase()}
@@ -865,7 +865,7 @@ export default function Feed() {
                               mediaUrls[0].match(/\.(mp4|mov|webm)$/i) ? (
                                 <video src={getImageUrl(mediaUrls[0])} className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-50 scale-110 select-none pointer-events-none" />
                               ) : (
-                                <img src={getImageUrl(mediaUrls[0])} alt="Contenido Oculto" draggable="false" onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-50 scale-110 select-none pointer-events-none" />
+                                <img src={getImageUrl(mediaUrls[0])} loading="lazy" alt="Contenido Oculto" draggable="false" onContextMenu={(e) => e.preventDefault()} className="absolute inset-0 w-full h-full object-cover blur-[20px] opacity-50 scale-110 select-none pointer-events-none" />
                               )
                             )}
                             <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
@@ -910,6 +910,7 @@ export default function Feed() {
                                     <img 
                                       key={idx} 
                                       src={getImageUrl(url, post.user?.username)} 
+                                      loading="lazy"
                                       draggable="false" 
                                       onContextMenu={(e) => e.preventDefault()} 
                                       className={`${itemStyle} cursor-pointer hover:opacity-90 transition-opacity`} 
@@ -1013,7 +1014,7 @@ export default function Feed() {
                         }`}>
                           <div className="w-full h-full rounded-full overflow-hidden border-2 border-black bg-black flex items-center justify-center">
                             {creator.creatorProfile?.profileImage ? (
-                              <img src={getImageUrl(creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
+                              <img src={getImageUrl(creator.creatorProfile.profileImage)} loading="lazy" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
                             ) : (
                               <span className="text-white">{(creator.username || 'U').toUpperCase()}</span>
                             )}
@@ -1052,7 +1053,7 @@ export default function Feed() {
                     <div className="w-16 h-16 rounded-full border-2 border-blue-500 p-1 mb-3 relative group-hover:scale-105 transition-transform shadow-[0_0_15px_rgba(59,130,246,0.4)]">
                        <div className="w-full h-full rounded-full overflow-hidden bg-black">
                          {featuredBundle.creator?.creatorProfile?.profileImage ? (
-                           <img src={getImageUrl(featuredBundle.creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" alt="Avatar" />
+                           <img src={getImageUrl(featuredBundle.creator.creatorProfile.profileImage)} loading="lazy" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" alt="Avatar" />
                          ) : (
                            <span className="w-full h-full flex items-center justify-center text-xl font-bold text-white bg-gradient-to-r from-blue-500 to-purple-500">
                              {(featuredBundle.creator?.username || 'U').toUpperCase()}
@@ -1096,7 +1097,7 @@ export default function Feed() {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/20 shadow-lg">
                   {activeStory.creator?.creatorProfile?.profileImage ? (
-                    <img src={getImageUrl(activeStory.creator.creatorProfile.profileImage)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
+                    <img src={getImageUrl(activeStory.creator.creatorProfile.profileImage)} loading="lazy" draggable="false" onContextMenu={(e) => e.preventDefault()} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-white font-bold">{(activeStory.creator?.username || 'U').toUpperCase()}</div>
                   )}
@@ -1145,7 +1146,7 @@ export default function Feed() {
                 {activeStory.mediaUrl?.match(/\.(mp4|mov|webm)$/i) ? (
                   <video src={getImageUrl(activeStory.mediaUrl)} autoPlay controls controlsList="nodownload noplaybackrate" disablePictureInPicture onContextMenu={(e) => e.preventDefault()} className="max-w-full max-h-full rounded-2xl shadow-2xl relative z-30 pointer-events-auto" />
                 ) : (
-                  <img src={getImageUrl(activeStory.mediaUrl, activeStory.creator?.username)} draggable="false" onContextMenu={(e) => e.preventDefault()} className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain" />
+                  <img src={getImageUrl(activeStory.mediaUrl, activeStory.creator?.username)} loading="lazy" draggable="false" onContextMenu={(e) => e.preventDefault()} className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain" />
                 )}
               </div>
             </div>
@@ -1228,6 +1229,7 @@ export default function Feed() {
             >
               <img 
                 src={getImageUrl(expandedGallery.urls[expandedGallery.currentIndex], expandedGallery.username)} 
+                loading="lazy"
                 alt="Imagen en pantalla completa"
                 className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] pointer-events-auto transition-transform duration-300" 
                 draggable="false" 
