@@ -73,7 +73,7 @@ const CommentNode = ({ comment, postId, currentUser, onReply, onDelete, isExpand
         <div className="flex items-center gap-2 mb-1">
           <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#0a0a0a] flex items-center justify-center">
             {userProfileImage ? (
-              <img src={getImageUrl(userProfileImage)} alt="Avatar" className="w-full h-full object-cover" />
+              <img src={getImageUrl(userProfileImage)} loading="lazy" alt="Avatar" className="w-full h-full object-cover" />
             ) : (
               <span className="text-[10px] font-black text-white bg-gradient-to-tr from-teal-500 to-blue-500 w-full h-full flex items-center justify-center">{initial}</span>
             )}
@@ -458,7 +458,7 @@ export default function CreatorProfile() {
                       : 'border-[4px] border-[#050505] bg-[#0a0a0a]'
             }`} onContextMenu={(e) => e.preventDefault()}>
               <div className="w-full h-full rounded-full overflow-hidden bg-[#0a0a0a] border-[4px] border-[#050505] flex items-center justify-center text-white text-5xl font-black">
-                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-yellow-500 to-red-500 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase().charAt(0)}</span>}
+                {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} loading="lazy" alt="Avatar" className="w-full h-full object-cover" draggable="false" /> : <span className="bg-gradient-to-tr from-yellow-500 to-red-500 w-full h-full flex items-center justify-center text-white">{(creator.username || 'U').toUpperCase().charAt(0)}</span>}
               </div>
             </div>
             
@@ -623,7 +623,7 @@ export default function CreatorProfile() {
                               }
                               return firstMediaUrl ? (
                                 <>
-                                  <img src={getImageUrl(firstMediaUrl)} className={`w-full h-full object-cover transition-all duration-700 ${!isPurchased && !isOwnerOrAdmin ? 'blur-xl opacity-50 scale-125' : 'blur-0 opacity-100'}`} alt="Bundle Cover" draggable="false" onContextMenu={(e) => e.preventDefault()} onClick={(e) => { if (isPurchased || isOwnerOrAdmin) handleOpenGallery(e); }}/>
+                                  <img src={getImageUrl(firstMediaUrl)} loading="lazy" className={`w-full h-full object-cover transition-all duration-700 ${!isPurchased && !isOwnerOrAdmin ? 'blur-xl opacity-50 scale-125' : 'blur-0 opacity-100'}`} alt="Bundle Cover" draggable="false" onContextMenu={(e) => e.preventDefault()} onClick={(e) => { if (isPurchased || isOwnerOrAdmin) handleOpenGallery(e); }}/>
                                   {!isPurchased && !isOwnerOrAdmin && (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm">
                                       <div className="bg-black/60 p-4 rounded-full border border-white/10 shadow-2xl group-hover:scale-110 transition-transform"><Lock className="w-8 h-8 text-white" /></div>
@@ -723,7 +723,7 @@ export default function CreatorProfile() {
 
                           <div className="flex items-center gap-3 mb-4 pr-10">
                             <div className="w-12 h-12 rounded-full border-2 border-yellow-500/50 flex items-center justify-center overflow-hidden shrink-0">
-                              {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} className="w-full h-full object-cover" /> : <span className="text-white font-bold">{creator.username.charAt(0).toUpperCase()}</span>}
+                              {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} loading="lazy" className="w-full h-full object-cover" /> : <span className="text-white font-bold">{creator.username.charAt(0).toUpperCase()}</span>}
                             </div>
                             <div>
                               <h3 className="text-white font-bold text-base">{creator.username}</h3>
@@ -732,7 +732,7 @@ export default function CreatorProfile() {
                           </div>
                           <div className="w-full h-80 rounded-[2rem] relative border border-white/5 overflow-hidden nm-inset">
                             {mediaUrls.length > 0 && (
-                              mediaUrls[0].match(/\.(mp4|mov|webm)$/i) ? <video src={getImageUrl(mediaUrls[0])} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 pointer-events-none" /> : <img src={getImageUrl(mediaUrls[0])} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 pointer-events-none" />
+                              mediaUrls[0].match(/\.(mp4|mov|webm)$/i) ? <video src={getImageUrl(mediaUrls[0])} className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 pointer-events-none" /> : <img src={getImageUrl(mediaUrls[0])} loading="lazy" className="absolute inset-0 w-full h-full object-cover blur-[40px] opacity-60 scale-125 pointer-events-none" />
                             )}
                             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-md">
                               <Lock className="w-16 h-16 text-red-500 drop-shadow-2xl mb-4" />
@@ -758,7 +758,7 @@ export default function CreatorProfile() {
 
                           <div className="flex items-center gap-3 pr-10">
                             <div className="w-12 h-12 rounded-full border-2 border-yellow-500/50 flex items-center justify-center overflow-hidden shrink-0">
-                              {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} className="w-full h-full object-cover" /> : <span className="text-white font-bold">{creator.username.charAt(0).toUpperCase()}</span>}
+                              {profile.profileImage ? <img src={getImageUrl(profile.profileImage)} loading="lazy" className="w-full h-full object-cover" /> : <span className="text-white font-bold">{creator.username.charAt(0).toUpperCase()}</span>}
                             </div>
                             <div>
                               <h3 className="text-white font-bold text-base">{creator.username}</h3>
@@ -796,6 +796,7 @@ export default function CreatorProfile() {
                                   <img 
                                     key={idx} 
                                     src={getImageUrl(url, post.user?.username)} 
+                                    loading="lazy"
                                     draggable="false" 
                                     onContextMenu={(e) => e.preventDefault()} 
                                     className={`${itemStyle} cursor-pointer hover:opacity-90 transition-opacity`} 
@@ -926,7 +927,7 @@ export default function CreatorProfile() {
                 />
               ) : (
                 <img 
-                  src={getImageUrl(expandedGallery.urls[expandedGallery.currentIndex], expandedGallery.username)} 
+                  src={getImageUrl(expandedGallery.urls[expandedGallery.currentIndex], expandedGallery.username)} loading="lazy"
                   alt="Imagen" 
                   className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] pointer-events-auto transition-transform duration-300" 
                   draggable="false" 
