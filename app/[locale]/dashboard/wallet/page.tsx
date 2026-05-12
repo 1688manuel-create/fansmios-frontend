@@ -357,7 +357,7 @@ export default function WalletDashboard() {
                   <button onClick={() => setIsExpress(false)} className={`p-4 rounded-2xl flex flex-col items-start transition-all ${!isExpress ? 'nm-inset border border-blue-500/30 text-blue-400' : 'nm-btn border border-transparent text-gray-500 hover:text-gray-300'}`}>
                     <div className="flex items-center gap-2 font-black mb-1"><Turtle className="w-5 h-5" /> {t('type_standard')}</div>
                     <p className="text-[10px] uppercase tracking-widest font-bold opacity-80 mt-2">{t('fee_2')}</p>
-                    <p className="text-[10px] opacity-60 font-medium">{t('time_7d')}</p>
+                    <p className="text-[10px] opacity-60 font-medium">{t('time_3d')}</p>
                   </button>
                   <button onClick={() => setIsExpress(true)} className={`p-4 rounded-2xl flex flex-col items-start transition-all ${isExpress ? 'nm-inset border border-purple-500/50 text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.15)]' : 'nm-btn border border-transparent text-gray-500 hover:text-gray-300'}`}>
                     <div className="flex items-center gap-2 font-black mb-1"><Zap className="w-5 h-5" /> {t('type_express')}</div>
@@ -383,7 +383,7 @@ export default function WalletDashboard() {
             <div className="space-y-8 flex flex-col">
               <div className="nm-btn border border-white/5 p-8 rounded-[2rem] flex-1">
                 <h3 className="text-xl font-black text-white mb-2 flex items-center gap-3 tracking-wide"><LinkIcon className="w-6 h-6 text-purple-500" /> {t('wallet_title')}</h3>
-                <p className="text-xs text-gray-400 mb-6 font-medium leading-relaxed">{t('wallet_desc_1')} <strong>USDT (Red Tron / TRC20)</strong>. {t('wallet_desc_2')}</p>
+                <p className="text-xs text-gray-400 mb-6 font-medium leading-relaxed">{t('wallet_desc_1')} <strong>USDC (RED BASE)</strong>. {t('wallet_desc_2')}</p>
                 <div className="space-y-4">
                   <input type="text" value={cryptoAddress} onChange={(e) => setCryptoAddress(e.target.value)} placeholder={t('ph_wallet')} className="w-full nm-inset rounded-xl px-5 py-4 text-sm font-mono text-white outline-none focus:border-purple-500/50 transition-colors placeholder:text-gray-700 font-bold" />
                   <button onClick={handleSaveCryptoWallet} disabled={isSavingWallet || !cryptoAddress} className="w-full nm-btn border border-purple-500/30 text-purple-400 hover:bg-purple-600 hover:text-white font-bold px-4 py-4 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2">

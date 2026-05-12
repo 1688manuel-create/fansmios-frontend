@@ -414,11 +414,11 @@ export default function AdminDashboard() {
                           <span className="text-green-400">{t('lbl_active_wallet')}: ${w.creator?.wallet?.balance?.toFixed(2) || 0}</span>
                           <span className="text-yellow-400">{t('lbl_held_wallet')}: ${w.creator?.wallet?.pendingBalance?.toFixed(2) || 0}</span>
                         </div>
-                        <p className="text-sm mt-2"><span className="text-gray-400">{t('lbl_network')}:</span> {w.cryptoNetwork || 'TRC20'} <span className="text-gray-400 ml-3">{t('lbl_address')}:</span> <span className="text-blue-400 select-all font-mono bg-blue-500/10 px-2 py-1 rounded">{w.cryptoAddress || t('not_provided')}</span></p>
+                        <p className="text-sm mt-2"><span className="text-gray-400">{t('lbl_network')}:</span> {w.cryptoNetwork || 'USDC'} <span className="text-gray-400 ml-3">{t('lbl_address')}:</span> <span className="text-blue-400 select-all font-mono bg-blue-500/10 px-2 py-1 rounded">{w.cryptoAddress || t('not_provided')}</span></p>
                         {w.adminNotes && <p className="text-xs text-orange-300 mt-2 bg-orange-500/10 p-2 rounded-lg">{w.adminNotes}</p>}
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-3xl font-black text-green-400 mb-4">${w.amount?.toFixed(2)} <span className="text-sm text-gray-500 font-normal">USDT</span></p>
+                        <p className="text-3xl font-black text-green-400 mb-4">${w.amount?.toFixed(2)} <span className="text-sm text-gray-500 font-normal">USDC</span></p>
                         
                         {/* 🔥 LÓGICA DE BOTONES Y PDF CONDICIONAL */}
                         <div className="flex flex-col gap-2">
