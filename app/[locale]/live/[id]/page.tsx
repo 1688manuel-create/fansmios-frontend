@@ -209,7 +209,7 @@ export default function LiveRoom() {
                     triggerGiftEffect(msg.giftImageUrl ? { ...giftData, image: msg.giftImageUrl } as Gift : giftData as Gift);
                  } else {
                     // 🔨 ¡MAGIA DE SUBASTA! Si el dinero no es de un regalo, es de la subasta. Lanzamos el ID 888.
-                    triggerGiftEffect({ id: 888, name: msg.user?.username || 'Alguien', amount: msg.amount, image: '', style: "text-yellow-400 font-black", action: 'sparkles' } as Gift);
+                    triggerGiftEffect({ id: 888, name: msg.senderName || msg.user?.username || msg.username || 'FanVIP', amount: msg.amount, image: '', style: "text-yellow-400 font-black", action: 'sparkles' } as Gift);
                  }
               }
               updateTopDonators(msg); handleStreak();
@@ -472,6 +472,10 @@ export default function LiveRoom() {
 
       <BattleOverlay battle={battle} />
       <AuctionOverlay auction={auction} isCreator={isCreatorOrAdmin} onBid={submitAuctionBid} />
+      
+      {/* 🔥 AHORA LOS EFECTOS ESTÁN EN LA CAPA MÁS ALTA */}
+      {giftEffect && <GiftEffectOverlay giftEffect={giftEffect} />}
+      {rouletteEvent && <RouletteOverlay event={rouletteEvent} />}
 
       <div className="absolute inset-0 z-0 bg-[#050505] [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full" onContextMenu={(e) => e.preventDefault()}>
         {hasAccess && liveKitToken ? (
@@ -532,9 +536,6 @@ export default function LiveRoom() {
                 )}
                 {streak > 1 && <div className="bg-orange-500/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-orange-500/50 flex items-center gap-1.5 animate-pulse mt-2"><Zap className="w-3 h-3 text-orange-400 fill-orange-500" /><span className="text-orange-400 font-black text-xs">Combo x{streak}</span></div>}
               </div>
-
-              {giftEffect && <GiftEffectOverlay giftEffect={giftEffect} />}
-              {rouletteEvent && <RouletteOverlay event={rouletteEvent} />}
 
               <div className="w-full px-4 pb-4 md:w-[500px] pointer-events-auto relative z-20">
                 <div ref={heartsContainerRef} className="absolute bottom-16 right-4 w-16 h-64 pointer-events-none overflow-visible z-0" />
