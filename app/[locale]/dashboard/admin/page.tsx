@@ -794,13 +794,13 @@ export default function AdminDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold tracking-widest uppercase text-gray-500 mb-2">Dirección de Bóveda (MetaMask/TronLink)</label>
+                  <label className="block text-xs font-bold tracking-widest uppercase text-gray-500 mb-2">Dirección de Bóveda (Red Base / USDC)</label>
                   <input
                     type="text"
                     value={withdrawAddress}
                     onChange={(e) => setWithdrawAddress(e.target.value)}
                     className="w-full bg-[#111] border border-white/10 rounded-xl p-4 text-green-400 font-mono text-sm focus:border-green-500 outline-none transition-colors placeholder:text-gray-600"
-                    placeholder="0x... o T..."
+                    placeholder="0x..."
                   />
                 </div>
               </div>
