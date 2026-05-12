@@ -204,8 +204,13 @@ export default function LiveRoom() {
               if (msg.isChallenge) {
                  triggerGiftEffect({ id: 999, name: msg.challengeTitle, amount: msg.amount, image: '', style: "text-red-500 font-black", action: 'explosion' } as Gift);
               } else {
-                 const giftData = GIFTS.find(g => g.amount === msg.amount) || { style: "text-green-400" };
-                 triggerGiftEffect(msg.giftImageUrl ? { ...giftData, image: msg.giftImageUrl } as Gift : giftData as Gift);
+                 const giftData = GIFTS.find(g => g.amount === msg.amount);
+                 if (giftData) {
+                    triggerGiftEffect(msg.giftImageUrl ? { ...giftData, image: msg.giftImageUrl } as Gift : giftData as Gift);
+                 } else {
+                    // 🔨 ¡MAGIA DE SUBASTA! Si el dinero no es de un regalo, es de la subasta. Lanzamos el ID 888.
+                    triggerGiftEffect({ id: 888, name: msg.user?.username || 'Alguien', amount: msg.amount, image: '', style: "text-yellow-400 font-black", action: 'sparkles' } as Gift);
+                 }
               }
               updateTopDonators(msg); handleStreak();
            }, 0);
@@ -992,7 +997,27 @@ function GiftEffectOverlay({ giftEffect }: { giftEffect: Gift }) {
     );
   }
 
-  // 🎁 INTERFAZ NORMAL PARA REGALOS
+  // 🔨 INTERFAZ ÉPICA PARA SUBASTAS (ID 888)
+  if (giftEffect.id === 888) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
+        <div className="text-center animate-fade-in flex flex-col items-center px-10 py-8 bg-gradient-to-b from-yellow-600/90 to-black backdrop-blur-xl border-4 border-yellow-400 rounded-3xl shadow-[0_0_100px_rgba(250,204,21,0.8)] transform scale-110 transition-transform">
+          <div className="text-7xl mb-2 animate-bounce drop-shadow-[0_0_15px_rgba(250,204,21,1)]">🔨</div>
+          <h2 className="text-white font-black text-3xl uppercase tracking-widest mb-1 drop-shadow-md">¡NUEVA PUJA!</h2>
+          <div className="text-5xl md:text-6xl font-black text-yellow-300 font-mono tracking-tighter drop-shadow-[0_0_20px_rgba(253,224,71,1)] mt-2">
+            ${giftEffect.amount.toFixed(2)}
+          </div>
+          <div className="bg-black/50 px-4 py-1 rounded-full mt-4 border border-yellow-500/50">
+            <span className="text-sm font-bold text-gray-200 uppercase tracking-widest">
+              GOLPE DE: <span className="text-yellow-400">@{giftEffect.name}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 🎁 INTERFAZ NORMAL PARA REGALOS (Rosas, Diamantes, etc.)
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
       <div className="text-center animate-bounce flex flex-col items-center">
