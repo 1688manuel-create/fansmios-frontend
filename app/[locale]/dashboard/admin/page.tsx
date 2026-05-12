@@ -247,9 +247,11 @@ export default function AdminDashboard() {
   const handleDownloadPdf = async (withdrawalId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.fansmio.com';
+      // Aseguramos la ruta base
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.fansmio.com/api'; 
       
-      const response = await fetch(`${API_URL}/api/wallet/withdraw/${withdrawalId}/pdf`, {
+      // 💥 EL BISTURÍ: Quitamos el "/api" extra que estaba después de ${API_URL}
+      const response = await fetch(`${API_URL}/wallet/withdraw/${withdrawalId}/pdf`, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` }
       });
