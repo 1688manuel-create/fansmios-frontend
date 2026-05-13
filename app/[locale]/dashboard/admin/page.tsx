@@ -88,12 +88,12 @@ export default function AdminDashboard() {
       
       if (settingsData?.data && settingsData.data.id) {
         setFees({
-          feeSubscription: settingsData.data.feeSubscription || 20,
-          feePPV: settingsData.data.feePPV || 20,
-          feeTips: settingsData.data.feeTips || 20,
-          feeLive: settingsData.data.feeLive || 30,
-          feeWithdrawalStd: settingsData.data.feeWithdrawalStd || 2,
-          feeWithdrawalExp: settingsData.data.feeWithdrawalExp || 5,
+          feeSubscription: settingsData.data.feeSubscription ?? 20,
+          feePPV: settingsData.data.feePPV ?? 20,
+          feeTips: settingsData.data.feeTips ?? 20,
+          feeLive: settingsData.data.feeLive ?? 30,
+          feeWithdrawalStd: settingsData.data.feeWithdrawalStd ?? 0, // 🔥 Cambiamos a ?? y por defecto 0
+          feeWithdrawalExp: settingsData.data.feeWithdrawalExp ?? 5,
         });
       }
     } catch (error) {
