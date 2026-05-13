@@ -151,9 +151,9 @@ export default function StatisticsDashboard() {
               <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-blue-500" /> {t('chart_income')}
               </h3>
-              {/* 🔥 EL BISTURÍ: Estilos forzados para que el móvil no aplaste la gráfica */}
-              <div className="w-full relative" style={{ height: '300px', minHeight: '300px', minWidth: '100%' }}>
-                <ResponsiveContainer width="100%" height="100%">
+              {/* 🔥 EL BISTURÍ DEFINITIVO: Contenedor estricto y el hack del 99% en el ancho */}
+              <div style={{ width: '100%', height: 300 }}>
+                <ResponsiveContainer width="99%" height="100%">
                   <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
                     <XAxis dataKey="name" stroke="#666" tick={{fill: '#888', fontSize: 12, fontWeight: 'bold'}} axisLine={false} tickLine={false} />
@@ -173,9 +173,9 @@ export default function StatisticsDashboard() {
               <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
                 <Users className="w-4 h-4 text-purple-500" /> {t('chart_subs')}
               </h3>
-              {/* 🔥 EL BISTURÍ: Mismo blindaje para las barras */}
-              <div className="w-full relative" style={{ height: '300px', minHeight: '300px', minWidth: '100%' }}>
-                <ResponsiveContainer width="100%" height="100%">
+              {/* 🔥 EL BISTURÍ DEFINITIVO: Contenedor estricto y el hack del 99% en el ancho */}
+              <div style={{ width: '100%', height: 300 }}>
+                <ResponsiveContainer width="99%" height="100%">
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
                     <XAxis dataKey="name" stroke="#666" tick={{fill: '#888', fontSize: 12, fontWeight: 'bold'}} axisLine={false} tickLine={false} />
