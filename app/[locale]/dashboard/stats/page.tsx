@@ -147,47 +147,58 @@ export default function StatisticsDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* Gráfica Ingresos */}
-            <div className="nm-inset p-6 sm:p-8 rounded-[2rem] border border-white/5">
+            <div className="nm-inset p-6 sm:p-8 rounded-[2rem] border border-white/5 overflow-hidden">
               <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-blue-500" /> {t('chart_income')}
               </h3>
-              {/* 🔥 EL BISTURÍ DEFINITIVO: Contenedor estricto y el hack del 99% en el ancho */}
-              <div style={{ width: '100%', height: 300 }}>
-                <ResponsiveContainer width="99%" height="100%">
-                  <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                    <XAxis dataKey="name" stroke="#666" tick={{fill: '#888', fontSize: 12, fontWeight: 'bold'}} axisLine={false} tickLine={false} />
-                    <YAxis stroke="#666" tick={{fill: '#888', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(value) => `$${value}`} />
-                    <Tooltip 
-                      contentStyle={{ backgroundColor: '#0a0a0a', borderColor: '#333', borderRadius: '12px', color: '#fff', fontWeight: 'bold' }} 
-                      itemStyle={{ color: '#3b82f6' }}
-                    />
-                    <Line type="monotone" dataKey="ingresos" stroke="#3b82f6" strokeWidth={4} dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#000' }} activeDot={{ r: 8 }} />
-                  </LineChart>
-                </ResponsiveContainer>
+              
+              {/* 🔥 OPCIÓN NUCLEAR: Scroll horizontal en móvil + Seguro Anti-Choque */}
+              <div className="w-full overflow-x-auto pb-4">
+                <div style={{ minWidth: '500px', height: '300px' }}>
+                  {chartData && chartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
+                        <XAxis dataKey="name" stroke="#666" tick={{fill: '#888', fontSize: 12, fontWeight: 'bold'}} axisLine={false} tickLine={false} />
+                        <YAxis stroke="#666" tick={{fill: '#888', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(value) => `$${value}`} />
+                        <Tooltip contentStyle={{ backgroundColor: '#0a0a0a', borderColor: '#333', borderRadius: '12px', color: '#fff', fontWeight: 'bold' }} itemStyle={{ color: '#3b82f6' }} />
+                        <Line type="monotone" dataKey="ingresos" stroke="#3b82f6" strokeWidth={4} dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#000' }} activeDot={{ r: 8 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-600 font-bold text-[10px] uppercase tracking-widest">
+                      Esperando datos de la bóveda...
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Gráfica Suscriptores */}
-            <div className="nm-inset p-6 sm:p-8 rounded-[2rem] border border-white/5">
+            <div className="nm-inset p-6 sm:p-8 rounded-[2rem] border border-white/5 overflow-hidden">
               <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
                 <Users className="w-4 h-4 text-purple-500" /> {t('chart_subs')}
               </h3>
-              {/* 🔥 EL BISTURÍ DEFINITIVO: Contenedor estricto y el hack del 99% en el ancho */}
-              <div style={{ width: '100%', height: 300 }}>
-                <ResponsiveContainer width="99%" height="100%">
-                  <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                    <XAxis dataKey="name" stroke="#666" tick={{fill: '#888', fontSize: 12, fontWeight: 'bold'}} axisLine={false} tickLine={false} />
-                    <YAxis stroke="#666" tick={{fill: '#888', fontSize: 12}} axisLine={false} tickLine={false} allowDecimals={false} />
-                    <Tooltip 
-                      cursor={{ fill: '#111' }} 
-                      contentStyle={{ backgroundColor: '#0a0a0a', borderColor: '#333', borderRadius: '12px', color: '#fff', fontWeight: 'bold' }} 
-                      itemStyle={{ color: '#a855f7' }}
-                    />
-                    <Bar dataKey="suscriptores" fill="#a855f7" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+              
+              {/* 🔥 OPCIÓN NUCLEAR: Scroll horizontal en móvil + Seguro Anti-Choque */}
+              <div className="w-full overflow-x-auto pb-4">
+                <div style={{ minWidth: '500px', height: '300px' }}>
+                  {chartData && chartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
+                        <XAxis dataKey="name" stroke="#666" tick={{fill: '#888', fontSize: 12, fontWeight: 'bold'}} axisLine={false} tickLine={false} />
+                        <YAxis stroke="#666" tick={{fill: '#888', fontSize: 12}} axisLine={false} tickLine={false} allowDecimals={false} />
+                        <Tooltip cursor={{ fill: '#111' }} contentStyle={{ backgroundColor: '#0a0a0a', borderColor: '#333', borderRadius: '12px', color: '#fff', fontWeight: 'bold' }} itemStyle={{ color: '#a855f7' }} />
+                        <Bar dataKey="suscriptores" fill="#a855f7" radius={[8, 8, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-600 font-bold text-[10px] uppercase tracking-widest">
+                      Calculando impacto social...
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
