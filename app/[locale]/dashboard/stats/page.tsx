@@ -209,7 +209,7 @@ export default function StatisticsDashboard() {
                       <XAxis dataKey="name" stroke="#444" tick={{fontSize: 10, fontWeight: 'bold'}} axisLine={false} tickLine={false} />
                       <YAxis stroke="#444" tick={{fontSize: 10}} axisLine={false} tickLine={false} allowDecimals={false} />
                       <Tooltip cursor={{fill: '#ffffff05'}} contentStyle={{ backgroundColor: "#000", border: "1px solid #222", borderRadius: "12px", fontSize: "12px" }} />
-                      <Bar dataKey="suscriptores" fill="#a855f7" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="suscriptores" fill="#a855f7" radius={[8, 8, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : <EmptyChart />}
