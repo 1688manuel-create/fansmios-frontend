@@ -116,9 +116,7 @@ export default function WalletDashboard() {
 
     setIsWithdrawing(true);
     try {
-      // 🔥 REGRESAMOS A TU RUTA ORIGINAL (La que sí existe en tu backend)
       const res = await api.post('/wallet/withdraw', { amount, isExpress, twoFactorToken });
-      
       alert(`🏦 ${t('alert_success')} ${res.data.message || t('alert_withdraw_process')}`);
       setWithdrawAmount(''); 
       setTwoFactorToken('');
@@ -132,20 +130,15 @@ export default function WalletDashboard() {
 
   const handleDownloadPdf = async (withdrawalId: string) => {
     try {
-      // 🔥 Usamos tu motor 'api' nativo con responseType 'blob' para atrapar el PDF
       const response = await api.get(`/wallet/withdraw/${withdrawalId}/pdf`, {
         responseType: 'blob' 
       });
-
-      // Transformamos el archivo puro en un enlace descargable
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const a = document.createElement('a');
       a.href = url;
       a.download = `Fansmio_Recibo_${withdrawalId.substring(0, 8)}.pdf`;
       document.body.appendChild(a);
       a.click();
-      
-      // Limpieza de memoria
       window.URL.revokeObjectURL(url);
       a.remove();
     } catch (error) {
@@ -164,7 +157,6 @@ export default function WalletDashboard() {
     );
   }
 
-  // 🛡️ VARIABLES SEGURAS
   const availableBalance = financeData?.wallet?.balance || 0;
   const pendingBalance = financeData?.wallet?.pendingBalance || 0;
   const totalEarned = financeData?.totalEarnedHistorial || 0;
@@ -172,7 +164,7 @@ export default function WalletDashboard() {
   const fanExactBalance = parseFloat(financeData?.wallet?.balance ?? localUser?.walletBalance ?? 0).toFixed(2);
 
   // ============================================================================
-  // 🌟 VISTA EXCLUSIVA PARA FANS (SOLO DÓLARES E HISTORIAL)
+  // 🌟 VISTA EXCLUSIVA PARA FANS
   // ============================================================================
   if (userRole === 'FAN') {
     return (
@@ -193,14 +185,10 @@ export default function WalletDashboard() {
           </nav>
 
           <main className="max-w-4xl mx-auto mt-8 px-4 space-y-8 relative z-10">
-            
-            {/* 🛡️ BANNER DE SALDO CENTRALIZADO */}
             <div className="nm-inset p-8 rounded-[2rem] border border-green-500/20 flex flex-col items-center justify-center relative overflow-hidden text-center py-12">
               <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-600"></div>
               <ShieldCheck className="w-8 h-8 text-green-500 mb-3 opacity-50" />
-              <h3 className="text-gray-400 font-bold uppercase tracking-widest mb-2 text-xs">
-                Saldo Disponible
-              </h3>
+              <h3 className="text-gray-400 font-bold uppercase tracking-widest mb-2 text-xs">Saldo Disponible</h3>
               <div className="text-6xl font-black text-white font-mono tracking-tight drop-shadow-md flex items-center gap-2">
                 <span className="text-green-500">$</span>{fanExactBalance}
               </div>
@@ -210,7 +198,7 @@ export default function WalletDashboard() {
               </div>
             </div>
 
-            {/* HISTORIAL DE MOVIMIENTOS DEL FAN */}
+            {/* 🔥 LISTA DE FANS CON SCROLL INTERNO */}
             <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default mt-8">
               <h2 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
                 <History className="w-5 h-5 text-green-500" /> {t('fan_history_title')}
@@ -218,7 +206,7 @@ export default function WalletDashboard() {
               {allTransactions.length === 0 ? (
                 <div className="text-center text-gray-600 py-12 font-medium">{t('fan_empty_history')}</div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
                   {allTransactions.map((tx: any) => {
                     const isTopUp = tx.type === 'CREDIT_TOPUP';
                     const isIncome = tx.isIncome || isTopUp;
@@ -271,7 +259,7 @@ export default function WalletDashboard() {
   }
 
   // ============================================================================
-  // 🏦 VISTA PARA CREADORES / ADMINS (Mantenido intacto)
+  // 🏦 VISTA PARA CREADORES / ADMINS
   // ============================================================================
   return (
     <AppLayout>
@@ -290,48 +278,50 @@ export default function WalletDashboard() {
         </nav>
 
         <main className="max-w-6xl mx-auto mt-8 px-4 space-y-8 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="nm-inset p-8 rounded-[2rem] border border-green-500/30 flex flex-col justify-center relative overflow-hidden group">
-              <div className="absolute -right-6 -top-6 text-green-500/10 group-hover:scale-110 transition-transform duration-500">
-                <DollarSign className="w-48 h-48" strokeWidth={1} />
+          
+          {/* 🔥 TARJETAS SUPERIORES COMPACTAS EN MÓVIL */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            <div className="nm-inset p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-green-500/30 flex flex-col justify-center relative overflow-hidden group">
+              <div className="absolute -right-4 -top-4 md:-right-6 md:-top-6 text-green-500/10 group-hover:scale-110 transition-transform duration-500">
+                <DollarSign className="w-32 h-32 md:w-48 md:h-48" strokeWidth={1} />
               </div>
-              <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-2 z-10">
+              <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-1 md:mb-2 z-10">
                 <CheckCircle2 className="w-4 h-4 text-green-400" /> {t('lbl_available_balance')}
               </h3>
-              <p className="text-5xl font-black text-white z-10 drop-shadow-[0_0_10px_rgba(34,197,94,0.2)]">
+              <p className="text-4xl md:text-5xl font-black text-white z-10 drop-shadow-[0_0_10px_rgba(34,197,94,0.2)]">
                 ${Number(availableBalance || 0).toFixed(2)}
               </p>
-              <p className="text-[10px] text-green-400 mt-4 font-bold uppercase tracking-widest nm-inset bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-md inline-flex w-fit z-10">
+              <p className="text-[9px] md:text-[10px] text-green-400 mt-3 md:mt-4 font-bold uppercase tracking-widest nm-inset bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-md inline-flex w-fit z-10">
                 {t('lbl_funds_ready')}
               </p>
             </div>
             
-            <div className="nm-btn border border-yellow-500/20 p-8 rounded-[2rem] flex flex-col justify-center relative overflow-hidden cursor-default group">
-              <div className="absolute -right-6 -top-6 text-yellow-500/5 group-hover:scale-110 transition-transform duration-500">
-                <Clock className="w-48 h-48" strokeWidth={1} />
+            <div className="nm-btn border border-yellow-500/20 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col justify-center relative overflow-hidden cursor-default group">
+              <div className="absolute -right-4 -top-4 md:-right-6 md:-top-6 text-yellow-500/5 group-hover:scale-110 transition-transform duration-500">
+                <Clock className="w-32 h-32 md:w-48 md:h-48" strokeWidth={1} />
               </div>
-              <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-2 z-10">
+              <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-1 md:mb-2 z-10">
                 <ShieldCheck className="w-4 h-4 text-yellow-500" /> {t('lbl_pending_balance')}
               </h3>
-              <p className="text-5xl font-black text-white z-10">
+              <p className="text-4xl md:text-5xl font-black text-white z-10">
                 ${Number(pendingBalance || 0).toFixed(2)}
               </p>
-              <p className="text-[10px] text-yellow-500 mt-4 font-bold uppercase tracking-widest z-10">
+              <p className="text-[9px] md:text-[10px] text-yellow-500 mt-3 md:mt-4 font-bold uppercase tracking-widest z-10">
                 {t('lbl_anti_fraud')}
               </p>
             </div>
 
-            <div className="nm-btn border border-purple-500/20 p-8 rounded-[2rem] flex flex-col justify-center relative overflow-hidden cursor-default group">
-              <div className="absolute -right-6 -top-6 text-purple-500/5 group-hover:scale-110 transition-transform duration-500">
-                <TrendingUp className="w-48 h-48" strokeWidth={1} />
+            <div className="nm-btn border border-purple-500/20 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col justify-center relative overflow-hidden cursor-default group">
+              <div className="absolute -right-4 -top-4 md:-right-6 md:-top-6 text-purple-500/5 group-hover:scale-110 transition-transform duration-500">
+                <TrendingUp className="w-32 h-32 md:w-48 md:h-48" strokeWidth={1} />
               </div>
-              <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-2 z-10">
+              <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-1 md:mb-2 z-10">
                 <TrendingUp className="w-4 h-4 text-purple-400" /> {t('lbl_total_earned')}
               </h3>
-              <p className="text-5xl font-black text-purple-400 z-10">
+              <p className="text-4xl md:text-5xl font-black text-purple-400 z-10">
                 ${totalEarned.toFixed(2)}
               </p>
-              <p className="text-[10px] text-gray-500 mt-4 font-bold uppercase tracking-widest z-10">
+              <p className="text-[9px] md:text-[10px] text-gray-500 mt-3 md:mt-4 font-bold uppercase tracking-widest z-10">
                 {t('lbl_total_platform')}
               </p>
             </div>
@@ -405,12 +395,14 @@ export default function WalletDashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
+            
+            {/* 🔥 LISTA DE INGRESOS CON SCROLL INTERNO */}
             <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default">
               <h2 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2"><Download className="w-4 h-4 text-green-500" /> {t('income_title')}</h2>
               {(!financeData?.recentTransactions || financeData.recentTransactions.length === 0) ? (
                 <div className="text-center text-gray-600 py-12 font-medium">{t('income_empty')}</div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
                   {financeData.recentTransactions.map((tx: any) => (
                     <div key={tx.id} className="flex items-center justify-between p-4 rounded-2xl nm-inset border border-white/5 hover:border-green-500/20 transition-all">
                       <div className="flex items-center gap-4">
@@ -429,12 +421,13 @@ export default function WalletDashboard() {
               )}
             </div>
 
+            {/* 🔥 LISTA DE RETIROS CON SCROLL INTERNO */}
             <div className="nm-btn border border-white/5 p-6 rounded-[2rem] cursor-default">
               <h2 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2"><History className="w-4 h-4 text-blue-500" /> {t('history_title')}</h2>
               {(!financeData?.withdrawalHistory || financeData.withdrawalHistory.length === 0) ? (
                 <div className="text-center text-gray-600 py-12 font-medium">{t('history_empty')}</div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
                   {financeData.withdrawalHistory.map((w: any) => (
                     <div key={w.id} className="flex items-center justify-between p-4 rounded-2xl nm-inset border border-white/5 hover:border-blue-500/20 transition-all">
                       <div className="flex items-center gap-4">
@@ -452,7 +445,6 @@ export default function WalletDashboard() {
                         <p className="text-white font-black text-base">-${(w.amount || 0).toFixed(2)}</p>
                         {w.adminNotes && <p className="text-[9px] text-gray-500 font-medium max-w-[120px] truncate mt-1" title={w.adminNotes}>{w.adminNotes}</p>}
                         
-                        {/* Botón de PDF solo si está Aprobado o Pagado */}
                         {(w.status === 'APPROVED' || w.status === 'PAID') && (
                           <button
                             onClick={() => handleDownloadPdf(w.id)}
