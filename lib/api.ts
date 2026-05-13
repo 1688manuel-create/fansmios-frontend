@@ -15,7 +15,7 @@ api.interceptors.request.use(
       const token = localStorage.getItem('token');
       
       // 💡 LISTA BLANCA: Rutas que no necesitan token
-      const publicRoutes = ['/auth/login', '/auth/register', '/users/login']; 
+      const publicRoutes = ['/auth/login', '/auth/register', '/users/login', '/auth/verify-2fa', '/verify-2fa']; 
       const isPublicRoute = publicRoutes.some(route => config.url?.includes(route));
 
       if (token && token !== 'undefined' && token !== 'null') {
@@ -55,7 +55,7 @@ api.interceptors.response.use(
 
         if (isProtected) {
           console.error("🔴 Bloqueo de seguridad: Expulsando a /auth...");
-          window.location.href = '/auth'; 
+          window.location.href = '/login';  
         } else {
           console.warn("⚠️ Petición rechazada (401), pero es un visitante en la vitrina. No se le expulsa.");
           // No hacemos window.location.href, dejamos que el usuario siga viendo el perfil.

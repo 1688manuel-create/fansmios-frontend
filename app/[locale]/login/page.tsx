@@ -45,7 +45,7 @@ export default function Login() {
       }
 
       // Si no tiene 2FA, entra directo
-      router.push('/feed'); 
+      window.location.href = '/feed';
     } catch (err: any) {
       setError(err.response?.data?.error || t('alert_error'));
       setLoading(false);
@@ -65,7 +65,7 @@ export default function Login() {
     try {
       // Llamada a tu endpoint para verificar el token 2FA
       await authService.verify2FALogin({ userId: tempUserId, token: twoFactorToken });
-      router.push('/feed'); // Acceso concedido
+      window.location.href = '/feed'; // Acceso concedido
     } catch (err: any) {
       setError(err.response?.data?.error || t('alert_error_2fa'));
     } finally {
