@@ -185,11 +185,11 @@ export default function WalletDashboard() {
           </nav>
 
           <main className="max-w-4xl mx-auto mt-8 px-4 space-y-8 relative z-10">
-            <div className="nm-inset p-8 rounded-[2rem] border border-green-500/20 flex flex-col items-center justify-center relative overflow-hidden text-center py-12">
+            <div className="nm-inset p-8 rounded-[2rem] border border-green-500/20 flex flex-col items-center justify-center relative overflow-hidden text-center py-8 md:py-12">
               <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-600"></div>
               <ShieldCheck className="w-8 h-8 text-green-500 mb-3 opacity-50" />
               <h3 className="text-gray-400 font-bold uppercase tracking-widest mb-2 text-xs">Saldo Disponible</h3>
-              <div className="text-6xl font-black text-white font-mono tracking-tight drop-shadow-md flex items-center gap-2">
+              <div className="text-5xl md:text-6xl font-black text-white font-mono tracking-tight drop-shadow-md flex items-center gap-2">
                 <span className="text-green-500">$</span>{fanExactBalance}
               </div>
               <div className="mt-6 flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full">
@@ -263,7 +263,7 @@ export default function WalletDashboard() {
   // ============================================================================
   return (
     <AppLayout>
-      <div className="min-h-screen pb-24 bg-nm-base relative">
+      <div className="min-h-screen pb-24 bg-nm-base relative overflow-hidden">
         <div className="absolute top-0 left-1/2 w-[800px] h-[400px] bg-green-900/5 rounded-full blur-[120px] pointer-events-none -translate-x-1/2"></div>
         <nav className="sticky top-0 z-50 bg-[#0a0a0a]/90 border-b border-white/5 px-6 py-4 flex justify-between items-center backdrop-blur-xl shadow-md">
           <h1 className="text-xl font-black text-white flex items-center gap-3 tracking-wide">
@@ -279,10 +279,12 @@ export default function WalletDashboard() {
 
         <main className="max-w-6xl mx-auto mt-8 px-4 space-y-8 relative z-10">
           
-          {/* 🔥 TARJETAS SUPERIORES COMPACTAS EN MÓVIL */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            <div className="nm-inset p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-green-500/30 flex flex-col justify-center relative overflow-hidden group">
-              <div className="absolute -right-4 -top-4 md:-right-6 md:-top-6 text-green-500/10 group-hover:scale-110 transition-transform duration-500">
+          {/* 🔥 BISTURÍ UX: CARRUSEL HORIZONTAL EN MÓVIL, GRID EN PC */}
+          <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-4 md:gap-6 pb-4 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            
+            {/* Tarjeta 1 */}
+            <div className="min-w-[85%] sm:min-w-[300px] md:min-w-0 snap-center shrink-0 nm-inset p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-green-500/30 flex flex-col justify-center relative overflow-hidden group">
+              <div className="absolute -right-4 -top-4 md:-right-6 md:-top-6 text-green-500/10 group-hover:scale-110 transition-transform duration-500 pointer-events-none">
                 <DollarSign className="w-32 h-32 md:w-48 md:h-48" strokeWidth={1} />
               </div>
               <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-1 md:mb-2 z-10">
@@ -296,8 +298,9 @@ export default function WalletDashboard() {
               </p>
             </div>
             
-            <div className="nm-btn border border-yellow-500/20 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col justify-center relative overflow-hidden cursor-default group">
-              <div className="absolute -right-4 -top-4 md:-right-6 md:-top-6 text-yellow-500/5 group-hover:scale-110 transition-transform duration-500">
+            {/* Tarjeta 2 */}
+            <div className="min-w-[85%] sm:min-w-[300px] md:min-w-0 snap-center shrink-0 nm-btn border border-yellow-500/20 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col justify-center relative overflow-hidden cursor-default group">
+              <div className="absolute -right-4 -top-4 md:-right-6 md:-top-6 text-yellow-500/5 group-hover:scale-110 transition-transform duration-500 pointer-events-none">
                 <Clock className="w-32 h-32 md:w-48 md:h-48" strokeWidth={1} />
               </div>
               <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-1 md:mb-2 z-10">
@@ -311,8 +314,9 @@ export default function WalletDashboard() {
               </p>
             </div>
 
-            <div className="nm-btn border border-purple-500/20 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col justify-center relative overflow-hidden cursor-default group">
-              <div className="absolute -right-4 -top-4 md:-right-6 md:-top-6 text-purple-500/5 group-hover:scale-110 transition-transform duration-500">
+            {/* Tarjeta 3 */}
+            <div className="min-w-[85%] sm:min-w-[300px] md:min-w-0 snap-center shrink-0 nm-btn border border-purple-500/20 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] flex flex-col justify-center relative overflow-hidden cursor-default group">
+              <div className="absolute -right-4 -top-4 md:-right-6 md:-top-6 text-purple-500/5 group-hover:scale-110 transition-transform duration-500 pointer-events-none">
                 <TrendingUp className="w-32 h-32 md:w-48 md:h-48" strokeWidth={1} />
               </div>
               <h3 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-1 md:mb-2 z-10">
@@ -327,6 +331,7 @@ export default function WalletDashboard() {
             </div>
           </div>
 
+          {/* 🔥 FORMULARIOS (Estos se mantienen completos de izquierda a derecha) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="nm-inset p-8 rounded-[2rem] border border-white/5">
               <h2 className="text-xl font-black text-white mb-6 flex items-center gap-3 tracking-wide">
