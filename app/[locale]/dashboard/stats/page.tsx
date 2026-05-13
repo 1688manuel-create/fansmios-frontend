@@ -11,7 +11,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
 } from "recharts";
 
 import api from "../../../../lib/api";
@@ -170,7 +169,7 @@ export default function StatisticsDashboard() {
             </div>
           </section>
 
-          {/* SECCIÓN GRÁFICAS: Aquí está el arreglo crítico para móvil */}
+          {/* SECCIÓN GRÁFICAS: BLINDADAS CON TAMAÑO FIJO PUR0 */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* GRÁFICA DE INGRESOS */}
@@ -179,19 +178,21 @@ export default function StatisticsDashboard() {
                 <TrendingUp className="w-4 h-4 text-blue-500" />
                 <h3 className="text-[10px] uppercase font-black text-gray-500 tracking-widest">{t("chart_income")}</h3>
               </div>
-              {/* Contenedor con altura fija obligatoria para evitar el error de width -1 */}
-              <div className="w-full h-[250px] sm:h-[300px]">
-                {mounted && chartData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+              
+              {/* 🔥 MURO INQUEBRANTABLE: Scroll horizontal nativo, gráfica 100% fija de 600x300 */}
+              <div className="w-full overflow-x-auto overflow-y-hidden pb-4 touch-pan-x">
+                <div style={{ width: '600px', height: '300px' }}>
+                  {mounted && chartData.length > 0 ? (
+                    /* ❌ SIN ResponsiveContainer */
+                    <LineChart width={600} height={300} data={chartData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" vertical={false} />
                       <XAxis dataKey="name" stroke="#444" tick={{fontSize: 10, fontWeight: 'bold'}} axisLine={false} tickLine={false} />
                       <YAxis stroke="#444" tick={{fontSize: 10}} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v}`} />
                       <Tooltip contentStyle={{ backgroundColor: "#000", border: "1px solid #222", borderRadius: "12px", fontSize: "12px" }} />
                       <Line type="monotone" dataKey="ingresos" stroke="#3b82f6" strokeWidth={4} dot={{ r: 4, fill: "#3b82f6", strokeWidth: 0 }} activeDot={{ r: 6 }} />
                     </LineChart>
-                  </ResponsiveContainer>
-                ) : <EmptyChart />}
+                  ) : <EmptyChart />}
+                </div>
               </div>
             </div>
 
@@ -201,18 +202,21 @@ export default function StatisticsDashboard() {
                 <Users className="w-4 h-4 text-purple-500" />
                 <h3 className="text-[10px] uppercase font-black text-gray-500 tracking-widest">{t("chart_subs")}</h3>
               </div>
-              <div className="w-full h-[250px] sm:h-[300px]">
-                {mounted && chartData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+              
+              {/* 🔥 MURO INQUEBRANTABLE: Scroll horizontal nativo, gráfica 100% fija de 600x300 */}
+              <div className="w-full overflow-x-auto overflow-y-hidden pb-4 touch-pan-x">
+                <div style={{ width: '600px', height: '300px' }}>
+                  {mounted && chartData.length > 0 ? (
+                    /* ❌ SIN ResponsiveContainer */
+                    <BarChart width={600} height={300} data={chartData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" vertical={false} />
                       <XAxis dataKey="name" stroke="#444" tick={{fontSize: 10, fontWeight: 'bold'}} axisLine={false} tickLine={false} />
                       <YAxis stroke="#444" tick={{fontSize: 10}} axisLine={false} tickLine={false} allowDecimals={false} />
                       <Tooltip cursor={{fill: '#ffffff05'}} contentStyle={{ backgroundColor: "#000", border: "1px solid #222", borderRadius: "12px", fontSize: "12px" }} />
-                      <Bar dataKey="suscriptores" fill="#a855f7" radius={[8, 8, 0, 0]} />
+                      <Bar dataKey="suscriptores" fill="#a855f7" radius={[4, 4, 0, 0]} />
                     </BarChart>
-                  </ResponsiveContainer>
-                ) : <EmptyChart />}
+                  ) : <EmptyChart />}
+                </div>
               </div>
             </div>
 
