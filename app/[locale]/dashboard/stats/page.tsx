@@ -131,8 +131,6 @@ export default function StatisticsDashboard() {
   return (
     <AppLayout>
       <div className="min-h-screen bg-[#050505] text-white pb-28 relative overflow-x-hidden">
-        {/* Glow de fondo para PC */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[400px] bg-blue-600/5 blur-[120px] pointer-events-none" />
 
         {/* NAVBAR */}
         <nav className="sticky top-0 z-50 backdrop-blur-2xl bg-[#050505]/80 border-b border-white/5">
@@ -238,7 +236,6 @@ export default function StatisticsDashboard() {
             </div>
 
             <div className="bg-[#0b0b0b] border border-yellow-500/20 rounded-[2.5rem] p-8 relative overflow-hidden">
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-yellow-500/10 blur-[50px]" />
               <h2 className="text-[10px] uppercase font-black text-yellow-500 tracking-widest mb-2 flex items-center gap-2">
                 <Crown className="w-4 h-4" /> {t("top_fans_title")}
               </h2>
