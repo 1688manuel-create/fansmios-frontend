@@ -5,23 +5,20 @@ import { useRouter } from 'next/navigation';
 import { authService } from '../../../lib/authService';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl'; 
-import { Eye, EyeOff, Lock, Loader2 } from 'lucide-react'; // 👈 IMPORTAMOS ICONOS CLAVE
+import { Eye, EyeOff, Lock, Loader2 } from 'lucide-react'; 
 
 export default function Login() {
   const router = useRouter();
   const t = useTranslations('Login'); 
   
-  // Estados del Formulario
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // 👈 ESTADO DEL OJITO
+  const [showPassword, setShowPassword] = useState(false); 
   
-  // Estados de Doble Factor (2FA)
   const [requires2FA, setRequires2FA] = useState(false); 
   const [twoFactorToken, setTwoFactorToken] = useState('');
-  const [tempUserId, setTempUserId] = useState<string | null>(null); // Para guardar el ID temporalmente
+  const [tempUserId, setTempUserId] = useState<string | null>(null); 
 
-  // Estados de Control
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -36,16 +33,15 @@ export default function Login() {
     try {
       const response = await authService.login({ email, password });
       
-      // 🛡️ BIFURCACIÓN DE SEGURIDAD: ¿Tiene 2FA activado?
       if (response?.requires2FA) {
         setRequires2FA(true);
-        setTempUserId(response.userId); // Guardamos el ID para el segundo paso
+        setTempUserId(response.userId); 
         setLoading(false);
-        return; // Detenemos la ejecución aquí, no lo dejamos pasar al feed
+        return; 
       }
 
-      // Si no tiene 2FA, entra directo
-      window.location.href = '/feed';
+      // 🔥 AQUÍ ESTÁ LA MAGIA QUE ROMPE EL BUCLE
+      window.location.href = '/feed'; 
     } catch (err: any) {
       setError(err.response?.data?.error || t('alert_error'));
       setLoading(false);
@@ -63,9 +59,10 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Llamada a tu endpoint para verificar el token 2FA
       await authService.verify2FALogin({ userId: tempUserId, token: twoFactorToken });
-      window.location.href = '/feed'; // Acceso concedido
+      
+      // 🔥 AQUÍ TAMBIÉN ROMPEMOS EL BUCLE
+      window.location.href = '/feed'; 
     } catch (err: any) {
       setError(err.response?.data?.error || t('alert_error_2fa'));
     } finally {
@@ -75,13 +72,11 @@ export default function Login() {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6 bg-[#050505] relative overflow-hidden">
-      {/* 🔮 Luz ambiental de fondo para darle el toque premium */}
       <div className="absolute top-1/2 left-1/2 w-[800px] h-[500px] bg-purple-900/10 rounded-full blur-[150px] pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
       
       <div className="bg-[#0a0a0a]/80 backdrop-blur-2xl p-8 sm:p-10 rounded-3xl max-w-md w-full space-y-8 relative z-10 border border-white/5 shadow-2xl">
         
         <div className="text-center space-y-2">
-          {/* Logo Táctico */}
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
               <span className="text-2xl drop-shadow-[0_0_15px_rgba(249,115,22,0.9)]">⚡</span>
@@ -101,12 +96,7 @@ export default function Login() {
           </div>
         )}
 
-        {/* 🔄 RENDERIZADO CONDICIONAL: O muestra Login Normal o Muestra el 2FA */}
         {!requires2FA ? (
-          
-          /* =======================================
-             FORMULARIO 1: CORREO Y CONTRASEÑA
-          ======================================== */
           <form onSubmit={handleLoginSubmit} className="space-y-6 animate-fade-in">
             <div className="space-y-5">
               <div>
@@ -124,14 +114,13 @@ export default function Login() {
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 pl-1">{t('lbl_password')}</label>
                 <div className="relative">
                   <input 
-                    type={showPassword ? "text" : "password"} // 👈 MAGIA DEL OJITO
+                    type={showPassword ? "text" : "password"} 
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full bg-[#111111] border border-white/10 rounded-xl pl-5 pr-14 py-4 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/50 transition-all font-medium text-sm tracking-widest"
                     placeholder="••••••••"
                   />
-                  {/* 👈 BOTÓN DEL OJITO */}
                   <button 
                     type="button" 
                     onClick={() => setShowPassword(!showPassword)}
@@ -154,9 +143,6 @@ export default function Login() {
 
         ) : (
 
-          /* =======================================
-             FORMULARIO 2: DOBLE FACTOR (2FA)
-          ======================================== */
           <form onSubmit={handle2FASubmit} className="space-y-6 animate-fade-in">
             <div>
               <div className="flex justify-between items-center mb-3 px-1">
@@ -168,7 +154,7 @@ export default function Login() {
                 maxLength={6} 
                 required
                 value={twoFactorToken} 
-                onChange={(e) => setTwoFactorToken(e.target.value.replace(/\D/g, ''))} // Solo números
+                onChange={(e) => setTwoFactorToken(e.target.value.replace(/\D/g, ''))} 
                 placeholder="••••••" 
                 className="w-full bg-[#111111] border border-white/10 rounded-xl px-4 py-4 text-white text-center text-3xl tracking-[0.7em] font-mono font-bold outline-none focus:border-purple-500/50 transition-colors placeholder:text-gray-800" 
               />

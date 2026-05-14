@@ -1159,7 +1159,14 @@
     "btn_verifying": "Verificando...",
     "btn_login": "Iniciar Sesión",
     "lbl_no_account": "¿No tienes una cuenta?",
-    "link_register": "Regístrate aquí"
+    "link_register": "Regístrate aquí",
+    "title_2fa": "Autenticación 2FA",
+    "subtitle_2fa": "Ingresa el código de 6 dígitos de tu aplicación autenticadora.",
+    "lbl_2fa_code": "Código Seguro",
+    "lbl_required": "REQUERIDO",
+    "btn_verify_2fa": "Verificar y Entrar",
+    "btn_cancel_login": "Cancelar Inicio de Sesión",
+    "alert_error_2fa": "Código inválido o expirado."
   },
 
   "Metadata": {
