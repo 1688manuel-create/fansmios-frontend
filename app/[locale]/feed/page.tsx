@@ -19,7 +19,7 @@ import BoostModal from '../../../components/BoostModal';
 import { 
   Image as ImageIcon, Lock, Radio, Bell, MessageCircle, LogOut, 
   Crown, LayoutDashboard, Plus, Trash2, Unlock, Coins, X, User,
-  TrendingUp, Zap, Star, ChevronRight, ChevronLeft, Send, BadgeCheck, Flag, Wallet, Bookmark, AlertTriangle
+  TrendingUp, Zap, Star, ChevronRight, ChevronLeft, Send, BadgeCheck, Flag, Wallet, Bookmark, AlertTriangle, Globe
 } from 'lucide-react';
 
 import { useTranslations } from 'next-intl';
@@ -134,6 +134,7 @@ export default function Feed() {
   const [clientSecret, setClientSecret] = useState(''); 
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [posts, setPosts] = useState<any[]>([]);
+  const [isPublic, setIsPublic] = useState(false);
   
   const [isTipModalOpen, setIsTipModalOpen] = useState(false);
   const [tipRecipient, setTipRecipient] = useState<any>(null);
@@ -410,7 +411,7 @@ export default function Feed() {
     if (fileInputRef.current) fileInputRef.current.value = ''; 
   };
 
-  const handlePublish = async () => {
+ const handlePublish = async () => {
     if (!newPostContent.trim() && selectedFiles.length === 0) return;
     setIsPublishing(true);
     try {
@@ -419,10 +420,14 @@ export default function Feed() {
       formData.append('isPPV', String(isPPV));
       formData.append('price', String(isPPV ? Number(price) : 0));
       
+      // 🌍 NUEVO: Enviamos el interruptor de Público al servidor
+      formData.append('isPublic', String(isPublic)); 
+      
       selectedFiles.forEach(file => { formData.append('media', file); });
       await postService.createPost(formData);
       
-      setNewPostContent(''); setIsPPV(false); setPrice(''); setSelectedFiles([]); setImagePreviews([]);
+      // 🔥 AÑADIDO: Agregamos setIsPublic(false) para limpiar el formulario
+      setNewPostContent(''); setIsPPV(false); setIsPublic(false); setPrice(''); setSelectedFiles([]); setImagePreviews([]);
       if (fileInputRef.current) fileInputRef.current.value = ''; 
       fetchData(); 
     } catch (error: any) { 
@@ -695,6 +700,8 @@ export default function Feed() {
                     <input type="file" multiple accept="image/*,video/*" ref={fileInputRef} onChange={handleMediaChange} className="hidden" />
                     <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-4 py-2.5 nm-btn text-gray-400 hover:text-white transition-colors"><ImageIcon className="w-4 h-4" /><span className="hidden sm:inline">{t('btn_media')}</span></button>
                     <button onClick={() => setIsPPV(!isPPV)} className={`flex items-center gap-2 px-4 py-2.5 nm-btn transition-colors ${isPPV ? 'text-green-400 border border-green-500/30' : 'text-yellow-500'}`}><Lock className="w-4 h-4" /> <span className="hidden sm:inline">PPV</span></button>
+                    {/* 🌍 AQUÍ VA TU NUEVO BOTÓN DE PÚBLICO / SOLO FANS */}
+                    <button onClick={() => setIsPublic(!isPublic)} className={`flex items-center gap-2 px-4 py-2.5 nm-btn transition-colors ${isPublic ? 'text-blue-400 border border-blue-500/30' : 'text-gray-400'}`}><Globe className="w-4 h-4" /><span className="hidden sm:inline">{isPublic ? 'Público' : 'Solo Fans'}</span></button>
                     <button onClick={handleStartLive} className="flex items-center gap-2 px-4 py-2.5 nm-btn text-red-500 hover:text-red-400 group"><Radio className="w-4 h-4 animate-pulse" /><span className="hidden sm:inline">{t('btn_live')}</span></button>
                   </div>
                   <button onClick={handlePublish} disabled={isPublishing || (!newPostContent.trim() && selectedFiles.length === 0) || (isPPV && !price)} className="w-full sm:w-auto nm-btn-primary px-8 py-3">{isPublishing ? t('btn_uploading') : t('btn_publish')}</button>
@@ -871,10 +878,18 @@ export default function Feed() {
                             <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
                             <div className="relative z-10 flex flex-col items-center bg-black/60 px-10 py-8 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
                               <Lock className={`w-14 h-14 mb-4 ${post.isPromoted ? 'text-yellow-500' : 'text-red-500'}`} />
+                              
+                              {/* 🔥 LÓGICA INTELIGENTE DE BOTONES */}
                               {isOwner ? (
                                 <button disabled className="py-3 px-8 text-sm flex items-center gap-2 font-bold nm-inset text-red-500 cursor-default rounded-xl"><Lock className="w-4 h-4"/> {t('lbl_your_ppv')} (${(post.price || 0).toFixed(2)})</button>
-                              ) : (
+                              ) : post.isPPV ? (
+                                // Botón para contenido PPV
                                 <button onClick={() => handleUnlockClick(post)} className={`py-3 px-8 text-sm flex items-center gap-2 font-bold ${post.isPromoted ? 'bg-yellow-500 text-black rounded-full shadow-[0_0_15px_rgba(234,179,8,0.4)]' : 'nm-btn-primary rounded-xl'}`}>{t('btn_unlock_for')} ${(post.price || 0).toFixed(2)}</button>
+                              ) : (
+                                // Botón para contenido normal (Pide Suscripción)
+                                <button onClick={() => router.push(`/${post.user.username}`)} className={`py-3 px-8 text-sm flex items-center gap-2 font-bold ${post.isPromoted ? 'bg-yellow-500 text-black rounded-full shadow-[0_0_15px_rgba(234,179,8,0.4)]' : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl hover:scale-105 transition-transform'}`}>
+                                  <Crown className="w-4 h-4" /> Suscríbete para ver
+                                </button>
                               )}
                             </div>
                           </div>
