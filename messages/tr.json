@@ -1150,16 +1150,23 @@
   },
 
   "Login": {
-    "alert_error": "Giriş hatası. Bilgilerinizi kontrol edin.",
+    "alert_error": "Giriş hatası. Lütfen bilgilerinizi kontrol edin.",
     "title": "Tekrar hoş geldiniz",
-    "subtitle": "Devam etmek için bilgilerinizi girin",
+    "subtitle": "Devam etmek için kimlik bilgilerinizi girin",
     "lbl_email": "E-posta Adresi",
-    "ph_email": "siz@email.com",
+    "ph_email": "sen@email.com",
     "lbl_password": "Şifre",
     "btn_verifying": "Doğrulanıyor...",
     "btn_login": "Giriş Yap",
     "lbl_no_account": "Hesabınız yok mu?",
-    "link_register": "Buradan kayıt olun"
+    "link_register": "Buradan kayıt olun",
+    "title_2fa": "2FA Kimlik Doğrulaması",
+    "subtitle_2fa": "Doğrulayıcı uygulamanızdan 6 haneli kodu girin.",
+    "lbl_2fa_code": "Güvenlik Kodu",
+    "lbl_required": "GEREKLİ",
+    "btn_verify_2fa": "Doğrula ve Gir",
+    "btn_cancel_login": "Girişi İptal Et",
+    "alert_error_2fa": "Geçersiz veya süresi dolmuş kod."
   },
 
   "Metadata": {

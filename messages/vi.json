@@ -1150,7 +1150,7 @@
   },
 
   "Login": {
-    "alert_error": "Lỗi đăng nhập. Kiểm tra thông tin của bạn.",
+    "alert_error": "Lỗi đăng nhập. Vui lòng kiểm tra lại thông tin của bạn.",
     "title": "Chào mừng trở lại",
     "subtitle": "Nhập thông tin xác thực của bạn để tiếp tục",
     "lbl_email": "Địa chỉ Email",
@@ -1158,8 +1158,15 @@
     "lbl_password": "Mật khẩu",
     "btn_verifying": "Đang xác minh...",
     "btn_login": "Đăng nhập",
-    "lbl_no_account": "Chưa có tài khoản?",
-    "link_register": "Đăng ký tại đây"
+    "lbl_no_account": "Bạn chưa có tài khoản?",
+    "link_register": "Đăng ký tại đây",
+    "title_2fa": "Xác thực 2FA",
+    "subtitle_2fa": "Nhập mã gồm 6 chữ số từ ứng dụng xác thực của bạn.",
+    "lbl_2fa_code": "Mã bảo mật",
+    "lbl_required": "BẮT BUỘC",
+    "btn_verify_2fa": "Xác minh và Vào",
+    "btn_cancel_login": "Hủy đăng nhập",
+    "alert_error_2fa": "Mã không hợp lệ hoặc đã hết hạn."
   },
 
   "Metadata": {

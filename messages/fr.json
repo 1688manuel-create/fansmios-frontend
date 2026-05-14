@@ -1150,7 +1150,7 @@
   },
 
   "Login": {
-    "alert_error": "Erreur de connexion. Vérifiez vos identifiants.",
+    "alert_error": "Erreur de connexion. Veuillez vérifier vos informations.",
     "title": "Bon retour",
     "subtitle": "Entrez vos identifiants pour continuer",
     "lbl_email": "Adresse e-mail",
@@ -1159,7 +1159,14 @@
     "btn_verifying": "Vérification...",
     "btn_login": "Se connecter",
     "lbl_no_account": "Vous n'avez pas de compte ?",
-    "link_register": "Inscrivez-vous ici"
+    "link_register": "Inscrivez-vous ici",
+    "title_2fa": "Authentification 2FA",
+    "subtitle_2fa": "Entrez le code à 6 chiffres de votre application d'authentification.",
+    "lbl_2fa_code": "Code de sécurité",
+    "lbl_required": "REQUIS",
+    "btn_verify_2fa": "Vérifier et Entrer",
+    "btn_cancel_login": "Annuler la connexion",
+    "alert_error_2fa": "Code invalide ou expiré."
   },
 
   "Metadata": {

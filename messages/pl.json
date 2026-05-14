@@ -1153,13 +1153,20 @@
     "alert_error": "Błąd logowania. Sprawdź swoje dane.",
     "title": "Witamy ponownie",
     "subtitle": "Wprowadź swoje dane, aby kontynuować",
-    "lbl_email": "Adres E-mail",
-    "ph_email": "ty@email.com",
+    "lbl_email": "Adres e-mail",
+    "ph_email": "twoj@email.com",
     "lbl_password": "Hasło",
     "btn_verifying": "Weryfikacja...",
     "btn_login": "Zaloguj się",
     "lbl_no_account": "Nie masz konta?",
-    "link_register": "Zarejestruj się tutaj"
+    "link_register": "Zarejestruj się tutaj",
+    "title_2fa": "Uwierzytelnianie 2FA",
+    "subtitle_2fa": "Wprowadź 6-cyfrowy kod z aplikacji uwierzytelniającej.",
+    "lbl_2fa_code": "Kod Bezpieczeństwa",
+    "lbl_required": "WYMAGANE",
+    "btn_verify_2fa": "Zweryfikuj i Wejdź",
+    "btn_cancel_login": "Anuluj logowanie",
+    "alert_error_2fa": "Nieprawidłowy lub wygasły kod."
   },
 
   "Metadata": {

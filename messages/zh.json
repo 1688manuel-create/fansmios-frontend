@@ -1150,16 +1150,23 @@
   },
 
   "Login": {
-    "alert_error": "登录出错。请检查您的凭据。",
+    "alert_error": "登录错误。请检查您的详细信息。",
     "title": "欢迎回来",
-    "subtitle": "输入您的凭据以继续",
+    "subtitle": "请输入您的凭证以继续",
     "lbl_email": "电子邮件地址",
     "ph_email": "you@email.com",
     "lbl_password": "密码",
-    "btn_verifying": "正在验证...",
+    "btn_verifying": "验证中...",
     "btn_login": "登录",
-    "lbl_no_account": "没有帐户？",
-    "link_register": "在此注册"
+    "lbl_no_account": "还没有账户？",
+    "link_register": "在这里注册",
+    "title_2fa": "双重身份验证",
+    "subtitle_2fa": "请输入您的身份验证器应用程序中的6位数字代码。",
+    "lbl_2fa_code": "安全代码",
+    "lbl_required": "必填",
+    "btn_verify_2fa": "验证并进入",
+    "btn_cancel_login": "取消登录",
+    "alert_error_2fa": "代码无效或已过期。"
   },
 
   "Metadata": {

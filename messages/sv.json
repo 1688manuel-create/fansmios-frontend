@@ -1150,16 +1150,23 @@
   },
 
   "Login": {
-    "alert_error": "Inloggningsfel. Kontrollera dina uppgifter.",
+    "alert_error": "Inloggningsfel. Vänligen kontrollera dina uppgifter.",
     "title": "Välkommen tillbaka",
-    "subtitle": "Ange dina uppgifter för att fortsätta",
+    "subtitle": "Ange dina inloggningsuppgifter för att fortsätta",
     "lbl_email": "E-postadress",
     "ph_email": "du@email.com",
     "lbl_password": "Lösenord",
     "btn_verifying": "Verifierar...",
     "btn_login": "Logga in",
     "lbl_no_account": "Har du inget konto?",
-    "link_register": "Registrera dig här"
+    "link_register": "Registrera dig här",
+    "title_2fa": "2FA-autentisering",
+    "subtitle_2fa": "Ange den 6-siffriga koden från din autentiseringsapp.",
+    "lbl_2fa_code": "Säkerhetskod",
+    "lbl_required": "KRÄVS",
+    "btn_verify_2fa": "Verifiera och Gå in",
+    "btn_cancel_login": "Avbryt inloggning",
+    "alert_error_2fa": "Ogiltig eller utgången kod."
   },
 
   "Metadata": {

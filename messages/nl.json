@@ -1152,14 +1152,21 @@
   "Login": {
     "alert_error": "Inlogfout. Controleer uw gegevens.",
     "title": "Welkom terug",
-    "subtitle": "Voer uw gegevens in om door te gaan",
+    "subtitle": "Voer uw inloggegevens in om door te gaan",
     "lbl_email": "E-mailadres",
-    "ph_email": "jij@email.com",
+    "ph_email": "u@email.com",
     "lbl_password": "Wachtwoord",
-    "btn_verifying": "Verifiëren...",
+    "btn_verifying": "Bezig met verifiëren...",
     "btn_login": "Inloggen",
-    "lbl_no_account": "Heb je geen account?",
-    "link_register": "Registreer hier"
+    "lbl_no_account": "Heeft u geen account?",
+    "link_register": "Registreer hier",
+    "title_2fa": "2FA-authenticatie",
+    "subtitle_2fa": "Voer de 6-cijferige code in vanuit uw authenticator-app.",
+    "lbl_2fa_code": "Beveiligingscode",
+    "lbl_required": "VERPLICHT",
+    "btn_verify_2fa": "Verifiëren en Invoeren",
+    "btn_cancel_login": "Inloggen annuleren",
+    "alert_error_2fa": "Ongeldige of verlopen code."
   },
 
   "Metadata": {

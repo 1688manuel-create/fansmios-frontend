@@ -1149,17 +1149,24 @@
     "btn_save_all": "Alle Änderungen speichern"
   },
 
-  "Login": {
-    "alert_error": "Fehler beim Anmelden. Überprüfen Sie Ihre Daten.",
+ "Login": {
+    "alert_error": "Anmeldefehler. Bitte überprüfen Sie Ihre Daten.",
     "title": "Willkommen zurück",
-    "subtitle": "Geben Sie Ihre Zugangsdaten ein, um fortzufahren",
+    "subtitle": "Geben Sie Ihre Anmeldedaten ein, um fortzufahren",
     "lbl_email": "E-Mail-Adresse",
     "ph_email": "sie@email.com",
     "lbl_password": "Passwort",
-    "btn_verifying": "Überprüfung...",
+    "btn_verifying": "Wird überprüft...",
     "btn_login": "Anmelden",
-    "lbl_no_account": "Haben Sie kein Konto?",
-    "link_register": "Hier registrieren"
+    "lbl_no_account": "Sie haben noch kein Konto?",
+    "link_register": "Hier registrieren",
+    "title_2fa": "2FA-Authentifizierung",
+    "subtitle_2fa": "Geben Sie den 6-stelligen Code aus Ihrer Authenticator-App ein.",
+    "lbl_2fa_code": "Sicherheitscode",
+    "lbl_required": "ERFORDERLICH",
+    "btn_verify_2fa": "Bestätigen und Eintreten",
+    "btn_cancel_login": "Anmeldung abbrechen",
+    "alert_error_2fa": "Ungültiger oder abgelaufener Code."
   },
 
   "Metadata": {

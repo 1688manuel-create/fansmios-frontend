@@ -1150,7 +1150,7 @@
   },
 
   "Login": {
-    "alert_error": "Kesalahan saat masuk. Periksa kredensial Anda.",
+    "alert_error": "Kesalahan login. Silakan periksa detail Anda.",
     "title": "Selamat datang kembali",
     "subtitle": "Masukkan kredensial Anda untuk melanjutkan",
     "lbl_email": "Alamat Email",
@@ -1159,7 +1159,14 @@
     "btn_verifying": "Memverifikasi...",
     "btn_login": "Masuk",
     "lbl_no_account": "Belum punya akun?",
-    "link_register": "Daftar di sini"
+    "link_register": "Daftar di sini",
+    "title_2fa": "Autentikasi 2FA",
+    "subtitle_2fa": "Masukkan 6 digit kode dari aplikasi autentikator Anda.",
+    "lbl_2fa_code": "Kode Aman",
+    "lbl_required": "WAJIB",
+    "btn_verify_2fa": "Verifikasi dan Masuk",
+    "btn_cancel_login": "Batal Masuk",
+    "alert_error_2fa": "Kode tidak valid atau kedaluwarsa."
   },
 
   "Metadata": {

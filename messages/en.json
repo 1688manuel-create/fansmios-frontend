@@ -1149,7 +1149,7 @@
   },
 
   "Login": {
-    "alert_error": "Error logging in. Check your credentials.",
+    "alert_error": "Login error. Please check your details.",
     "title": "Welcome back",
     "subtitle": "Enter your credentials to continue",
     "lbl_email": "Email Address",
@@ -1158,7 +1158,14 @@
     "btn_verifying": "Verifying...",
     "btn_login": "Log In",
     "lbl_no_account": "Don't have an account?",
-    "link_register": "Register here"
+    "link_register": "Register here",
+    "title_2fa": "2FA Authentication",
+    "subtitle_2fa": "Enter the 6-digit code from your authenticator app.",
+    "lbl_2fa_code": "Secure Code",
+    "lbl_required": "REQUIRED",
+    "btn_verify_2fa": "Verify and Enter",
+    "btn_cancel_login": "Cancel Login",
+    "alert_error_2fa": "Invalid or expired code."
   },
 
   "Metadata": {

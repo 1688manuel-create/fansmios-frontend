@@ -1150,7 +1150,7 @@
   },
 
   "Login": {
-    "alert_error": "로그인 오류. 자격 증명을 확인하세요.",
+    "alert_error": "로그인 오류. 세부 정보를 확인하십시오.",
     "title": "다시 오신 것을 환영합니다",
     "subtitle": "계속하려면 자격 증명을 입력하세요",
     "lbl_email": "이메일 주소",
@@ -1159,7 +1159,14 @@
     "btn_verifying": "확인 중...",
     "btn_login": "로그인",
     "lbl_no_account": "계정이 없으신가요?",
-    "link_register": "여기에서 등록하세요"
+    "link_register": "여기에서 등록하세요",
+    "title_2fa": "2단계 인증 (2FA)",
+    "subtitle_2fa": "인증기 앱에서 6자리 코드를 입력하세요.",
+    "lbl_2fa_code": "보안 코드",
+    "lbl_required": "필수",
+    "btn_verify_2fa": "확인 및 입장",
+    "btn_cancel_login": "로그인 취소",
+    "alert_error_2fa": "잘못되거나 만료된 코드입니다."
   },
 
   "Metadata": {
