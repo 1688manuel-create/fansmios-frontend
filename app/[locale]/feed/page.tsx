@@ -700,7 +700,7 @@ export default function Feed() {
                     <input type="file" multiple accept="image/*,video/*" ref={fileInputRef} onChange={handleMediaChange} className="hidden" />
                     <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-4 py-2.5 nm-btn text-gray-400 hover:text-white transition-colors"><ImageIcon className="w-4 h-4" /><span className="hidden sm:inline">{t('btn_media')}</span></button>
                     <button onClick={() => setIsPPV(!isPPV)} className={`flex items-center gap-2 px-4 py-2.5 nm-btn transition-colors ${isPPV ? 'text-green-400 border border-green-500/30' : 'text-yellow-500'}`}><Lock className="w-4 h-4" /> <span className="hidden sm:inline">PPV</span></button>
-                    {/* 🌍 AQUÍ VA TU NUEVO BOTÓN DE PÚBLICO / SOLO FANS */}
+                    {/* 👁️ AQUÍ VA TU NUEVO BOTÓN DE PÚBLICO / SOLO FANS */}
                     <button onClick={() => setIsPublic(!isPublic)} className={`flex items-center gap-2 px-4 py-2.5 nm-btn transition-colors ${isPublic ? 'text-blue-400 border border-blue-500/30' : 'text-gray-400'}`}><Globe className="w-4 h-4" /><span className="hidden sm:inline">{isPublic ? 'Público' : 'Solo Fans'}</span></button>
                     <button onClick={handleStartLive} className="flex items-center gap-2 px-4 py-2.5 nm-btn text-red-500 hover:text-red-400 group"><Radio className="w-4 h-4 animate-pulse" /><span className="hidden sm:inline">{t('btn_live')}</span></button>
                   </div>
