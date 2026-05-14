@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation';
 import { fanService } from '../../../../lib/fanService';
 import api from '../../../../lib/api'; 
 import PaymentModal from '../../../../components/PaymentModal'; // 🔥 Importamos el nuevo Modal Cripto-Invisible
-import { useTranslations } from 'next-intl'; // 👈 AGREGAR AQUÍ
+import { useTranslations } from 'next-intl'; 
 
 export default function FanSubscriptions() {
   const router = useRouter();
-  const t = useTranslations('Subscriptions'); // 👈 AGREGAR ESTA LÍNEA AQUÍ
+  const t = useTranslations('Subscriptions'); 
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -122,10 +122,21 @@ export default function FanSubscriptions() {
                         <p className="text-xs text-gray-500 mt-1">{t('lbl_renewal')}: {new Date(sub.endDate).toLocaleDateString()}</p>
                       </div>
                     </div>
-                    <div className="flex gap-3 w-full sm:w-auto">
+                    
+                    {/* 👇 AQUÍ ESTÁN LOS BOTONES DE LA SUSCRIPCIÓN ACTIVA */}
+                    <div className="flex flex-wrap gap-3 w-full sm:w-auto justify-end">
                       <button onClick={() => router.push(`/${sub.creator?.username}`)} className="flex-1 sm:flex-none bg-white/10 hover:bg-white/20 text-white font-bold py-2.5 px-6 rounded-full transition-colors text-sm">
                         {t('btn_view_profile')}
                       </button>
+
+                      {/* 🔥 NUEVO BOTÓN DE CHAT AQUÍ */}
+                      <button 
+                        onClick={() => router.push(`/chat/${sub.creatorId}`)}
+                        className="flex-1 sm:flex-none bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 font-bold py-2.5 px-6 rounded-full transition-colors text-sm"
+                      >
+                        💬 Mensaje
+                      </button>
+
                       <button 
                         onClick={() => handleCancelSubscription(sub.creatorId, sub.creator?.username)}
                         className="flex-1 sm:flex-none bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-bold py-2.5 px-6 rounded-full transition-colors text-sm"
@@ -156,7 +167,7 @@ export default function FanSubscriptions() {
                         <p className="text-xs text-gray-500 mt-1">{t('lbl_expires')}: {new Date(sub.endDate).toLocaleDateString()}</p>
                       </div>
                     </div>
-                    {/* 🔥 EL NUEVO BOTÓN DE REACTIVACIÓN QUE ABRE ONRAMPER */}
+                    {/* 🔥 EL BOTÓN DE REACTIVACIÓN QUE ABRE ONRAMPER */}
                     <button 
                       onClick={() => handleReactivateSubscription(sub.creatorId, sub.price, sub.creator?.username)} 
                       className="w-full sm:w-auto bg-pink-500/20 text-pink-400 font-bold py-2 px-6 rounded-full text-sm hover:bg-pink-500 hover:text-white transition-all"
@@ -185,7 +196,7 @@ export default function FanSubscriptions() {
             onSuccess={() => {
               setIsPaymentModalOpen(false);
               alert(t('alert_renew_success'));
-              window.location.reload(); {/* 🔥 SOLUCIÓN INFALIBLE */}
+              window.location.reload(); 
             }}
         />
       )}
