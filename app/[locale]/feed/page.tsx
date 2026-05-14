@@ -392,9 +392,9 @@ export default function Feed() {
          return;
       }
 
-      const hasOversizedFile = filesArray.some(f => f.size > 150 * 1024 * 1024);
+      const hasOversizedFile = filesArray.some(f => f.size > 500 * 1024 * 1024);
       if (hasOversizedFile) {
-        setConfirmConfig({ title: "Archivo Muy Pesado", message: "¡Alto! El archivo es muy pesado (Máximo 150MB o 5 Minutos).", confirmText: "Entendido", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
+        setConfirmConfig({ title: "Archivo Muy Pesado", message: "¡Alto! El archivo es muy pesado (Máximo 500MB o 50 Minutos).", confirmText: "Entendido", hideCancel: true, onConfirm: () => setConfirmConfig(null) });
         if (fileInputRef.current) fileInputRef.current.value = '';
         return;
       }
