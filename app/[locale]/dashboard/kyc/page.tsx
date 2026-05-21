@@ -383,7 +383,7 @@ export default function KYCVerification() {
 
         {/* 🎥 MODAL FLOTANTE DEL DIRECTOR VIRTUAL (🔥 FIX z-) */}
         {isRecording && (
-          <div className="fixed inset-0 z-[999]flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 animate-fade-in">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 animate-fade-in">
             <div className="bg-[#0a0a0a] border border-red-500/50 p-4 rounded-[2rem] w-full max-w-sm flex flex-col items-center shadow-[0_0_50px_rgba(239,68,68,0.15)] relative">
               
               <button onClick={stopCamera} className="absolute -top-4 -right-4 bg-red-500 text-white p-2 rounded-full shadow-xl hover:bg-red-600 transition-colors z-50">
