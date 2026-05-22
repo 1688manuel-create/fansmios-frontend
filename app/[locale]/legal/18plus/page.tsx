@@ -19,7 +19,7 @@ export default function Consent18Page() {
 
           <div className="space-y-6 text-sm leading-relaxed font-medium text-gray-400 max-w-2xl mx-auto text-left">
             <p>
-              Esta plataforma ("Fansmio VIP") contiene o puede contener información, imágenes, videos y otros materiales de naturaleza explícitamente sexual ("Material para Adultos").
+              Esta plataforma ("Fansmio") contiene o puede contener información, imágenes, videos y otros materiales de naturaleza explícitamente sexual ("Material para Adultos").
             </p>
             
             <p className="text-white font-bold">
